@@ -26,7 +26,7 @@ at large.
 		<capability name="JavaPlatform" value="Android/2.1" />
 		<capability name="JavaConfiguration" value="Android/2.1" />
 		<capability name="GpsMid.editing" value="true"/>
-		<capability name="JavaPackage" value="osm-editing, online"/>
+		<capability name="JavaPackage" value="osm-editing, online, bigsearch"/>
 		<capability name="Emulator.Skin" value="WVGA800" />
 		<capability name="ScreenSize" value="800x480" />
 		<capability name="CanvasSize" value="800x480" />

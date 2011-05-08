@@ -64,17 +64,23 @@ public class Names {
 		}
 		boolean houseNumber = false;
 		if (w instanceof Node) {
+			byte type = (byte) ((Node) w).getType(Configuration.getConfiguration());
 			POIdescription poiDesc = 
-				Configuration.getConfiguration().getpoiDesc((byte) ((Node) w).getType(Configuration.getConfiguration()));
+				Configuration.getConfiguration().getpoiDesc(type);
+			//System.out.println("Testing node "+ w + " type " + type + " poiDesc = " + poiDesc);
 			if (poiDesc != null && poiDesc.houseNumberIndex) {
 				houseNumber = true;
+				//System.out.println("Setting houseNumber = true for node "+ w);
 			}
 		}
 		if (w instanceof Way) {
+			byte type = (byte) ((Way) w).getType(Configuration.getConfiguration());
 			WayDescription wayDesc =
-				Configuration.getConfiguration().getWayDesc((byte)(-1*((Way) w).getType(Configuration.getConfiguration())));
+				Configuration.getConfiguration().getWayDesc(type);
 
+			//System.out.println("Testing way "+ w + " type " + type + "wayDesc = " + wayDesc);
 			if (wayDesc != null && wayDesc.houseNumberIndex) {
+				//System.out.println("Setting houseNumber = true for way "+ w);
 				houseNumber = true;
 			}
 		}
@@ -98,10 +104,10 @@ public class Names {
 		} else {
 			names1.put(mn.getName(),mn);
 		}
-//		System.out.println("adding to wholename canon:" + mn);
 		if (!houseNumber) {
+			//System.out.println("adding to wholename canon, !houseNumber: " + mn);
 			if (! canons.add(mn)){
-//			System.out.println("canon already there:" + mn);
+				//System.out.println("canon already there:" + mn);
 				Name mnNext=new Name(w.getName()+"\0");
 				mnNext.setCanon( mn.getCanon());
 				try {
@@ -124,7 +130,7 @@ public class Names {
 		String [] housenumbers = words;
 		if (allAddrTags && (w instanceof Node)) {
 			Node n = (Node) w;
-			if (n.hasHouseNumber()) {
+			if (n.hasHouseNumberTag()) {
 				housenumbers = w.getAttribute("addr:housenumber").split("[ ;,.()]");
 			}
 		}
@@ -135,10 +141,10 @@ public class Names {
 					continue;
 				}
 				mn = new Name(word);
-//			System.out.println("adding word:" + mn);
+                                //System.out.println("adding word:" + mn);
 				mn.addEntity(w);
 				if (! wordCanons.add(mn)){
-					//				System.out.println("wordCanon already there:" + mn);
+					//System.out.println("wordCanon already there:" + mn);
 					Name mnNext=new Name(word+"\0");
 					mnNext.setCanon( mn.getCanon());
 					try {
@@ -158,7 +164,7 @@ public class Names {
 		}
 		// add to housenumber index
 		if (houseNumber || allAddrTags) {
-			//System.out.println("Entity: " + w);
+			//System.out.println("Adding to housenumber index: Entity: " + w);
 			for (String word : housenumbers) {
 				//System.out.println("Word: " + word);
 				if (word.length() == 0) {
@@ -166,7 +172,7 @@ public class Names {
 					continue;
 				}
 				mn = new Name(word);
-//			System.out.println("adding word:" + mn);
+				//System.out.println("adding word:" + mn);
 				mn.addEntity(w);
 				if (! houseNumberCanons.add(mn)){
 					//				System.out.println("wordCanon already there:" + mn);

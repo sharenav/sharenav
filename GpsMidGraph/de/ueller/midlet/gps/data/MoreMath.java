@@ -338,43 +338,47 @@ public class MoreMath {
 			int PX, int PY  
 	)   
 	{  
-		float distSquare ;  
-		int X12, Y12;//, X1P, Y1P, X2P, Y2P ;  // X1, Y1, X2, Y2 are reused now
+ 		// all variables changed to long/double,
+ 		// because on big ZOOM levels (starting from '5 meters'
+ 		// on scale bar) override happens (far-far-away line
+ 		// calculated as very closer line)
+		double distSquare;
+		long X12, Y12, X1P, Y1P, X2P, Y2P;
 
 
 //		Find vector from  ( X1,Y1 )  to  ( X2,Y2 )   
 //		and the Square of its length.   
-		X12 = X2 - X1 ;  
-		Y12 = Y2 - Y1 ;  
+		X12 = (long)X2 - (long)X1;
+		Y12 = (long)Y2 - (long)Y1;
 
 //		Find vector from  ( X1,Y1 )  to  ( PX,PY )  .   
-		X1 = PX - X1 ;
-		Y1 = PY - Y1 ;
+		X1P = (long)PX - (long)X1;
+		Y1P = (long)PY - (long)Y1;
 //		Do scalar product and check sign.   
-		if  (  X12 * X1 + Y12 * Y1     <= 0  )
+		if  (  X12 * X1P + Y12 * Y1P     <= 0L  )
 		{  
 //			Closest point on segment is  ( X1,Y1 ) ;  
 //			find its distance  ( squared )  from  ( PX,PY )  .   
-			distSquare = X1 * X1 + Y1 * Y1 ;
+			distSquare = X1P * X1P + Y1P * Y1P ;
 		}  
 		else 
 		{  
 //			Find vector from  ( X2,Y2 )  to  ( PX,PY )  .   
-			X2 = PX - X2 ;
-			Y2 = PY - Y2 ;
+			X2P = (long)PX - (long)X2 ;
+			Y2P = (long)PY - (long)Y2 ;
 //			Do scalar product and check sign.   
-			if  (  X12 * X2 + Y12 * Y2     >= 0  )
+			if  (  X12 * X2P + Y12 * Y2P     >= 0L  )
 			{  
 				// Closest point on segment is  ( X2,Y2 ) ;  
 				// find its distance  ( squared )  from  ( PX,PY )  .   
-				distSquare = X2 * X2 + Y2 * Y2 ;
+				distSquare = X2P * X2P + Y2P * Y2P ;
 			}  
 			else 
 			{  
 				// Closest point on segment is between  ( X1,Y1 )  and  
 				//   ( X2,Y2 )  . Use perpendicular distance formula.   
-				distSquare = X12 * Y1 - Y12 * X1 ;
-				int L12Square = X12 * X12 + Y12 * Y12 ;
+				distSquare = (double)(X12 * Y1P - Y12 * X1P) ;
+				double L12Square = (double)(X12 * X12 + Y12 * Y12) ;
 				distSquare = distSquare * distSquare / L12Square ;  
 				// Note that if L12Square be zero, the first  
 				// of the three branches will be selected,  
@@ -383,51 +387,50 @@ public class MoreMath {
 		}  
 
 
-		return distSquare ;  
+		return (float)distSquare ;  
 	}   
 	public static float  ptSegDistSq  (  float X1, float Y1,  
 			float X2, float Y2,  
 			float PX, float PY  
 	)   
 	{  
-		float distSquare ;  
-		float L12Square ;  
-		float X12, Y12;//, X1P, Y1P, X2P, Y2P ;
+		double distSquare ;  
+		double X12, Y12, X1P, Y1P, X2P, Y2P ;
 
 
 //		Find vector from  ( X1,Y1 )  to  ( X2,Y2 )   
 //		and the Square of its length.   
-		X12 = X2 - X1 ;  
-		Y12 = Y2 - Y1 ;  
+		X12 = (double)X2 - (double)X1 ;  
+		Y12 = (double)Y2 - (double)Y1 ;  
 
 //		Find vector from  ( X1,Y1 )  to  ( PX,PY )  .   
-		X1 = PX - X1 ;
-		Y1 = PY - Y1 ;
+		X1P = (double)PX - (double)X1 ;
+		Y1P = (double)PY - (double)Y1 ;
 //		Do scalar product and check sign.   
-		if  (  X12 * X1 + Y12 * Y1     <= 0f  )
+		if  (  X12 * X1P + Y12 * Y1P     <= 0D  )
 		{  
 //			Closest point on segment is  ( X1,Y1 ) ;  
 //			find its distance  ( squared )  from  ( PX,PY )  .   
-			distSquare = X1 * X1 + Y1 * Y1 ;
+			distSquare = X1P * X1P + Y1P * Y1P ;
 		}  
 		else 
 		{  
 //			Find vector from  ( X2,Y2 )  to  ( PX,PY )  .   
-			X2 = PX - X2 ;
-			Y2 = PY - Y2 ;
+			X2P = (double)PX - (double)X2 ;
+			Y2P = (double)PY - (double)Y2 ;
 //			Do scalar product and check sign.   
-			if  (  X12 * X2 + Y12 * Y2     >= 0f  )
+			if  (  X12 * X2P + Y12 * Y2P     >= 0D  )
 			{  
 				// Closest point on segment is  ( X2,Y2 ) ;  
 				// find its distance  ( squared )  from  ( PX,PY )  .   
-				distSquare = X2 * X2 + Y2 * Y2 ;
+				distSquare = X2P * X2P + Y2P * Y2P ;
 			}  
 			else 
 			{  
 				// Closest point on segment is between  ( X1,Y1 )  and  
 				//   ( X2,Y2 )  . Use perpendicular distance formula.   
-				distSquare = X12 * Y1 - Y12 * X1 ;
-				L12Square = X12 * X12 + Y12 * Y12 ;
+				distSquare = X12 * Y1P - Y12 * X1P ;
+				double L12Square = X12 * X12 + Y12 * Y12 ;
 				distSquare = distSquare * distSquare / L12Square ;  
 				// Note that if L12Square be zero, the first  
 				// of the three branches will be selected,  
@@ -435,13 +438,10 @@ public class MoreMath {
 			}  
 		}  
 
-
-		return distSquare ;  
+		return (float)distSquare;
 	}   
 
 
-
-	
 	/**
 	 * The rest of this file is based on work of Nikolay Klimchuk but modified
 	 * to use float instead of double.

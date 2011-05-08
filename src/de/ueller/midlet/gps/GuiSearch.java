@@ -14,6 +14,9 @@ import java.lang.Integer;
 import java.util.Hashtable;
 //import java.util.Enumeration;
 //#endif
+//#if polish.android
+import android.view.KeyEvent;
+//#endif
 
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.ChoiceGroup;
@@ -22,6 +25,7 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
@@ -103,6 +107,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private int cursor=0;
 	
 	private int scrollOffset = 0;
+
+	private volatile static long lastPaintTime = 0;
 
 	private StringBuffer searchCanon = new StringBuffer();
 
@@ -187,6 +193,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private volatile TimerTask tapAutoReleaseTimerTask = null;
 	private final int TAP_AUTORELEASE_DELAY = 500;
 
+	/** result ticker */
+	private volatile int ticker = -4;
+	private volatile int tickerDiff = 0;
+	private volatile int tickerMax = 0;
+	private volatile boolean needsTicker = false;
+
 	private KeySelectMenu poiTypeForm;
 
 	//#if polish.api.bigsearch
@@ -235,6 +247,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		
 		timerT = new TimerTask() {
 			public void run() {
+				tickerTick();
 				if (needsPainting) {
 					repaint();
 				}
@@ -609,6 +622,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 	protected void paint(Graphics gc) {
 		//#debug debug
 		logger.debug("Painting search screen with offset: " + scrollOffset);
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_LARGE_FONT)) {
+			Font fontLarge = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_LARGE);  
+			gc.setFont(fontLarge);
+		}
+		lastPaintTime = System.currentTimeMillis();
 		if (fontSize == 0)
 			fontSize = gc.getFont().getHeight();		
 		int yc=scrollOffset;
@@ -739,23 +757,55 @@ public class GuiSearch extends Canvas implements CommandListener,
 					}					
 				}
 			}
-			// always show last name part unreduced
-			if(reducedName!=0 && nameb.length()>=2) {
-				// only if the result is more than once reduced (for POIs) or the result has a nearby entry
-				if (displayReductionLevel > 1 || sr.nearBy != null) {
-					nameb.setLength(nameb.length()-2);
-					if(reducedName==1) {
-						nameb.append(name);
-					}
-					else {
-						nameb.append(nearNameb.toString());					
+			if (displayReductionLevel == 4) {
+				// show start of name & distance + compass
+				nameb.setLength(0);
+				nameb.append(name);
+			} else {
+				// show last name part unreduced unless reduced to compass
+				if(reducedName!=0 && nameb.length()>=2) {
+					// only if the result is more than once reduced (for POIs) or the result has a nearby entry
+					if (displayReductionLevel > 1 || sr.nearBy != null) {
+						nameb.setLength(nameb.length()-2);
+						if(reducedName==1) {
+							nameb.append(name);
+						}
+						else {
+							nameb.append(nearNameb.toString());
+						}
 					}
 				}
 			}
 			appendCompassDirection(nameb, sr);
 			name=nameb.toString();
+			if (i == cursor &&
+			    (Configuration.getCfgBitState(Configuration.CFGBIT_TICKER_ISEARCH_ALL)
+			     || Configuration.getCfgBitState(Configuration.CFGBIT_TICKER_ISEARCH))) {
+				if (nameBiggerThanFits(gc, name)) {
+					needsTicker = true;
+				} else {
+					needsTicker = false;
+				}
+			}
+			int tickerUse = 0;
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_TICKER_ISEARCH_ALL)
+			    && i != cursor && needsTicker && tickerDiff > 0) {
+				tickerUse = tickerDiff;
+			}
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_TICKER_ISEARCH)
+			    && i == cursor && needsTicker && tickerDiff > 0) {
+				tickerUse = tickerDiff;
+			}
+
+			if (i == cursor && needsTicker && tickerDiff > 0) {
+				if (!nameBiggerThanFits(gc, name.substring(tickerDiff)) && ticker > 0) {
+					tickerAtEnd();
+				}
+			}
+			name = name.substring(tickerUse);
 			if (name != null) {
 				// avoid index out of bounds 
+				// FIXME add code to handle word search code and housenumber search result highlighting
 				int imatch=searchCanon.length(); 
 				if (name.length()<imatch) { 
 					imatch=name.length(); 
@@ -781,21 +831,30 @@ public class GuiSearch extends Canvas implements CommandListener,
 					} else { 
 						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_NONSELECTED_TYPED]);
 					}
-					gc.drawString(name.substring(0,imatch+flags.length()), 17, yc, Graphics.TOP | Graphics.LEFT); 
+					int len = imatch+flags.length()-tickerUse;
+					if (len > name.length()) {
+						len = name.length();
+					} else if (len < 0) {
+						len = 0;
+					}
+					gc.drawString(name.substring(0,len), 17, yc, Graphics.TOP | Graphics.LEFT); 
 					// remaining name part 
 					if (i == cursor){ 
 						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_REST]);
 					} else { 
 						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_NONSELECTED_REST]);
 					} 
-					gc.drawString(name.substring(imatch+flags.length()), 17 + gc.getFont().stringWidth(name.substring(0,imatch+flags.length())) , yc, Graphics.TOP | Graphics.LEFT);
+					gc.drawString(name.substring(len), 17 + gc.getFont().stringWidth(name.substring(0,len)) , yc, Graphics.TOP | Graphics.LEFT);
 				}
 				// carret 
 				if(!(Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) || matchMode())
 				   && carret<=imatch && displayReductionLevel<1) { 
-					int cx=17 + gc.getFont().stringWidth(name.substring(0,carret+flags.length())); 
-					gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_TYPED]);
-					gc.drawLine(cx-1,yc+fontSize,cx+1,yc+fontSize); 
+					int len = carret+flags.length()-tickerUse;
+					if (len >= 0) {
+						int cx=17 + gc.getFont().stringWidth(name.substring(0,len)); 
+						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_TYPED]);
+						gc.drawLine(cx-1,yc+fontSize,cx+1,yc+fontSize); 
+					}
 				}
 			}
 			else 
@@ -819,6 +878,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	protected void keyPressed(int keyCode) {
 		int action = getGameAction(keyCode);
+		resetTicker();
 		/** Ignore gameActions from unicode character keys (space char and above).
 		 *  By not treating those keys as game actions they get added to the search canon
 		 *  by default if not handled otherwise */
@@ -889,13 +949,33 @@ public class GuiSearch extends Canvas implements CommandListener,
 				return;
 			} else {
 				displayReductionLevel++;
-				if (displayReductionLevel > 3)
+				if (displayReductionLevel > 4)
 					displayReductionLevel = 0;
 				repaint(0, 0, getWidth(), getHeight());
 				return;
 			}
 			// Unicode character 10 is LF
 			// so 10 should correspond to Enter key on QWERT keyboards
+//#if polish.android
+			// FIXME the SEARCH doesn't work, wonder if J2MEPolish switches keycodes or something as
+			// search key is special in android
+		} else if (keyCode == 10 || action == FIRE || keyCode == KeyEvent.KEYCODE_SEARCH) {
+				commandAction( Trace.getInstance().getCommand(Trace.ROUTING_START_CMD), (Displayable) null);
+		} else if (keyCode == 10 || action == FIRE || keyCode == KeyEvent.KEYCODE_BACK) {
+			// FIXME With this there's the problem that Back gets passed on to the next menu
+			// (e.g. route mode asking). See http://developer.android.com/sdk/android-2.0.html
+			// for Native Android workaround; not sure how to do this with J2MEPolish
+			if (keyCode == KeyEvent.KEYCODE_BACK && !isCursorValid()) {
+				destroy();
+				parent.show();
+			}
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
+				commandAction( ROUTE1_CMD, (Displayable) null);
+			} else {
+				commandAction( OK1_CMD, (Displayable) null);				
+			}
+			return;
+//#else
 		} else if (keyCode == 10 || action == FIRE) {
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
 				commandAction( ROUTE1_CMD, (Displayable) null);
@@ -903,6 +983,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				commandAction( OK1_CMD, (Displayable) null);				
 			}
 			return;
+//#endif
 		} else if (action == UP) {
 			if (cursor > 0)
 				cursor--;			
@@ -972,6 +1053,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 				for (int i = 0; i < slen ; i++) {
 					searchCanon.insert(carret++, (char) words.charAt(i));
 				}
+				//#if polish.api.bigsearch
+				matchSources = null;
+				matchLats = null;
+				matchLons = null;
+				//#endif
 				//System.out.println("Searchcanon tostring: " + searchCanon.toString());
 				//System.out.println("Searchcanon length: " + searchCanon.length());
 				words = "";
@@ -1060,6 +1146,36 @@ public class GuiSearch extends Canvas implements CommandListener,
 		}
 		//#endif
 	}
+
+	private boolean nameBiggerThanFits(Graphics gc, String name) {
+		return 17 + gc.getFont().stringWidth(name) > getWidth();
+	}
+
+	private void tickerTick() {
+				ticker++;
+				if (ticker >= 0) {
+					tickerDiff = ticker;
+				} else if (ticker < -4) {
+					tickerDiff = tickerMax;
+				} else if (ticker < 0) {
+					tickerDiff = 0;
+				}
+				if (needsTicker && isCursorValid() && (System.currentTimeMillis() - lastPaintTime) > 300) {
+					needsPainting = true;
+				}
+				//System.out.println("tickerTick ending: ticker " + ticker + " tickerDiff " + tickerDiff);
+	}
+	private void resetTicker() {
+		// stop a moment at string start (-4..0)
+		ticker = -4;
+		tickerDiff = 0;
+	}
+	private void tickerAtEnd() {
+		// stop a moment at string end (-8..-5) and string start (-4..0)
+		tickerMax = tickerDiff;
+		ticker = -8;
+	}
+
 	private boolean matchMode() {
 		return (!words.equals(""));
 	}
@@ -1108,8 +1224,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 				//		   + id + "source = "
 				//		   + ((Integer) matchSources.get(id)).intValue());
 				//if (((Integer) matchSources.get(id)).intValue() == SearchNames.INDEX_HOUSENUMBER && matchLats.get(id) != null) {
-				// get more exact coordinates from old match if current match is a way
-				if (sr.type > 0 && matchLats != null && matchLats.get(id) != null) {
+				// get more exact coordinates from old match if current match is not from housenumber index
+				if (sr.source != SearchNames.INDEX_HOUSENUMBER && matchLats != null && matchLats.get(id) != null) {
 					sr.lat = ((Float) matchLats.get(id)).floatValue();
 					sr.lon = ((Float) matchLons.get(id)).floatValue();
 					sourceNew = (Integer) matchSources.get(id);
@@ -1503,8 +1619,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 		//#if polish.api.bigsearch
 		if (matchMode() && state!= STATE_FAVORITES) {
 			Long id = new Long(srNew.resultid);
-			// if match is a way, try to get more exact coords from previous match
-			if (srNew.type > 0) {
+			// if match is not from a housenumber index, try to get more exact coords from previous match
+			if (srNew.source != SearchNames.INDEX_HOUSENUMBER) {
 				// transfer house number coordinates to street
 				if (matchLats != null && matchLats.get(id) != null) {
 					srNew.lat = ((Float) matchLats.get(id)).floatValue();

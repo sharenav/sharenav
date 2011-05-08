@@ -66,6 +66,8 @@ public class Relations {
 		int houseNumberRelationAcceptCount = 0;
 		int houseNumberRelationProblemCount = 0;
 		int houseNumberRelationIgnoreCount = 0;
+		int boundaryIgnore = 0;
+
 		HashMap<Long, Way> wayHashMap = parser.getWayHashMap();
 		Map<Long, Node> nodeHashMap = parser.getNodeHashMap();
 		ArrayList<Way> removeWays = new ArrayList<Way>();
@@ -186,11 +188,20 @@ public class Relations {
 					i.remove();
 				} else if ("multipolygon".equals(r.getAttribute("type"))) {
 					if (r.getAttribute("admin_level") != null){
+						// FIXME should not be blatantly ignore, but instead should be handled
+						// if enabled in style file
+						//System.out.println("Warning: ignoring relation with admin_level tag , relation" + r);
+						boundaryIgnore++;
 						continue;
 					}
 					if ("administrative".equalsIgnoreCase(r.getAttribute("boundary"))) {
+						// FIXME should not be blatantly ignore, but instead should be handled
+						// if enabled in style file
+						//System.out.println("Warning: ignoring relation with boundary=administrative tag, relation " + r);
+						boundaryIgnore++;
 						continue;
 					}
+
 //				System.out.println("Starting to handle multipolygon relation");
 //				System.out.println("  see http://www.openstreetmap.org/browse/relation/" + r.id);
 
@@ -210,15 +221,11 @@ public class Relations {
 //						a.debug = true;
 //					}
 						Way w = wayHashMap.get(ref);
-						if (w.getAttribute("admin_level") != null) {
-							continue rel;
-						}
-						if ("administrative".equalsIgnoreCase(w.getAttribute("boundary"))) {
-							continue rel;
-						}
 						// FIXME can be removed when proper coastline support exists
 						if ("coastline".equalsIgnoreCase(w.getAttribute("natural"))) {
-							continue rel;
+							// this shouldn't cause trouble anymore, but give a message just in case
+							System.out.println("Warning: saw natural=coastline way " + w + " in relation " + r);
+							//continue rel;
 						}
 
 //					System.out.println("Handling outer way http://www.openstreetmap.org/browse/way/" + ref);
@@ -317,6 +324,7 @@ public class Relations {
 		System.out.println("info: ignored " + houseNumberRelationIgnoreCount + " associatedStreet (housenumber) relations");
 		System.out.println("info: processed " + houseNumberRelationAcceptCount + " associatedStreet (housenumber) relations"
 			+ ", of which " +  houseNumberRelationProblemCount + " had problems");
+		System.out.println("info: ignored " + boundaryIgnore + " boundary=administrative multipolygon relations");
 	}
 
 	/**

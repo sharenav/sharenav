@@ -44,6 +44,7 @@ public class CalcNearBy {
 			calcWayIsIn(parser, nearByElements);
 		}
 		if (kdWaysSize > 0) {
+			CalcWaysForHouseNumberAreas(parser, nearByWays);
 			calcWaysForHouseNumbers(parser, nearByWays);
 		}
 	}
@@ -192,77 +193,96 @@ public class CalcNearBy {
 	 */
 	private void calcWayIsIn(OsmParser parser, KDTree nearByElements) {		
 		for (Way w : parser.getWays()) {
-			if (w.isHighway() /*&& w.getIsIn() == null */) {
-				Node thisNode = w.getMidPoint();
-				if (thisNode == null) {
-					continue;
-				}
-				Node nearestPlace = null;				
-				try {					
-					nearestPlace = (Node) nearByElements.nearest(MyMath.latlon2XYZ(thisNode));
-
-					if (nearestPlace.getType(null) <= 5 && !(MyMath.dist(thisNode, nearestPlace) < Constants.MAX_DIST_CITY[nearestPlace.getType(null)])) {					
-						long maxDistanceTested = MyMath.dist(thisNode, nearestPlace);
-						int retrieveN = 5;
-						if (retrieveN > kdSize) {
-							retrieveN = kdSize;
-						}
-						nearestPlace = null;
-						while (maxDistanceTested < Constants.MAX_DIST_CITY[Constants.NODE_PLACE_CITY]) {							
-							Object [] nearPlaces = nearByElements.nearest(MyMath.latlon2XYZ(thisNode), retrieveN);
-							long dist = 0;
-							for (Object o : nearPlaces) {
-								Node other = (Node) o;								
-								dist = MyMath.dist(thisNode, other);
-								//As the list returned by the kd-tree is sorted by distance,
-								//we can stop at the first found 
-								if (other.getType(null) <= 5 && dist < Constants.MAX_DIST_CITY[other.getType(null)]) {								
-									nearestPlace = other;									
-									break;
-								}							
-							}
-							if (nearestPlace != null) {
-								//found a suitable Place, leaving loop
-								break;
-							}
-							if (retrieveN == kdSize) {
-								/**
-								 * We have checked all available places and nothing was
-								 * suitable, so abort with nearestPlace == null;
-								 */
-								break;
-							}
-							maxDistanceTested = dist;
-							retrieveN = retrieveN * 5;
-							if (retrieveN > kdSize) {
-								retrieveN = kdSize;
-							}
-						}
-					}
-				} catch (KeySizeException e) {
-					// Something must have gone horribly wrong here,
-					// This should never happen.					
-					e.printStackTrace();
-					return;
-				}
-				if (nearestPlace != null) {
-					w.setAttribute("is_in", nearestPlace.getName());					
-					w.nearBy = nearestPlace;
-				}				
-			}
-		}		
+			calcEntityIsIn(parser, nearByElements, (Entity) w);
+		}
+		for (Node n : parser.getNodes()) {
+			calcEntityIsIn(parser, nearByElements, (Entity) n);
+		}
 	}
 
+	private void calcEntityIsIn(OsmParser parser, KDTree nearByElements, Entity e) {
+		// index way, poi or area with is_in
+		Node thisNode = null;
+		if (e instanceof Node) {
+			thisNode = (Node) e;
+		}
+		if (e instanceof Way) {
+			Way w = (Way) e;
+			thisNode = w.getMidPoint();
+		}
+		if (thisNode == null) {
+			return;
+		}
+		Node nearestPlace = null;				
+		try {					
+			nearestPlace = (Node) nearByElements.nearest(MyMath.latlon2XYZ(thisNode));
+
+			if (nearestPlace.getType(null) <= 5 && !(MyMath.dist(thisNode, nearestPlace) < Constants.MAX_DIST_CITY[nearestPlace.getType(null)])) {					
+				long maxDistanceTested = MyMath.dist(thisNode, nearestPlace);
+				int retrieveN = 5;
+				if (retrieveN > kdSize) {
+					retrieveN = kdSize;
+				}
+				nearestPlace = null;
+				while (maxDistanceTested < Constants.MAX_DIST_CITY[Constants.NODE_PLACE_CITY]) {							
+					Object [] nearPlaces = nearByElements.nearest(MyMath.latlon2XYZ(thisNode), retrieveN);
+					long dist = 0;
+					for (Object o : nearPlaces) {
+						Node other = (Node) o;								
+						dist = MyMath.dist(thisNode, other);
+						//As the list returned by the kd-tree is sorted by distance,
+						//we can stop at the first found 
+						if (other.getType(null) <= 5 && dist < Constants.MAX_DIST_CITY[other.getType(null)]) {								
+							nearestPlace = other;									
+							break;
+						}							
+					}
+					if (nearestPlace != null) {
+						//found a suitable Place, leaving loop
+						break;
+					}
+					if (retrieveN == kdSize) {
+						/**
+						 * We have checked all available places and nothing was
+						 * suitable, so abort with nearestPlace == null;
+						 */
+						break;
+					}
+					maxDistanceTested = dist;
+					retrieveN = retrieveN * 5;
+					if (retrieveN > kdSize) {
+						retrieveN = kdSize;
+					}
+				}
+			}
+		} catch (KeySizeException exc) {
+			// Something must have gone horribly wrong here,
+			// This should never happen.					
+			exc.printStackTrace();
+			return;
+		}
+		if (nearestPlace != null) {
+			if (!e.containsKey("is_in")) {
+				e.setAttribute("is_in", nearestPlace.getName());					
+			}
+			// don't overwrite info from calcCityNearBy()
+			if (e.nearBy == null) {
+				e.nearBy = nearestPlace;
+			}
+		}				
+	}		
+		
 	/**
 	 * @param parser
 	 * @param nearByElements
 	 */
 	private void calcWaysForHouseNumbers(OsmParser parser, KDTree nearByElements) {		
+		long startTime = System.currentTimeMillis();
 		int count = 0;
 		int ignoreCount = 0;
 		HashMap<Long, Way> wayHashMap = parser.getWayHashMap();
 		for (Node n : parser.getNodes()) {
-			if (n.hasHouseNumber()) {
+			if (n.hasHouseNumberTag()) {
 				long way = calcWayForHouseNumber((Entity) n, wayHashMap);
 				//System.out.println ("Got id " + way + " for housenumber node " + n);
 				if (way != 0 && !n.containsKey("__wayid")) {
@@ -281,13 +301,38 @@ public class CalcNearBy {
 				}
 			}
 		}		
-		System.out.println("info: accepted " + count + " non-relation housenumber-to-street connections");
-		System.out.println("info:  " + exactCount + " exact matches");
-		System.out.println("info:  " + heuristicCount + " heuristic matches (housenumbers without addr:street or addr:street not found)");
-		System.out.println("info: ignored " + ignoreCount + " non-relation housenumber-to-street connections");
+		long time = (System.currentTimeMillis() - startTime);
+		System.out.println("info: node housenumbers: accepted " + count + " non-relation housenumber-to-street connections in " + time / 1000 + " seconds");
+		System.out.println("info: node housenumbers: ignored " + ignoreCount + " non-relation housenumber-to-street connections");
+		System.out.println("info: node+area housenumbers:  " + exactCount + " exact matches");
+		System.out.println("info: node+area housenumbers:  " + heuristicCount + " heuristic matches (housenumbers without addr:street or addr:street not found)");
+	}
+
+	private void CalcWaysForHouseNumberAreas(OsmParser parser, KDTree nearByElements) {		
+		long startTime = System.currentTimeMillis();
+		int count = 0;
+		HashMap<Long, Way> wayHashMap = parser.getWayHashMap();
+		for (Way w : parser.getWays()) {
+			if (w.hasHouseNumberTag()) {
+				count++;
+				Node n = w.getMidPoint();
+				long way = calcWayForHouseNumber((Entity) n, wayHashMap);
+				if (way != (long) 0) {
+					if (!w.containsKey("__wayid")) {
+						w.setAttribute("__wayid", Long.toString(way));
+					}
+					//System.out.println("Adding housenumber helper tag __wayid " + way + " to way " + w + " midpoint: " + n );
+				}
+				//n.wayToPOItransfer(w);
+				//parser.addNode(n);
+			}
+		}		
+		long time = (System.currentTimeMillis() - startTime);
+		System.out.println("info: area housenumbers: accepted " + count + " non-relation housenumber-to-street connections in " + time / 1000 + " seconds");
 	}
 
 	private void calcCityNearBy(OsmParser parser, KDTree nearByElements) {
+		long startTime = System.currentTimeMillis();
 		//double [] latlonKey = new double[2];
 		for (Node n : parser.getNodes()) {
 			String place = n.getPlace();
@@ -337,9 +382,12 @@ public class CalcNearBy {
 				}
 			}
 		}
+		long time = (System.currentTimeMillis() - startTime);
+		System.out.println("info: city nearbys created in " + time / 1000 + " seconds");
 	}
 
 	private KDTree getNearByElements(OsmParser parser) {
+		long startTime = System.currentTimeMillis();
 		System.out.println("Creating nearBy candidates");
 		KDTree kd = new KDTree(3);
 		//double [] latlonKey = new double[2]; 
@@ -363,11 +411,13 @@ public class CalcNearBy {
 				}				
 			}
 		}
-		System.out.println("Found " + kdSize + " placenames");
+		long time = (System.currentTimeMillis() - startTime);
+		System.out.println("Found " + kdSize + " placenames in " + time / 1000 + " seconds");
 		return kd;
 	}
 	private KDTree getNearByWays(OsmParser parser) {
 		System.out.println("Creating nearBy way candidates");
+		long startTime = System.currentTimeMillis();
 		KDTree kd = new KDTree(3);
 		//double [] latlonKey = new double[2]; 
 		for (Way w : parser.getWays()) {
@@ -412,7 +462,8 @@ public class CalcNearBy {
 				}				
 			}
 		}
-		System.out.println("Found " + kdWaysSize + " waynames");
+		long time = (System.currentTimeMillis() - startTime);
+		System.out.println("Found " + kdWaysSize + " waynames in " + time / 1000 + " seconds");
 		return kd;
 	}
 	// return distance from node to way

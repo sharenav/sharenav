@@ -1,34 +1,38 @@
-    *** Housenumber search **
-    - Housenumber search (streetname&housenumber) can be enabled by useHouseNumbers in .properties
-      or checking the checkbox in the GUI
-    - to search, use the '#' key to end the street name or house number
-    - in multi-word search, also ' ' works to end the street name or house number
-    - Currently Osm2GpsMid can connect housenumbers to streets encoded in the map as
+    *** House number search **
+    - House number search (street name & house number) can be enabled by useHouseNumbers in .properties
+      or checking the checkbox in the Osm2GpsMid GUI
+    - to search, use the '#' key to end the street name or house number, e.g. Picadilly#10#
+    - in multi-word search (explained below), also ' ' works to end the street name or house number
+    - Currently Osm2GpsMid can connect house numbers to streets encoded in the map as
       * associatedStreet relations (no support for interpolation yet)
       * addr:street tagging
       * nearest way: when addr:street is not in map data, connection is made with heuristic,
         i.e. matching to the nearest named way
     - support mainly for addr:housenumber and addr:street tagging, not for the Czech
       scheme with is_in tags, though the code might partially work with a modified style file
-    - like multi-word search, housenumber search can require a bunch of memory.
+    - like multi-word search, house number search can require a bunch of memory.
     - enabled only for "Generic/editing", "Generic/full" (and "Generic/microemulator") targets.
+    *** Search user interface ***
+    - POIs and areas are now indexed with is_in (nearbys)
+    - the star key (*) switching between nearbys has a new last step where also the last
+      nearby is hidden so that the distance and compass direction are shown
+    - horizontal scroll (optionally) of the search result under cursor or all search results
+    - option to use a large font for better UI on hi-res devices
     *** Multi-word search ***
-    - enable new feature multi-word search for build
-      targets "microemulator", "editing" and "full"; it can require
-      more memory than single word or whole name search,
-      so don't enable it yet for other targets. To add multi-word indexes to map,
-      set useWordSearch=true in properties.
-    *** Misc. bug fixes ***
-    - GpsMid: fixed empty/invalid map startup infinite loop bug (tracker 3288429)
-    - Osm2GpMid: fixed handling of multipolygons where a way is in more than one multipolygon
-    - GpsMid: loss of route line when zooming out
-    *** Osm2GpsMid ***
-    - More memory usage optimizations for Osm2GpsMid, thx walter9
+    - New feature multi-word search, available only in "Generic/editing", "Generic/full" (and "Generic/microemulator")
+      as it can require more memory than single word or whole name search.
+      To add multi-word indexes to map, set useWordSearch=true in .properties.
+	*** Osm2GpsMid ***
+    - More memory usage optimizations for Osm2GpsMid reducing memory usage during map creation
+      by up to 35%, thx walter9
     *** Routing ***
-    - the route line is now rendered only up to the closest point to the destination on the destination way
+    - the route line is now rendered only up to the closest point to the destination on the destination way,
+      so when using a POI or house number as destination GpsMid will route more exactly there
     - if auto zoom is activated the map will be zoomed in further
       when getting closer than 200 m route distance to the route destination 
-    *** Map Elements ***
+    *** Appearance ***
+    - bigger icon; 15x15 -> 48x48
+    *** Style File ***
     - add regular expression matching for specialisation tag in style file.
       Example:
 		<specialisation key = "ref" regexp="true" value = "^154..*$"/>
@@ -43,11 +47,18 @@
       or add combined="true" to combine same type relations into one:
 
 				<asRelation relation = "true" combined="true"/>
-
     *** Platforms ***
-    - make WinCE sound work with fallback NoiseMaker code when playerUpdate doesn't get called
-    - work around a Samsung Wave route line disappearance platform bug
-
+    - On WinCE sound works now with a fallback NoiseMaker code when playerUpdate doesn't get called
+    - work around a Samsung Wave route line disappearance platform bug (thx walter9)
+    - some tweaks to make Android version UI better handle the Android keys
+    *** Misc. bug fixes ***
+    - GpsMid: fixed empty/invalid map startup infinite loop bug (tracker 3288429)
+    - Osm2GpMid: fixed handling of multipolygons where a way is in more than one multipolygon
+    - When zooming out the off distance now stays correct, so no route recalculation is
+	  triggered. This is done by calculating the distance between the
+	  actual gps coordinates and the nearest way position when there's a valid GPS position
+	  and the screen is centered to the GPS position (thx walter9)
+	 
 GpsMid 0.7.3
     *** Map Elements ***
     - added natural=waterfall

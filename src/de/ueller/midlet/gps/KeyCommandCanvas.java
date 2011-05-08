@@ -15,6 +15,10 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 
+//#if polish.android
+import android.view.KeyEvent;
+//#endif
+
 import de.ueller.gps.tools.intTree;
 
 public abstract class KeyCommandCanvas extends Canvas implements
@@ -59,6 +63,16 @@ public abstract class KeyCommandCanvas extends Canvas implements
 			return;
 		}
 
+//#if polish.android
+		if (keyCode == KeyEvent.KEYCODE_SEARCH) {
+			commandAction(Trace.getInstance().getCommand(Trace.SEARCH_CMD), (Displayable) null);
+			return;
+		}
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			commandAction(Trace.getInstance().getCommand(Trace.ICON_MENU), (Displayable) null);
+			return;
+		}
+//#endif
 		// handle actions for repeatable keys like direction keys immediately
 		Command c = (Command) repeatableKeyPressCommand.get(keyCode);
 		if (c == null) {

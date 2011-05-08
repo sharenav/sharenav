@@ -228,7 +228,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup rotationGroup;
 	private ChoiceGroup directionGroup;
 	private ChoiceGroup nightModeGroup;
-	private ChoiceGroup searchLayoutGroup;
 	private ChoiceGroup uiLangGroup;
 	private ChoiceGroup naviLangGroup;
 	private ChoiceGroup onlineLangGroup;
@@ -478,12 +477,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		nightModeGroup = new ChoiceGroup(Locale.get("guidiscover.Colors")/*Colors*/, Choice.EXCLUSIVE, nightMode, null);
 		menuDisplayOptions.append(nightModeGroup);
 
-		String [] searchLayout = new String[2];
-		searchLayout[0] = Locale.get("guidiscover.SearchWholeNames")/*Search for whole names*/;
-		searchLayout[1] = Locale.get("guidiscover.SearchWords")/*Search for words*/;
-		searchLayoutGroup = new ChoiceGroup(Locale.get("guidiscover.SearchStyle")/*Search style*/, Choice.EXCLUSIVE, searchLayout, null);
-		menuDisplayOptions.append(searchLayoutGroup);
-
 		// FIXME rename string to generic
 		rotationGroup = new ChoiceGroup(Locale.get("guidiscover.MapProjection")/*Map Projection*/, Choice.EXCLUSIVE, Configuration.projectionsString, null);
 		menuDisplayOptions.append(rotationGroup);
@@ -561,9 +554,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				Choice.MULTIPLE, backlights, null);
 		menuDisplayOptions.append(backlightOpts);
 
-		String [] sizes = new String[2];
+		String [] sizes = new String[3];
 		sizes[0] = Locale.get("guidiscover.largerPOIlabels")/*larger POI labels*/;
 		sizes[1] = Locale.get("guidiscover.largerwaypointlabels")/*larger waypoint labels*/;
+		sizes[2] = Locale.get("guidiscover.largefont")/*larger font*/;
 		sizeOpts = new ChoiceGroup(Locale.get("guidiscover.SizeOptions")/*Size Options:*/, Choice.MULTIPLE, sizes, null);
 		menuDisplayOptions.append(sizeOpts);
 
@@ -999,11 +993,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					Trace.getInstance().stopCompass();
 				}
 
-				boolean searchLayout = (searchLayoutGroup.getSelectedIndex() == 1);
-				
-				if (searchLayout != Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ) {
-					Configuration.setCfgBitSavedState(Configuration.CFGBIT_WORD_ISEARCH, searchLayout);
-				}
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE,
 						(renderOpts.getSelectedIndex() == 1)
 				);
@@ -1012,6 +1001,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_POI_LABELS_LARGER, sizeOpts.isSelected(0));
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_WPT_LABELS_LARGER, sizeOpts.isSelected(1));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_LARGE_FONT, sizeOpts.isSelected(2));
 				
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS, mapInfoOpts.isSelected(0));
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_SCALE_BAR, mapInfoOpts.isSelected(1));
@@ -1266,13 +1256,13 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				}
 //#endif
 				nightModeGroup.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE) ? 1 : 0, true);
-				searchLayoutGroup.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_WORD_ISEARCH) ? 1 : 0, true);
 				rotationGroup.setSelectedIndex(Configuration.getProjDefault(), true);
 				renderOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE) ? 1 : 0, true);
 				directionOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION) ? 1 : 0, true);
 				distanceViews.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_DISTANCE_VIEW) ? 1 : 0, true);
 				sizeOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_POI_LABELS_LARGER));
 				sizeOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_WPT_LABELS_LARGER));
+				sizeOpts.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_LARGE_FONT));
 				mapInfoOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS));
 				mapInfoOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_SCALE_BAR));
 				mapInfoOpts.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP));

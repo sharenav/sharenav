@@ -57,7 +57,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 23;
+	public final static int VERSION = 24;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -282,6 +282,12 @@ public class Configuration {
 	public final static byte CFGBIT_RUNNING = 108;
 	/** bit 109: Flag whether to use word search (in contrast to whole name search) in incremental search */
 	public final static byte CFGBIT_WORD_ISEARCH = 109;
+	/** bit 110: Flag whether to scroll the search result under cursor horizontally */
+	public final static byte CFGBIT_TICKER_ISEARCH = 110;
+	/** bit 111: Flag whether to scroll all search results horizontally */
+	public final static byte CFGBIT_TICKER_ISEARCH_ALL = 111;
+	/** bit 112: Flag whether to have a large font for UI */
+	public final static byte CFGBIT_LARGE_FONT = 112;
 	
 	/**
 	 * These are the database record IDs for each configuration option
@@ -761,6 +767,9 @@ public class Configuration {
 			setSearchMax(50);
 			//#endif
 		}
+		if (configVersionStored < 24) {
+			cfgBits_64_to_127 |= 1L << CFGBIT_TICKER_ISEARCH;
+		}
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);
 	}
 
@@ -947,7 +956,7 @@ public class Configuration {
 		DataInputStream dis = new DataInputStream(is);
 		int version = dis.readInt();
 		// compatibility with versions 21 and 23
-		if (version != VERSION && !(version >= 21 && version <= 23)) {
+		if (version != VERSION && !(version >= 21 && version <= 24)) {
 			throw new IOException(Locale.get("configuration.ConfigVersionMismatch")/*Version of the stored config does not match with current GpsMid*/);
 		}
 		boolean destPosValid = getCfgBitSavedState(CFGBIT_SAVED_DESTPOS_VALID);

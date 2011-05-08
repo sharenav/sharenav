@@ -494,6 +494,7 @@ guisetupgui.IconsMappedOnKeys=ikony mapovány na tlačítka
 guisetupgui.OptimiseForRouting=optimalizovat pro navigaci
 guisetupgui.IconMenu=Menu ikon:
 guisetupgui.DefineMaxMem=Maximální dostupná paměť (kB)
+guisetupgui.DefineMaxSearch=Maximální počet výsledků vyhledávání
 splash.author=Originální program
 splash.contributors=Mnoho dalších přispívajících
 splash.currdevelopers=Ostatní současní vývojáři:

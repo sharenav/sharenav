@@ -17,6 +17,7 @@ public class GuiSetupGui extends Form implements CommandListener {
 	private ChoiceGroup imenuOpts;
 	private ChoiceGroup mapTapFeatures;
 	private ChoiceGroup searchSettings;
+	private ChoiceGroup searchLayoutGroup;
 
 	// commands
 	private static final Command CMD_SAVE = new Command(Locale.get("generic.Save")/*Save*/, 
@@ -44,11 +45,6 @@ public class GuiSetupGui extends Form implements CommandListener {
 			memField = new TextField(Locale.get("guisetupgui.DefineMaxMem")/*Define maxMem (kbyte)*/,
 					Long.toString(mem), 8, TextField.DECIMAL);
 			append(memField);
-			int searchMax = Configuration.getSearchMax();
-			searchField = new TextField(Locale.get("guisetupgui.DefineMaxSearch")/*Max # of search results*/,
-					Integer.toString(searchMax), 8, TextField.DECIMAL);
-			append(searchField);
-			
 			String [] imenu = new String[5];
 			imenu[0] = Locale.get("guisetupgui.UseIconMenu")/*Use icon menu*/;
 			imenu[1] = Locale.get("guisetupgui.FullscreenIconMenu")/*Fullscreen icon menu*/;
@@ -69,26 +65,6 @@ public class GuiSetupGui extends Form implements CommandListener {
 					Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED));
 			append(imenuOpts);
 		
-			/* only display search settings available on the device */
-			// maximum search option entries
-			int iMax = 0;
-			if (Configuration.getHasPointerEvents()) {
-				iMax++;
-			}
-			if (iMax > 0) {
-				String [] search = new String[iMax];
-				int i = 0;
-				if (Configuration.getHasPointerEvents()) {
-					search[i++] = Locale.get("guisetupgui.numberkeypad")/*Enable virtual keypad*/;
-				}
-				searchSettings = new ChoiceGroup(Locale.get("guisetupgui.searchopts")/*Search options:*/, Choice.MULTIPLE, search, null);
-				i = 0;
-				if (Configuration.getHasPointerEvents()) {
-					searchSettings.setSelectedIndex(i++, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD));
-				}
-				append(searchSettings);
-			}
-					
 			if (Configuration.getHasPointerEvents()) {
 				String [] touch = new String[3];
 				int i = 0;
@@ -104,6 +80,41 @@ public class GuiSetupGui extends Form implements CommandListener {
 				append(mapTapFeatures);
 			}
 
+			// search options
+			int iMax = 2;
+			if (Configuration.getHasPointerEvents()) {
+				iMax++;
+			}
+			String [] search = null;
+			search = new String[iMax];
+			int searchnum = 0;
+			search[searchnum++] = Locale.get("guisetupgui.scroll")/*Scroll result under cursor*/;
+			search[searchnum++] = Locale.get("guisetupgui.scrollall")/*Scroll all results*/;
+			if (Configuration.getHasPointerEvents()) {
+			    search[searchnum++] = Locale.get("guisetupgui.numberkeypad")/*Enable virtual keypad*/;
+			}
+			searchSettings = new ChoiceGroup(Locale.get("guisetupgui.searchopts")/*Search options:*/, Choice.MULTIPLE, search, null);
+			/* only display search settings available on the device */
+			// maximum search option entries
+			searchnum = 0;
+			searchSettings.setSelectedIndex(searchnum++, Configuration.getCfgBitSavedState(Configuration.CFGBIT_TICKER_ISEARCH));
+			searchSettings.setSelectedIndex(searchnum++, Configuration.getCfgBitSavedState(Configuration.CFGBIT_TICKER_ISEARCH_ALL));
+			if (Configuration.getHasPointerEvents()) {
+			    searchSettings.setSelectedIndex(searchnum++, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD));
+			}
+			append(searchSettings);
+			String [] searchLayout = new String[2];
+			searchLayout[0] = Locale.get("guidiscover.SearchWholeNames")/*Search for whole names*/;
+			searchLayout[1] = Locale.get("guidiscover.SearchWords")/*Search for words*/;
+			searchLayoutGroup = new ChoiceGroup(Locale.get("guidiscover.SearchStyle")/*Search style*/, Choice.EXCLUSIVE, searchLayout, null);
+			searchLayoutGroup.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_WORD_ISEARCH) ? 1 : 0, true);
+			append(searchLayoutGroup);
+
+			int searchMax = Configuration.getSearchMax();
+			searchField = new TextField(Locale.get("guisetupgui.DefineMaxSearch")/*Max # of search results*/,
+					Integer.toString(searchMax), 8, TextField.DECIMAL);
+			append(searchField);
+			
 			addCommand(CMD_SAVE);
 			addCommand(CMD_CANCEL);
 
@@ -161,7 +172,14 @@ public class GuiSetupGui extends Form implements CommandListener {
 			Trace.uncacheIconMenu();
 			GuiDiscover.uncacheIconMenu();
 
+			boolean searchLayout = (searchLayoutGroup.getSelectedIndex() == 1);
+				
+			if (searchLayout != Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ) {
+			    Configuration.setCfgBitSavedState(Configuration.CFGBIT_WORD_ISEARCH, searchLayout);
+			}
 			int i = 0;
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_TICKER_ISEARCH, searchSettings.isSelected(i++));
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_TICKER_ISEARCH_ALL, searchSettings.isSelected(i++));
 			if (Configuration.getHasPointerEvents()) {
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD, searchSettings.isSelected(i++));
 			}

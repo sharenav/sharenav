@@ -136,6 +136,17 @@ public class SearchList {
 					if (e instanceof Way) {
 						idtowrite = ((Way) e).id;
 					}
+					if (listType != INDEX_NAME && Configuration.getConfiguration().useHouseNumbers) {
+						// write way id for matching housenumber to streetname
+						//System.out.println ("listType == 3, testing node " + n);
+						//System.out.println ("type was: " + n.getType(Configuration.getConfiguration()));
+						String wayid = e.getAttribute("__wayid");
+						if (wayid != null) {
+							long way = Long.parseLong(wayid);
+							//System.out.println ("Found housenumber node wayid:" + wayid + "(" + way + ")" );
+							idtowrite = way;
+						}
+					}			   
 					if (e instanceof Node) {
 						Node n = (Node) e;						
 						url = n.getUrl();
@@ -143,20 +154,8 @@ public class SearchList {
 						name = n.getName();
 						ds.writeByte(-1*n.getType(Configuration.getConfiguration()));
 						center=n;
-//						System.out.println("entryType " + n.getNameType() + " idx=" + mapName.getIndex());
+						//System.out.println("entryType " + n.getNameType() + " idx=" + mapName.getIndex());
 						// housenumber index
-						
-						if (listType != INDEX_NAME && Configuration.getConfiguration().useHouseNumbers) {
-							// write way id for matching housenumber to streetname
-//							System.out.println ("listType == 3, testing node " + n);
-//							System.out.println ("type was: " + -1*n.getType(Configuration.getConfiguration()));
-							String wayid = n.getAttribute("__wayid");
-							if (wayid != null) {
-								long way = Long.parseLong(wayid);
-//								System.out.println ("housenumber node wayid:" + wayid + "(" + way + ")" );
-								idtowrite = way;
-							}
-						}			   
 					}
 					if (e instanceof Way) {
 						Way w = (Way) e;
