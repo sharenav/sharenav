@@ -172,7 +172,7 @@ public class SearchNames implements Runnable {
 				fnPrefix = "/s";
 			}
 			String fileName = fnPrefix + fn + ".d";
-			System.out.println("open " + fileName);
+			//System.out.println("open " + fileName);
 			InputStream stream;
 			try {
 				stream = Configuration.getMapResource(fileName);
