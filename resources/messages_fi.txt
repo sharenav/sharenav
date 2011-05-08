@@ -725,3 +725,7 @@ guisetupgui.DefineMaxSearch=Hakutulosten maksimimäärä
 guisetupgui.scroll=Vieritä hakutulosta
 guisetupgui.scrollall=Vieritä kaikkia hakutuloksia
 guidiscover.largefont=Isompi teksti
+generic.Error=Virhe
+generic.Info=Tietoa
+guidiscover.ExportConfig=Vie asetukset
+guidiscover.ImportConfig=Tuo asetukset
