@@ -257,7 +257,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		
 		needsPainting = false;
 		try {
-			GpsMid.getTimer().schedule(timerT, 500, 500);
+			GpsMid.getTimer().schedule(timerT, 400, 400);
 		} catch (Exception e) {
 			logger.exception("Failed to initialize GuiSearch repaint timer", e);
 		}
