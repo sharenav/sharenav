@@ -75,8 +75,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		Locale.get("trace.Camera")/*Camera*/,
 		//#endif
 		//#if polish.api.fileconnection
-		Locale.get("guidiscover.SaveConfig")/*Save config*/, 
-		Locale.get("guidiscover.LoadConfig")/*Load config*/
+		Locale.get("guidiscover.ExportConfig")/*Export config*/, 
+		Locale.get("guidiscover.ImportConfig")/*Import config*/
 		//#endif
 		};
 
@@ -103,21 +103,21 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	protected static final int MENU_ITEM_ONLINE_OPT = 12;
 	//#if polish.api.mmapi
 	protected static final int MENU_ITEM_CAMERA_OPT = 13;
-	protected static final int MENU_ITEM_SAVE_CONFIG = 14;
-	protected static final int MENU_ITEM_LOAD_CONFIG = 15;
+	protected static final int MENU_ITEM_EXPORT_CONFIG = 14;
+	protected static final int MENU_ITEM_IMPORT_CONFIG = 15;
 	//#else
-	protected static final int MENU_ITEM_SAVE_CONFIG = 13;
-	protected static final int MENU_ITEM_LOAD_CONFIG = 14;
+	protected static final int MENU_ITEM_EXPORT_CONFIG = 13;
+	protected static final int MENU_ITEM_IMPORT_CONFIG = 14;
 	//#endif
 	//#else
 	protected static final int MENU_ITEM_ONLINE_OPT = 11;
 	//#if polish.api.mmapi
 	protected static final int MENU_ITEM_CAMERA_OPT = 12;
-	protected static final int MENU_ITEM_SAVE_CONFIG = 13;
-	protected static final int MENU_ITEM_LOAD_CONFIG = 14;
+	protected static final int MENU_ITEM_EXPORT_CONFIG = 13;
+	protected static final int MENU_ITEM_IMPORT_CONFIG = 14;
 	//#else
-	protected static final int MENU_ITEM_SAVE_CONFIG = 12;
-	protected static final int MENU_ITEM_LOAD_CONFIG = 13;
+	protected static final int MENU_ITEM_EXPORT_CONFIG = 12;
+	protected static final int MENU_ITEM_IMPORT_CONFIG = 13;
 	//#endif
 	//#endif
 
@@ -203,8 +203,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private final static int		STATE_OSM_OPT = 10;
 	//#endif
 	private final static int		STATE_OPENCELLID_OPT = 11;
-	private final static int		STATE_LOAD_CONFIG = 12;
-	private final static int		STATE_SAVE_CONFIG = 13;
+	private final static int		STATE_IMPORT_CONFIG = 12;
+	private final static int		STATE_EXPORT_CONFIG = 13;
 	private final static int		STATE_URL_ENTER_GPS = 14;
 	private final static int		STATE_URL_ENTER_GPX = 15;
 	private final static int		STATE_ONLINE_OPT = 16;
@@ -332,7 +332,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		debugOther.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS));
 		debugOther.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_BEARINGS));
 		menuDebug.append(debugOther);
-
 	}
 
 	private void initLocationSetupMenu() {
@@ -1423,14 +1422,16 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				break;
 			//#endif
 			//#if polish.api.fileconnection
-			case MENU_ITEM_SAVE_CONFIG:
-				state = STATE_SAVE_CONFIG;
-				FsDiscover fsd = new FsDiscover(this, this, null, FsDiscover.CHOOSE_DIRONLY, null, Locale.get("guidiscover.SaveConfiguration")/*"Save configuration"*/);
+			case MENU_ITEM_EXPORT_CONFIG:
+				state = STATE_EXPORT_CONFIG;
+				FsDiscover fsd = new FsDiscover(this, this, null, FsDiscover.CHOOSE_DIRONLY, 
+						null, Locale.get("guidiscover.ExportConfig")/*"Export config"*/);
 				fsd.show();
 				break;
-			case MENU_ITEM_LOAD_CONFIG:
-				state = STATE_LOAD_CONFIG;
-				fsd = new FsDiscover(this, this, null, FsDiscover.CHOOSE_FILEONLY, "cfg", Locale.get("guidiscover.LoadConfiguration")/*"Load configuration"*/);
+			case MENU_ITEM_IMPORT_CONFIG:
+				state = STATE_IMPORT_CONFIG;
+				fsd = new FsDiscover(this, this, null, FsDiscover.CHOOSE_FILEONLY, "cfg", 
+						Locale.get("guidiscover.ImportConfig")/*"Import config"*/);
 				fsd.show();
 				break;
 			//#endif
@@ -1527,8 +1528,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	public void selectionCanceled() {
 		//#if polish.api.fileconnection
 		switch (state) {
-		case STATE_LOAD_CONFIG:
-		case STATE_SAVE_CONFIG:
+		case STATE_IMPORT_CONFIG:
+		case STATE_EXPORT_CONFIG:
 			state = STATE_ROOT;
 			break;
 		}
@@ -1559,7 +1560,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		case STATE_DEBUG:
 			debugLog.set(0, url_trunc, null);
 			break;
-		case STATE_SAVE_CONFIG:
+		case STATE_EXPORT_CONFIG:
 			try {
 				FileConnection con = (FileConnection)Connector.open(url_trunc + "GpsMid.cfg");
 				if (!con.exists()) {
@@ -1567,19 +1568,26 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				}
 				Configuration.serialise(con.openOutputStream());
 				con.close();
+				String name = con.getName();
+				GpsMid.getInstance().alert(Locale.get("generic.Info")/*Info*/, 
+						Locale.get("guidiscover.CfgExported", name)/*Configuration exported to '<file>'*/, 3000);
 			} catch (Exception e) {
-				logger.exception(Locale.get("guidiscover.CouldNotSaveCfg")/*Could not save configuration*/, e);
+				logger.exception(Locale.get("guidiscover.CouldNotSaveCfg")/*Could not save configuration*/
+						+ ": " + e.getMessage(), e);
 			}
 			state = STATE_ROOT;
 			show();
 			break;
-		case STATE_LOAD_CONFIG:
+		case STATE_IMPORT_CONFIG:
 			try {
 				FileConnection con = (FileConnection)Connector.open(url);
 				Configuration.deserialise(con.openInputStream());
 				con.close();
+				GpsMid.getInstance().alert(Locale.get("generic.Info")/*Info*/, 
+						Locale.get("guidiscover.CfgImported", url)/*Configuration imported from '<file>'*/, 3000);
 			} catch (Exception e) {
-				logger.exception(Locale.get("guidiscover.CouldNotLoadCfg")/*Could not load configuration*/, e);
+				logger.exception(Locale.get("guidiscover.CouldNotLoadCfg")/*Could not load configuration*/
+						+ ": " + e.getMessage(), e);
 			}
 			state = STATE_ROOT;
 			show();

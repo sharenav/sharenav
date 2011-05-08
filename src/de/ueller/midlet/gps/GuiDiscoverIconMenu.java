@@ -50,8 +50,8 @@ public class GuiDiscoverIconMenu extends IconMenuWithPagesGUI {
 			//#endif
 			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.OpenCellID")/*OpenCellID*/, "is_cellid", GuiDiscover.MENU_ITEM_OPENCELLID_OPT);
 			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Keys")/*Keys*/, "is_keys", GuiDiscover.MENU_ITEM_KEYS_OPT);
-			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.LoadConfig")/*Load Config*/, "is_load", GuiDiscover.MENU_ITEM_LOAD_CONFIG);
-			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.SaveConfig")/*Save Config*/, "is_save", GuiDiscover.MENU_ITEM_SAVE_CONFIG);
+			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.ImportConfig")/*Import Config*/, "is_load", GuiDiscover.MENU_ITEM_IMPORT_CONFIG);
+			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.ExportConfig")/*Export Config*/, "is_save", GuiDiscover.MENU_ITEM_EXPORT_CONFIG);
 			mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
 
 			setActiveTabAndCursor(rememberedTabNr, rememberedEleId);
