@@ -193,23 +193,33 @@ public class BundleGpsMid implements Runnable {
 				fw = new FileWriter(manifest2);
 				String line;
 				Pattern p1 = Pattern.compile("MIDlet-(\\d):\\s(.*),(.*),(.*)");
-				while (true) {
-					line = fr.readLine();
-					if (line == null) {
-						break;
+				line = fr.readLine();
+				if (line != null) {
+					while (true) {
+						if (line == null) {
+							break;
+						}
+						String nextline = fr.readLine();
+						if (nextline == null) {
+							break;
+						}
+						if (nextline.substring(0, 1).equals(" ")) {
+							line += nextline;
+							continue;
+						}
+						Matcher m1 = p1.matcher(line);
+						if (m1.matches()) {
+							fw.write("MIDlet-" + m1.group(1) + ": " + c.getMidletName()
+								 + "," + m1.group(3) + "," + m1.group(4) + "\n");
+						} else if (line.startsWith("MIDlet-Name: ")) {
+							fw.write("MIDlet-Name: " + c.getMidletName() + "\n");
+						} else {
+							fw.write(line + "\n");
+						}
+						line = nextline;
 					}
-
-					Matcher m1 = p1.matcher(line);
-					if (m1.matches()) {
-						fw.write("MIDlet-" + m1.group(1) + ": " + c.getMidletName()
-							 + "," + m1.group(3) + "," + m1.group(4) + "\n");
-					} else if (line.startsWith("MIDlet-Name: ")) {
-						fw.write("MIDlet-Name: " + c.getMidletName() + "\n");
-					} else {
-						fw.write(line + "\n");
-					}
+					fr.close();
 				}
-				fr.close();
 			}
 			manifest.delete();
 			if (rename) {
