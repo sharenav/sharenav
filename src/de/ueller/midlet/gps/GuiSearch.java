@@ -1188,10 +1188,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 		String name = "";
 		//#if polish.api.bigsearch
 		if (sr.preMatchIdx != 0) {
-			name = parent.getName(sr.preMatchIdx) + " ";
+			name = getName(sr.preMatchIdx) + " ";
 		}
 		//#endif
-		name += parent.getName(sr.nameIdx);
+		name += getName(sr.nameIdx);
 		return name;
 	}
 
