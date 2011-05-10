@@ -19,6 +19,7 @@ import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.routing.TravelMode;
 import de.ueller.midlet.gps.tile.POIdescription;
 import de.ueller.midlet.gps.tile.WayDescription;
+import de.ueller.midlet.gps.Trace;
 
 import de.enough.polish.util.Locale;
 
@@ -263,9 +264,10 @@ public class Legend {
 		 */
 		short mapFormatVersion = ds.readShort();
 		if (mapFormatVersion != MAP_FORMAT_VERSION) {
-			throw new IOException("The Map files are not the version we expected, " +
-					"please use the correct Osm2GpsMid to recreate the map " +
-					"data.  Expected: " + MAP_FORMAT_VERSION + " Read: " + mapFormatVersion);
+		        Trace.getInstance().alert(Locale.get("legend.wrongmapvertitle"),
+				     Locale.get("legend.wrongmapvermsg1") + " " + MAP_FORMAT_VERSION
+				     + " " + Locale.get("legend.wrongmapvermsg2") + " " + mapFormatVersion,
+				     Alert.FOREVER);
 		}
 		
 		mapVersion = ds.readUTF();
