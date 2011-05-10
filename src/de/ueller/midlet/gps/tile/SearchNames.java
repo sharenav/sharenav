@@ -281,7 +281,11 @@ public class SearchNames implements Runnable {
 				if (!current.toString().startsWith(compare)) {
 					idx = -1;
 				}
-				type = ds.readByte();
+				if (Legend.enableBigStyles) {
+					type = ds.readShort();
+				} else {
+					type = ds.readByte();
+				}
 								
 				while (type != 0) {					
 					if (stopSearch) {
@@ -331,7 +335,11 @@ public class SearchNames implements Runnable {
 						//#endif
 						sr.urlIdx = urlidx;
 						sr.phoneIdx = phoneidx;
-						sr.type = (byte) type;
+						//#if polish.api.bigsearch
+							sr.type = (short) type;
+						//#else
+							sr.type = (byte) type;
+						//#endif
 						sr.lat = lat;
 						sr.lon = lon;
 						sr.nearBy = isInArray;
@@ -358,7 +366,11 @@ public class SearchNames implements Runnable {
 						}
 						//System.out.println("found " + current +"(" + idx + ") type=" + type);
 					}
-					type = ds.readByte();
+					if (Legend.enableBigStyles) {
+						type = ds.readShort();
+					} else {
+						type = ds.readByte();
+					}
 				} // while (type != 0)
 			} // while (true)
 		} catch (NullPointerException e) {
