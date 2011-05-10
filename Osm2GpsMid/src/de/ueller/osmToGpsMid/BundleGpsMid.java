@@ -204,7 +204,7 @@ public class BundleGpsMid implements Runnable {
 							break;
 						}
 						if (nextline.substring(0, 1).equals(" ")) {
-							line += nextline.substring(1);
+							line += nextline;
 							continue;
 						}
 						Matcher m1 = p1.matcher(line);
