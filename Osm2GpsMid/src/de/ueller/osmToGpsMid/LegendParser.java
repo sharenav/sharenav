@@ -172,7 +172,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			}
 			System.out.println("Style-file: You have " + (poiIdx - 1)
 					+ " POI types defined and " + (wayIdx - 1) + " way types");
-			if (poiIdx > 126 || true) {
+			if (poiIdx > 126) {
 				// polish.api.bigstyles
 				config.bigStyles = true;
 				System.out.println("WARNING: your style file contains > 126 POI types, you'll need a \"bigstyles\" GpsMid.");
