@@ -78,7 +78,8 @@ public class Way extends Entity implements Comparable<Way> {
 	 * Indicates that this way was already written to output;
 	 */
 	public boolean				used								= false;
-	public byte				type								= -1;
+	// polish.api.bigstyles
+	public short				type								= -1;
 
 	/**
 	 * Way id of the last unhandled maxSpeed - by using this to detect repeats,
@@ -228,7 +229,8 @@ public class Way extends Entity implements Comparable<Way> {
 		type = -1;
 	}
 
-	public byte getType(Configuration c) {
+	// polish.api.bigstyles
+	public short getType(Configuration c) {
 		if (type == -1) {
 			type = calcType(c);
 		}
@@ -240,7 +242,8 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 	}
 
-	public byte getType() {
+	// polish.api.bigstyles
+	public short getType() {
 		if (type > -1) {
 			return type;
 		} else {
@@ -248,7 +251,8 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 	}
 
-	private byte calcType(Configuration c) {
+	// polish.api.bigstyles
+	private short calcType(Configuration c) {
 		WayDescription way = (WayDescription) super.calcType(c.getWayLegend());
 
 		if (way == null) {
@@ -339,7 +343,8 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 	
 	public byte getZoomlevel(Configuration c) {
-		byte type = getType(c);
+		// polish.api.bigstyles
+		short type = getType(c);
 
 		if (type < 0) {
 			// System.out.println("unknown type for node " + toString());
@@ -481,8 +486,9 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public int compareTo(Way o) {
-		byte t1 = getType();
-		byte t2 = o.getType();
+		// polish.api.bigstyles
+		short t1 = getType();
+		short t2 = o.getType();
 		if (t1 < t2) {
 			return 1;
 		} else if (t1 > t2) { return -1; }
@@ -561,7 +567,8 @@ public class Way extends Entity implements Comparable<Way> {
 	/**
 	 * @return
 	 */
-	public byte getNameType() {
+	// polish.api.bigstyles
+	public short getNameType() {
 		String t = getAttribute("highway");
 		if (t != null) { return (Constants.NAME_STREET); }
 		return Constants.NAME_AMENITY;
@@ -625,7 +632,8 @@ public class Way extends Entity implements Comparable<Way> {
 			System.out.println("Write way 39123631");
 		}
 
-		byte type = getType();
+		// polish.api.bigstyles
+		short type = getType();
 
 		if (getName() != null && getName().trim().length() > 0) {
 			flags += WAY_FLAG_NAME;
@@ -731,7 +739,12 @@ public class Way extends Entity implements Comparable<Way> {
 		ds.writeShort((short) (MyMath.degToRad(b.maxLat - t.centerLat) * MyMath.FIXPT_MULT));
 		ds.writeShort((short) (MyMath.degToRad(b.maxLon - t.centerLon) * MyMath.FIXPT_MULT));
 
-		ds.writeByte(type);
+		// polish.api.bigstyles
+		if (Configuration.getConfiguration().bigStyles) {
+			ds.writeShort(type);
+		} else {
+			ds.writeByte(type);
+		}
 		ds.writeByte(wayTravelModes);
 
 		if ((flags & WAY_FLAG_NAME) == WAY_FLAG_NAME) {

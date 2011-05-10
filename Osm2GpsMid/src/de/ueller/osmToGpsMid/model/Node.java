@@ -37,7 +37,8 @@ public class Node extends Entity {
 	/**
 	 * Type of this Node
 	 */
-	private byte type = -1;
+	// polish.api.bigstyles
+	private short type = -1;
 	//public byte noConfType = -1;
 	public boolean used = false;
 	private byte connectedLineCount = 0;
@@ -146,7 +147,8 @@ public class Node extends Entity {
 		type = -1;
 	}
 
-	public byte getType(Configuration c) {
+	// polish.api.bigstyles
+	public short getType(Configuration c) {
 		if (type != -1) {
 			return type;
 		} else {
@@ -210,7 +212,8 @@ public class Node extends Entity {
 	}
 
 	
-	private byte calcType(Configuration c) {
+	// polish.api.bigstyles
+	private short calcType(Configuration c) {
 		if (type != -1) {
 			return type;
 		}

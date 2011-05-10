@@ -95,7 +95,11 @@ public class PaintContext extends ScreenContext {
 	/** highlight way to this path node # */
 	public volatile short conWayToAt;
 	/** highlight way to node idx */
+	//#if polish.api.bigstyles
+	public volatile short conWayType;
+	//#else
 	public volatile byte conWayType;
+	//#endif
 	/** modifiers like motorway and motorway_link (from description) and roundabout/bridge tunnel (from way) */
 	public volatile short conWayRouteFlags;
 	/** number of routable ways at the connection (result should always be >= 1)*/
@@ -122,7 +126,11 @@ public class PaintContext extends ScreenContext {
 	/** used to find out if the connection leads straight-on to multiple named routable ways for giving a bearing instruction*/  
 	public volatile boolean conWayBearingHasName[] = new boolean[8];
 	/** used to find out if the connection leads straight-on to multiple named routable ways for giving a bearing instruction*/  
+	//#if polish.api.bigstyles
+	public volatile short conWayBearingWayType[] = new short[8];
+	//#else
 	public volatile byte conWayBearingWayType[] = new byte[8];
+	//#endif
 
 	/** used to vaguely identify ways that might contain a solution path for highlighting*/
 	public volatile int conWayNumNameIdxs;  

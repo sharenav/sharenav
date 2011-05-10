@@ -70,7 +70,11 @@ public class SingleTile extends Tile implements QueueableTile {
 
 	public int[] phoneIdx;
 
+	//#if polish.api.bigstyles
+	public short[] type;
+	//#else
 	public byte[] type;
+	//#endif
 
 	private Way[][] ways;
 
@@ -352,7 +356,11 @@ public class SingleTile extends Tile implements QueueableTile {
 
 	public void paintNode(PaintContext pc, int i) {
 		Image img = null;
+		//#if polish.api.bigstyles
+		short t=type[i];
+		//#else
 		byte t=type[i];
+		//#endif
 		boolean hideable = Legend.isNodeHideable(t);
 		
 		// addition by sk750 until "byte om ="
@@ -521,7 +529,11 @@ public class SingleTile extends Tile implements QueueableTile {
     * type searchType close to lat/lon. The list is ordered
     * by distance with the closest one first.  
     */
-   public Vector getNearestPoi(boolean matchAnyPoi, byte searchType, float lat, float lon, float maxDist, CancelMonitorInterface cmi) {	   
+   //#if polish.api.bigstyles
+   public Vector getNearestPoi(boolean matchAnyPoi, short searchType, float lat, float lon, float maxDist, CancelMonitorInterface cmi) {	   
+   //#else
+   public Vector getNearestPoi(boolean matchAnyPoi, byte searchType, float lat, float lon, float maxDist, CancelMonitorInterface cmi) {
+   //#endif
 	   Vector resList = new Vector();
 	   
 	   if(cmi != null) {
@@ -562,7 +574,11 @@ public class SingleTile extends Tile implements QueueableTile {
 		   }
 		   if (matchAnyPoi) {
 			   boolean match = false;
+			   //#if polish.api.bigstyles
+			   for (short j = 1; j < Legend.getMaxType(); j++) {
+			   //#else
 			   for (byte j = 1; j < Legend.getMaxType(); j++) {
+			   //#endif
 				   if (type[i] == j) {
 					   match = true;
 				   }
@@ -581,7 +597,11 @@ public class SingleTile extends Tile implements QueueableTile {
 			   if (Legend.enablePhoneTags) {
 				   sr.phoneIdx = phoneIdx[i];
 			   }
+			   //#if polish.api.bigstyles
+			   sr.type = (short)(-1 * type[i]); //It is a node. They have the top bit set to distinguish them from ways in search results
+			   //#else
 			   sr.type = (byte)(-1 * type[i]); //It is a node. They have the top bit set to distinguish them from ways in search results
+			   //#endif
 			   sr.dist = ProjMath.getDistance(sr.lat, sr.lon, lat, lon);
 			   if (sr.dist < maxDist) {
 				   resList.addElement(sr);				   

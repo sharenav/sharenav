@@ -121,7 +121,11 @@ public class ContainerTile extends Tile {
 	    * coordinate and traverses that one first to check for
 	    * close by POI.
 	    */
+	//#if polish.api.bigstyles
+	public Vector getNearestPoi(boolean matchAnyPoi, short searchType, float lat, float lon, float maxDist, CancelMonitorInterface cmi) {
+	//#else
 	public Vector getNearestPoi(boolean matchAnyPoi, byte searchType, float lat, float lon, float maxDist, CancelMonitorInterface cmi) {
+	//#endif
 		boolean t1closer;
 		Vector res;
 		Vector res2;

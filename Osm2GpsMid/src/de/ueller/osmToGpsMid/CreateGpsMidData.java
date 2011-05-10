@@ -336,7 +336,18 @@ public class CreateGpsMidData implements FilenameFilter {
 			/**
 			 * Writing POI legend data
 			 */
-			dsi.writeByte(config.getPOIDescs().size());
+			/**
+			 * // polish.api.bigstyles * Are there more way or poi styles than 126
+			 */
+         		//System.err.println("Big styles:" + config.bigStyles);
+			// polish.api.bigstyles
+			// backwards compatibility - use "0" as a marker that we use a short for # of styles
+			if (config.bigStyles) {
+				dsi.writeByte((byte) 0);
+				dsi.writeShort(config.getPOIDescs().size());
+			} else {
+				dsi.writeByte(config.getPOIDescs().size());
+			}
 			for (EntityDescription entity : config.getPOIDescs()) {
 				POIdescription poi = (POIdescription) entity; 
 				byte flags = 0;
@@ -355,7 +366,13 @@ public class CreateGpsMidData implements FilenameFilter {
 				if (!poi.hideable) {
 					flags |= LEGEND_FLAG_NON_HIDEABLE;
 				}
-				dsi.writeByte(poi.typeNum);
+				// polish.api.bigstyles
+				if (config.bigStyles) {
+					dsi.writeShort(poi.typeNum);
+					//System.out.println("poi typenum: " + poi.typeNum);
+				} else {
+					dsi.writeByte(poi.typeNum);
+				}
 				dsi.writeByte(flags);
 				dsi.writeUTF(_(poi.description));
 				dsi.writeBoolean(poi.imageCenteredOnNode);
@@ -402,7 +419,16 @@ public class CreateGpsMidData implements FilenameFilter {
 			/**
 			 * Writing Way legend data 
 			 */
-			dsi.writeByte(Configuration.getConfiguration().getWayDescs().size());
+			// polish.api.bigstyles
+			if (config.bigStyles) {
+				System.out.println("waydesc size: " + Configuration.getConfiguration().getWayDescs().size());
+
+				// backwards compatibility - use "0" as a marker that we use a short for # of styles
+				dsi.writeByte((byte) 0);
+				dsi.writeShort(Configuration.getConfiguration().getWayDescs().size());
+			} else {
+				dsi.writeByte(Configuration.getConfiguration().getWayDescs().size());
+			}
 			for (EntityDescription entity : Configuration.getConfiguration().getWayDescs()) {
 				WayDescription way = (WayDescription) entity;
 				byte flags = 0;
@@ -421,7 +447,12 @@ public class CreateGpsMidData implements FilenameFilter {
 				if (way.minDescriptionScale != 0) {
 					flags |= LEGEND_FLAG_MIN_DESCRIPTION_SCALE;
 				}
-				dsi.writeByte(way.typeNum);
+				// polish.api.bigstyles
+				if (config.bigStyles) {
+					dsi.writeShort(way.typeNum);
+				} else {
+					dsi.writeByte(way.typeNum);
+				}
 				dsi.writeByte(flags);
 				byte routeFlags = 0;
 				if (way.value.equalsIgnoreCase("motorway")) {
@@ -1282,7 +1313,8 @@ public class CreateGpsMidData implements FilenameFilter {
 //			parentWays.size() + " ways");
 		// Collect all ways that are in this rectangle
 		for (Way w1 : parentWays) {
-			byte type = w1.getType();
+			// polish.api.bigstyles
+			short type = w1.getType();
 			if (type < 1) {
 				continue;
 			}
@@ -1325,7 +1357,8 @@ public class CreateGpsMidData implements FilenameFilter {
 		//rid of a O(n^2) bottle neck
 		TreeSet<Way> waysTS = new TreeSet<Way>(ways);
 		for (Way w1 : parentWays) {
-			byte type = w1.getType();
+			// polish.api.bigstyles
+			short type = w1.getType();
 			if (type < 1) {
 				continue;
 			}
@@ -1651,7 +1684,12 @@ public class CreateGpsMidData implements FilenameFilter {
 					
 		}
 		if ((flags & Constants.NODE_MASK_TYPE) > 0) {
-			ds.writeByte(n.getType(configuration));
+			// polish.api.bigstyles
+			if (Configuration.getConfiguration().bigStyles) {
+				ds.writeShort(n.getType(configuration));
+			} else {
+				ds.writeByte(n.getType(configuration));
+			}
 			if (configuration.enableEditingSupport) {
 				if (n.id > Integer.MAX_VALUE) {
 					System.err.println("WARNING: Node OSM-ID won't fit in 32 bits for way " + n);

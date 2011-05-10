@@ -152,7 +152,15 @@ public class SearchList {
 						url = n.getUrl();
 						phone = n.getPhone();
 						name = n.getName();
-						ds.writeByte(-1*n.getType(Configuration.getConfiguration()));
+						//# polish.api.bigstyles
+						if (Configuration.getConfiguration().bigStyles) {
+							ds.writeShort(-1*n.getType(Configuration.getConfiguration()));
+						} else {
+						//
+							ds.writeByte(-1*n.getType(Configuration.getConfiguration()));
+						//
+						}
+						//
 						center=n;
 						//System.out.println("entryType " + n.getNameType() + " idx=" + mapName.getIndex());
 						// housenumber index
@@ -162,7 +170,17 @@ public class SearchList {
 						url = w.getUrl();
 						phone = w.getPhone();
 						name = w.getName();
-						ds.writeByte(w.getType(Configuration.getConfiguration()));
+						//
+						//ds.writeByte(w.getNameType());
+						// polish.api.bigstyles
+						if (Configuration.getConfiguration().bigStyles) {
+							ds.writeShort(w.getType(Configuration.getConfiguration()));
+						} else {
+						//
+							ds.writeByte(w.getType(Configuration.getConfiguration()));
+						//
+						}
+						//
 //						System.out.println("entryType " + w.getNameType() + " idx=" + mapName.getIndex());
 						center=w.getMidPoint();
 					}
@@ -244,7 +262,15 @@ public class SearchList {
 						}				
 					}
 				}
-				ds.writeByte(0);
+				// polish.api.bigstyles
+				if (Configuration.getConfiguration().bigStyles) {
+					ds.writeShort(0);
+				} else {
+				//
+					ds.writeByte(0);
+				//
+				}
+				//
 //				ds.writeUTF(string.substring(eq));
 				curPos=eq;
 				lastStr=string;

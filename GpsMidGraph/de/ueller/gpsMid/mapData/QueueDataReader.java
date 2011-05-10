@@ -108,7 +108,11 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		for (int i = 0; i < iNodeCount; i++) {
 			nameIdx[i] = -1;
 		}
+		//#if polish.api.bigstyles
+		short[] type = new short[iNodeCount];
+		//#else
 		byte[] type = new byte[iNodeCount];
+		//#endif
 		int[] osmID;
 		//#if polish.api.osm-editing
 		if (Legend.enableEdits) {
@@ -160,7 +164,15 @@ public class QueueDataReader extends QueueReader implements Runnable {
 					}
 				} 
 				if ((flag & Legend.NODE_MASK_TYPE) > 0) {
-					type[i] = ds.readByte();
+					//#if polish.api.bigstyles
+					if (Legend.enableBigStyles) {
+						type[i] = ds.readShort();
+					} else {
+					//#endif
+						type[i] = ds.readByte();
+					//#if polish.api.bigstyles
+					}
+					//#endif
 					//#if polish.api.osm-editing
 					if (Legend.enableEdits) {
 						osmID[i] = ds.readInt();

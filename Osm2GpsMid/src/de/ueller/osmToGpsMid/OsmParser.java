@@ -149,7 +149,8 @@ public abstract class OsmParser {
 	 * @param w
 	 */
 	public void addWay(Way w) {
-		byte t = w.getType(configuration);
+		// polish.api.bigstyles
+		short t = w.getType(configuration);
 		/**
 		 * We seem to have a bit of a mess with respect to type -1 and 0. Both
 		 * are used to indicate invalid type it seems.
@@ -177,7 +178,8 @@ public abstract class OsmParser {
 	 * @param w
 	 */
 	public void addNode(Node n) {
-		byte t = n.getType(configuration);
+		// polish.api.bigstyles
+		short t = n.getType(configuration);
 		/**
 		 * We seem to have a bit of a mess with respect to type -1 and 0. Both
 		 * are used to indicate invalid type it seems.

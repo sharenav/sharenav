@@ -33,6 +33,8 @@
     *** Appearance ***
     - bigger icon; 15x15 -> 48x48
     *** Style File ***
+    - allow for more than 126 POI/way styles for targets editing, full, microemulator, full-nolocation,
+      android hiresonline
     - add regular expression matching for specialisation tag in style file.
       Example:
 		<specialisation key = "ref" regexp="true" value = "^154..*$"/>

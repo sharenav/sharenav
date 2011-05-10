@@ -315,6 +315,12 @@ public class Configuration {
 		/** Name of the base Midlet (e.g. GpsMid-Generic-multi) to be used. */
 		private String appParam;
 
+		/** Flag if there are more way or poi styles than 126. */
+
+		//#if polish.api.bigstyles		
+		public boolean bigStyles = false;
+		//#endif
+
 		/** Full name of the jar file of the base midlet */
 		private String appJarFileName = null;
 		
@@ -1315,11 +1321,12 @@ public class Configuration {
 			return legend.getWayLegend();
 		}
 		
-		public POIdescription getpoiDesc(byte t) {
+		public POIdescription getpoiDesc(short t) {
 			return legend.getPOIDesc(t);
 		}
 		
-		public WayDescription getWayDesc(byte t) {
+		// polish.api.bigstyles
+		public WayDescription getWayDesc(short t) {
 			return legend.getWayDesc(t);
 		}
 		

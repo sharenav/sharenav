@@ -1,7 +1,11 @@
 package de.ueller.gps.data;
 
 public class SearchResult {
+	//#if polish.api.bigstyles
+	public short type;
+	//#else
 	public byte type;
+	//#endif
 	//#if polish.api.bigsearch
 	public byte source;
 	public long resultid = 0;

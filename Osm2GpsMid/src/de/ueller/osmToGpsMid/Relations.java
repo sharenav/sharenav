@@ -116,7 +116,8 @@ public class Relations {
 									}
 								}
 								w2.resetType(conf);
-								byte type = w2.getType(conf);
+								// polish.api.bigstyles
+								short type = w2.getType(conf);
 							}
 						} else {
 							newId = FakeIdGenerator.makeFakeId();
@@ -134,7 +135,8 @@ public class Relations {
 							}
 							w2.resetType(conf);
 							w.setAttribute(key, Long.toString(newId));
-							byte type = w2.getType(conf);
+							// polish.api.bigstyles
+							short type = w2.getType(conf);
 							//System.out.println("adding way: " + w2 + " newId = " + newId);
 							parser.addWay(w2);
 						}

@@ -16,7 +16,8 @@ public class EntityDescription {
 	public String	key;
 	public String	value;
 	public List<ConditionTuple> specialisation;
-	public byte		typeNum;
+	// polish.api.bigstyles
+	public short	typeNum;
 	public String	nameKey;
 	public String	nameFallbackKey;
 	public String	helperTag;

@@ -228,7 +228,15 @@ public class Way extends Entity {
 		maxLat = is.readShort();
 		maxLon = is.readShort();
 
-		type = is.readByte();
+		//#if polish.api.bigstyles
+		if (Legend.enableBigStyles) {
+			type = is.readShort();
+		} else {
+		//#endif
+			type = is.readByte();
+		//#if polish.api.bigstyles
+		}
+		//#endif
 		setWayRouteModes(is.readByte());	
 		
 		if ((f & WAY_FLAG_NAME) == WAY_FLAG_NAME) {
