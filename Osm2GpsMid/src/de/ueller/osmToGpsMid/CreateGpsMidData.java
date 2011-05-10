@@ -1692,7 +1692,8 @@ public class CreateGpsMidData implements FilenameFilter {
 			}
 			if (configuration.enableEditingSupport) {
 				if (n.id > Integer.MAX_VALUE) {
-					System.err.println("WARNING: Node OSM-ID won't fit in 32 bits for way " + n);
+					// FIXME enable again after Relations.java doesn't use fake ids
+					//System.err.println("WARNING: Node OSM-ID won't fit in 32 bits for way " + n);
 					ds.writeInt(-1);
 				} else {
 					ds.writeInt((int)n.id);
