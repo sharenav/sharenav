@@ -29,8 +29,8 @@ public class Path extends ArrayList<Node> {
 
 	public boolean add(Node n) {
 		return super.add(n);
-	public void add(Node n) {
-		nodeList.add(n);
+		//public void add(Node n) {  ?? FIXME
+		//nodeList.add(n);  ?? FIXME
 	}
 	
 	/**
