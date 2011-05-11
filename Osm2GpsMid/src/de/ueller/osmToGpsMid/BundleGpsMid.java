@@ -237,20 +237,20 @@ public class BundleGpsMid implements Runnable {
 		 * of GpsMid, to duplicate as little data as possible.
 		 */
 		try {
-			String line = fr.readLine();;
+			boolean copymode = false;
 			while (true) {
+				String line = fr.readLine();;
 				if (line == null) {
 					break;
 				}
-				String nextline = fr.readLine();
-				if (nextline != null && nextline.substring(0, 1).equals(" ")) {
-					line += nextline.substring(1);
-					continue;
-				}
 				if (line.startsWith("MIDlet") || line.startsWith("MicroEdition")) {
 					fw.write(line + "\n");
+					copymode = true;
+				} else if (line.startsWith(" ") && copymode) {
+					fw.write(line + "\n");
+				} else {
+					copymode = false;
 				}
-				line = nextline;
 			}
 		} catch (IOException ioe) {
 			//This will probably be the end of the file
