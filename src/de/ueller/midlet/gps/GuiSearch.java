@@ -713,11 +713,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			}
 			Image img = null;
 			if (sr.type < 0) {
-				//#if polish.api.bigstyles
 				img = Legend.getNodeSearchImage((short)(sr.type*-1));
-				//#else
-				img = Legend.getNodeSearchImage((byte)(sr.type*-1));
-				//#endif
 			} else if (sr.type == 0 ) {
 				img = waypointIcon;
 			} else { // type > 0
@@ -917,11 +913,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH)) {
 					searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_WORD);
 				} else {
-				//#if polish.api.bigsearch
-					searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_BIGNAME);
-				//#else
-					searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_NAME);
-				//#endif
+					if (Legend.enableMap66Search) {
+						searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_BIGNAME);
+					} else {
+						searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_NAME);
+					}
 				}
 				searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_HOUSENUMBER);
 				//searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_WHOLEWORD);
@@ -939,7 +935,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					//#endif
 				}
 				if (keyCode == KEY_POUND && state == STATE_FAVORITES) {
-					// FIXME make this work
+					// FIXME check if this works
 					sortByDist = !sortByDist;
 					reSearch();
 					return;
@@ -1151,6 +1147,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		//#else
 		if (searchCanon.length() > 1) {
 			state = STATE_MAIN;
+			reSearch();
 		}
 		//#endif
 	}
@@ -1761,11 +1758,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		clearList();
 		searchCanon.setLength(0);
 		searchAlpha = false;
-		//#if polish.api.bigstyles
 		final short poiType = ((POItypeSelectMenuItem)item).getIdx();
-		//#else
-		final byte poiType = ((POItypeSelectMenuItem)item).getIdx();
-		//#endif
 		final CancelMonitorInterface cmi = this;
 		isSearchCanceled = false;
 		Thread t = new Thread(new Runnable() {

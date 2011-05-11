@@ -42,6 +42,10 @@ public class SearchList {
 	public static final int INDEX_HOUSENUMBER = 3;
 	public static final int INDEX_BIGNAME = 4;
 
+	public static final int FLAG_NODE = 0x80;
+	public static final int FLAG_URL = 0x40;
+	public static final int FLAG_PHONE = 0x20;
+
 	public SearchList(Names names, Urls urls, WayRedirect wayRedirect) {
 		super();
 		this.names = names;
@@ -125,6 +129,7 @@ public class SearchList {
 					ds.writeShort(nameIdx);
 				}				
 				for (Entity e : mapName.getEntitys()){
+					int isInFlags = 0;
 					Node center=null;
 					String url = null;
 					String phone = null;
@@ -152,18 +157,21 @@ public class SearchList {
 						url = n.getUrl();
 						phone = n.getPhone();
 						name = n.getName();
-						//# polish.api.bigstyles
-						if (Configuration.getConfiguration().bigStyles) {
-							ds.writeShort(-1*n.getType(Configuration.getConfiguration()));
-						} else {
-						//
-							ds.writeByte(-1*n.getType(Configuration.getConfiguration()));
-						//
+						if (Configuration.getConfiguration().map66search) {
+							isInFlags |= FLAG_NODE;
 						}
-						//
+						// polish.api.bigstyles
+						if (Configuration.getConfiguration().bigStyles) {
+							ds.writeShort(n.getType(Configuration.getConfiguration()));
+						} else {
+							if (Configuration.getConfiguration().map66search) {
+								ds.writeByte(n.getType(Configuration.getConfiguration()));
+							} else {
+								ds.writeByte(-1*n.getType(Configuration.getConfiguration()));
+							}
+						}
 						center=n;
 						//System.out.println("entryType " + n.getNameType() + " idx=" + mapName.getIndex());
-						// housenumber index
 					}
 					if (e instanceof Way) {
 						Way w = (Way) e;
@@ -176,13 +184,26 @@ public class SearchList {
 						if (Configuration.getConfiguration().bigStyles) {
 							ds.writeShort(w.getType(Configuration.getConfiguration()));
 						} else {
-						//
 							ds.writeByte(w.getType(Configuration.getConfiguration()));
-						//
 						}
-						//
 //						System.out.println("entryType " + w.getNameType() + " idx=" + mapName.getIndex());
 						center=w.getMidPoint();
+					}
+					int urlIdx = urls.getUrlIdx(url);
+					int phoneIdx = urls.getUrlIdx(phone);
+					if (urlIdx == -1) {
+						urlIdx = 0;
+					}
+					if (phoneIdx == -1) {
+						phoneIdx = 0;
+					}
+					if (Configuration.getConfiguration().map66search) {
+						if (urlIdx != 0 && Configuration.getConfiguration().useUrlTags) {
+							isInFlags |= FLAG_URL;
+						}
+						if (phoneIdx != 0 && Configuration.getConfiguration().usePhoneTags) {
+							isInFlags |= FLAG_PHONE;
+						}
 					}
                                         // write id for housenumber or multi-word matching
 					if (listType != INDEX_NAME) {
@@ -208,7 +229,11 @@ public class SearchList {
 						nb=nb.nearBy;
 					}
 
-					ds.writeByte(isIn.size());
+					int isInSize = isIn.size();
+					if (Configuration.getConfiguration().map66search) {
+						isInSize |= isInFlags;
+					}
+					ds.writeByte(isInSize & 0xff);
 					for (Entity e1 : isIn){
 						int isinIdx = names.getNameIdx(e1.getName());
 						if (isinIdx < 0) {
@@ -226,8 +251,6 @@ public class SearchList {
 					}
 					ds.writeFloat(MyMath.degToRad(center.lat));
 					ds.writeFloat(MyMath.degToRad(center.lon));
-					int urlIdx = urls.getUrlIdx(url);
-					int phoneIdx = urls.getUrlIdx(phone);
 					int entityNameIdx = names.getNameIdx(name);
 //					System.out.println("in entity, name: " + name);
 //					System.out.println("in entity, entityNameIdx: " + entityNameIdx);
@@ -236,41 +259,38 @@ public class SearchList {
 					} else {
 						nameIdx = primaryNameIdx;
 					}
-					if (urlIdx == -1) {
-						urlIdx = 0;
-					}
-					if (phoneIdx == -1) {
-						phoneIdx = 0;
-					}
 					if (nameIdx >= Short.MAX_VALUE) {
 						ds.writeInt(nameIdx | 0x80000000);
 					} else {
 						ds.writeShort(nameIdx);
 					}				
 					if (Configuration.getConfiguration().useUrlTags) {
-						if (urlIdx >= Short.MAX_VALUE) {  // FIXME a flag somewhere to save space?
-							ds.writeInt(urlIdx | 0x80000000);
-						} else {
-							ds.writeShort(urlIdx);
-						}				
+						if (!Configuration.getConfiguration().map66search
+						    || urlIdx != 0) {
+							if (urlIdx >= Short.MAX_VALUE) {  // FIXME a flag somewhere to save space?
+								ds.writeInt(urlIdx | 0x80000000);
+							} else {
+								ds.writeShort(urlIdx);
+							}				
+						}
 					}
 					if (Configuration.getConfiguration().usePhoneTags) {
-						if (phoneIdx >= Short.MAX_VALUE) {// FIXME a flag somewhere to save space?
-							ds.writeInt(phoneIdx | 0x80000000);
-						} else {
-							ds.writeShort(phoneIdx);
-						}				
+						if (!Configuration.getConfiguration().map66search
+						    || phoneIdx != 0) {
+							if (phoneIdx >= Short.MAX_VALUE) {// FIXME a flag somewhere to save space?
+								ds.writeInt(phoneIdx | 0x80000000);
+							} else {
+								ds.writeShort(phoneIdx);
+							}				
+						}
 					}
 				}
 				// polish.api.bigstyles
 				if (Configuration.getConfiguration().bigStyles) {
 					ds.writeShort(0);
 				} else {
-				//
 					ds.writeByte(0);
-				//
 				}
-				//
 //				ds.writeUTF(string.substring(eq));
 				curPos=eq;
 				lastStr=string;

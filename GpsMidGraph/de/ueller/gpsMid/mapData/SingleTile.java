@@ -359,7 +359,7 @@ public class SingleTile extends Tile implements QueueableTile {
 		//#if polish.api.bigstyles
 		short t=type[i];
 		//#else
-		byte t=type[i];
+		short t=(short) (type[i] & 0xff);
 		//#endif
 		boolean hideable = Legend.isNodeHideable(t);
 		
@@ -574,11 +574,7 @@ public class SingleTile extends Tile implements QueueableTile {
 		   }
 		   if (matchAnyPoi) {
 			   boolean match = false;
-			   //#if polish.api.bigstyles
 			   for (short j = 1; j < Legend.getMaxType(); j++) {
-			   //#else
-			   for (byte j = 1; j < Legend.getMaxType(); j++) {
-			   //#endif
 				   if (type[i] == j) {
 					   match = true;
 				   }

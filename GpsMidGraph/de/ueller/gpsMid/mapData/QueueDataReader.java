@@ -168,10 +168,10 @@ public class QueueDataReader extends QueueReader implements Runnable {
 					if (Legend.enableBigStyles) {
 						type[i] = ds.readShort();
 					} else {
-					//#endif
-						type[i] = ds.readByte();
-					//#if polish.api.bigstyles
+						type[i] = (short) (ds.readByte() & 0xff);
 					}
+					//#else
+					type[i] = ds.readByte();
 					//#endif
 					//#if polish.api.osm-editing
 					if (Legend.enableEdits) {

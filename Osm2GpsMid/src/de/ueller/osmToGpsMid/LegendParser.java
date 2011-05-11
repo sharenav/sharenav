@@ -174,14 +174,22 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 					+ " POI types defined and " + (wayIdx - 1) + " way types");
 			if (poiIdx > 126) {
 				// polish.api.bigstyles
-				config.bigStyles = true;
-				System.out.println("WARNING: your style file contains > 126 POI types, you'll need a \"bigstyles\" GpsMid.");
+				config.mediumStyles = true;
+				config.map66search = true;
+				if (poiIdx > 253) {
+					config.bigStyles = true;
+					System.out.println("WARNING: your style file contains > 253 POI types, you'll need a \"bigstyles\" GpsMid.");
+				}
 				//System.exit(1);
 			}
 			if (wayIdx > 126) {
 				// polish.api.bigstyles
-				config.bigStyles = true;
-				System.out.println("WARNING: your style file contains > 126 way types, you'll need a \"bigstyles\" GpsMid.");
+				config.mediumStyles = true;
+				config.map66search = true;
+				if (poiIdx > 253) {
+					config.bigStyles = true;
+					System.out.println("WARNING: your style file contains > 253 way types, you'll need a \"bigstyles\" GpsMid.");
+				}
 				//System.exit(1);
 			}
 

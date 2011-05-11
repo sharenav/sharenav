@@ -60,7 +60,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write.
 	 * This constant must be in sync with GpsMid.
 	 */
-	public final static short MAP_FORMAT_VERSION = 65;
+	public final static short MAP_FORMAT_VERSION = 66;
 
 	public final static int COLOR_MAP_BACKGROUND = 0;
 	public final static int COLOR_MAP_TEXT = 1;
@@ -315,11 +315,16 @@ public class Configuration {
 		/** Name of the base Midlet (e.g. GpsMid-Generic-multi) to be used. */
 		private String appParam;
 
-		/** Flag if there are more way or poi styles than 126. */
+		/** Flags if there are more way or poi styles than 126 or 255. */
 
-		//#if polish.api.bigstyles		
+		// polish.api.bigstyles	- use a short for type
 		public boolean bigStyles = false;
-		//#endif
+		// 126 .. 255  - this flag is not used for anything now
+		public boolean mediumStyles = false;
+		// use a search format with flags in is_in count byte, starting with map format 66
+		// with changing this to "false" and tweaking the map format version to 65
+		// version 65 compatible maps can be produced when <= 126 style file elements
+		public boolean map66search = true;
 
 		/** Full name of the jar file of the base midlet */
 		private String appJarFileName = null;

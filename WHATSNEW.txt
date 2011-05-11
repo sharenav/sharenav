@@ -53,6 +53,13 @@
     - On WinCE sound works now with a fallback NoiseMaker code when playerUpdate doesn't get called
     - work around a Samsung Wave route line disappearance platform bug (thx walter9)
     - some tweaks to make Android version UI better handle the Android keys
+    *** Map format change 65 -> 66 ***
+    - indexes now have a long for housenumber & multi-word matching
+    - old format s*.d index phased out in favor of new format n*.d for name index, new indexes
+      h*.d for housenumbers and w*.d for words.
+    - can now have more than 126 styles. If there are more than 253 styles, a word will be
+      used for storing the style, otherwise a byte will be used; the byte is now treated
+      as unsigned 
     *** Misc. bug fixes ***
     - GpsMid: fixed empty/invalid map startup infinite loop bug (tracker 3288429)
     - Osm2GpMid: fixed handling of multipolygons where a way is in more than one multipolygon

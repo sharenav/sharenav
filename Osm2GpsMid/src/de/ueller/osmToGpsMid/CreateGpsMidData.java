@@ -186,18 +186,17 @@ public class CreateGpsMidData implements FilenameFilter {
 //		}
 //		System.exit(2);
 		// create search list for whole items
-		sl.createSearchList(path, SearchList.INDEX_NAME);
+		//sl.createSearchList(path, SearchList.INDEX_NAME);
+		// create search list for names, including data for housenumber matching, primary since map version 66
+		sl.createSearchList(path, SearchList.INDEX_BIGNAME);
 		// create search list for words
 		if (Configuration.getConfiguration().useWordSearch) {
 			sl.createSearchList(path, SearchList.INDEX_WORD);
 			// create search list for whole words / house numbers
 			sl.createSearchList(path, SearchList.INDEX_WHOLEWORD);
-			// create search list for house numbers
 		}
 		if (Configuration.getConfiguration().useHouseNumbers) {
-		    sl.createSearchList(path, SearchList.INDEX_HOUSENUMBER);
-		    // create search list for names for housenumber matching
-		    sl.createSearchList(path, SearchList.INDEX_BIGNAME);
+			sl.createSearchList(path, SearchList.INDEX_HOUSENUMBER);
 		}
 
 		// Output statistics for travel modes

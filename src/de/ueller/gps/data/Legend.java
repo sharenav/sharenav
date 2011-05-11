@@ -28,7 +28,7 @@ public class Legend {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 65;
+	public final static short MAP_FORMAT_VERSION = 66;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -196,6 +196,7 @@ public class Legend {
 	public static boolean enableUrlTags;
 	public static boolean enablePhoneTags;
 	public static boolean enableBigStyles;
+	public static boolean enableMap66Search;
 	public static short numUiLang;
 	public static short numNaviLang;
 	public static short numOnlineLang;
@@ -263,7 +264,11 @@ public class Legend {
 		 * Check to see if we have the right version of the Map format
 		 */
 		short mapFormatVersion = ds.readShort();
-		if (mapFormatVersion != MAP_FORMAT_VERSION) {
+		if (mapFormatVersion >= 66) {
+			enableMap66Search = true;
+		}
+		// we can read versions 66 and 65
+		if (mapFormatVersion != MAP_FORMAT_VERSION && mapFormatVersion != 65) {
 		        Trace.getInstance().alert(Locale.get("legend.wrongmapvertitle"),
 				     Locale.get("legend.wrongmapvermsg1") + " " + MAP_FORMAT_VERSION
 				     + " " + Locale.get("legend.wrongmapvermsg2") + " " + mapFormatVersion,
@@ -394,11 +399,14 @@ public class Legend {
 			//#if polish.api.bigstyles
 			//#else
 			// will have trouble handling bigger number of styles, try anyway for some fail-safety
+		        Trace.getInstance().alert(Locale.get("legend.bigstyleserrtitle"),
+						  Locale.get("legend.bigstyleserr"),
+						  Alert.FOREVER);
 			logger.error(Locale.get("legend.ReadLegendPOIErr")/*Read legend had trouble reading POI descriptions*/);
 			//#endif
 		}
 		if (poiDescNumByte != 0) {
-			numPoiDesc = (short) poiDescNumByte;
+			numPoiDesc = (short) (poiDescNumByte & 0xff);
 		}
 		//#debug info
 		logger.info("Reading " + (numPoiDesc - 1) + " POI descriptions (+ 1 bogus) from legend.dat");
@@ -406,11 +414,11 @@ public class Legend {
 		for (int i = 0; i < pois.length; i++) {
 			pois[i] = new POIdescription();
 			if (enableBigStyles) {
-				if (ds.readShort() != i) {
+				if ((ds.readShort() & 0xffff) != i) {
 					logger.error(Locale.get("legend.ReadLegendPOIErr")/*Read legend had trouble reading POI descriptions*/);
 				}
 			} else {
-				if (ds.readByte() != i) {
+				if ((ds.readByte() & 0xff) != i) {
 					logger.error(Locale.get("legend.ReadLegendPOIErr")/*Read legend had trouble reading POI descriptions*/);
 				}
 			}
@@ -501,7 +509,7 @@ public class Legend {
 			//#endif
 		}
 		if (wayDescNumByte != 0) {
-			numWayDesc = (short) wayDescNumByte;
+			numWayDesc = (short) (wayDescNumByte & 0xff);
 		}
 		//#debug info
 		logger.info("Reading " + (numWayDesc - 1) + " way descriptions (+ 1 bogus) from legend.dat");
@@ -509,11 +517,11 @@ public class Legend {
 		for (int i = 0; i < ways.length; i++) {
 			ways[i] = new WayDescription();
 			if (enableBigStyles) {
-				if (ds.readShort() != i) {
+				if ((ds.readShort() & 0xffff) != i) {
 					logger.error(Locale.get("legend.ReadLegendWayErr")/*Read legend had trouble reading way descriptions*/);
 				}
 			} else {
-				if (ds.readByte() != i) {
+				if ((ds.readByte() & 0xff) != i) {
 					logger.error(Locale.get("legend.ReadLegendWayErr")/*Read legend had trouble reading way descriptions*/);
 				}
 			}
@@ -587,101 +595,53 @@ public class Legend {
 	}	
 	
 	//#if polish.api.osm-editing
-	//#if polish.api.bigstyles
 	public static final String[] getNodeOsmTags(short type) {
-	//#else
-	public static final String[] getNodeOsmTags(byte type) {
-	//#endif
 		return pois[type].osmTags;
 	}
 	//#endif
 	
-	//#if polish.api.bigstyles
 	public static final int getNodeTextColor(short type) {
-	//#else
-	public static final int getNodeTextColor(byte type) {
-	//#endif
 		return pois[type].textColor;
 	}
 	
-	//#if polish.api.bigstyles
 	public static final Image getNodeImage(short type)  {
-	//#else
-	public static final Image getNodeImage(byte type)  {
-	//#endif
 		return pois[type].image;
 	}
 	
-	//#if polish.api.bigstyles
 	public static final Image getNodeSearchImage(short type)  {
-	//#else
-	public static final Image getNodeSearchImage(byte type)  {
-	//#endif
 		return pois[type].searchIcon;
 	}
 	
-	//#if polish.api.bigstyles
 	public static final int getNodeMaxScale(short type) {
-	//#else
-	public static final int getNodeMaxScale(byte type) {
-	//#endif
 		return pois[type].maxImageScale;
 	}
 	
-	//#if polish.api.bigstyles
 	public static final int getNodeMaxTextScale(short type) {
-	//#else
-	public static final int getNodeMaxTextScale(byte type) {
-	//#endif
 		return pois[type].maxTextScale;
 	}
 	
-	//#if polish.api.bigstyles
 	public static final boolean isNodeImageCentered(short type) {
-	//#else
-	public static final boolean isNodeImageCentered(byte type) {
-	//#endif
 		return pois[type].imageCenteredOnNode;
 	}
 	
-	//#if polish.api.bigstyles
 	public static final boolean isNodeHideable(short type) {
-	//#else
-	public static final boolean isNodeHideable(byte type) {
-	//#endif
 		return pois[type].hideable;
 	}
 	
-	//#if polish.api.bigstyles
 	public static final byte getNodeOverviewMode(short type) {
-	//#else
-	public static final byte getNodeOverviewMode(byte type) {
-	//#endif
 		return pois[type].overviewMode;
 	}
 	
-	//#if polish.api.bigstyles
 	public static void setNodeOverviewMode(short type, byte state) {
-	//#else
-	public static void setNodeOverviewMode(byte type, byte state) {
-	//#endif
 		pois[type].overviewMode = state;
 	}
 	
 	public static void clearAllNodesOverviewMode() {
-		//#if polish.api.bigstyles
 		for (short i = 1; i < getMaxType(); i++) {
-		//#else
-		for (byte i = 1; i < getMaxType(); i++) {
-		//#endif
 			pois[i].overviewMode = OM_SHOWNORMAL;
 		}
 	}	
-	//#if polish.api.bigstyles
 	public static final  String getNodeTypeDesc(short type) {
-	//#else
-	public static final  String getNodeTypeDesc(byte type) {
-	//#endif
 		if (type < 0 || type >= pois.length) {
 			logger.error(Locale.get("legend.ERRORInvalidPOItype")/*ERROR: Invalid POI type */ + type + Locale.get("legend.requested")/* requested!*/);
 			return null;
@@ -689,11 +649,7 @@ public class Legend {
 		return pois[type].description;
 	}
 	
-	//#if polish.api.bigstyles
 	public static final WayDescription getWayDescription(short type) {			
-	//#else
-	public static final WayDescription getWayDescription(byte type) {			
-	//#endif
 		if (type < 0 || type >= ways.length) {
 			logger.error(Locale.get("legend.ERRORInvalidWaytype")/*ERROR: Invalid way type */ + type + Locale.get("legend.requested")/* requested*/);
 			return null;
@@ -701,27 +657,15 @@ public class Legend {
 		return ways[type];
 	}
 	
-	//#if polish.api.bigstyles
 	public static final boolean isWayHideable(short type) {
-	//#else
-	public static final boolean isWayHideable(byte type) {
-	//#endif
 		return ways[type].hideable;
 	}
 
-	//#if polish.api.bigstyles
 	public static final Image getWayImage(short type)  {
-	//#else
-	public static final Image getWayImage(byte type)  {
-	//#endif
 		return ways[type].searchIcon;
 	}
 	
-	//#if polish.api.bigstyles
 	public static final Image getWaySearchImage(short type)  {
-	//#else
-	public static final Image getWaySearchImage(byte type)  {
-	//#endif
 		if (ways[type].searchIcon != null) {
 			return ways[type].searchIcon;
 		} else {
@@ -744,11 +688,7 @@ public class Legend {
 		}
 	}
 	
-	//#if polish.api.bigstyles
 	public static Image getWayOrAreaSearchImage(short type)  {
-	//#else
-	public static Image getWayOrAreaSearchImage(byte type)  {
-	//#endif
 		if (ways[type].searchIcon == null) {
 			if (ways[type].isArea) {
 				ways[type].searchIcon = getAreaSearchImage(type);
@@ -776,11 +716,7 @@ public class Legend {
 		}
 	}
 	
-	//#if polish.api.bigstyles
 	public static Image getAreaSearchImage(short type)  {
-	//#else
-	public static Image getAreaSearchImage(byte type)  {
-	//#endif
 		if (ways[type].searchIcon != null) {
 			return ways[type].searchIcon;
 		} else {
@@ -793,19 +729,11 @@ public class Legend {
 		}
 	}
 	
-	//#if polish.api.bigstyles
 	public static byte getWayOverviewMode(short type) {
-	//#else
-	public static byte getWayOverviewMode(byte type) {
-	//#endif
 		return ways[type].overviewMode;
 	}
 
-	//#if polish.api.bigstyles
 	public static void setWayOverviewMode(short type, byte state) {
-	//#else
-	public static void setWayOverviewMode(byte type, byte state) {
-	//#endif
 		ways[type].overviewMode = state;
 	}
 
@@ -818,11 +746,7 @@ public class Legend {
 	}
 
 	public static void clearAllWaysOverviewMode() {
-		//#if polish.api.bigstyles
 		for (short i = 1; i < getMaxWayType(); i++) {
-		//#else
-		for (byte i = 1; i < getMaxWayType(); i++) {
-		//#endif
 			ways[i].overviewMode = OM_SHOWNORMAL;
 		}
 	}
@@ -831,22 +755,12 @@ public class Legend {
 		return midletTravelModes;
 	}
 	
-	//#if polish.api.bigstyles
 	public static final short getMaxWayType() {
 		return (short)ways.length;
-	//#else
-	public static final byte getMaxWayType() {
-		return (byte)ways.length;
-	//#endif
 	}
 	
-	//#if polish.api.bigstyles
 	public static final short getMaxType() {
 		return (short)pois.length;
-	//#else
-	public static final byte getMaxType() {
-		return (byte)pois.length;
-	//#endif
 	}
 	
 	public static final byte scaleToTile(int scale) {

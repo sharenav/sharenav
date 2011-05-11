@@ -232,10 +232,10 @@ public class Way extends Entity {
 		if (Legend.enableBigStyles) {
 			type = is.readShort();
 		} else {
-		//#endif
-			type = is.readByte();
-		//#if polish.api.bigstyles
+			type = (short) (is.readByte() & 0xff);
 		}
+		//#else
+		type = is.readByte();
 		//#endif
 		setWayRouteModes(is.readByte());	
 		
@@ -815,7 +815,12 @@ public class Way extends Entity {
 	
 	
 	public void processPath(PaintContext pc, SingleTile t, int mode, byte layer) {
+		//#if polish.api.bigstyles
 		WayDescription wayDesc = Legend.getWayDescription(type);
+		//#else
+		WayDescription wayDesc = Legend.getWayDescription((short) (type & 0xff));
+		//#endif
+
 		/** width of the way to be painted */
 		int w = 0;
 		byte highlight=HIGHLIGHT_NONE;
@@ -839,7 +844,11 @@ public class Way extends Entity {
 		}
 
 		if ((mode & Tile.OPT_PAINT) > 0) {
+			//#if polish.api.bigstyles
 			byte om = Legend.getWayOverviewMode(type);
+			//#else
+			byte om = Legend.getWayOverviewMode((short) (type & 0xff));
+			//#endif
 
 			switch (om & Legend.OM_MODE_MASK) {
 			case Legend.OM_SHOWNORMAL: 
@@ -1168,7 +1177,11 @@ public class Way extends Entity {
 		//boolean info=false;
     	
     	// exit if not zoomed in enough
-    	WayDescription wayDesc = Legend.getWayDescription(type);
+		//#if polish.api.bigstyles
+	    	WayDescription wayDesc = Legend.getWayDescription(type);
+		//#else
+	    	WayDescription wayDesc = Legend.getWayDescription((short) (type & 0xff));
+		//#endif
 		if (pc.scale > wayDesc.maxTextScale * Configuration.getDetailBoostMultiplier() ) {			
 			return;
 		}	
@@ -1601,7 +1614,11 @@ public class Way extends Entity {
 		int wDraw = w;
 		int turn = 0;
 		
+		//#if polish.api.bigstyles
 		WayDescription wayDesc = Legend.getWayDescription(type);
+		//#else
+		WayDescription wayDesc = Legend.getWayDescription(type);
+		//#endif
 
 		Vector route = pc.trace.getRoute();
 		
@@ -2050,11 +2067,19 @@ public class Way extends Entity {
 	}
 
 	public void paintAsArea(PaintContext pc, SingleTile t) {
+		//#if polish.api.bigstyles
 		WayDescription wayDesc = Legend.getWayDescription(type);
+		//#else
+		WayDescription wayDesc = Legend.getWayDescription((short) (type & 0xff));
+		//#endif
 
 		pc.g.setColor(wayDesc.lineColor);
 		
+		//#if polish.api.bigstyles
 		byte om = Legend.getWayOverviewMode(type);
+		//#else
+		byte om = Legend.getWayOverviewMode((short) (type & 0xff));
+		//#endif
 		switch (om & Legend.OM_MODE_MASK) {
 			case Legend.OM_SHOWNORMAL: 
 				// if not in Overview Mode check for scale
@@ -2131,7 +2156,11 @@ public class Way extends Entity {
 	}
 
 	public void paintAreaName(PaintContext pc, SingleTile t) {
+		//#if polish.api.bigstyles
 		WayDescription wayDesc = Legend.getWayDescription(type);
+		//#else
+		WayDescription wayDesc = Legend.getWayDescription((short) (type & 0xff));
+		//#endif
 		if (pc.scale > wayDesc.maxTextScale * Configuration.getDetailBoostMultiplier() ) {			
 			return;
 		}		
@@ -2262,12 +2291,20 @@ public class Way extends Entity {
 	}
 
 	public void setColor(PaintContext pc) {		
+		//#if polish.api.bigstyles
 		WayDescription wayDesc = Legend.getWayDescription(type);
+		//#else
+		WayDescription wayDesc = Legend.getWayDescription((short) (type & 0xff));
+		//#endif
 		pc.g.setStrokeStyle(wayDesc.getGraphicsLineStyle());
 		pc.g.setColor(isDamaged() ? Legend.COLORS[Legend.COLOR_WAY_DAMAGED_DECORATION] : wayDesc.lineColor);
 	}
 	public int getWidth(PaintContext pc) {
+		//#if polish.api.bigstyles
 		WayDescription wayDesc = Legend.getWayDescription(type);
+		//#else
+		WayDescription wayDesc = Legend.getWayDescription((short) (type & 0xff));
+		//#endif
 		return wayDesc.wayWidth;
 	}
 
@@ -2294,7 +2331,11 @@ public class Way extends Entity {
 
 	public void setBorderColor(PaintContext pc) {
 		pc.g.setStrokeStyle(Graphics.SOLID);
+		//#if polish.api.bigstyles
 		WayDescription wayDesc = Legend.getWayDescription(type);
+		//#else
+		WayDescription wayDesc = Legend.getWayDescription((short) (type & 0xff));
+		//#endif
 		pc.g.setColor(isDamaged() ? Legend.COLOR_WAY_DAMAGED_BORDER : wayDesc.boardedColor);
 	}
 	
@@ -2387,7 +2428,11 @@ public class Way extends Entity {
 	}
 	
 	public String toString() {
+		//#if polish.api.bigstyles
 		return Locale.get("way.Way")/*Way*/ + " " + Trace.getInstance().getName(nameIdx) + " " + Locale.get("way.type")/*type*/ + ": " +  Legend.getWayDescription(type).description;
+		//#else
+		return Locale.get("way.Way")/*Way*/ + " " + Trace.getInstance().getName(nameIdx) + " " + Locale.get("way.type")/*type*/ + ": " +  Legend.getWayDescription((short) (type & 0xff)).description;
+		//#endif
 	}
 
 	/**

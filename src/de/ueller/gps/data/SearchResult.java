@@ -1,11 +1,8 @@
 package de.ueller.gps.data;
 
 public class SearchResult {
-	//#if polish.api.bigstyles
+	// use negative types for nodes in this structure, though not in index data since map format 66
 	public short type;
-	//#else
-	public byte type;
-	//#endif
 	//#if polish.api.bigsearch
 	public byte source;
 	public long resultid = 0;

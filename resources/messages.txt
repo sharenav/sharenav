@@ -1199,3 +1199,5 @@ guidiscovericonmenu.ImportConfig=Import config
 legend.wrongmapvertitle=Incorrect map version
 legend.wrongmapvermsg1=The Map files are not the version we expected, please use the correct Osm2GpsMid to recreate the map data. Trying to continue. Expected version:
 legend.wrongmapvermsg2=Read:
+legend.bigstyleserrtitle=Map format error
+legend.bigstyleserr=The map has more than 253 styles; switch to using bigstyles version of GpsMid

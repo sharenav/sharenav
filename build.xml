@@ -58,16 +58,6 @@
 		<property name="dir.work" value="build/test" />		
 	</target>
 
-	<target name="testmicroemu-smallstyles" 
-		description="Call this target first to skip the obfuscation step, e.g. ant test j2mepolish"
-		>
-		<property name="gpsmid.microemu_device" value="Generic/microemulator-smallstyles"/>
-		<property name="test" value="true" />
-		<property name="testmicroemu" value="true" />
-		<property name="logging" value="true" />
-		<property name="dir.work" value="build/test" />		
-	</target>
-
 	<target name="debug" 
 		description="Call this target first to set debugging"
 		>
@@ -88,7 +78,7 @@
 	<property name="dir.work" value="build/real/${customization}" />
 	<property name="dir.dist" value="dist/${customization}" />
 	<property name="deploy-url" value="" />
-	<property name="mapversion" value="65" />
+	<property name="mapversion" value="66" />
 </target>
  
 <!-- In this target the J2ME Polish task is used.             -->
@@ -109,7 +99,7 @@
             <!-- lowercase icon name required for Android, before Android support was icon="GpsMid.png" -->
 		<info
 			name="GpsMid"
-			version="0.7.31"
+			version="0.7.32"
 			description="Shows moving map made from OpenStreetMap data"
 			vendorName="Harald Mueller"
 			infoUrl="http://gpsmid.sourceforge.net"
@@ -312,7 +302,6 @@
 
 <target name="emulator" depends="test,j2mepolish" />
 <target name="microemulator" depends="testmicroemu,j2mepolish" />
-<target name="microemulator-smallstyles" depends="testmicroemu-smallstyles,j2mepolish" />
 
 <target name="clean" 
   		description="allows a clean build. You should call [ant clean] whenever you made changes to devices.xml, vendors.xml or groups.xml">
