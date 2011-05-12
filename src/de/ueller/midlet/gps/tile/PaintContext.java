@@ -101,7 +101,7 @@ public class PaintContext extends ScreenContext {
 	/** number of routable ways at the connection (result should always be >= 1)*/
 	public volatile byte conWayNumToRoutableWays;
 	/** bearing at the end of the path leading to this connection */
-	public volatile short conWayStartBearing;
+	public volatile byte conWayStartBearing;
 	/** number of possible motorway instructions (enter / leave motorway) this way leads to */
 	public volatile byte conWayNumMotorways;
 	/** bearing at the beginning of the path leading to the next connection */
@@ -118,7 +118,7 @@ public class PaintContext extends ScreenContext {
 	/** count of bearings used to find out if the connection leads straight-on to multiple named routable ways for giving a bearing instruction*/  
 	public volatile int conWayBearingsCount;
 	/** used to find out if the connection leads straight-on to multiple routable ways for giving a bearing instruction*/  
-	public volatile short conWayBearings[] = new short[8];
+	public volatile byte conWayBearings[] = new byte[8];
 	/** used to find out if the connection leads straight-on to multiple named routable ways for giving a bearing instruction*/  
 	public volatile boolean conWayBearingHasName[] = new boolean[8];
 	/** used to find out if the connection leads straight-on to multiple named routable ways for giving a bearing instruction*/  

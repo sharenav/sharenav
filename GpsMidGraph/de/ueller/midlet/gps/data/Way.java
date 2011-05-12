@@ -521,8 +521,8 @@ public class Way extends Entity {
 		short searchCon2Lon = (short) ((pc.searchCon2Lon - t.centerLon) * MoreMath.FIXPT_MULT);
 		
 		boolean isCircleway = isCircleway(t);
-		short bearingForward = 0;
-		short bearingBackward = 0;
+		byte bearingForward = 0;
+		byte bearingBackward = 0;
 		// check if way contains both search connections
 		// System.out.println("search path nodes: " + path.length);
 		for (short i = 0; i < path.length; i++) {
