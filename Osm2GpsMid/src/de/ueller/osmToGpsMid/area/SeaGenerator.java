@@ -172,12 +172,12 @@ public class SeaGenerator {
 		List<Way> toBeAdded = new ArrayList<Way>();
 		for (Way segment : shoreline) {
 			List<Node> points = segment.getNodes();
-			List<List<Node>> clipped = LineClipper.clip(seaBounds, points);
+			List<ArrayList<Node>> clipped = LineClipper.clip(seaBounds, points);
 			//List<List<Node>> clipped = null;
 			if (clipped != null) {
 				log.info("clipping " + segment);
 				toBeRemoved.add(segment);
-				for (List<Node> pts : clipped) {
+				for (ArrayList<Node> pts : clipped) {
 					long id = FakeIdGenerator.makeFakeId();
 					Way shore = new Way(id, pts);
 					toBeAdded.add(shore);

@@ -104,6 +104,11 @@ public class Way extends Entity implements Comparable<Way> {
 		this.path = new Path(other.path);
 	}
 
+	public Way(long id, ArrayList<Node> newPath) {
+		this.id = id;
+		this.path = new Path(newPath);
+	}
+
 	/**
 	 * create a new Way which shares the tags with the other way, has the same type and id, but no Nodes
 	 * 

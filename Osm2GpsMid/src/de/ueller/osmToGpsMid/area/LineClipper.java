@@ -42,7 +42,7 @@ public class LineClipper {
 	 * this is expected to be the normal case.
 	 * If clipping is needed then an array of point lists is returned.
 	 */
-	public static List<List<Node>> clip(Bounds a, List<Node> coords) {
+	public static List<ArrayList<Node>> clip(Bounds a, List<Node> coords) {
 
 		// If all the points are inside the box then we just return null
 		// to show that nothing was done and the line can be used.  This
@@ -59,8 +59,8 @@ public class LineClipper {
 		if (inBounds)
 			return null;
 		class LineCollector {
-			private final List<List<Node>> ret = new ArrayList<List<Node>>(4);
-			private List<Node> currentLine;
+			private final ArrayList<ArrayList<Node>> ret = new ArrayList<ArrayList<Node>>(4);
+			private ArrayList<Node> currentLine;
 			private Node last;
 
 			public void add(Node[] segment) {
