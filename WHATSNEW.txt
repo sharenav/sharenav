@@ -19,8 +19,9 @@
     - horizontal scroll (optionally) of the search result under cursor or all search results
     - option to use a large font for better UI on hi-res devices
     *** Multi-word search ***
-    - New feature multi-word search, available only in "Generic/editing", "Generic/full" (and "Generic/microemulator")
-      as it can require more memory than single word or whole name search.
+    - New feature multi-word search, available currently in "Generic/editing", "Generic/full" (and "Generic/microemulator")
+      as it can require more memory than single word or whole name search. Can be added to others with "bigsearch"
+      pseudo-api keyword in custom-devices.xml; requires recompiling.
       To add multi-word indexes to map, set useWordSearch=true in .properties.
 	*** Osm2GpsMid ***
     - More memory usage optimizations for Osm2GpsMid reducing memory usage during map creation
@@ -33,8 +34,8 @@
     *** Appearance ***
     - bigger icon; 15x15 -> 48x48
     *** Style File ***
-    - allow for more than 126 POI/way styles for targets editing, full, microemulator, full-nolocation,
-      android hiresonline
+    - allow for more than 126 POI/way styles, up to 253 for default midlets
+      (more than 254 are possible with separate "bigstyles" pseudo-api not currently enabled for any target)
     - add regular expression matching for specialisation tag in style file.
       Example:
 		<specialisation key = "ref" regexp="true" value = "^154..*$"/>
@@ -60,7 +61,8 @@
       h*.d for housenumbers and w*.d for words.
     - can now have more than 126 styles. If there are more than 253 styles, a word will be
       used for storing the style, otherwise a byte will be used; the byte is now treated
-      as unsigned 
+      as unsigned. A bigstyles pseudo-api needs to be added to custom-devices.xml to
+      build a midlet with support for more than 253 styles, it's currently not enabled for any target.
     *** Misc. bug fixes ***
     - GpsMid: fixed empty/invalid map startup infinite loop bug (tracker 3288429)
     - Osm2GpMid: fixed handling of multipolygons where a way is in more than one multipolygon
