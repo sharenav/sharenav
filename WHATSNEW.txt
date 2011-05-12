@@ -23,7 +23,7 @@
       as it can require more memory than single word or whole name search. Can be added to others with "bigsearch"
       pseudo-api keyword in custom-devices.xml; requires recompiling.
       To add multi-word indexes to map, set useWordSearch=true in .properties.
-	*** Osm2GpsMid ***
+    *** Osm2GpsMid ***
     - More memory usage optimizations for Osm2GpsMid reducing memory usage during map creation
       by up to 35%, thx walter9
     *** Routing ***
