@@ -168,7 +168,7 @@ public class RouteLineProducer implements Runnable {
 			
 			int countSameBearings = 0;
 			for (int b = 0; b < pc.conWayBearingsCount; b++) {
-				byte bearingAlternative = pc.conWayBearings[b];
+				short bearingAlternative = pc.conWayBearings[b];
 				if (cTo.wayConStartBearing == bearingAlternative) {
 					countSameBearings++;
 				}
@@ -179,7 +179,7 @@ public class RouteLineProducer implements Runnable {
 //			System.out.println(iConnFrom + ": " + cTo.wayConStartBearing);
 			// check if we need a bearing instruction at this connection
 			for (int b = 0; b < pc.conWayBearingsCount; b++) {
-				byte bearingAlternative = pc.conWayBearings[b];
+				short bearingAlternative = pc.conWayBearings[b];
 //				System.out.println(bearing);
 				
 				if (cTo.wayConStartBearing != bearingAlternative) {					
