@@ -64,7 +64,7 @@ public class Names {
 		}
 		boolean houseNumber = false;
 		if (w instanceof Node) {
-			byte type = (byte) ((Node) w).getType(Configuration.getConfiguration());
+			short type = (short) ((Node) w).getType(Configuration.getConfiguration());
 			POIdescription poiDesc = 
 				Configuration.getConfiguration().getpoiDesc(type);
 			//System.out.println("Testing node "+ w + " type " + type + " poiDesc = " + poiDesc);
@@ -74,7 +74,7 @@ public class Names {
 			}
 		}
 		if (w instanceof Way) {
-			byte type = (byte) ((Way) w).getType(Configuration.getConfiguration());
+			short type = (short) ((Way) w).getType(Configuration.getConfiguration());
 			WayDescription wayDesc =
 				Configuration.getConfiguration().getWayDesc(type);
 
