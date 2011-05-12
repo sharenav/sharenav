@@ -554,8 +554,8 @@ public class RouteInstructions {
 							drawBearing(pc, pc.lineP2.x, pc.lineP2.y, c.endBearing, true, 0x00800000);
 							pc.g.setStrokeStyle(Graphics.DOTTED);
 							drawBearing(pc, pc.lineP2.x, pc.lineP2.y, c.wayConEndBearing, true, 0x00FF0000);							
-							short startBearingCon = 0;
-							short startBearingWay = 0;
+							byte startBearingCon = 0;
+							byte startBearingWay = 0;
 							if ( i < route.size()-1 ) {
 								ConnectionWithNode cNext = (ConnectionWithNode) route.elementAt(i + 1);
 								startBearingCon = cNext.startBearing;
@@ -705,7 +705,7 @@ public class RouteInstructions {
 	}
 	
 	
-	private void drawBearing(PaintContext pc, int posX, int posY, short halfBearing, boolean isStartBearing, int color) {
+	private void drawBearing(PaintContext pc, int posX, int posY, byte halfBearing, boolean isStartBearing, int color) {
 		pc.g.setColor(color);
 		float radc = (float) (halfBearing * Math.PI / 90d);
 		int dx = (int) (Math.sin(radc) * 20);
