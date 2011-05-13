@@ -159,47 +159,47 @@ public class Relation extends Entity {
 					}
 				}
 				if (Configuration.getConfiguration().useHouseNumbers && (type.equalsIgnoreCase("associatedStreet") || type.equalsIgnoreCase("street"))) {
-					int waycount = 0;
-					int nodecount = 0;
+					int streetcount = 0;
+					int housecount = 0;
 					boolean ok = false;
 					for (Member m : members) {
 						switch (m.getRole()) {
 						case Member.ROLE_STREET: {
 							if (m.getType() == Member.TYPE_WAY) {
-								waycount++;
+								streetcount++;
 								//System.out.println("Relation " + id + " way ref = " + wref);
 								break;
 							}
 						}
 						case Member.ROLE_HOUSE: {
 							if (m.getType() == Member.TYPE_NODE) {
-								nodecount++;
-								//System.out.println("Relation " + id + " node ref = " + nref);
+								housecount++;
+								//System.out.println("Relation " + id + " house ref = " + nref);
 								break;
 							}
 							if (m.getType() == Member.TYPE_WAY) {
 								//System.out.println("Info: trying to handle way (typically building, area) with housenumber, relation url: " 
 								//		   + toUrl());
-								nodecount++;
+								housecount++;
 								break;
 							}
 						}
 						}
 
 					}
-					if (waycount >= 1 && nodecount >= 1) {
-						//System.out.println("Housenumber relation ok, way count: " 
-						//		+ waycount + " node count " + nodecount + " url: " + toUrl());
+					if (streetcount >= 1 && housecount >= 1) {
+						//System.out.println("Housenumber relation ok, street count: " 
+						//		+ streetcount + " house count " + housecount + " url: " + toUrl());
 						return true;
 					} else {
 						// Warn only about associatedStreet relations with no housenumbers,
 						// but not street relations, as there's nothing suspicious
 						// about a street relation with no houses
-						if (type.equalsIgnoreCase("street") && nodecount == 0) {
+						if (type.equalsIgnoreCase("street") && housecount == 0) {
 							// do nothing
 						} else {
-							System.out.println("Warning: ignoring map data: Housenumber relation not ok, way count: " 
-									   + waycount + " node count " + nodecount + " url: " + toUrl());
+							System.out.println("Warning: ignoring map data: Housenumber relation not ok, street count: " 
+									   + streetcount + " house count " + housecount + " url: " + toUrl());
 							return false;
 						}
 					}
