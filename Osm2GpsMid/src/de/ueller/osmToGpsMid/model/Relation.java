@@ -192,9 +192,16 @@ public class Relation extends Entity {
 						//		+ waycount + " node count " + nodecount + " url: " + toUrl());
 						return true;
 					} else {
-						System.out.println("Warning: ignoring map data: Housenumber relation not ok, way count: " 
-								+ waycount + " node count " + nodecount + " url: " + toUrl());
-						return false;
+						// Warn only about associatedStreet relations with no housenumbers,
+						// but not street relations, as there's nothing suspicious
+						// about a street relation with no houses
+						if (type.equalsIgnoreCase("street") && nodecount == 0) {
+							// do nothing
+						} else {
+							System.out.println("Warning: ignoring map data: Housenumber relation not ok, way count: " 
+									   + waycount + " node count " + nodecount + " url: " + toUrl());
+							return false;
+						}
 					}
 				}
 				return !isPartial();
