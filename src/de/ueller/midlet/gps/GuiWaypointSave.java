@@ -87,6 +87,33 @@ public class GuiWaypointSave extends Form implements CommandListener {
 			ele  = fldEle.getString();
 			logger.info("Saving waypoint with name: " + name + " ele: " + ele);
 			waypt.displayName = name;
+			// on android, there's a force close with the thread version
+			// FIXME perhaps the thread version could be made to work somehow on android
+			//#if polish.android
+			try {
+				// Use the elevation from textfield, if not "" 
+				waypt.ele = Integer.parseInt(ele);
+			} catch (NumberFormatException e) {
+				waypt.ele = PositionMark.INVALID_ELEVATION;
+			}
+					
+			parent.gpx.addWayPt(waypt);
+
+			// Wait a bit before displaying the map again. Hopefully
+			// this avoids the sporadic freezing after saving a waypoint.
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException ie) {
+			}
+
+			// Recenter GPS after saving a Waypoint if this option is selected
+			if (cg.isSelected(1)) {
+				parent.gpsRecenter = true;
+				parent.newDataReady();
+			}
+			parent.show();				
+			return;
+			//#else
 			Thread adder = new Thread(new Runnable() {
 				public void run()
 				{
@@ -117,6 +144,7 @@ public class GuiWaypointSave extends Form implements CommandListener {
 			adder.setPriority(Thread.MAX_PRIORITY);
 			adder.start();
 			return;
+			//#endif
 		}
 		else if (cmd == backCmd) {
 			parent.show();
