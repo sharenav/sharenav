@@ -606,7 +606,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 						//System.out.println ("MatchMode: " + matchMode() + " matchSources: " + matchSources);
 						if (matchMode() && matchSources != null) {
 							if (matchSources.get(id) != null &&
-							    ((Integer) matchIdx.get(id)).intValue() != res.nameIdx) {
+							    (((Integer) matchIdx.get(id)).intValue() != res.nameIdx)
+							    || Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH)){
 								res.preMatchIdx = ((Integer) matchIdx.get(id)).intValue();
 								result.addElement(res);
 							}
@@ -1241,7 +1242,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 			Long id = new Long(sr.resultid);
 			// transfer house number coordinates to street
 			Integer sourceNew = new Integer(sr.source);
-			if (matchSources.get(id) != null && ((Integer) matchIdx.get(id)).intValue() != sr.nameIdx) {
+			if (matchSources.get(id) != null &&
+			    (((Integer) matchIdx.get(id)).intValue() != sr.nameIdx)
+			    || Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH)){
 				//System.out.println("found match from old results, id = "
 				//		   + id + "source = "
 				//		   + ((Integer) matchSources.get(id)).intValue());
