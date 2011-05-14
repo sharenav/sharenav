@@ -232,7 +232,7 @@ public class Way extends Entity {
 		if (Legend.enableBigStyles) {
 			type = is.readShort();
 		} else {
-			type = (short) (is.readByte() & 0xff);
+			Type = (short) (is.readByte() & 0xff);
 		}
 		//#else
 		type = is.readByte();
@@ -1617,7 +1617,7 @@ public class Way extends Entity {
 		//#if polish.api.bigstyles
 		WayDescription wayDesc = Legend.getWayDescription(type);
 		//#else
-		WayDescription wayDesc = Legend.getWayDescription(type);
+		WayDescription wayDesc = Legend.getWayDescription((short) (type & 0xff));
 		//#endif
 
 		Vector route = pc.trace.getRoute();
