@@ -244,11 +244,18 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		// for Native Android workaround; not sure how to do this with J2MEPolish
 		//#if polish.android
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			main.alert("Splash", "Quitting", 3000);
-			shutdown = true;
-			Configuration.setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, false, true);
-			Configuration.setCfgBitState(Configuration.CFGBIT_RUNNING, false, true);
-			main.notifyDestroyed();
+			if (initDone) {
+				shutdown = true;
+				GpsMid.showMapScreen();
+				return;
+			} else {
+				main.alert("Splash", "Quitting", 3000);
+				shutdown = true;
+				Configuration.setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, false, true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_RUNNING, false, true);
+				main.notifyDestroyed();
+				return;
+			}
 		}
 		//#endif
 
