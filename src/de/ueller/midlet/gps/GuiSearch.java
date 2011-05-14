@@ -605,7 +605,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 						// match multiword search or housenumber search
 						//System.out.println ("MatchMode: " + matchMode() + " matchSources: " + matchSources);
 						if (matchMode() && matchSources != null) {
-							if (matchSources.get(id) != null) {
+							if (matchSources.get(id) != null &&
+							    (((Integer) matchIdx.get(id)).intValue() != res.nameIdx
+							     || Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH))) {
 								res.preMatchIdx = ((Integer) matchIdx.get(id)).intValue();
 								result.addElement(res);
 							}
@@ -1188,7 +1190,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private String nameForResult(SearchResult sr) {
 		String name = "";
 		//#if polish.api.bigsearch
-		if (sr.preMatchIdx != 0) {
+		if (sr.preMatchIdx != 0 && sr.preMatchIdx != sr.nameIdx) {
 			name = getName(sr.preMatchIdx) + " ";
 		}
 		//#endif
@@ -1240,7 +1242,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 			Long id = new Long(sr.resultid);
 			// transfer house number coordinates to street
 			Integer sourceNew = new Integer(sr.source);
-			if (matchSources.get(id) != null) {
+			if (matchSources.get(id) != null &&
+			    (((Integer) matchIdx.get(id)).intValue() != sr.nameIdx
+			     || Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH))) {
 				//System.out.println("found match from old results, id = "
 				//		   + id + "source = "
 				//		   + ((Integer) matchSources.get(id)).intValue());
@@ -1249,9 +1253,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				if (sr.source != SearchNames.INDEX_HOUSENUMBER && matchLats != null && matchLats.get(id) != null) {
 					sr.lat = ((Float) matchLats.get(id)).floatValue();
 					sr.lon = ((Float) matchLons.get(id)).floatValue();
-					//#if polish.api.bigsearch
 					sr.preMatchIdx = ((Integer) matchIdx.get(id)).intValue();
-					//#endif
 					sourceNew = (Integer) matchSources.get(id);
 				}
 				//	result.removeElementAt(i);

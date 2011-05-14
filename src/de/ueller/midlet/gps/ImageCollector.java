@@ -550,8 +550,13 @@ public class ImageCollector implements Runnable {
 			if (wayForName.nameIdx != -1) {
 				name = screenPc.trace.getName(wayForName.nameIdx);
 			} else {
+				//#if polish.api.bigstyles
 				WayDescription wayDesc = Legend
 						.getWayDescription(wayForName.type);
+				//#else
+				WayDescription wayDesc = Legend
+						.getWayDescription((short) (wayForName.type & 0xff));
+				//#endif
 				name = Locale.get("imagecollector.unnamed")/*(unnamed */ + wayDesc.description + ")";
 			}
 			if (name == null) {
