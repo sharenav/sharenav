@@ -232,7 +232,7 @@ public class Way extends Entity {
 		if (Legend.enableBigStyles) {
 			type = is.readShort();
 		} else {
-			Type = (short) (is.readByte() & 0xff);
+			type = (short) (is.readByte() & 0xff);
 		}
 		//#else
 		type = is.readByte();
