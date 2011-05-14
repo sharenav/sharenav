@@ -823,7 +823,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		addCommand(CMDS[ABOUT_CMD]);
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
 			if (!Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {
+				//#ifndef polish.android
 				super.addCommand(CMDS[ICON_MENU]);
+				//#endif
 			}
 		}
 		setCommandListener(this);
@@ -866,7 +868,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
 			if (!Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {
+				//#ifndef polish.android
 				super.removeCommand(CMDS[ICON_MENU]);
+				//#endif
 			}
 		}
 	}
@@ -883,7 +887,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			} else
 			//#endif
 			{
+				//#ifndef polish.android
 				super.addCommand(CMDS[ICON_MENU]);
+				//#endif
 			}
 		}
 //#if polish.android

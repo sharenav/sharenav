@@ -962,9 +962,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 			// Unicode character 10 is LF
 			// so 10 should correspond to Enter key on QWERT keyboards
 //#if polish.android
-			// FIXME the SEARCH doesn't work, wonder if J2MEPolish switches keycodes or something as
-			// search key is special in android
-		} else if (keyCode == 10 || action == FIRE || keyCode == KeyEvent.KEYCODE_SEARCH) {
+			// the SEARCH doesn't work with KeyEvent.KEYCODE_SEARCH, wonder if J2MEPolish
+			// switches keycodes or something. 0 seems to be what is given in practice for the search key
+			// in KeyCommandCanvas, but not here
+		} else if (keyCode == 10 || action == FIRE || keyCode == 0) {
 				commandAction( Trace.getInstance().getCommand(Trace.ROUTING_START_CMD), (Displayable) null);
 		} else if (keyCode == 10 || action == FIRE || keyCode == KeyEvent.KEYCODE_BACK) {
 			// FIXME With this there's the problem that Back gets passed on to the next menu
