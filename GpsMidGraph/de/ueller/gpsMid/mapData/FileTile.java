@@ -99,11 +99,7 @@ public class FileTile extends Tile implements QueueableTile {
 	}
 
 
-	//#if polish.api.bigstyles
 	public Vector getNearestPoi(boolean matchAnyPoi, short searchType, float lat, float lon, float maxDist, CancelMonitorInterface cmi) {		
-	//#else
-	public Vector getNearestPoi(boolean matchAnyPoi, byte searchType, float lat, float lon, float maxDist, CancelMonitorInterface cmi) {
-	//#endif
 		if (tile == null){
 			/**
 			 * This hole case is not correctly handled. The POI data
