@@ -37,7 +37,7 @@ cp -p Osm2GpsMid/dist/Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar
 
 
 mkdir "Release $numver"
-cp dist/*-$ver.jar README.mkd WHATSNEW.txt Osm2GpsMid-$ver.jar "Release $numver"
+cp dist/*-$ver.jar README.mkd WHATSNEW.txt Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar "Release $numver"
 
 #scp Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar $user,gpsmid@web.sf.net:htdocs/prebuild
 
