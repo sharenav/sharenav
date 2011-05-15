@@ -1,3 +1,4 @@
+GpsMid 0.7.5
     *** Bug fixes **
     - fix nearest POI search bug
 
