@@ -3,7 +3,7 @@
 # update the Osm2GpsMid snapshots
 #
 
-user=jkpj
+user=PUT_YOUR_SOURCEFORGE_USERNAME_HERE
 numver=0.7.4
 ver=$numver-map66
 
