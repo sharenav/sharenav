@@ -1,7 +1,7 @@
     *** Bug fixes **
     - fix nearest POI search bug
 
-GpsMid 0.7.4
+GpsMid 0.7.4 (internal version, not released)
     *** House number search **
     - House number search (street name & house number) can be enabled by useHouseNumbers in .properties
       or checking the checkbox in the Osm2GpsMid GUI
