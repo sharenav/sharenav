@@ -4,7 +4,7 @@
 #
 
 user=PUT_YOUR_SOURCEFORGE_USERNAME_HERE
-numver=0.7.4
+numver=0.7.5
 ver=$numver-map66
 
 ant clean
