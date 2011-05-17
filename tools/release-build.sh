@@ -23,8 +23,8 @@ ant
 for target in full editing blackberry minimal
 do
   java -Xmx1024m -jar dist/Osm2GpsMid-$ver.jar --nogui --properties=mapdef/$map-$target
-  mv GpsMid-$ver.jar GpsMid-Generic-$target-$ver.jar
-  mv GpsMid-$ver.jad GpsMid-Generic-$target-$ver.jad
+#  mv GpsMid-$ver.jar GpsMid-Generic-$target-$ver.jar
+#  mv GpsMid-$ver.jad GpsMid-Generic-$target-$ver.jad
 done
 
 cd ..
