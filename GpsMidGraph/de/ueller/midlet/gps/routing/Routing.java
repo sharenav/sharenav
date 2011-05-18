@@ -493,10 +493,10 @@ public class Routing implements Runnable {
 
 
 	private int getTurn(int endBearing, int startBearing) {
-		if (endbearing == 99 || startBearing == 99) {
+		if (endBearing == 99 || startBearing == 99) {
 			return 0;
 		}
-		return Math.abs((endbearing - startbearing)*2);
+		return Math.abs((endBearing - startBearing)*2);
 	}
 
 	private int getTurnCost(int endBearing, int startBearing) {
