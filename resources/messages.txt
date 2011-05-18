@@ -1201,3 +1201,4 @@ legend.wrongmapvermsg1=The Map files are not the version we expected, please use
 legend.wrongmapvermsg2=Read:
 legend.bigstyleserrtitle=Map format error
 legend.bigstyleserr=The map has more than 253 styles; switch to using bigstyles version of GpsMid
+guiroute.AllowPoorRoutes=Allow poor routes

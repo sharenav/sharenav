@@ -56,6 +56,9 @@ public class GuiRoute extends Form implements CommandListener {
 		routingTravelModesGroup.setSelectedIndex(Configuration.getTravelModeNr(), true);
 		append(routingTravelModesGroup);
 
+		gaugeRoutingEsatimationFac=new Gauge(Locale.get("guiroute.AllowPoorRoutes") + "/" + Locale.get("guiroute.CalculationSpeed")/*Calculation speed*/, true, 10, Configuration.getRouteEstimationFac());
+		append(gaugeRoutingEsatimationFac);
+
 		String [] trStates = new String[2];
 		trStates[0] = Locale.get("generic.On")/*On*/;
 		trStates[1] = Locale.get("generic.Off")/*Off*/;
@@ -71,8 +74,6 @@ public class GuiRoute extends Form implements CommandListener {
 		routingAllowOptsGroup.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_USE_TOLLROADS));
 		append(routingAllowOptsGroup);
 
-		gaugeRoutingEsatimationFac=new Gauge(Locale.get("guiroute.CalculationSpeed")/*Calculation speed*/, true, 10, Configuration.getRouteEstimationFac());
-		append(gaugeRoutingEsatimationFac);
 		tfMainStreetNetDistanceKm = new TextField(Locale.get("guiroute.DistanceToMainStreet")/*Distance in km to main street net (used for large route distances):*/, Integer.toString(Configuration.getMainStreetDistanceKm()), 5, TextField.DECIMAL);
 		append(tfMainStreetNetDistanceKm);
 		

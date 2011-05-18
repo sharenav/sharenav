@@ -736,3 +736,4 @@ legend.wrongmapvermsg1=Karttatiedostot eivät ole odotettua versiota. Ole hyvä 
 legend.wrongmapvermsg2=Kartasta luettu:
 guidiscover.CfgExported=Asetukset viety tiedostoon '{0}'.
 guidiscover.CfgImported=Asetukset tuotu tiedostosta '{0}'.
+guiroute.AllowPoorRoutes=Salli huonot reitit
