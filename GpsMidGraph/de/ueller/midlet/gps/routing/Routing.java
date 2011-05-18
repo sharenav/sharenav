@@ -542,7 +542,7 @@ public class Routing implements Runnable {
 		 * like at http://www.openstreetmap.org/?mlat=48.061419&mlon=11.639106&zoom=18&layers=B000FTF
 		 * or vice versa like at http://www.openstreetmap.org/browse/node/673142
 		 */
-		if (from.isMotorwayConnection() && to.isMotorwayConnection() && getTurn(from.startBearing, to.endBearing) > 100 ) {
+		if (from.isMotorwayConnection() && to.isMotorwayConnection() && getTurn(from.endBearing, to.startBearing) > 100 ) {
 			return (int) (dist * 2);
 		}
 		
