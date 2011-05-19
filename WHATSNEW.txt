@@ -1,3 +1,10 @@
+    *** Clarify routing UI ***
+    - communicate to user more prominently that the calculation speed setting allows poor routes
+    *** Bug fixes **
+    - routing bug fixes, e.g. related to fixing incorrect penalties for bogus turns
+    ** Build scripts ***
+    - add some scripts (for GNU/Linux etc.) to build GpsMid with a minimal map
+
 GpsMid 0.7.5
     *** Bug fixes **
     - fix nearest POI search bug
