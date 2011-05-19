@@ -288,6 +288,10 @@ public class Configuration {
 	public final static byte CFGBIT_TICKER_ISEARCH_ALL = 111;
 	/** bit 112: Flag whether to have a large font for UI */
 	public final static byte CFGBIT_LARGE_FONT = 112;
+	/** bit 113: Flag whether to suppress the warning about hitting the search max limit */
+	public final static byte CFGBIT_SUPPRESS_SEARCH_WARNING = 113;
+	/** bit 114: Flag whether to suppress the warning about poor routes */
+	public final static byte CFGBIT_SUPPRESS_ROUTE_WARNING = 114;
 	
 	/**
 	 * These are the database record IDs for each configuration option

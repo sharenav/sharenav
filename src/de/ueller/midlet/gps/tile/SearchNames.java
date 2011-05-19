@@ -14,6 +14,7 @@ import java.util.Vector;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.SearchResult;
 import de.ueller.gps.data.Legend;
+import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GuiSearch;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
@@ -373,6 +374,10 @@ public class SearchNames implements Runnable {
 								// of silently not showing results
 								//#debug info
 								logger.info("Found SEARCH_MAX_COUNT entries. That's enough, stopping further search");
+								if (!Configuration.getCfgBitState(Configuration.CFGBIT_SUPPRESS_SEARCH_WARNING)) {
+									GpsMid.getInstance().alert(Locale.get("SearchNames.SearchWarningTitle")/*Search warning*/,
+										     Locale.get("SearchNames.SearchWarning")/*Maximum search count exceeded, search interrupted*/, 500);
+								}
 								ds.close();
 								return;
 							}

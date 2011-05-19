@@ -93,6 +93,12 @@ public class Routing implements Runnable {
 		this.parent = parent;
 		
 		estimateFac = (Configuration.getRouteEstimationFac() / 10f) + 0.8f;
+		if (Configuration.getRouteEstimationFac() > 0) {
+			if (!Configuration.getCfgBitState(Configuration.CFGBIT_SUPPRESS_ROUTE_WARNING)) {
+				parent.alert(Locale.get("routing.RoutingWarningTitle")/*Routing warning*/,
+					     Locale.get("routing.RoutingWarning")/*Routes may be longer than necessary, as allow poor routes setting is on*/, 5000);
+			}
+		}
 		maxEstimationSpeed = (int) ( (Configuration.getTravelMode().maxEstimationSpeed * 10) / 36);
 		if (maxEstimationSpeed == 0) {
 			maxEstimationSpeed = 1; // avoid division by zero

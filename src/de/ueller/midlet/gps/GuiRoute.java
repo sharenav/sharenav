@@ -23,6 +23,7 @@ public class GuiRoute extends Form implements CommandListener {
 	private ChoiceGroup routingTurnRestrictionsGroup;
 	private ChoiceGroup continueMapWhileRouteing;
 	private ChoiceGroup routingOptsGroup;
+	private ChoiceGroup routingWarningOptsGroup;
 	private ChoiceGroup routingAllowOptsGroup;
 	private ChoiceGroup routingStrategyOptsGroup;
 	private ChoiceGroup routingShowOptsGroup;
@@ -58,6 +59,12 @@ public class GuiRoute extends Form implements CommandListener {
 
 		gaugeRoutingEsatimationFac=new Gauge(Locale.get("guiroute.AllowPoorRoutes") + "/" + Locale.get("guiroute.CalculationSpeed")/*Calculation speed*/, true, 10, Configuration.getRouteEstimationFac());
 		append(gaugeRoutingEsatimationFac);
+
+		String [] routingWarningOpts = new String[1];
+		routingWarningOpts[0] = Locale.get("guiroute.SuppressRouteWarning")/*Älä varoita huonoista reiteistä*/;
+		routingWarningOptsGroup = new ChoiceGroup(Locale.get("guiroute.RouteWarningSetting")/*Warning*/, Choice.MULTIPLE, routingWarningOpts, null);
+		routingWarningOptsGroup.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SUPPRESS_ROUTE_WARNING));
+		append(routingWarningOptsGroup);
 
 		String [] trStates = new String[2];
 		trStates[0] = Locale.get("generic.On")/*On*/;
@@ -142,6 +149,7 @@ public class GuiRoute extends Form implements CommandListener {
 					(int) (Float.parseFloat(km)) 
 			);
 
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_SUPPRESS_ROUTE_WARNING, routingWarningOptsGroup.isSelected(0));
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_USE_MOTORWAYS, routingAllowOptsGroup.isSelected(0));
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_USE_TOLLROADS, routingAllowOptsGroup.isSelected(1));			
 			
