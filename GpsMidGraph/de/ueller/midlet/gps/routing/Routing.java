@@ -492,15 +492,21 @@ public class Routing implements Runnable {
 	} 
 
 
-	private int getTurn(int endBearing, int startBearing) {
+	private int getTurnAngle(int endBearing, int startBearing) {
 		if (endBearing == 99 || startBearing == 99) {
 			return 0;
 		}
-		return Math.abs((endBearing - startBearing)*2);
+		int angle = Math.abs((endBearing - startBearing)*2);
+		if (angle > 180) {
+			angle = 360 - angle;
+		}
+		//System.out.println ("GetTurn:  " + angle + " endBearing: " + endBearing +
+		//	" startBearing " + startBearing);
+		return angle;
 	}
 
 	private int getTurnCost(int endBearing, int startBearing) {
-		int adTurn=getTurn(endBearing, startBearing);
+		int adTurn=getTurnAngle(endBearing, startBearing);
 		if (adTurn > 150){
 			return 20;
 		} else if (adTurn > 120){
@@ -542,7 +548,7 @@ public class Routing implements Runnable {
 		 * like at http://www.openstreetmap.org/?mlat=48.061419&mlon=11.639106&zoom=18&layers=B000FTF
 		 * or vice versa like at http://www.openstreetmap.org/browse/node/673142
 		 */
-		if (from.isMotorwayConnection() && to.isMotorwayConnection() && getTurn(from.endBearing, to.startBearing) > 100 ) {
+		if (from.isMotorwayConnection() && to.isMotorwayConnection() && getTurnAngle(from.endBearing, to.startBearing) > 100 ) {
 			return (int) (dist * 2);
 		}
 		
