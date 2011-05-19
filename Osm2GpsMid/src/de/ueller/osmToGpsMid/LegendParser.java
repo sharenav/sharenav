@@ -690,7 +690,9 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 					String typicalSpeed = atts.getValue("speed");
 					if (typicalSpeed != null) {
 						try {
-							currentWay.typicalSpeed[travelModeNr] = Integer.parseInt(typicalSpeed);
+							Float speed = Float.parseFloat(typicalSpeed);
+							currentWay.typicalSpeed[travelModeNr] = Float.parseFloat(typicalSpeed);
+							//currentWay.typicalSpeed[travelModeNr] = Integer.parseInt(typicalSpeed);
 						} catch (NumberFormatException nfe) {
 							System.out.println("Invalid speed for "
 									+ currentWay.description);
