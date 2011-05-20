@@ -1,7 +1,11 @@
+    *** Search user interface ***
+    - optionally warn (warning on by default) of incomplete search results when search limit is reached
     *** Routing ***
     - allow for non-integer (decimal) speeds for travel modes
-    *** Clarify routing UI ***
-    - communicate to user more prominently that the calculation speed setting allows poor routes
+    - optionally warn (warning on by default) of poor routes if accepted by setting
+    *** Routing user interface ***
+    - communicate to user more prominently that the calculation speed setting allows poor routes,
+      optionally warn (warning on by default) of poor routes if accepted by setting
     *** Bug fixes **
     - routing bug fixes, e.g. related to fixing incorrect penalties for bogus turns
     ** Build scripts ***
