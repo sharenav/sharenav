@@ -1,3 +1,5 @@
+    *** Routing ***
+    - allow for non-integer (decimal) speeds for travel modes
     *** Clarify routing UI ***
     - communicate to user more prominently that the calculation speed setting allows poor routes
     *** Bug fixes **
