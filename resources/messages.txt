@@ -1209,4 +1209,3 @@ SearchNames.SearchWarning=Maximum search count exceeded, search interrupted
 guisetupgui.SuppressSearchWarning=Suppress warning about exceeding max results
 guiroute.RouteWarningSetting=Warnings
 guiroute.SuppressRouteWarning=Suppress warning about poor routes
-
