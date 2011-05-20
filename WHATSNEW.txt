@@ -8,6 +8,11 @@
     - add some scripts (for GNU/Linux etc.) to build GpsMid with a minimal map
 
 GpsMid 0.7.5
+    *** ERRATA for style file with more than 126 POI elements ***
+    - Errata for "allow for more than 126 POI/way styles, up to 253 for default midlets"
+      * ERRATA: nearby POI search is unavailable in 0.7.5 if there are more than 126 POI elements.
+        Fixed in git May 20, 2011 - expect this to be fixed in 0.7.6.
+
     *** Bug fixes **
     - fix nearest POI search bug
 
@@ -50,6 +55,8 @@ GpsMid 0.7.4 (internal version, not released)
     *** Style File ***
     - allow for more than 126 POI/way styles, up to 253 for default midlets
       (more than 254 are possible with separate "bigstyles" pseudo-api not currently enabled for any target)
+      * ERRATA: nearby POI search is unavailable in 0.7.5 if there are more than 126 POI elements.
+        Fixed in git May 20, 2011 - expect this to be fixed in 0.7.6.
     - add regular expression matching for specialisation tag in style file.
       Example:
 		<specialisation key = "ref" regexp="true" value = "^154..*$"/>
