@@ -18,6 +18,7 @@ import java.util.Hashtable;
 import android.view.KeyEvent;
 //#endif
 
+import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.ChoiceGroup;
 import javax.microedition.lcdui.Command;
@@ -280,6 +281,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				if (!isCursorValid()) {
 					return;
 				}
+				//System.out.println("Trying to handle url or phone cmd");
 				SearchResult sr = (SearchResult) result.elementAt(cursor);
 				String url = null;
 				String phone = null;
@@ -292,7 +294,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 					}
 				}
 				if (c == URL_CMD) {
-					if (sr.phoneIdx != -1) {
+					//System.out.println("Trying to fetch url");
+					if (sr.urlIdx != -1) {
+						//System.out.println("Got url " + url);
 						url = parent.getUrl(sr.urlIdx);
 					}
 				}
@@ -301,7 +305,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 						//#if polish.api.online
 						GpsMid.getInstance().platformRequest(url);
 						//#else
-						// FIXME: show user the url or phone number
+						GpsMid.getInstance().alert (Locale.get("guisearch.OpenUrlTitle"),
+							      Locale.get("guisearch.OpenUrl") +  " " + url, Alert.FOREVER);
 						//#endif
 					}
 				} catch (Exception e) {

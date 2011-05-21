@@ -744,3 +744,5 @@ SearchNames.SearchWarning=Hakutulosten enimmäismäärä ylittyi, haku keskeytyi
 guisetupgui.SuppressSearchWarning=Älä varoita hakutulosmäärän ylittymisestä
 guiroute.RouteWarningSetting=Varoitukset
 guiroute.SuppressRouteWarning=Älä varoita huonoista reiteistä
+guisearch.OpenUrlTitle=Avaa URL
+guisearch.OpenUrl=Avaa tämä URL:
