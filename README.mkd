@@ -1,7 +1,7 @@
 Installing GpsMid
 -----------------
 You need to choose the right variant of GpsMid for your phone.
-If you are unsure, try <GpsMid-Generic-full-0.7.3-map65> or read the Wiki page
+If you are unsure, try <GpsMid-Generic-full-0.7.5-map66> or read the Wiki page
 [http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=DevicesList](http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=DevicesList) 
 where users have collected their experiences with different phone models.
 
@@ -14,15 +14,20 @@ entry from its context menu.
 
 Map data
 --------
-<Osm2GpsMid-0.7.3-map65.jar> is needed to create the binary map data for GpsMid.
+<Osm2GpsMid-0.7.5-map66.jar> is needed to create the binary map data for GpsMid.
 Java 1.5 or later must be installed on your PC to run it.
 The process is explained here:
 [http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Getting_started](http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Getting_started)
 
+<Osm2GpsMid-0.7.5-map66-debug.jar> creates debug versions of GpsMid. Normally,
+you won't need to use it.
+
 Alternatively, you can download pre-built map data from
 [http://gpsmid.sourceforge.net/prebuild/](http://gpsmid.sourceforge.net/prebuild/).
 
-The JAR files you find there contain the map data. Copy the one you want
-to your phone and configure GpsMid to read from this file in Setup -> Map
-source. (For some devices, especially from Nokia, you MUST rename 
-the .jar file to .zip to make it visible and selectable.)
+The ZIP files you find there contain the map data. 
+Copy the one you want to your phone and configure GpsMid to read from this file 
+in Setup -> Map source.
+
+On many devices, it's preferable to unpack the contents of the ZIP archive first
+because reading from the ZIP increases the memory consumption of GpsMid.
