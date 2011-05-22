@@ -276,7 +276,8 @@ public class SeaGenerator {
 						 * (which is why making this method sound like it's a simple getter is 
 						 * a bloody bad idea).
 						 */
-						byte t = w.getType(configuration);
+						// polish.api.bigstyles
+						short t = w.getType(configuration);
 						tile.addWay(w);
 					}
 				}
@@ -295,7 +296,8 @@ public class SeaGenerator {
 					 * (which is why making this method sound like it's a simple getter is 
 					 * a bloody bad idea).
 					 */
-					byte t = sea.getType(configuration);
+					// polish.api.bigstyles
+					short t = sea.getType(configuration);
 					log.info("sea (newly created): ", sea);
 					System.out.println("  Sea (newly created): " + sea);
 					tile.addWay(sea);
@@ -445,7 +447,8 @@ public class SeaGenerator {
 					 * (which is why making this method sound like it's a simple getter is 
 					 * a bloody bad idea).
 					 */
-					byte t = w.getType(configuration);
+					// polish.api.bigstyles
+					short t = w.getType(configuration);
 					tile.addWay(w);
 				}
 			}
@@ -527,7 +530,8 @@ public class SeaGenerator {
 			 * (which is why making this method sound like it's a simple getter is 
 			 * a bloody bad idea).
 			 */
-			byte t = sea.getType(configuration);
+			// polish.api.bigstyles
+			short t = sea.getType(configuration);
 			log.info("sea background: ", sea);
 			System.out.println("  Sea background: " + sea);
 			tile.addWay(sea);
@@ -554,7 +558,8 @@ public class SeaGenerator {
 				 * (which is why making this method sound like it's a simple getter is 
 				 * a bloody bad idea).
 				 */
-				byte t = land.getType(configuration);
+				// polish.api.bigstyles
+				short t = land.getType(configuration);
 				tile.addWay(land);
 			}
 		}

@@ -24,10 +24,10 @@ class GuiPOItypeSelectMenu extends KeySelectMenu implements KeySelectMenuListene
 	class POItypeSelectMenuItem implements KeySelectMenuItem {
 		private Image img;
 		private String  name;
-		private byte idx;
+		private short idx;
 		private String canon;
 		
-		public POItypeSelectMenuItem(Image img, String name, byte idx) {
+		public POItypeSelectMenuItem(Image img, String name, short idx) {
 			this.img = img;
 			this.name = name;
 			this.idx = idx;
@@ -46,7 +46,7 @@ class GuiPOItypeSelectMenu extends KeySelectMenu implements KeySelectMenuListene
 			return canon;
 		}
 		
-		public byte getIdx() {
+		public short getIdx() {
 			return idx;
 		}
 		
@@ -77,9 +77,9 @@ class GuiPOItypeSelectMenu extends KeySelectMenu implements KeySelectMenuListene
 		if (poiTypes == null) {
 			poiTypes = new Vector();
 			// FIXME select proper image for
-			KeySelectMenuItem menuItem = new POItypeSelectMenuItem(Legend.getNodeSearchImage((byte)0), Locale.get("guipoitypeselectmenu.Everything")/*Everything*/, (byte)0);
+			KeySelectMenuItem menuItem = new POItypeSelectMenuItem(Legend.getNodeSearchImage((short)0), Locale.get("guipoitypeselectmenu.Everything")/*Everything*/, (short)0);
 			poiTypes.addElement(menuItem);
-			for (byte i = 1; i < Legend.getMaxType(); i++) {
+			for (short i = 1; i < Legend.getMaxType(); i++) {
 				menuItem = new POItypeSelectMenuItem(Legend.getNodeSearchImage(i),Legend.getNodeTypeDesc(i),i);
 				poiTypes.addElement(menuItem);
 			}
@@ -90,7 +90,7 @@ class GuiPOItypeSelectMenu extends KeySelectMenu implements KeySelectMenuListene
 	public void keySelectMenuSearchString(String searchString) {
 		this.removeAll();
 		Vector vec = new Vector();
-		for (byte i = 0; i < poiTypes.size(); i++) {
+		for (short i = 0; i < poiTypes.size(); i++) {
 			POItypeSelectMenuItem poiType = (POItypeSelectMenuItem)poiTypes.elementAt(i); 
 			if (poiType.getCanon().startsWith(searchString) || poiType.getName().toLowerCase().startsWith(searchString.toLowerCase())) {
 				logger.info(poiType + " matches searchString " + searchString);

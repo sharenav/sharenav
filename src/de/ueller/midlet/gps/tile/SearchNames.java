@@ -14,6 +14,7 @@ import java.util.Vector;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.SearchResult;
 import de.ueller.gps.data.Legend;
+import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GuiSearch;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
@@ -44,6 +45,11 @@ public class SearchNames implements Runnable {
 	public static final int INDEX_HOUSENUMBER = 3;
 	public static final int INDEX_BIGNAME = 4;
 	public static final int INDEX_WAYPOINTS = 5;
+
+	public static final int FLAG_NODE = 0x80;
+	public static final int FLAG_URL = 0x40;
+	public static final int FLAG_PHONE = 0x20;
+
 	protected static final Logger logger = 
 		Logger.getInstance(SearchNames.class, Logger.TRACE);
 
@@ -172,7 +178,7 @@ public class SearchNames implements Runnable {
 				fnPrefix = "/s";
 			}
 			String fileName = fnPrefix + fn + ".d";
-			System.out.println("open " + fileName);
+			//System.out.println("open " + fileName);
 			InputStream stream;
 			try {
 				stream = Configuration.getMapResource(fileName);
@@ -187,9 +193,10 @@ public class SearchNames implements Runnable {
 				//System.out.println("Couldn't open bigname index, trying to fall back to name index");
 
 				/*
-				 * However, if it's a BIGNAME index which fails, try opening the NAME index as fallback
+				 * However, if it's a BIGNAME index which fails
+				 * with map format 65, try opening the NAME index as fallback
 				 */
-				if (iType == INDEX_BIGNAME) {
+				if (iType == INDEX_BIGNAME && !Legend.enableMap66Search) {
 					fnPrefix = "/s";
 					fileName = fnPrefix + fn + ".d";
 					try {
@@ -281,7 +288,11 @@ public class SearchNames implements Runnable {
 				if (!current.toString().startsWith(compare)) {
 					idx = -1;
 				}
-				type = ds.readByte();
+				if (Legend.enableBigStyles) {
+					type = ds.readShort();
+				} else {
+					type = ds.readByte();
+				}
 								
 				while (type != 0) {					
 					if (stopSearch) {
@@ -292,12 +303,19 @@ public class SearchNames implements Runnable {
 					if (iType != INDEX_NAME) {
 						id = ds.readLong();
 					}
-					byte isInCount = ds.readByte();
+					byte isInCountByte = ds.readByte();
+					// strip flags
+					byte isInCount = (byte) (isInCountByte & 0x0f);
+
+					// in map 65, node is negative in index, in 66, positive in index but negative in memory
+					if (Legend.enableMap66Search && (isInCountByte & FLAG_NODE) == FLAG_NODE) {
+						type = (short) -1*type;
+					}
 					int[] isInArray = null;
 					if (isInCount > 0 ) {
 						isInArray = new int[isInCount];
 						for (int jj = isInCount; jj-- != 0;) {
-							isInArray[jj] = Names.readNameIdx(ds);							
+							isInArray[jj] = Names.readNameIdx(ds);
 						}
 					}
 					float lat = ds.readFloat();
@@ -306,10 +324,14 @@ public class SearchNames implements Runnable {
 					int phoneidx = -1;
 					int nameidx = Names.readNameIdx(ds);
 					if (Legend.enableUrlTags) {
-						urlidx = Urls.readUrlIdx(ds);
+						if (!Legend.enableMap66Search || (isInCountByte & FLAG_URL) == FLAG_URL) {
+							urlidx = Urls.readUrlIdx(ds);
+						}
 					}
 					if (Legend.enablePhoneTags) {
-						phoneidx = Urls.readUrlIdx(ds);
+						if (!Legend.enableMap66Search || (isInCountByte & FLAG_PHONE) == FLAG_PHONE) {
+							phoneidx = Urls.readUrlIdx(ds);
+						}
 					}
 					if (urlidx == 0) {
 						urlidx = -1;
@@ -331,7 +353,7 @@ public class SearchNames implements Runnable {
 						//#endif
 						sr.urlIdx = urlidx;
 						sr.phoneIdx = phoneidx;
-						sr.type = (byte) type;
+						sr.type = (short) type;
 						sr.lat = lat;
 						sr.lon = lon;
 						sr.nearBy = isInArray;
@@ -352,13 +374,21 @@ public class SearchNames implements Runnable {
 								// of silently not showing results
 								//#debug info
 								logger.info("Found SEARCH_MAX_COUNT entries. That's enough, stopping further search");
+								if (!Configuration.getCfgBitState(Configuration.CFGBIT_SUPPRESS_SEARCH_WARNING)) {
+									GpsMid.getInstance().alert(Locale.get("SearchNames.SearchWarningTitle")/*Search warning*/,
+										     Locale.get("SearchNames.SearchWarning")/*Maximum search count exceeded, search interrupted*/, 500);
+								}
 								ds.close();
 								return;
 							}
 						}
 						//System.out.println("found " + current +"(" + idx + ") type=" + type);
 					}
-					type = ds.readByte();
+					if (Legend.enableBigStyles) {
+						type = ds.readShort();
+					} else {
+						type = ds.readByte();
+					}
 				} // while (type != 0)
 			} // while (true)
 		} catch (NullPointerException e) {
@@ -374,11 +404,17 @@ public class SearchNames implements Runnable {
  	        //#if polish.api.bigsearch
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH)) {
 			appendSearchBlocking(search, INDEX_WORD);
-		} else {
+		} else if (Legend.enableMap66Search) {
 			appendSearchBlocking(search, INDEX_BIGNAME);
+		} else {
+			appendSearchBlocking(search, INDEX_NAME);
 		}
  	        //#else
-		appendSearchBlocking(search, INDEX_NAME);
+		if (Legend.enableMap66Search) {
+			appendSearchBlocking(search, INDEX_BIGNAME);
+		} else {
+			appendSearchBlocking(search, INDEX_NAME);
+		}
                 //#endif
 	}
 	/**

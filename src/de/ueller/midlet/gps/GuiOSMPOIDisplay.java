@@ -52,7 +52,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 	private ChoiceGroup poiSelectionCG;
 	private boolean showPoiTypeForm;
 	private boolean showParent;
-	private byte poiType;
+	private short poiType;
 	
 	public GuiOSMPOIDisplay(int nodeID, SingleTile t, float lat, float lon, GpsMidDisplayable parent) {
 		super(Locale.get("guiosmpoidisplay.Node")/*Node*/, parent);
@@ -127,7 +127,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 		}
 		
 		if (c == OK_CMD) {
-			poiType = (byte)poiSelectionCG.getSelectedIndex();
+			poiType = (short)poiSelectionCG.getSelectedIndex();
 			String [] tags = Legend.getNodeOsmTags(poiType);
 			for (int i = 0; i < tags.length/2; i++) {
 				osmentity.getTags().put(tags[i*2], tags[i*2 + 1]);

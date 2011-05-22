@@ -29,11 +29,15 @@ import javax.microedition.lcdui.Image;
 
 import de.enough.polish.util.Locale;
 
+//#if polish.android
+import android.view.KeyEvent;
+//#endif
+
 public class Splash extends Canvas implements CommandListener,Runnable{
 	private Image splash;
-    /** Soft button to go back from about screen. */
-    private final Command BACK_CMD = new Command(Locale.get("splash.Accept"), Command.OK, 2);
-    private final Command EXIT_CMD = new Command(Locale.get("splash.Deny"), Command.EXIT, 1);
+	/** Soft button to go back from about screen. */
+	private final Command BACK_CMD = new Command(Locale.get("splash.Accept"), Command.OK, 2);
+	private final Command EXIT_CMD = new Command(Locale.get("splash.Deny"), Command.EXIT, 1);
 	private final GpsMid main;
 	String[] txt = {
 		Locale.get("splash.Discl1")/*Disclaimer:*/,
@@ -235,5 +239,25 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 			Configuration.setWikipediaLang("en");
 			Configuration.setNamesOnMapLang("en");
 		}
+		// FIXME With this there's the problem that Back gets passed on to the next menu
+		// See http://developer.android.com/sdk/android-2.0.html
+		// for Native Android workaround; not sure how to do this with J2MEPolish
+		//#if polish.android
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			if (initDone) {
+				shutdown = true;
+				GpsMid.showMapScreen();
+				return;
+			} else {
+				main.alert("Splash", "Quitting", 3000);
+				shutdown = true;
+				Configuration.setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, false, true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_RUNNING, false, true);
+				main.notifyDestroyed();
+				return;
+			}
+		}
+		//#endif
+
 	}
 }

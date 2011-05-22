@@ -28,7 +28,7 @@ public class WayDescription extends EntityDescription{
 	 */
 	public byte		wayDescTravelModes;
 	/** typical speed of this WayDescription for up to MAXTRAVELMODES travel modes */
-	public int		typicalSpeed[] = new int[TravelModes.MAXTRAVELMODES];
+	public float		typicalSpeed[] = new float[TravelModes.MAXTRAVELMODES];
 	public int		noWaysOfType;
 	public byte		forceToLayer;
 	
@@ -52,7 +52,7 @@ public class WayDescription extends EntityDescription{
 		wayWidth = 2;
 		wayDescTravelModes = 0;
 		for (int i = 0; i < TravelModes.travelModeCount; i++) {
-			typicalSpeed[i] = 5;
+			typicalSpeed[i] = 5f;
 		}
 		rulePriority = 0;
 	}

@@ -107,16 +107,24 @@ public class Relations {
 								//System.out.println ("way w2: " + w2 + " key: " + key);
 								for (String t : r.getTags()) {
 									if (w2.containsKey(t)) {
-										// don't duplicate ; FIXME should check if is in
-										// by splitting on ";" and comparing values
-										if (!w2.getAttribute(t).equals(r.getAttribute(t)) && w2.getAttribute(t).length() < 35)
+										// don't add to name if already there
+										String [] values = w2.getAttribute(t).split(";");
+										boolean exists = false;
+										for (int v = 0; v < values.length ; v++) {
+											if (values[v].equals(r.getAttribute(t))) {
+												exists = true;
+											}
+										}
+										// FIXME find out why long strings cause problems, fix the issue, and remove the arbitrary restriction of 35 chars in name
+										if (!exists && w2.getAttribute(t).length() < 35)
 											w2.setAttribute(t, w2.getAttribute(t) + ";" + r.getAttribute(t));
 									} else {
 										w2.setAttribute(t, r.getAttribute(t));
 									}
 								}
 								w2.resetType(conf);
-								byte type = w2.getType(conf);
+								// polish.api.bigstyles
+								short type = w2.getType(conf);
 							}
 						} else {
 							newId = FakeIdGenerator.makeFakeId();
@@ -134,7 +142,8 @@ public class Relations {
 							}
 							w2.resetType(conf);
 							w.setAttribute(key, Long.toString(newId));
-							byte type = w2.getType(conf);
+							// polish.api.bigstyles
+							short type = w2.getType(conf);
 							//System.out.println("adding way: " + w2 + " newId = " + newId);
 							parser.addWay(w2);
 						}

@@ -71,7 +71,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 	}
 
 	public void applyElGroupElementStates() {
-		byte count = 0;
+		short count = 0;
 		byte nonOverviewMode = Legend.OM_SHOWNORMAL;
 		byte overviewMode = Legend.OM_OVERVIEW;
 		byte nameReq = Legend.OM_NAME_ALL;
@@ -103,7 +103,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 			// only hide non-overview elements if at least one overview element is selected
 			// This is implemented so because otherwise simple switching between POIs, areas and ways would
 			// cause to disappear all the elements in the list unintentionally
-			for(byte i = 0; i < ovElSelectionCG.size(); i++ ) {
+			for(short i = 0; i < ovElSelectionCG.size(); i++ ) {
 				if (ovElSelectionCG.isSelected(i)) {
 					nonOverviewMode = Legend.OM_HIDE;
 					break;
@@ -116,7 +116,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 		switch (ovElGroupNr) {
 			case 0:
 				// save overview mode state to node description
-				for (byte i = 1; i < Legend.getMaxType(); i++) {				
+				for (short i = 1; i < Legend.getMaxType(); i++) {				
 					if (Legend.isNodeHideable(i)) {
 						Legend.setNodeOverviewMode(i, ovElSelectionCG.isSelected(count)?overviewMode:nonOverviewMode);
 						count++;
@@ -125,7 +125,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 				break;
 			case 1:
 				// save overview mode state to 'area' description
-				for (byte i = 1; i < Legend.getMaxWayType(); i++) {				
+				for (short i = 1; i < Legend.getMaxWayType(); i++) {				
 					WayDescription w = Legend.getWayDescription(i);
 					if (w.isArea && Legend.isWayHideable(i) ) {
 						Legend.setWayOverviewMode(i, ovElSelectionCG.isSelected(count)?overviewMode:nonOverviewMode);
@@ -135,7 +135,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 				break;
 			case 2:
 				// save overview mode state to way description
-				for (byte i = 1; i < Legend.getMaxWayType(); i++) {				
+				for (short i = 1; i < Legend.getMaxWayType(); i++) {				
 					WayDescription w = Legend.getWayDescription(i);
 					if (!w.isArea && Legend.isWayHideable(i) ) {
 						Legend.setWayOverviewMode(i, ovElSelectionCG.isSelected(count)?overviewMode:nonOverviewMode);
@@ -176,7 +176,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 				frmMaxEl--;
 			}
 
-			byte count=0;
+			short count=0;
 
 			// Warning: do not move this up - it must be after applyElGroupElementStates()
 			ovElGroupNr = (byte) ovElGroupCG.getSelectedIndex();
@@ -204,7 +204,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 			switch (ovElGroupNr) {
 				case 0:
 					// set POI overview states in form				
-					for (byte i = 1; i < Legend.getMaxType(); i++) {				
+					for (short i = 1; i < Legend.getMaxType(); i++) {				
 						if (Legend.isNodeHideable(i)) {
 							ovElSelectionCG.append(Legend.getNodeTypeDesc(i), Legend.getNodeSearchImage(i));
 							ovElSelectionCG.setSelectedIndex(count, ((Legend.getNodeOverviewMode(i) & Legend.OM_MODE_MASK) == Legend.OM_OVERVIEW) );
@@ -214,7 +214,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 					break;
 				case 1:
 					// set Area overview states in form
-					for (byte i = 1; i < Legend.getMaxWayType(); i++) {				
+					for (short i = 1; i < Legend.getMaxWayType(); i++) {				
 						WayDescription w = Legend.getWayDescription(i);
 						if (w.isArea && Legend.isWayHideable(i) ) {
 							ovElSelectionCG.append(w.description, Legend.getAreaSearchImage(i));
@@ -225,7 +225,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 					break;
 				case 2:
 					// set Way overview  states in form
-					for (byte i = 1; i < Legend.getMaxWayType(); i++) {				
+					for (short i = 1; i < Legend.getMaxWayType(); i++) {				
 						WayDescription w = Legend.getWayDescription(i);
 						if (!w.isArea && Legend.isWayHideable(i) ) {
 							ovElSelectionCG.append(w.description, Legend.getWaySearchImage(i));

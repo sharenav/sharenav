@@ -3,8 +3,9 @@
 # update the Osm2GpsMid snapshots
 #
 
-user=YOUR_SOURCEFORGE_USERNAME_HERE
-ver=0.7.32-map66
+user=PUT_YOUR_SOURCEFORGE_USERNAME_HERE
+numver=0.7.5
+ver=$numver-map66
 
 ant clean
 #
@@ -34,4 +35,11 @@ cp -p Osm2GpsMid/dist/Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar
 
 # 
 
-scp Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar $user,gpsmid@web.sf.net:htdocs/prebuild
+
+mkdir "Release $numver"
+cp dist/*-$ver.jar README.mkd WHATSNEW.txt Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar "Release $numver"
+
+#scp Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar $user,gpsmid@web.sf.net:htdocs/prebuild
+
+chmod -R g+w "Release $numver"
+scp -p -r "Release $numver" $user,gpsmid@web.sf.net:/home/frs/project/g/gp/gpsmid/gpsmid/

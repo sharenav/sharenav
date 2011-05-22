@@ -93,6 +93,12 @@ public class Routing implements Runnable {
 		this.parent = parent;
 		
 		estimateFac = (Configuration.getRouteEstimationFac() / 10f) + 0.8f;
+		if (Configuration.getRouteEstimationFac() > 0) {
+			if (!Configuration.getCfgBitState(Configuration.CFGBIT_SUPPRESS_ROUTE_WARNING)) {
+				parent.alert(Locale.get("routing.RoutingWarningTitle")/*Routing warning*/,
+					     Locale.get("routing.RoutingWarning")/*Routes may be longer than necessary, as allow poor routes setting is on*/, 5000);
+			}
+		}
 		maxEstimationSpeed = (int) ( (Configuration.getTravelMode().maxEstimationSpeed * 10) / 36);
 		if (maxEstimationSpeed == 0) {
 			maxEstimationSpeed = 1; // avoid division by zero
@@ -340,9 +346,11 @@ public class Routing implements Runnable {
 					continue;
 				}
 
-				int dTurn=currentNode.fromBearing-nodeSuccessor.startBearing;
-				int turnCost=getTurnCost(dTurn);
+				int turnCost=getTurnCost(currentNode.fromBearing,nodeSuccessor.startBearing);
+				//System.out.println ("currentNode frombearing " + currentNode.fromBearing
+				//		    + " nodeSuccessor.startBearing " + nodeSuccessor.startBearing);
 				successorCost = currentNode.costs + nodeSuccessor.getCost()+turnCost;
+				//System.out.println("successor " + nodeSuccessor + " cost " + successorCost + " turnCost : " + turnCost + " node " + currentNode + " current node costs " + currentNode.costs + " nodesucc cost " + nodeSuccessor.getCost());
 				// when the next connection starts at traffic signals and the current one isn't also starting at a traffic signal but we are not on a motorway connection
 				if (nodeSuccessor.startsAtTrafficSignals() && !currentNode.state.startsAtTrafficSignals() && !nodeSuccessor.isMotorwayConnection() ) {
 					//System.out.println("TRAFFIC SIGNAL");
@@ -366,6 +374,8 @@ public class Routing implements Runnable {
 				theNode = (openNode != null) ? openNode : closedNode;
 				// in open or closed				
 				if (theNode != null) {
+					//System.out.println("successor cost " + successorCost + ", theNode.costs " + theNode.costs);
+					//System.out.println("theNode.distance " + theNode.distance);
 					if (successorCost < theNode.costs) {
 						if (closedNode != null) {
 							if (checkForTurnRestrictions) {
@@ -487,9 +497,22 @@ public class Routing implements Runnable {
 		return lo; //insert before lo 
 	} 
 
-	
-	private int getTurnCost(int turn) {
-		int adTurn=Math.abs(turn*2);
+
+	private int getTurnAngle(int endBearing, int startBearing) {
+		if (endBearing == 99 || startBearing == 99) {
+			return 0;
+		}
+		int angle = Math.abs((endBearing - startBearing)*2);
+		if (angle > 180) {
+			angle = 360 - angle;
+		}
+		//System.out.println ("GetTurn:  " + angle + " endBearing: " + endBearing +
+		//	" startBearing " + startBearing);
+		return angle;
+	}
+
+	private int getTurnCost(int endBearing, int startBearing) {
+		int adTurn=getTurnAngle(endBearing, startBearing);
 		if (adTurn > 150){
 			return 20;
 		} else if (adTurn > 120){
@@ -512,8 +535,8 @@ public class Routing implements Runnable {
 //		if (noHeuristic){
 //			return 0;
 //		}
-		int dTurn=from.endBearing-to.startBearing;
-		int turnCost=getTurnCost(dTurn);
+		//int dTurn=from.endBearing-to.startBearing;
+		int turnCost=getTurnCost(from.endBearing, to.startBearing);
 		RouteNode toNode=getRouteNode(to.toId);
 		if (toNode == null) {
 			//#debug info
@@ -531,7 +554,7 @@ public class Routing implements Runnable {
 		 * like at http://www.openstreetmap.org/?mlat=48.061419&mlon=11.639106&zoom=18&layers=B000FTF
 		 * or vice versa like at http://www.openstreetmap.org/browse/node/673142
 		 */
-		if (from.isMotorwayConnection() && to.isMotorwayConnection() && Math.abs(dTurn*2) > 100 ) {
+		if (from.isMotorwayConnection() && to.isMotorwayConnection() && getTurnAngle(from.endBearing, to.startBearing) > 100 ) {
 			return (int) (dist * 2);
 		}
 		
@@ -733,8 +756,8 @@ public class Routing implements Runnable {
 					if (! w.isOneDirectionOnly() ) { // if no against oneway rule applies
 //						parent.getRouteNodes().addElement(new RouteHelper(rn.lat,rn.lon,"next back"));
 						// TODO: fill in bearings and cost
-						Connection initialState=new Connection(rn,0,(byte)0,(byte)0, -1);
-						GraphNode firstNode=new GraphNode(initialState,null,0,0,(byte)0);
+						Connection initialState=new Connection(rn,0,(byte)99,(byte)99, -1);
+						GraphNode firstNode=new GraphNode(initialState,null,0,0,(byte)99);
 						open.put(initialState.toId, firstNode);
 						nodes.addElement(firstNode);
 						/*
@@ -756,8 +779,8 @@ public class Routing implements Runnable {
 					routeFrom = rn;
 					firstNodeId2 = rn.id;
 					// TODO: fill in bearings and cost
-					Connection initialState=new Connection(rn,0,(byte)0,(byte)0, -2);
-					GraphNode firstNode=new GraphNode(initialState,null,0,0,(byte)0);
+					Connection initialState=new Connection(rn,0,(byte)99,(byte)99, -2);
+					GraphNode firstNode=new GraphNode(initialState,null,0,0,(byte)99);
 					open.put(initialState.toId, firstNode);
 					nodes.addElement(firstNode);						
 					/*
@@ -793,7 +816,7 @@ public class Routing implements Runnable {
 												new Node(toMark.lat, toMark.lon, true)
 					)
 			);
-			//System.out.println("Closest " + RouteInstructions.getClosestPointOnDestWay() );
+			System.out.println("Closest " + RouteInstructions.getClosestPointOnDestWay() );
 			RouteTileRet nodeTile=new RouteTileRet();
 			// roundabouts don't need to be explicitly tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
 			RouteNode nextNode = findNextRouteNode(nearestSeg, toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
@@ -801,7 +824,7 @@ public class Routing implements Runnable {
 				finalNodeId2 = nextNode.id; // must be before the oneDirection check as this routeNode might be the destination node for connection/duration determination
 				if (! w.isOneDirectionOnly() ){ // if no against oneway rule applies
 					// TODO: fill in bearings and cost
-					Connection newCon=new Connection(routeTo,0,(byte)0,(byte)0, -3);
+					Connection newCon=new Connection(routeTo,0,(byte)99,(byte)99, -3);
 					tile.getRouteNode(nextNode.lat, nextNode.lon, nodeTile);
 					nodeTile.tile.addConnection(nextNode,newCon,bestTime);
 					/*
@@ -824,7 +847,7 @@ public class Routing implements Runnable {
 				return false;
 			}
 			// TODO: fill in bearings and cost
-			Connection newCon=new Connection(routeTo,0,(byte)0,(byte)0, -4);
+			Connection newCon=new Connection(routeTo,0,(byte)99,(byte)99, -4);
 			tile.getRouteNode(prefNode.lat, prefNode.lon, nodeTile);
 			nodeTile.tile.addConnection(prefNode,newCon,bestTime);
 			/*
@@ -998,7 +1021,7 @@ public class Routing implements Runnable {
 			for (int cl=0;cl < successor.length;cl++){
 				Connection nodeSuccessor=successor[cl];
 				if (nodeSuccessor.toId == rnToId) {
-//					System.out.println("CONNECTION FOUND: " + nodeSuccessor.durationFSecs / 5 );
+					//System.out.println("CONNECTION FOUND: " + nodeSuccessor.durationFSecs / 5 );
 					return nodeSuccessor.durationFSecs;
 				}
 			}

@@ -4,7 +4,9 @@
 #
 
 user=YOUR_SOURCEFORGE_USERNAME_HERE
-ver=0.7.32-map66
+numver=0.7.45
+rcver=rc-v0.7.5
+ver=$numver-map66
 
 ant clean
 #
@@ -34,4 +36,6 @@ cp -p Osm2GpsMid/dist/Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar
 
 # 
 
-scp Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar $user,gpsmid@web.sf.net:htdocs/prebuild
+
+scp Osm2GpsMid-$ver.jar $user,gpsmid@web.sf.net:htdocs/prebuild/Osm2GpsMid-$ver-$rcver.jar
+scp Osm2GpsMid-$ver-debug.jar $user,gpsmid@web.sf.net:htdocs/prebuild/Osm2GpsMid-$ver-$rcver-debug.jar

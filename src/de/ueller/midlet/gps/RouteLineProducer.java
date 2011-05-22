@@ -133,7 +133,11 @@ public class RouteLineProducer implements Runnable {
 			cFrom.wayFromConAt = pc.conWayFromAt;
 			cFrom.wayToConAt = pc.conWayToAt;
 			cFrom.wayNameIdx = pc.conWayNameIdx;
+			//#if polish.bigstyles
 			cFrom.wayType = pc.conWayType;
+			//#else
+			cFrom.wayType = (byte) (pc.conWayType & 0xff);
+			//#endif
 			cFrom.wayDistanceToNext = pc.conWayDistanceToNext;
 			// at the final route seg reduce the distance to be only until the closest point on the destination way
 			if (iConnFrom == route.size() - 2) {
@@ -168,7 +172,7 @@ public class RouteLineProducer implements Runnable {
 			
 			int countSameBearings = 0;
 			for (int b = 0; b < pc.conWayBearingsCount; b++) {
-				byte bearingAlternative = pc.conWayBearings[b];
+				short bearingAlternative = pc.conWayBearings[b];
 				if (cTo.wayConStartBearing == bearingAlternative) {
 					countSameBearings++;
 				}
@@ -179,7 +183,7 @@ public class RouteLineProducer implements Runnable {
 //			System.out.println(iConnFrom + ": " + cTo.wayConStartBearing);
 			// check if we need a bearing instruction at this connection
 			for (int b = 0; b < pc.conWayBearingsCount; b++) {
-				byte bearingAlternative = pc.conWayBearings[b];
+				short bearingAlternative = pc.conWayBearings[b];
 //				System.out.println(bearing);
 				
 				if (cTo.wayConStartBearing != bearingAlternative) {					
@@ -264,7 +268,11 @@ public class RouteLineProducer implements Runnable {
 				cFrom.wayFromConAt = pc.conWayFromAt;
 				cFrom.wayToConAt = pc.conWayToAt;
 				cFrom.wayNameIdx = pc.conWayNameIdx;
+				//#if polish.bigstyles
 				cFrom.wayType = pc.conWayType;
+				//#else
+				cFrom.wayType = (byte) (pc.conWayType & 0xff);
+				//#endif
 				cFrom.wayDistanceToNext = pc.conWayDistanceToNext;
 				cFrom.wayRouteFlags |= Legend.ROUTE_FLAG_AREA;				
 				System.out.println("AREA MATCH FOR: " + iConnFrom);

@@ -205,9 +205,10 @@ public class Configuration {
 	public final static byte CFGBIT_MAXSPEED_WINTER = 69;
 	// bit 70: Flag whether iconMenus should have icons mapped on keys
 	public final static byte CFGBIT_ICONMENUS_MAPPED_ICONS = 70;
-	/** bit 71: Flag whether display size specific defaults are set
-	(we need a canvas to determine display size, so we can't determine appropriate defaults in Configuration) */
-	public final static byte CFGBIT_DISPLAYSIZE_SPECIFIC_DEFAULTS_DONE = 71;
+	/** bit 71: Flag whether canvas specific defaults are set
+	(we need a canvas to determine display size and hasPointerEvents(),
+	 so we can't determine appropriate defaults in Configuration) */
+	public final static byte CFGBIT_CANVAS_SPECIFIC_DEFAULTS_DONE = 71;
 	/** bit 72: Flag whether initial Setup Forms were shown to the user */
 	public final static byte CFGBIT_INITIAL_SETUP_DONE = 72;
 	/** bit 73: Flag whether to add a Back command in fullscreen menu */
@@ -288,6 +289,10 @@ public class Configuration {
 	public final static byte CFGBIT_TICKER_ISEARCH_ALL = 111;
 	/** bit 112: Flag whether to have a large font for UI */
 	public final static byte CFGBIT_LARGE_FONT = 112;
+	/** bit 113: Flag whether to suppress the warning about hitting the search max limit */
+	public final static byte CFGBIT_SUPPRESS_SEARCH_WARNING = 113;
+	/** bit 114: Flag whether to suppress the warning about poor routes */
+	public final static byte CFGBIT_SUPPRESS_ROUTE_WARNING = 114;
 	
 	/**
 	 * These are the database record IDs for each configuration option

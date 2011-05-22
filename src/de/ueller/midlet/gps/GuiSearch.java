@@ -18,6 +18,7 @@ import java.util.Hashtable;
 import android.view.KeyEvent;
 //#endif
 
+import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.ChoiceGroup;
 import javax.microedition.lcdui.Command;
@@ -205,6 +206,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private Hashtable matchSources = null;
 	private Hashtable matchLats = null;
 	private Hashtable matchLons = null;
+	private Hashtable matchIdx = null;
 	//#endif
 
 	private boolean spacePressed = false;
@@ -256,7 +258,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		
 		needsPainting = false;
 		try {
-			GpsMid.getTimer().schedule(timerT, 500, 500);
+			GpsMid.getTimer().schedule(timerT, 400, 400);
 		} catch (Exception e) {
 			logger.exception("Failed to initialize GuiSearch repaint timer", e);
 		}
@@ -279,6 +281,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				if (!isCursorValid()) {
 					return;
 				}
+				//System.out.println("Trying to handle url or phone cmd");
 				SearchResult sr = (SearchResult) result.elementAt(cursor);
 				String url = null;
 				String phone = null;
@@ -291,7 +294,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 					}
 				}
 				if (c == URL_CMD) {
-					if (sr.phoneIdx != -1) {
+					//System.out.println("Trying to fetch url");
+					if (sr.urlIdx != -1) {
+						//System.out.println("Got url " + url);
 						url = parent.getUrl(sr.urlIdx);
 					}
 				}
@@ -300,7 +305,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 						//#if polish.api.online
 						GpsMid.getInstance().platformRequest(url);
 						//#else
-						// FIXME: show user the url or phone number
+						GpsMid.getInstance().alert (Locale.get("guisearch.OpenUrlTitle"),
+							      Locale.get("guisearch.OpenUrl") +  " " + url, Alert.FOREVER);
 						//#endif
 					}
 				} catch (Exception e) {
@@ -319,14 +325,14 @@ public class GuiSearch extends Canvas implements CommandListener,
 					positionMark.displayName = wayPts[sr.nameIdx].displayName;
 				} else {
 					positionMark.nameIdx=sr.nameIdx;
-					positionMark.displayName=parent.getName(sr.nameIdx);
+					positionMark.displayName=nameForResult(sr);
 				}
 				//#else
 				if (state == STATE_FAVORITES) {
 					positionMark.displayName = wayPts[sr.nameIdx].displayName;
 				} else {
 					positionMark.nameIdx=sr.nameIdx;
-					positionMark.displayName=parent.getName(sr.nameIdx);
+					positionMark.displayName=nameForResult(sr);
 				}
 				//#endif
 				parent.setDestination(positionMark);
@@ -427,6 +433,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			matchSources = null;
 			matchLats = null;
 			matchLons = null;
+			matchIdx = null;
 			//#endif
 			words = "";
 			spacePressed = false;
@@ -439,7 +446,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			if (cursor >= result.size()) return;
 			SearchResult sr = (SearchResult) result.elementAt(cursor);
 			PositionMark positionMark = new PositionMark(sr.lat,sr.lon);
-			positionMark.displayName=parent.getName(sr.nameIdx);
+			positionMark.displayName=nameForResult(sr);
 			parent.gpx.addWayPt(positionMark);
 			parent.show();
 			return;
@@ -501,7 +508,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				if (state == STATE_FAVORITES) {
 					name = wayPts[sr.nameIdx].displayName;
 				} else {
-					name = parent.getName(sr.nameIdx);
+					name = nameForResult(sr);
 				}
 				int imatch=searchCanon.length(); 
 				if (name != null && name.length()<imatch) { 
@@ -577,13 +584,13 @@ public class GuiSearch extends Canvas implements CommandListener,
 					if (state == STATE_FAVORITES && res.source == SearchNames.INDEX_WAYPOINTS) {
 						name = wayPts[res.nameIdx].displayName;
 					} else {
-						name = parent.getName(res.nameIdx);
+						name = nameForResult(res);
 					}
 					//#else
 					if (state == STATE_FAVORITES) {
 						name = wayPts[res.nameIdx].displayName;
 					} else {
-						name = parent.getName(res.nameIdx);
+						name = nameForResult(res);
 					}
 					//#endif
 					//System.out.println ("MatchMode: " + matchMode());
@@ -603,7 +610,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 						// match multiword search or housenumber search
 						//System.out.println ("MatchMode: " + matchMode() + " matchSources: " + matchSources);
 						if (matchMode() && matchSources != null) {
-							if (matchSources.get(id) != null) {
+							if (matchSources.get(id) != null &&
+							    (((Integer) matchIdx.get(id)).intValue() != res.nameIdx
+							     || Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH))) {
+								res.preMatchIdx = ((Integer) matchIdx.get(id)).intValue();
 								result.addElement(res);
 							}
 						} else {
@@ -710,7 +720,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			}
 			Image img = null;
 			if (sr.type < 0) {
-				img = Legend.getNodeSearchImage((byte)(sr.type*-1));
+				img = Legend.getNodeSearchImage((short)(sr.type*-1));
 			} else if (sr.type == 0 ) {
 				img = waypointIcon;
 			} else { // type > 0
@@ -724,7 +734,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			//#else
 			if (state != STATE_FAVORITES) {
 			//#endif
-				name = flags + getName(sr.nameIdx);
+				name = flags + nameForResult(sr);
 			} else {
 				if (wayPts.length > sr.nameIdx) {
 					name = wayPts[sr.nameIdx].displayName;
@@ -910,11 +920,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH)) {
 					searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_WORD);
 				} else {
-				//#if polish.api.bigsearch
-					searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_BIGNAME);
-				//#else
-					searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_NAME);
-				//#endif
+					if (Legend.enableMap66Search) {
+						searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_BIGNAME);
+					} else {
+						searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_NAME);
+					}
 				}
 				searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_HOUSENUMBER);
 				//searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_WHOLEWORD);
@@ -932,7 +942,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					//#endif
 				}
 				if (keyCode == KEY_POUND && state == STATE_FAVORITES) {
-					// FIXME make this work
+					// FIXME check if this works
 					sortByDist = !sortByDist;
 					reSearch();
 					return;
@@ -957,9 +967,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 			// Unicode character 10 is LF
 			// so 10 should correspond to Enter key on QWERT keyboards
 //#if polish.android
-			// FIXME the SEARCH doesn't work, wonder if J2MEPolish switches keycodes or something as
-			// search key is special in android
-		} else if (keyCode == 10 || action == FIRE || keyCode == KeyEvent.KEYCODE_SEARCH) {
+			// the SEARCH doesn't work with KeyEvent.KEYCODE_SEARCH, wonder if J2MEPolish
+			// switches keycodes or something. 0 seems to be what is given in practice for the search key
+			// in KeyCommandCanvas, but not here
+		} else if (keyCode == 10 || action == FIRE || keyCode == 0) {
 				commandAction( Trace.getInstance().getCommand(Trace.ROUTING_START_CMD), (Displayable) null);
 		} else if (keyCode == 10 || action == FIRE || keyCode == KeyEvent.KEYCODE_BACK) {
 			// FIXME With this there's the problem that Back gets passed on to the next menu
@@ -1021,7 +1032,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					if (state == STATE_FAVORITES) {
 						name = wayPts[sr.nameIdx].displayName;
 					} else {
-						name = parent.getName(sr.nameIdx);
+
 					}
 					if (carret < name.length()) {
 						searchAlpha = true;
@@ -1057,6 +1068,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				matchSources = null;
 				matchLats = null;
 				matchLons = null;
+				matchIdx = null;
 				//#endif
 				//System.out.println("Searchcanon tostring: " + searchCanon.toString());
 				//System.out.println("Searchcanon length: " + searchCanon.length());
@@ -1143,6 +1155,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		//#else
 		if (searchCanon.length() > 1) {
 			state = STATE_MAIN;
+			reSearch();
 		}
 		//#endif
 	}
@@ -1180,6 +1193,17 @@ public class GuiSearch extends Canvas implements CommandListener,
 		return (!words.equals(""));
 	}
 
+	private String nameForResult(SearchResult sr) {
+		String name = "";
+		//#if polish.api.bigsearch
+		if (sr.preMatchIdx != 0 && sr.preMatchIdx != sr.nameIdx) {
+			name = getName(sr.preMatchIdx) + " ";
+		}
+		//#endif
+		name += getName(sr.nameIdx);
+		return name;
+	}
+
 	//#if polish.api.bigsearch
 	private void storeMatches() {
 		SearchResult sr = null;
@@ -1192,16 +1216,21 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (matchLons == null) {
 			matchLons = new Hashtable();
 		}
+		if (matchIdx == null) {
+			matchIdx = new Hashtable();
+		}
 
 		for (int i = 0; i < result.size(); i++) {
 			sr = (SearchResult) result.elementAt(i);
 			Long id = new Long(sr.resultid);
+			Integer idx = new Integer(sr.nameIdx);
 			Float Lat = new Float(sr.lat);
 			Float Lon = new Float(sr.lon);
 			Integer source = new Integer(sr.source);
 			matchSources.put(id, source);
 			matchLats.put(id, Lat);
 			matchLons.put(id, Lon);
+			matchIdx.put(id, idx);
 			//System.out.println("Adding result: " + sr.resultid + " sr.source/housenum: " + sr.source + "/" + SearchNames.INDEX_HOUSENUMBER);
 			//System.out.println("Store match, adding, source = " + ((Integer) matchSources.get(id)).intValue());
 		}
@@ -1219,7 +1248,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 			Long id = new Long(sr.resultid);
 			// transfer house number coordinates to street
 			Integer sourceNew = new Integer(sr.source);
-			if (matchSources.get(id) != null) {
+			if (matchSources.get(id) != null &&
+			    (((Integer) matchIdx.get(id)).intValue() != sr.nameIdx
+			     || Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH))) {
 				//System.out.println("found match from old results, id = "
 				//		   + id + "source = "
 				//		   + ((Integer) matchSources.get(id)).intValue());
@@ -1228,6 +1259,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				if (sr.source != SearchNames.INDEX_HOUSENUMBER && matchLats != null && matchLats.get(id) != null) {
 					sr.lat = ((Float) matchLats.get(id)).floatValue();
 					sr.lon = ((Float) matchLons.get(id)).floatValue();
+					sr.preMatchIdx = ((Integer) matchIdx.get(id)).intValue();
 					sourceNew = (Integer) matchSources.get(id);
 				}
 				//	result.removeElementAt(i);
@@ -1237,8 +1269,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 				// if new match is a node, save coordinates
 				Float Lat = new Float(sr.lat);
 				Float Lon = new Float(sr.lon);
+				Integer idx = new Integer(sr.nameIdx);
 				matchLats.put(id, Lat);
 				matchLons.put(id, Lon);
+				matchIdx.put(id, idx);
 			}
 			matchNewSources.put(id, sourceNew);
 		}
@@ -1635,13 +1669,13 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (state == STATE_FAVORITES && srNew.source == SearchNames.INDEX_WAYPOINTS) {
 			name = wayPts[srNew.nameIdx].displayName;
 		} else {
-			name = parent.getName(srNew.nameIdx);
+			name = nameForResult(srNew);
 		}
 		//#else
 		if (state == STATE_FAVORITES) {
 			name = wayPts[srNew.nameIdx].displayName;
 		} else {
-			name = parent.getName(srNew.nameIdx);
+			name = nameForResult(srNew);
 		}
 		//#endif
 		//#debug debug
@@ -1732,7 +1766,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		clearList();
 		searchCanon.setLength(0);
 		searchAlpha = false;
-		final byte poiType = ((POItypeSelectMenuItem)item).getIdx();
+		final short poiType = ((POItypeSelectMenuItem)item).getIdx();
 		final CancelMonitorInterface cmi = this;
 		isSearchCanceled = false;
 		Thread t = new Thread(new Runnable() {

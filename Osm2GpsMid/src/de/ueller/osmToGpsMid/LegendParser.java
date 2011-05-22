@@ -136,7 +136,8 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			relationExpansions = new Hashtable<String, Boolean>();
 			relationExpansionsCombine = new Hashtable<String, Boolean>();
 			/* Add a bogous POI description, to reserve type 0 as a special marker */
-			currentPoi.typeNum = (byte)poiIdx++;
+			// polish.api.bigstyles
+			currentPoi.typeNum = (short) poiIdx++;
 			currentPoi.key = "A key that should never be hot";
 			currentPoi.value = "A value that should never be triggered";
 			currentPoi.description = "No description";
@@ -149,7 +150,8 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			 * Add a bogous Way description, to reserve type 0 as a special
 			 * marker
 			 */
-			currentWay.typeNum = (byte)wayIdx++;
+			// polish.api.bigstyles
+			currentWay.typeNum = (short) wayIdx++;
 			currentWay.key = "A key that should never be hot";
 			currentWay.value = "A value that should never be triggered";
 			currentWay.description = "No description";
@@ -171,12 +173,24 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			System.out.println("Style-file: You have " + (poiIdx - 1)
 					+ " POI types defined and " + (wayIdx - 1) + " way types");
 			if (poiIdx > 126) {
-				System.out.println("ERROR: your style file contains too many POI types, we currently only support 126. Sorry");
-				System.exit(1);
+				// polish.api.bigstyles
+				config.mediumStyles = true;
+				config.map66search = true;
+				if (poiIdx > 253) {
+					config.bigStyles = true;
+					System.out.println("WARNING: your style file contains > 253 POI types, you'll need a \"bigstyles\" GpsMid.");
+				}
+				//System.exit(1);
 			}
 			if (wayIdx > 126) {
-				System.out.println("ERROR: your style file contains too many way types, we currently only support 126. Sorry");
-				System.exit(1);
+				// polish.api.bigstyles
+				config.mediumStyles = true;
+				config.map66search = true;
+				if (poiIdx > 253) {
+					config.bigStyles = true;
+					System.out.println("WARNING: your style file contains > 253 way types, you'll need a \"bigstyles\" GpsMid.");
+				}
+				//System.exit(1);
 			}
 
 			// check if all colors are defined in the style-file
@@ -350,7 +364,8 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			}
 			if (qName.equals("value")) {
 				currentPoi = new POIdescription();
-				currentPoi.typeNum = (byte)poiIdx++;
+				// polish.api.bigstyles
+				currentPoi.typeNum = (short)poiIdx++;
 				currentPoi.key = currentKey;
 				currentPoi.value = atts.getValue("name");
 				currentPoi.hideable = true;
@@ -453,7 +468,8 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			}
 			if (qName.equals("Wvalue")) {
 				currentWay = new WayDescription();
-				currentWay.typeNum = (byte)wayIdx++;
+				// polish.api.bigstyles
+				currentWay.typeNum = (short) wayIdx++;
 				currentWay.key = currentKey;
 				currentWay.value = atts.getValue("name");
 				currentWay.hideable = true;
@@ -674,7 +690,9 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 					String typicalSpeed = atts.getValue("speed");
 					if (typicalSpeed != null) {
 						try {
-							currentWay.typicalSpeed[travelModeNr] = Integer.parseInt(typicalSpeed);
+							Float speed = Float.parseFloat(typicalSpeed);
+							currentWay.typicalSpeed[travelModeNr] = Float.parseFloat(typicalSpeed);
+							//currentWay.typicalSpeed[travelModeNr] = Integer.parseInt(typicalSpeed);
 						} catch (NumberFormatException nfe) {
 							System.out.println("Invalid speed for "
 									+ currentWay.description);
@@ -899,7 +917,8 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 		return poiMap;
 	}
 
-	public POIdescription getPOIDesc(byte type) {
+	// polish.api.bigstyles
+	public POIdescription getPOIDesc(short type) {
 		return (POIdescription) pois.get(type);
 	}
 
@@ -911,7 +930,8 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 		return wayMap;
 	}
 
-	public WayDescription getWayDesc(byte type) {
+	// polish.api.bigstyles
+	public WayDescription getWayDesc(short type) {
 		return (WayDescription) ways.get(type);
 	}
 

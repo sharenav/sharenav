@@ -4,7 +4,7 @@
 #
 
 user=PUT_YOUR_SOURCEFORGE_USERNAME_HERE
-ver=0.7.31-map65
+ver=0.7.32-map66
 
 ant clean
 #

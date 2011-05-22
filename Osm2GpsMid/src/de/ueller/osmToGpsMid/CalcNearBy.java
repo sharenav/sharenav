@@ -192,12 +192,23 @@ public class CalcNearBy {
 	 * @param nearByElements
 	 */
 	private void calcWayIsIn(OsmParser parser, KDTree nearByElements) {		
+		long startTime = System.currentTimeMillis();
 		for (Way w : parser.getWays()) {
-			calcEntityIsIn(parser, nearByElements, (Entity) w);
+			if (w.getName() != null) {
+				calcEntityIsIn(parser, nearByElements, (Entity) w);
+			}
 		}
+		long time = (System.currentTimeMillis() - startTime);
+		System.out.println("info: calcEntityIsIn for ways took " + time / 1000 + " seconds");
+		startTime = System.currentTimeMillis();
 		for (Node n : parser.getNodes()) {
-			calcEntityIsIn(parser, nearByElements, (Entity) n);
+			if (n.getName() != null) {
+				calcEntityIsIn(parser, nearByElements, (Entity) n);
+			}
 		}
+		time = (System.currentTimeMillis() - startTime);
+		System.out.println("info: calcEntityIsIn for nodes took " + time / 1000 + " seconds");
+
 	}
 
 	private void calcEntityIsIn(OsmParser parser, KDTree nearByElements, Entity e) {

@@ -12,12 +12,16 @@ public class ConnectionWithNode {
 	public int wayNameIdx=-1; // used to vaguely identify ways that might contain a solution path for highlighting  
 	public short wayFromConAt=0;
 	public short wayToConAt=0;
+	//#if polish.api.bigstyles
+	public short wayType=0;
+	//#else
 	public byte wayType=0;
+	//#endif
 	public short wayRouteFlags=0;
 	public byte wayConEndBearing=0;
 	public byte wayConStartBearing=0;
 	public float wayDistanceToNext=Float.MAX_VALUE;
-	public byte wayTypeOfAlternativeBearingWay = 0;
+	public short wayTypeOfAlternativeBearingWay = 0;
 	
 	public ConnectionWithNode(RouteNode n,Connection c){
 		this.to=n;

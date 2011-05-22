@@ -26,7 +26,7 @@ at large.
 		<capability name="JavaPlatform" value="Android/2.1" />
 		<capability name="JavaConfiguration" value="Android/2.1" />
 		<capability name="GpsMid.editing" value="true"/>
-		<capability name="JavaPackage" value="osm-editing, online, bigsearch"/>
+		<capability name="JavaPackage" value="osm-editing, online, bigsearch, bigstyles"/>
 		<capability name="Emulator.Skin" value="WVGA800" />
 		<capability name="ScreenSize" value="800x480" />
 		<capability name="CanvasSize" value="800x480" />
@@ -46,6 +46,17 @@ at large.
 		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, min-samsapi, osm-editing, online, bigsearch"/>
 	</device>
 	<device supportsPolishGui="true">
+		<identifier>Generic/microemulator-smallstyles</identifier>
+		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing for microemulator testing.
+		</description>
+		<features>isVirtual</features>
+		<capability name="Emulator.Class" value="GenericEmulator"/>
+		<capability name="JavaPlatform" value="MIDP/2.0"/>
+		<capability name="GpsMid.editing" value="true"/>
+		<capability name="JavaConfiguration" value="CLDC/1.1"/>
+		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, min-samsapi, osm-editing, online, bigsearch"/>
+	</device>
+	<device supportsPolishGui="true">
 		<identifier>Generic/editing</identifier>
 		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing.
 		</description>
@@ -53,6 +64,7 @@ at large.
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
 		<capability name="GpsMid.editing" value="true"/>
 		<capability name="JavaConfiguration" value="CLDC/1.1"/>
+		<!-- add "bigstyles" to be able to handle more than 255 style file elements -->
 		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, min-samsapi, osm-editing, online, bigsearch"/>
 	</device>
 	<device supportsPolishGui="true">
@@ -101,7 +113,7 @@ at large.
 		<features>isVirtual</features>
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
 		<capability name="JavaConfiguration" value="CLDC/1.1"/>
-		<capability name="JavaPackage" value="webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, min-samsapi"/>
+		<capability name="JavaPackage" value="webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, min-samsapi, bigsearch, bigstyles"/>
 	</device>
 	<device supportsPolishGui="true">
 		<identifier>Generic/minimal</identifier>

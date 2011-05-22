@@ -64,7 +64,8 @@ public abstract class KeyCommandCanvas extends Canvas implements
 		}
 
 //#if polish.android
-		if (keyCode == KeyEvent.KEYCODE_SEARCH) {
+		//GpsMid.getInstance().alert("keycode", "keycode = " + keyCode, 3000);
+		if (keyCode == 0) {
 			commandAction(Trace.getInstance().getCommand(Trace.SEARCH_CMD), (Displayable) null);
 			return;
 		}
@@ -154,6 +155,14 @@ public abstract class KeyCommandCanvas extends Canvas implements
 			ignoreKeyCode = 0;
 			return;
 		}
+		//#if polish.android
+		// interpret menu key on key up
+		if (keyCode == -111) {
+			commandAction(Trace.getInstance().getCommand(Trace.ICON_MENU), (Displayable) null);
+			ignoreKeyCode = keyCode;
+			return;
+		}
+		//#endif
 		final Command doubleC = (Command) doubleKeyPressCommand.get(keyCode);
 		// key was pressed twice quickly
 		if (releasedKeyCode == keyCode) {

@@ -1551,34 +1551,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			debugLog.set(0, url_trunc, null);
 			break;
 		case STATE_EXPORT_CONFIG:
-			try {
-				FileConnection con = (FileConnection)Connector.open(url_trunc + "GpsMid.cfg");
-				if (!con.exists()) {
-					con.create();
-				}
-				Configuration.serialise(con.openOutputStream());
-				con.close();
-				String name = con.getName();
-				GpsMid.getInstance().alert(Locale.get("generic.Info")/*Info*/, 
-						Locale.get("guidiscover.CfgExported", name)/*Configuration exported to '<file>'*/, 3000);
-			} catch (Exception e) {
-				logger.exception(Locale.get("guidiscover.CouldNotSaveCfg")/*Could not save configuration*/
-						+ ": " + e.getMessage(), e);
-			}
+			ConfigExportImport.exportConfig(url_trunc + "GpsMid.cfg");
 			state = STATE_ROOT;
 			show();
 			break;
 		case STATE_IMPORT_CONFIG:
-			try {
-				FileConnection con = (FileConnection)Connector.open(url);
-				Configuration.deserialise(con.openInputStream());
-				con.close();
-				GpsMid.getInstance().alert(Locale.get("generic.Info")/*Info*/, 
-						Locale.get("guidiscover.CfgImported", url)/*Configuration imported from '<file>'*/, 3000);
-			} catch (Exception e) {
-				logger.exception(Locale.get("guidiscover.CouldNotLoadCfg")/*Could not load configuration*/
-						+ ": " + e.getMessage(), e);
-			}
+			ConfigExportImport.importConfig(url);
 			state = STATE_ROOT;
 			show();
 			break;
