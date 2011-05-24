@@ -520,7 +520,7 @@ public class Way extends Entity {
 		short searchCon2Lat = (short) ((pc.searchCon2Lat - t.centerLat) * MoreMath.FIXPT_MULT);
 		short searchCon2Lon = (short) ((pc.searchCon2Lon - t.centerLon) * MoreMath.FIXPT_MULT);
 		
-		boolean isCircleway = isCircleway(t);
+		boolean isCircleway = isCircleway();
 		byte bearingForward = 0;
 		byte bearingBackward = 0;
 		// check if way contains both search connections
@@ -937,7 +937,7 @@ public class Way extends Entity {
 												 */
 												short from = c.wayFromConAt;
 												short to = c.wayToConAt;
-												boolean isCircleway = isCircleway(t);
+												boolean isCircleway = isCircleway();
 												if (from > to  && !(isRoundAbout() || isCircleway) ) {
 													// swap direction
 													to = from;
@@ -2348,7 +2348,7 @@ public class Way extends Entity {
 	 * Checks if the way is a circle way (a closed way - with the same node at the start and the end)
 	 * @return true if this way is a circle way  
 	 */
-	public boolean isCircleway(SingleTile t) {
+	public boolean isCircleway() {
 		return (path[0] == path[path.length - 1]);
 	}
 	
