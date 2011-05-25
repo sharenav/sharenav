@@ -229,6 +229,9 @@ public class Names implements Runnable {
 			// FIXME this indicates a bug in handling of long names in Osm2GpsMid and/or GpsMid
 			// The bug is triggered at least by route relation expansion code which creates
 			// long way names for route relations with rich-style
+			// .. though in the Munich area it's seen as the following which doesn't look like
+			// a route relation name
+                        // A bug occurred: error reading name in Names, name=Rosenheim â Kolbermoor â Bad Aiblin
 			System.out.println("A bug occurred: error reading name in Names, name=" + name);
 			name.setLength(0);
 			return -1;
