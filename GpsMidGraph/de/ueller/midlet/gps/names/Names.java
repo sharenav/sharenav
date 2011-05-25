@@ -223,7 +223,16 @@ public class Names implements Runnable {
 			return pos;
 		}
 		name.setLength(pos);
-		name.append(ds.readUTF());
+		try { 
+			name.append(ds.readUTF());
+		} catch (EOFException eofe) {
+			// FIXME this indicates a bug in handling of long names in Osm2GpsMid and/or GpsMid
+			// The bug is triggered at least by route relation expansion code which creates
+			// long way names for route relations with rich-style
+			System.out.println("A bug occurred: error reading name in Names, name=" + name);
+			name.setLength(0);
+			return -1;
+		}
 		return pos;		
 	}
 
