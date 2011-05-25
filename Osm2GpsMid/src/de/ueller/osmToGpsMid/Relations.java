@@ -115,10 +115,10 @@ public class Relations {
 												exists = true;
 											}
 										}
-										// FIXME find out why long strings cause problems, fix the issue, and remove the arbitrary restriction of name length or make it configurable
+										// Way.java truncates more when alternative name is also used
 										// (name/Names.java in GpsMid is where the EOF exception happens in reading of name)
 										// might be that it's a byte which is used as the string length in SearchList.java / Names.java
-										if (!exists && (w2.getAttribute(t).length() + r.getAttribute(t).length()) < 127)
+										if (!exists && (w2.getAttribute(t).length() + r.getAttribute(t).length()) < 125)
 											w2.setAttribute(t, w2.getAttribute(t) + ";" + r.getAttribute(t));
 									} else {
 										w2.setAttribute(t, r.getAttribute(t));

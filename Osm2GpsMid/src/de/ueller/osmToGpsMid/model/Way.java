@@ -303,7 +303,20 @@ public class Way extends Entity implements Comparable<Way> {
 					nameFallback = getAttribute(desc.nameFallbackKey);
 				}
 				if (name != null && nameFallback != null && (!desc.nameFallbackKey.equals("*") || !desc.key.equals(desc.nameKey))) {
-					name += " (" + nameFallback + ")";
+					if (name.length() + nameFallback.length() > 125) {
+						// cut too long names
+						int namelen = name.length();
+						if (namelen > 60) {
+							namelen = 60;
+						}
+						int nameFallbackLen = nameFallback.length();
+						if (namelen + nameFallbackLen > 125) {
+							nameFallbackLen = 120-namelen;
+						}
+						name = name.substring(0, namelen) + ".. (" + nameFallback.substring(0, nameFallbackLen) + ")";
+					} else {
+						name += " (" + nameFallback + ")";
+					}
 				} else if ((name == null) && (nameFallback != null)) {
 					name = nameFallback;
 				}

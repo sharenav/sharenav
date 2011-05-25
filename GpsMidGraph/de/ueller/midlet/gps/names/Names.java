@@ -226,12 +226,10 @@ public class Names implements Runnable {
 		try { 
 			name.append(ds.readUTF());
 		} catch (EOFException eofe) {
-			// FIXME this indicates a bug in handling of long names in Osm2GpsMid and/or GpsMid
-			// The bug is triggered at least by route relation expansion code which creates
+			// FIXME perhaps remove this after a while since 2011-05-26,
+			// was a catch for a bug in handling of long names in Osm2GpsMid and GpsMid (byte for length)
+			// The bug was triggered at least by route relation expansion code which created
 			// long way names for route relations with rich-style
-			// .. though in the Munich area it's seen as the following which doesn't look like
-			// a route relation name
-                        // A bug occurred: error reading name in Names, name=Rosenheim â Kolbermoor â Bad Aiblin
 			System.out.println("A bug occurred: error reading name in Names, name=" + name);
 			name.setLength(0);
 			return -1;
