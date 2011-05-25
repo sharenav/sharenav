@@ -499,9 +499,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		visualOpts = new ChoiceGroup(Locale.get("guidiscover.VisualOptions")/*Visual Options:*/, Choice.MULTIPLE, visuals, null);
 		menuDisplayOptions.append(visualOpts);
 		
-		String [] metricUnit = new String[1];
+		String [] metricUnit = new String[2];
 		metricUnit[0] = Locale.get("guidiscover.metricunits")/*metric units*/;
-		metricUnits = new ChoiceGroup(Locale.get("guidiscover.Units")/*Units*/, Choice.MULTIPLE, metricUnit, null);
+		metricUnit[1] = Locale.get("guidiscover.englishunits")/*English units*/;
+		metricUnits = new ChoiceGroup(Locale.get("guidiscover.Units")/*Units*/, Choice.EXCLUSIVE, metricUnit, null);
 		menuDisplayOptions.append(metricUnits);
 
 		String [] distanceView = new String[2];
@@ -1040,9 +1041,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK, sellight[i++]);
 				//#endif
 				
-				sellight = new boolean[1];
-				metricUnits.getSelectedFlags(sellight);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_METRIC, sellight[0]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_METRIC, (metricUnits.getSelectedIndex() == 0));
 				
 				sellight = new boolean[2];
 				visualOpts.getSelectedFlags(sellight);
@@ -1270,7 +1269,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				mapInfoOpts.setSelectedIndex(4, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP));
 				mapInfoOpts.setSelectedIndex(5, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_WHEN_ROUTING));
 				mapInfoOpts.setSelectedIndex(6, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP));
-				metricUnits.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_METRIC));
+				metricUnits.setSelectedIndex(Configuration.getCfgBitSavedState(Configuration.CFGBIT_METRIC) ? 0 : 1, true);
 
 				visualOpts.setSelectedIndex(0, ! Configuration.getCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS));
 				visualOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUND_WAY_ENDS));

@@ -1956,9 +1956,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			if (speed > 0 &&
 					Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP)) {
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
-					tl.ele[TraceLayout.SPEED_CURRENT].setText(" " + Integer.toString(speed) + Locale.get("trace.kmh")/* km/h*/);
+					tl.ele[TraceLayout.SPEED_CURRENT].setText(" " + Integer.toString(speed) + Locale.get("guitacho.kmh")/* km/h*/);
 				} else {
-					tl.ele[TraceLayout.SPEED_CURRENT].setText(" " + Integer.toString((int)(speed / 1.609344f)) + " mph");
+					tl.ele[TraceLayout.SPEED_CURRENT].setText(" " + Integer.toString((int)(speed / 1.609344f)) + Locale.get("guitacho.mph"));
 				}
 			}
 
@@ -3475,27 +3475,40 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public static String showDistance(int meters, int type) {
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
 			if (type == DISTANCE_UNKNOWN) {
-				return "???m";
+				return "???" + Locale.get("guitacho.m");
 			}
+			int MajorUnit = meters / 1000;
+			int MinorUnit = meters % 1000;
+			String MinorShort = (MinorUnit / 10 < 10 ? "0" : "") + (MinorUnit / 10);
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_DISTANCE_VIEW) && (type != DISTANCE_ALTITUDE)) {
-				if (meters >= 10000) {
-					return meters / 1000 + "km";
-				} else if (meters < 1000) {
-					return meters + "m";
+				if (MajorUnit >= 10) {
+					return Integer.toString(MajorUnit) + Locale.get("guitacho.km");
+				} else if (MajorUnit == 0) {
+					return Integer.toString(MinorUnit) + Locale.get("guitacho.m");
 				} else {
 					// FIXME use e.g. getDecimalSeparator() for decimal comma/point selection
-					return meters / 1000 + "." + (meters % 1000) / 100 + "km";
+					return Integer.toString(MajorUnit) + "." + MinorShort + Locale.get("guitacho.km");
 				}
 			} else {
-				return meters + "m";
+				return Integer.toString(meters) + Locale.get("guitacho.m");
 			}
 		} else {
 			if (type == DISTANCE_UNKNOWN) {
-				return "???yd";
-			} else if (type == DISTANCE_ALTITUDE) {
-				return Integer.toString((int)(meters / 0.30480 + 0.5)) + "ft";
+				return "???" + Locale.get("guitacho.yd");
+			}
+			int MajorUnit = (int)(meters / 1609.344f);
+			int MinorUnit = (int)(meters % 1609.344f + 0.5f);
+			String MinorShort = (MinorUnit / 16.09344f < 10.0f ? "0" : "") + (int)(MinorUnit / 16.09344f);
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_DISTANCE_VIEW) && (type != DISTANCE_ALTITUDE)) {
+				if (MajorUnit >= 10) {
+					return Integer.toString(MajorUnit) + Locale.get("guitacho.mi");
+				} else if (MajorUnit == 0) {
+					return Integer.toString(MinorUnit) + Locale.get("guitacho.yd");
+				} else {
+					return Integer.toString(MajorUnit) + "." + MinorShort + Locale.get("guitacho.mi");
+				}
 			} else {
-				return Integer.toString((int)(meters / 0.9144 + 0.5)) + "yd";
+				return Integer.toString((int)(meters / 0.9144 + 0.5f)) + Locale.get("guitacho.yd");
 			}
 		}
 	}
