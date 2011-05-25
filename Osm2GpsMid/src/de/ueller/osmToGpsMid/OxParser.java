@@ -32,7 +32,7 @@ import de.ueller.osmToGpsMid.model.Way;
 
 public class OxParser extends OsmParser {
 
-	private class OsmXmlHandler extends DefaultHandler {
+	private class OsmXmlHandler extends DefaultHandler  {
 		private final Hashtable<String, String> tagsCache = new Hashtable<String, String>();
 
 		@Override
@@ -48,7 +48,7 @@ public class OxParser extends OsmParser {
 
 			System.out.println("Nodes " + nodeTot + "/" + nodeIns + ", Ways "
 					+ wayTot + "/" + wayIns + ", Relations " + relTot + "/"
-					+ relPart + "/" + relIns);
+					+ relPart + "/" + relIns + ",  Read " + (forwardInputStream.lBytesRead/1000) + " KiB");
 			printMemoryUsage(2);
 			System.out.println("End of document, reading took " + time
 					+ " seconds");
@@ -186,11 +186,12 @@ public class OxParser extends OsmParser {
 				String qName) {
 			// System.out.println("end  " + localName + " " + qName);
 			ele++;
-			if (ele > 1000000) {
+			if (System.currentTimeMillis() - lLastStatusTime > 10000) {
 				ele = 0;
+				lLastStatusTime = System.currentTimeMillis();
 				System.out.println("Nodes " + nodeTot + "/" + nodeIns
 						+ ", Ways " + wayTot + "/" + wayIns + ", Relations "
-						+ relTot + "/" + relPart + "/" + relIns);
+						+ relTot + "/" + relPart + "/" + relIns + ",  Read " + (forwardInputStream.lBytesRead/1000) + " KiB");
 			}
 			if (qName.equals("node")) {
 				if (current == null) {
@@ -282,6 +283,84 @@ public class OxParser extends OsmParser {
 	}
 
 	/**
+	 *  This class represents an input stream which counts the bytes read.
+	 */
+	class ForwardInputStream  extends InputStream
+	{
+		InputStream inputStream = null;
+		long lBytesRead = 0;
+
+		public ForwardInputStream(InputStream inputStream)
+		{
+			this.inputStream = inputStream;
+		}
+
+		@Override
+		public int available()
+		{
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+
+		@Override
+		public void close() throws IOException
+		{
+			inputStream.close();
+		}
+
+		@Override
+		public void mark(int readlimit)
+		{
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+
+		@Override
+		public boolean markSupported()
+		{
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+
+		@Override
+		public int read() throws IOException
+		{
+			int readByte = inputStream.read();
+			if ( readByte != -1 )
+				lBytesRead++;
+			return readByte;
+		}
+
+		@Override
+		public int read(byte[] b) throws IOException
+		{
+			int iNumReadBytes = inputStream.read(b);
+			if ( iNumReadBytes != -1 )
+				lBytesRead+=iNumReadBytes;
+			return iNumReadBytes;
+		}
+
+		@Override
+		public int read(byte[] b, int off, int len) throws IOException
+		{
+			int iNumReadBytes = inputStream.read(b, off, len);
+			if ( iNumReadBytes != -1 )
+				lBytesRead+=iNumReadBytes;
+			return iNumReadBytes;
+		}
+
+		@Override
+		public  void reset()
+		{
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+
+		@Override
+		public long skip(long n)
+		{
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+	}
+
+
+	/**
 	 * The current processed primitive
 	 */
 	private Entity current = null;
@@ -297,6 +376,9 @@ public class OxParser extends OsmParser {
 	private long startTime;
 
 	private Node previousNodeWithThisId;
+
+	private ForwardInputStream forwardInputStream = null;
+	private long lLastStatusTime = 0;
 
 	/**
 	 * @param i
@@ -329,7 +411,9 @@ public class OxParser extends OsmParser {
 			// Parse the input
 			factory.setValidating(false);
 			SAXParser saxParser = factory.newSAXParser();
-			saxParser.parse(i, new OsmXmlHandler());
+			lLastStatusTime = System.currentTimeMillis();
+			forwardInputStream = new ForwardInputStream(i);
+			saxParser.parse(forwardInputStream, new OsmXmlHandler());
 			// parse(new InputStreamReader(new BufferedInputStream(i,10240),
 			// "UTF-8"));
 		} catch (IOException e) {
