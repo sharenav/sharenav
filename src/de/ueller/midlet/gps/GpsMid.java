@@ -509,7 +509,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 						((FileConnection) debugLogConn).create();
 					}
 					logFile = new OutputStreamWriter(
-							((FileConnection) debugLogConn).openOutputStream());
+							((FileConnection) debugLogConn).openOutputStream(), Configuration.getUtf8Encoding());
 				}
 			} catch (IOException e) {
 				log.exception("Couldn't connect to the debug log file", e);

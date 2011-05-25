@@ -11,6 +11,7 @@
     *** Bug fixes **
     - routing bug fixes, e.g. related to fixing incorrect penalties for bogus turns
     - fixes for showing non-metric units, thanks brait
+    - log debug output in utf8, thanks brait
     *** Build scripts ***
     - add some scripts (for GNU/Linux etc.) to build GpsMid with a minimal map
 
