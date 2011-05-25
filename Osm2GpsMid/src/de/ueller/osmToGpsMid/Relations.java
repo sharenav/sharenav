@@ -115,8 +115,9 @@ public class Relations {
 												exists = true;
 											}
 										}
-										// FIXME find out why long strings cause problems, fix the issue, and remove the arbitrary restriction of 35 chars in name
-										if (!exists && w2.getAttribute(t).length() < 35)
+										// FIXME find out why long strings cause problems, fix the issue, and remove the arbitrary restriction of name length or make it configurable
+										// (name/Names.java in GpsMid is where the EOF exception happens in reading of name)
+										if (!exists && w2.getAttribute(t).length() < 80)
 											w2.setAttribute(t, w2.getAttribute(t) + ";" + r.getAttribute(t));
 									} else {
 										w2.setAttribute(t, r.getAttribute(t));
