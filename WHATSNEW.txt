@@ -8,7 +8,8 @@
       optionally warn (warning on by default) of poor routes if accepted by setting
     *** Bug fixes **
     - routing bug fixes, e.g. related to fixing incorrect penalties for bogus turns
-    ** Build scripts ***
+    - fixes for showing non-metric units, thanks brait
+    *** Build scripts ***
     - add some scripts (for GNU/Linux etc.) to build GpsMid with a minimal map
 
 GpsMid 0.7.5
