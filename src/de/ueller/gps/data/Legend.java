@@ -13,6 +13,7 @@ import java.io.InputStream;
 
 import javax.microedition.lcdui.Image;
 import javax.microedition.midlet.MIDlet;
+import javax.microedition.media.Manager;
 
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.GpsMid;
@@ -370,9 +371,41 @@ public class Legend {
 		 * Read sound formats
 		 */
 		count = (int) ds.readByte();
-		soundFormats = new String[count];
+		String soundFormatsToTry[] = new String[count];
 		for (int i = 0; i < count; i++) {
-			soundFormats[i] = ds.readUTF();
+			soundFormatsToTry[i] = ds.readUTF();
+		}
+
+		soundFormats = new String[count];
+                String supportedFormat[] = Manager.getSupportedContentTypes(null);
+                int supportedFormatsLast = 0;
+                for (int i = 0; i < supportedFormat.length; i++) {
+                	for (int t = 0; t < count; t++) {
+                        	String mediaContentType = "";
+                                if (soundFormatsToTry[t].equals("wav") ) {
+                                	mediaContentType = "audio/x-wav";
+                                } else if (soundFormatsToTry[t].equals("mp3") ) {
+                                        mediaContentType = "audio/mpeg";
+                                } else if (soundFormatsToTry[t].equals("amr") ) {
+                                        mediaContentType = "audio/amr";
+                                } else if (soundFormatsToTry[t].equals("ogg") ) {
+                                        mediaContentType = "audio/x-ogg";
+                                }
+                                // for best work place SUPPORTED extensions at begining of
+                                // 'must-to-use' list
+                                if (!mediaContentType.equals("") && supportedFormat[i] == mediaContentType) {
+                                        soundFormats[supportedFormatsLast++] = soundFormatsToTry[t];
+                                        soundFormatsToTry[t] = "";
+                                        break;
+                                }
+                        }
+                }
+                // finally, insert unsupported (by phone) extensions at the end of 'must-to-use'
+                // list, just for try to play
+		for (int i = 0; i < count; i++) {
+                        if (soundFormatsToTry[i] != "") {
+                                soundFormats[supportedFormatsLast++] = soundFormatsToTry[i];
+                        }
 		}
 
 		/*

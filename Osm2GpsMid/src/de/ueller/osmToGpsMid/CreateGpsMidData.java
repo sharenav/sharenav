@@ -540,7 +540,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			/**
 			 * Copy sounds for all sound formats to midlet 
 			 */
-			String soundFormat[] = configuration.getUseSounds().split("[;,]", 2);
+			String soundFormat[] = configuration.getUseSounds().split("[;,]", 10);
 			// write sound format infos 
 			dsi.write((byte) soundFormat.length);
 	    	for (int i = 0; i < soundFormat.length; i++) {
@@ -690,7 +690,7 @@ public class CreateGpsMidData implements FilenameFilter {
     	File dir = new File(path);
     	File[] sounds = dir.listFiles(this);
 
-    	String soundFormat[] = configuration.getUseSounds().split("[;,]", 2);
+    	String soundFormat[] = configuration.getUseSounds().split("[;,]", 10);
     	
     	String soundMatch = ";";
     	for (int i = 0; i < soundFormat.length; i++) {
