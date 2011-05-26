@@ -1726,7 +1726,10 @@ public class Way extends Entity {
 				wClosest = wDraw;
 				// get direction we go on the way
 				ConnectionWithNode c = (ConnectionWithNode) route.elementAt(hl[i]);
-				dividedHighlight = (c.wayFromConAt > c.wayToConAt);
+				dividedHighlight = (c.wayFromConAt > c.wayToConAt);					
+				if (isCircleway() && isOneway() && dividedHighlight) {
+					dividedHighlight = false;
+				}
 				// fix dstToRoutePath on way part of divided final route seg for off route display
 				if ( (dividedFinalDone || dividedFinalRouteSeg)
 					 &&closestP.equals(closestDestP)
@@ -1979,7 +1982,11 @@ public class Way extends Entity {
 		}
 		ConnectionWithNode c = (ConnectionWithNode) pc.trace.getRoute().elementAt(RouteInstructions.routePathConnection);
 		return	(
-			(c.wayFromConAt < c.wayToConAt)
+			(
+				c.wayFromConAt < c.wayToConAt
+				||
+				(isCircleway() && isOneway() && c.wayFromConAt > c.wayToConAt)
+			)
 			?RouteInstructions.pathIdxInRoutePathConnection <= i 
 			:RouteInstructions.pathIdxInRoutePathConnection > i+1
 		);
