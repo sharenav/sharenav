@@ -426,11 +426,16 @@ public class RouteData {
 
 				boolean bicycleOppositeDirection = (tm.travelModeFlags & TravelMode.BICYLE_OPPOSITE_EXCEPTIONS) > 0 && w.isOppositeDirectionForBicycleAllowed();				
 				// you can go against the direction of the way if it's not a oneway or an against direction rule applies
-				if (! (w.isOneWay() || w.isRoundabout())
-					||
-					(tm.travelModeFlags & TravelMode.AGAINST_ALL_ONEWAYS) > 0
-					||
-					bicycleOppositeDirection
+				if (
+					!w.isRoundabout() // FIXME: workaround to never route against direction in roundabouts, not even walk because we have no routing instruction for this
+					&&
+					(
+						! w.isOneWay()
+							||
+						(tm.travelModeFlags & TravelMode.AGAINST_ALL_ONEWAYS) > 0
+							||
+						bicycleOppositeDirection
+					)
 				) {
 					againstDirectionTravelModes |= (1<<i);
 					if (bicycleOppositeDirection) {
