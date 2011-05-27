@@ -128,6 +128,8 @@ public class RouteSoundSyntax {
 			
 			getAndWriteString("soon.sound");
 			getAndWriteString("again.sound");
+			getAndWriteString("meters.sound");
+			getAndWriteString("yards.sound");
 			getAndWriteString("checkdirection.screen");
 			getAndWriteString("checkdirection.sound");
 			getAndWriteString("followstreet.sound");

@@ -21,6 +21,7 @@ import android.content.Context;
 
 import de.ueller.midlet.gps.Trace;
 import de.ueller.gps.data.Configuration;
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gpsMid.mapData.QueueReader;
 
@@ -106,6 +107,8 @@ public class RouteSyntax {
 	private static String [] metersSounds;
 	private static String soonSound; 
 	private static String againSound; 
+	private static String metersSound = "METERS"; 
+	private static String yardsSound = "YARDS"; 
 	private static String followStreetSound; 
 	private static String checkDirectionSound; 
 	private static String recalculationSound; 
@@ -222,6 +225,10 @@ public class RouteSyntax {
 			
 			soonSound = dis.readUTF();
 			againSound = dis.readUTF();
+			if (Legend.enableMap67Sounds) {
+				metersSound = dis.readUTF();
+				yardsSound = dis.readUTF();
+			}
 			checkDirectionText = dis.readUTF();
 			checkDirectionSound = dis.readUTF();
 			followStreetSound = dis.readUTF();
@@ -319,12 +326,13 @@ public class RouteSyntax {
 		if(!routeSyntaxAvailable) {
 			return "";
 		}
-		return HelperRoutines.replaceAll( getSyntaxTemplate(instruction, SyntaxTemplateComponents.in) , "%METERS%", metersSounds[(inDistance / 100) - 1]);
+		String s = HelperRoutines.replaceAll( getSyntaxTemplate(instruction, SyntaxTemplateComponents.in) , "%METERS%", metersSounds[(inDistance / 100) - 1]);
+		return HelperRoutines.replaceAll(s, "%DISTANCE%", metersSounds[(inDistance / 100) - 1] + ";" + (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC) ? metersSound : yardsSound));
 	}
 
 	public static String getTextInstructionIn(int instruction, int inDistance) {
-		// FIXME this could be cleaner (e.g. %distance% instead of %meters%m) but keeping for now for backwards compatibility
-		return HelperRoutines.replaceAll( getSyntaxTemplate(instruction, SyntaxTemplateComponents.inText), "%meters%", Trace.showDistance(inDistance, Trace.DISTANCE_GENERIC));
+		String s = HelperRoutines.replaceAll( getSyntaxTemplate(instruction, SyntaxTemplateComponents.inText), "%meters%m", Trace.showDistance(inDistance, Trace.DISTANCE_GENERIC));
+		return HelperRoutines.replaceAll(s, "%distance%", Trace.showDistance(inDistance, Trace.DISTANCE_GENERIC));
 	}
 
 	public static String getSoundInstructionThen(int instructionThen, boolean soon, boolean again) {

@@ -60,7 +60,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write.
 	 * This constant must be in sync with GpsMid.
 	 */
-	public final static short MAP_FORMAT_VERSION = 66;
+	public final static short MAP_FORMAT_VERSION = 67;
 
 	public final static int COLOR_MAP_BACKGROUND = 0;
 	public final static int COLOR_MAP_TEXT = 1;
@@ -248,7 +248,7 @@ public class Configuration {
 		"CONNECT", "DISCONNECT", "PREPARE", "HALF", "HARD", "BEAR", "LEFT", "RIGHT", "UTURN", "THEN", "SOON", "AGAIN", "TO",
 		"ENTER_MOTORWAY", "LEAVE_MOTORWAY",	"RAB", "1ST", "2ND", "3RD", "4TH", "5TH", "6TH", "RABEXIT",
 		"CHECK_DIRECTION", "ROUTE_RECALCULATION", "DEST_REACHED",
-		"IN", "100", "200", "300", "400", "500", "600", "700", "800", "METERS", "INTO_TUNNEL", "OUT_OF_TUNNEL", "FOLLOW_STREET",
+		"IN", "100", "200", "300", "400", "500", "600", "700", "800", "METERS", "YARDS", "INTO_TUNNEL", "OUT_OF_TUNNEL", "FOLLOW_STREET",
 		"AREA_CROSS", "AREA_CROSSED", "SPEED_LIMIT"
 	};
 	

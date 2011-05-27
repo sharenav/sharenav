@@ -23,7 +23,7 @@
 
    	<property name="dist.dir" value="${basedir}/dist"/>
 	<property name="version" value="0.7.51"/>
-	<property name="mapversion" value="66"/>
+	<property name="mapversion" value="67"/>
 	<property name="buildlib" value="buildlib/explode.jar"/>
 
    <available property="clover.available" classname="org.apache.tools.ant.taskdefs.CloverCompilerAdapter"/>
