@@ -31,6 +31,7 @@ rab:liikenneympyrässä
 5th:viides
 6th:kuudes
 meters:metrin
+yards:jaardin
 rabexit:ulosmeno
 target_reached:kohde saavutettu
 check_direction:tarkista suunta!
