@@ -104,7 +104,7 @@ public class RouteSyntax {
 	private static String [] simpleDirectionSounds;
 	private static String [] bearDirectionSounds;
 	private static String [] roundAboutExitSounds;
-	private static String [] metersSounds;
+	private static String [] distancesSounds;
 	private static String soonSound; 
 	private static String againSound; 
 	private static String metersSound = "METERS"; 
@@ -210,9 +210,9 @@ public class RouteSyntax {
 				roundAboutExitSounds[i] = dis.readUTF();
 			}
 			
-			metersSounds = new String[8];
-			for (i = 0; i < metersSounds.length; i++) {
-				metersSounds[i] = dis.readUTF();
+			distancesSounds = new String[8];
+			for (i = 0; i < distancesSounds.length; i++) {
+				distancesSounds[i] = dis.readUTF();
 			}
 						
 			for (i = 0; i < SyntaxInstructionTypes.count; i++) {
@@ -326,8 +326,9 @@ public class RouteSyntax {
 		if(!routeSyntaxAvailable) {
 			return "";
 		}
-		String s = HelperRoutines.replaceAll( getSyntaxTemplate(instruction, SyntaxTemplateComponents.in) , "%METERS%", metersSounds[(inDistance / 100) - 1]);
-		return HelperRoutines.replaceAll(s, "%DISTANCE%", metersSounds[(inDistance / 100) - 1] + ";" + (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC) ? metersSound : yardsSound));
+		String s = HelperRoutines.replaceAll( getSyntaxTemplate(instruction, SyntaxTemplateComponents.in) , "%METERS%", distancesSounds[(inDistance / 100) - 1]);
+		s = HelperRoutines.replaceAll(s, "%UNIT%", (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC) ? metersSound : yardsSound));
+		return HelperRoutines.replaceAll(s, "%DISTANCE%", distancesSounds[(inDistance / 100) - 1]);
 	}
 
 	public static String getTextInstructionIn(int instruction, int inDistance) {

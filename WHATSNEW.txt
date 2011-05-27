@@ -3,7 +3,8 @@
     *** Routing ***
     - allow for non-integer (decimal) speeds for travel modes
     - optionally warn (warning on by default) of poor routes if accepted by setting
-    - support for distances in English units (yards) in navigation instructions
+    - support for distances in English units (yards) in navigation instructions (changes also in syntax.cfg
+      for this)
     *** Routing user interface ***
     - communicate to user more prominently that the calculation speed setting allows poor routes,
       optionally warn (warning on by default) of poor routes if accepted by setting

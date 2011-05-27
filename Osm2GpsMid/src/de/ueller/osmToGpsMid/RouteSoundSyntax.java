@@ -109,9 +109,9 @@ public class RouteSoundSyntax {
 				getAndWriteString("roundabout.exit." + exitNames[i] + ".sound");
 			}
 			
-			final String meterNames[] = { "100", "200", "300", "400", "500", "600", "700", "800"};
-			for (int i=0; i < meterNames.length; i++) {
-				getAndWriteString("meters." + meterNames[i] + ".sound");
+			final String distanceNames[] = { "100", "200", "300", "400", "500", "600", "700", "800"};
+			for (int i=0; i < distanceNames.length; i++) {
+				getAndWriteString("distances." + distanceNames[i] + ".sound");
 			}
 				
 			String componentNames[] = { "normal.sound", "prepare.sound", "in.sound", "then.sound", "normal.screen", "in.screen" };
@@ -150,7 +150,16 @@ public class RouteSoundSyntax {
 		try {
 			s = rb.getString(key).trim();
 		} catch (MissingResourceException e) {
-			System.out.println("syntax.cfg: " + key + " not found");			;
+			System.out.println("syntax.cfg: " + key + " not found");
+			if (key.startsWith("distances.")) {
+				String key2 = "meters." + key.substring(10);
+				System.out.println("syntax.cfg: trying " + key2);
+				try {
+					s = rb.getString(key2).trim();
+				} catch (MissingResourceException e2) {
+					System.out.println("syntax.cfg: " + key2 + " not found");
+				}
+			}
 		}
 		dsi.writeUTF(s);
 		if (key.endsWith(".sound")) {
