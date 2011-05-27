@@ -1093,6 +1093,7 @@ public class Way extends Entity {
 								pc.squareDstToRoutePath = dst;
 								pc.routePathConnection = hl[i1 - 1];
 								pc.pathIdxInRoutePathConnection = pi;
+								pc.actualRoutePathWay = this;
 								if (pc.bUsedGpsCenter == true) {
 									pc.fNearestSegmentRoutePathLat1 = fSegmentLat1;
 									pc.fNearestSegmentRoutePathLong1 = fSegmentLong1;

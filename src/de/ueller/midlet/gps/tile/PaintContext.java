@@ -77,6 +77,9 @@ public class PaintContext extends ScreenContext {
 	public volatile Way actualWay=null;
 	/** nearest routable way taking penalty into account */ 
 	public volatile Way actualRoutableWay=null;
+	/** nearest way on the route path taking penalty into account */ 
+	public volatile Way actualRoutePathWay=null;
+
 	public volatile SingleTile actualSingleTile = null;
 	
 	/* variables for searching matching route connections in ways */

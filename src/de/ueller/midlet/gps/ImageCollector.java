@@ -252,6 +252,7 @@ public class ImageCollector implements Runnable {
 								if (RouteInstructions.dstToRoutePath != RouteInstructions.DISTANCE_UNKNOWN) {
 									RouteInstructions.routePathConnection = createPC.routePathConnection;
 									RouteInstructions.pathIdxInRoutePathConnection = createPC.pathIdxInRoutePathConnection;
+									RouteInstructions.actualRoutePathWay = createPC.actualRoutePathWay;
 									// when we determine during painting that the cursor is closer than 25 meters at the route line, bring it to the top
 									if (RouteInstructions.dstToRoutePath < 25) {
 										createPC.highlightedPathOnTop = true;

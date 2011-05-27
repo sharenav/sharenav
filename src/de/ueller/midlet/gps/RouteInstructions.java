@@ -18,6 +18,7 @@ import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.ProjMath;
+import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.routing.RouteHelper;
 import de.ueller.midlet.gps.tile.PaintContext;
@@ -98,6 +99,7 @@ public class RouteInstructions {
 	public volatile static int dstToRoutePath=1;
 	public volatile static int routePathConnection=0;
 	public volatile static int pathIdxInRoutePathConnection=0;
+	public volatile static Way actualRoutePathWay = null;
 
 	// variables for determining against route path 
 	private static int prevRoutePathConnection = 0;
@@ -781,7 +783,7 @@ public class RouteInstructions {
 		// if the routePathConnection stayed the same but the segment inside the way changed
 		// it depends on the direction of the route along the way if we go forward or backward 
 		// along the route
-		} else if (routePathConnection == prevRoutePathConnection) {
+		} else if (routePathConnection == prevRoutePathConnection && !actualRoutePathWay.isCircleway()) {
 			ConnectionWithNode c = (ConnectionWithNode) route.elementAt(routePathConnection);
 			// determine the direction of the route on the way
 			// by checking if the route goes on the way forward or backward
