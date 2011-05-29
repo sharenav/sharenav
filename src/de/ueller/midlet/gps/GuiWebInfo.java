@@ -4,6 +4,7 @@ package de.ueller.midlet.gps;
  * GpsMid - Copyright (c) 2008 Kai Krueger apmon at users dot sourceforge dot net 
  * See Copying
  */
+import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
@@ -154,7 +155,8 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 					//#if polish.api.online
 					GpsMid.getInstance().platformRequest(url);
 					//#else
-					// FIXME: show user the url or phone number
+					GpsMid.getInstance().alert (Locale.get("guisearch.OpenUrlTitle"),
+								    Locale.get("guisearch.OpenUrl") +  " " + url, Alert.FOREVER);
 					//#endif
 				}
 			} catch (Exception e) {
