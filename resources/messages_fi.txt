@@ -747,6 +747,6 @@ guiroute.SuppressRouteWarning=Älä varoita huonoista reiteistä
 guisearch.OpenUrlTitle=Avaa URL
 guisearch.OpenUrl=Avaa tämä URL:
 guidiscover.englishunits=englantilaiset yksiköt
+guisearch.Edit=Muokkaa tietoja OSM:ssä
 guiosmpoidisplay.SavingPOI=Talletetaan kohde
 guiosmpoidisplay.PoiSuccessfullySaved=Kohteen talletus OpenStreetMapiin onnistui
-guisearch.Edit=Muokkaa tietoja OSM:ssä
