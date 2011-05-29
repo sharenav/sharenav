@@ -1618,6 +1618,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					}
 				}
 				if (c == CMDS[RETRIEVE_NODE]) {
+					// FIXME add support for accessing a node
+					// under cursor
 					if (Legend.enableEdits) {
 						GuiOSMPOIDisplay guiNode = new GuiOSMPOIDisplay(-1, null,
 								center.radlat, center.radlon, this);

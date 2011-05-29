@@ -349,6 +349,7 @@ public class SearchNames implements Runnable {
 						sr.nameIdx = idx;
 						//#if polish.api.bigsearch
 						sr.resultid = id;
+						sr.osmID = id;
 						sr.source = (byte) iType;
 						//#endif
 						sr.urlIdx = urlidx;

@@ -38,6 +38,11 @@ import de.ueller.gps.data.SearchResult;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gpsMid.CancelMonitorInterface;
+//#if polish.api.bigsearch
+//#if polish.api.osm-editing
+import de.ueller.midlet.gps.GuiOSMPOIDisplay;
+//#endif
+//#endif
 import de.ueller.midlet.gps.GuiPOItypeSelectMenu.POItypeSelectMenuItem;
 import de.ueller.midlet.gps.data.KeySelectMenuItem;
 import de.ueller.midlet.gps.data.MoreMath;
@@ -80,6 +85,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private final Command FULLT_CMD = new Command(Locale.get("guisearch.Fulltext")/*Fulltext search*/, Command.ITEM, 10);
 	private final Command URL_CMD = new Command(Locale.get("guisearch.OpenURL")/*Open URL*/, Command.ITEM, 11);
 	private final Command PHONE_CMD = new Command(Locale.get("guisearch.Phone")/*Call Phone*/, Command.ITEM, 12);
+	//#if polish.api.bigsearch
+	//#if polish.api.osm-editing
+	private final Command EDIT_CMD = new Command(Locale.get("guisearch.Edit")/*Edit OSM data*/, Command.ITEM, 13);
+	//#endif
+	//#endif
 
 	//private Form form;
 
@@ -246,6 +256,14 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (Legend.enablePhoneTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_PHONE)) {
 			addCommand(PHONE_CMD);
 		}
+
+		//#if polish.api.bigsearch
+		//#if polish.api.osm-editing
+		if (Legend.enableEdits) {
+			addCommand(EDIT_CMD);
+		}
+		//#endif
+		//#endif
 		
 		timerT = new TimerTask() {
 			public void run() {
@@ -313,6 +331,27 @@ public class GuiSearch extends Canvas implements CommandListener,
 					//mLogger.exception("Could not open url " + url, e);
 				}
 			}
+			//#if polish.api.bigsearch
+			//#if polish.api.osm-editing
+			if (c == EDIT_CMD) {
+				if (!isCursorValid()) {
+					return;
+				}
+				SearchResult sr = (SearchResult) result.elementAt(cursor);
+				if (Legend.enableEdits) {
+					// FIXME this should be made to work for areas & ways or at least should give a more accurate error message
+					//System.out.println("Trying to retrieve node " + sr.osmID + " lat: " + sr.lat + " lon " + sr.lon);
+					GuiOSMPOIDisplay guiNode = new GuiOSMPOIDisplay((int) sr.osmID, null,
+											sr.lat, sr.lon, parent);
+					guiNode.show();
+					guiNode.refresh();
+				} else {
+					logger.error(Locale.get("trace.EditingIsNotEnabled")/*Editing is not enabled in this map*/);
+				}
+				return;
+			}
+			//#endif
+			//#endif
 			if (c == OK1_CMD || c == OK2_CMD || c == ROUTE1_CMD || c == ROUTE2_CMD) {			
 				if (!isCursorValid()) {
 					return;

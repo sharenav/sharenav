@@ -28,6 +28,7 @@ import de.ueller.midlet.gps.GuiOSMChangeset;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.GuiPOItypeSelectMenu.POItypeSelectMenuItem;
 import de.ueller.midlet.gps.data.KeySelectMenuItem;
+import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.OSMdataEntity;
 import de.ueller.midlet.gps.data.OSMdataNode;
 import de.ueller.midlet.gps.data.PositionMark;
@@ -46,7 +47,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 	private int nodeID;
 	private HTTPhelper http;
 	
-	private int loadPOIxmlState;
+	//private int loadPOIxmlState;
 	
 	private GuiPOItypeSelectMenu poiTypeForm;
 	private ChoiceGroup poiSelectionCG;
@@ -58,9 +59,9 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 		super(Locale.get("guiosmpoidisplay.Node")/*Node*/, parent);
 		this.nodeID = nodeID;
 		showParent = false;
-		loadPOIxmlState = LOAD_POI_STATE_NONE;
+		loadState = LOAD_STATE_NONE;
 		if (nodeID < 0) {
-			osmentity = new OSMdataNode(nodeID, lat, lon);
+			osmentity = new OSMdataNode(nodeID, lat*MoreMath.FAC_RADTODEC, lon*MoreMath.FAC_RADTODEC);
 			showPoiTypeForm = true;
 			setupPoiTypeForm();
 		} else {
@@ -83,12 +84,14 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 		if (nodeID < 0) {
 			
 		} else {
+			//System.out.println("Retrieving XML for Node " + nodeID);
 			logger.debug("Retrieving XML for Node " + nodeID);
 			String url = Configuration.getOsmUrl() + "node/" + nodeID;
 			if (http == null) { 
 				http = new HTTPhelper();
 			}
-			loadPOIxmlState = LOAD_POI_STATE_LOAD;
+			//loadPOIxmlState = LOAD_POI_STATE_LOAD;
+			loadState = LOAD_STATE_LOAD;
 			http.getURL(url, this);
 		}
 		
@@ -107,7 +110,8 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 		if (http == null) { 
 			http = new HTTPhelper();
 		}
-		loadPOIxmlState = LOAD_POI_STATE_UPLOAD;
+		//loadPOIxmlState = LOAD_POI_STATE_UPLOAD;
+		loadState = LOAD_STATE_UPLOAD;
 		http.uploadData(url, fullXML, true, this, Configuration.getOsmUsername(), Configuration.getOsmPwd());
 	}
 	
@@ -141,6 +145,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 		if ((c == BACK_CMD) && (showPoiTypeForm)) {
 			parent.show();
 		}
+		//FIXME add delete POI command
 	}
 
 	public void show() {
@@ -168,17 +173,17 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 				break;
 			}
 			case LOAD_STATE_UPLOAD: {
-				GpsMid.getInstance().alert(Locale.get("guiosmpoidisplay.AddingPOI")/*Adding POI*/, Locale.get("guiosmpoidisplay.PoiSuccessfullyAdded")/*Poi was successfully added to OpenStreetMap*/, 1000);
+				GpsMid.getInstance().alert(Locale.get("guiosmpoidisplay.SavingPOI")/*Saving POI*/, Locale.get("guiosmpoidisplay.PoiSuccessfullySaved")/*Poi was successfully saved to OpenStreetMap*/, 1000);
 				
 				if (osmentity instanceof OSMdataEntity) {
 					logger.info("Adding Waypoint to mark where POI was uploaded to OSM");
 					OSMdataNode poi = (OSMdataNode)osmentity;
-					PositionMark waypt = new PositionMark(poi.getLat(), poi.getLon());
+					PositionMark waypt = new PositionMark(poi.getLat()*MoreMath.FAC_DECTORAD, poi.getLon()*MoreMath.FAC_DECTORAD);
 					waypt.displayName = Locale.get("guiosmpoidisplay.POI")/*POI: */ + Legend.getNodeTypeDesc(poiType);
 					Trace.getInstance().gpx.addWayPt(waypt);
 				}
 
-				loadState = LOAD_POI_STATE_NONE;
+				loadState = LOAD_STATE_NONE;
 				break;
 			}
 			case LOAD_STATE_CHANGESET: {

@@ -6,6 +6,7 @@ public class SearchResult {
 	//#if polish.api.bigsearch
 	public byte source;
 	public long resultid = 0;
+	public long osmID = 0;
 	public int preMatchIdx = 0;
 	//public int postMatchIdx = 0;
         //#endif

@@ -1208,3 +1208,6 @@ guiroute.RouteWarningSetting=Warnings
 guiroute.SuppressRouteWarning=Suppress warning about poor routes
 guisearch.OpenUrlTitle=Open URL
 guisearch.OpenUrl=Open this url:
+guisearch.Edit=Edit OSM data
+guiosmpoidisplay.SavingPOI=Saving POI
+guiosmpoidisplay.PoiSuccessfullySaved=Poi was successfully saved to OpenStreetMap

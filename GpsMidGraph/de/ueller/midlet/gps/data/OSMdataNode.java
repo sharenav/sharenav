@@ -87,6 +87,9 @@ public class OSMdataNode extends OSMdataEntity implements XmlParserContentHandle
 					editTime = (String)atts.get("timestamp");
 					version = Integer.parseInt((String)atts.get("version"));
 					changesetID = Integer.parseInt((String)atts.get("changeset"));
+					// FIXME for OSM POI editing, using a float loses some accuracy,
+					// eg. 	60,2077779, 24,6411467 to 60,20778, 24,641148
+					// - would be proper to store strings to keep the coordinates the same
 					lat = Float.parseFloat((String)atts.get("lat"));
 					lon = Float.parseFloat((String)atts.get("lon"));
 				} else {
@@ -110,8 +113,8 @@ public class OSMdataNode extends OSMdataEntity implements XmlParserContentHandle
 		
 		xml  = "<?xml version='1.0' encoding='utf-8'?>\r\n";
 		xml += "<osm version='0.6' generator='GpsMid'>\r\n";
-		xml += "<node id='" + osmID + "' lat='" + lat * MoreMath.FAC_RADTODEC + 
-				"' lon='" + lon * MoreMath.FAC_RADTODEC + "' version='" + version + 
+		xml += "<node id='" + osmID + "' lat='" + lat + 
+			"' lon='" + lon + "' version='" + version + 
 				"' changeset='" + commitChangesetID + "'>\r\n";
 		Enumeration enKey = tags.keys();
 		while (enKey.hasMoreElements()) {
