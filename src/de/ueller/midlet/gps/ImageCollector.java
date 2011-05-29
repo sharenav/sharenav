@@ -544,7 +544,7 @@ public class ImageCollector implements Runnable {
 					// were rounded down already. (Seems to work better for
 					// speed limits of
 					// 20mph and 30mph)
-				    maxspeed = Locale.get("imagecollector.SL")/* SL:*/ + winter + ((int)(nummaxspeed / 1.609344f) + 1);
+				    maxspeed = Locale.get("imagecollector.SL")/* SL:*/ + winter + ((int)(nummaxspeed / 1.609344f + 0.5f));
 				}
 			}
 

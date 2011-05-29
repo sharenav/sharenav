@@ -2181,7 +2181,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
 				tl.ele[TraceLayout.SPEEDING_SIGN].setText(Integer.toString(speedingSpeedLimit));
 			} else {
-				tl.ele[TraceLayout.SPEEDING_SIGN].setText(Integer.toString((int)(speedingSpeedLimit / 1.609344f)));
+				tl.ele[TraceLayout.SPEEDING_SIGN].setText(Integer.toString((int)(speedingSpeedLimit / 1.609344f + 0.5f)));
 			}
 		} else {
 			startTimeOfSpeedingSign = 0;
