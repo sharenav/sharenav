@@ -696,11 +696,9 @@ guiosmentitydisplay.UploadToOSM=Lataa OSM:ään
 guiosmentitydisplay.value=arvo
 guiosmentitydisplay.ver=    versio:
 guiosmpoidisplay.AddingPOI=Lisätään kohde
-guiosmpoidisplay.SavingPOI=Talletetaan kohde
 guiosmpoidisplay.Node=Piste
 guiosmpoidisplay.POI=Kohde(POI): 
 guiosmpoidisplay.PoiSuccessfullyAdded=Kohteen lisäys OpenStreetMapiin onnistui
-guiosmpoidisplay.PoiSuccessfullySaved=Kohteen talletus OpenStreetMapiin onnistui
 guiosmwaydisplay.AddPreset=Lisää esivalinta
 guiosmwaydisplay.maxspeed20mph=maxspeed=20 mph
 guiosmwaydisplay.maxspeed30mph=maxspeed=30 mph
@@ -749,4 +747,6 @@ guiroute.SuppressRouteWarning=Älä varoita huonoista reiteistä
 guisearch.OpenUrlTitle=Avaa URL
 guisearch.OpenUrl=Avaa tämä URL:
 guidiscover.englishunits=englantilaiset yksiköt
+guiosmpoidisplay.SavingPOI=Talletetaan kohde
+guiosmpoidisplay.PoiSuccessfullySaved=Kohteen talletus OpenStreetMapiin onnistui
 guisearch.Edit=Muokkaa tietoja OSM:ssä
