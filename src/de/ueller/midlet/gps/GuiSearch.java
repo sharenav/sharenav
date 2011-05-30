@@ -88,6 +88,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	//#if polish.api.bigsearch
 	//#if polish.api.osm-editing
 	private final Command EDIT_CMD = new Command(Locale.get("guisearch.Edit")/*Edit OSM data*/, Command.ITEM, 13);
+	private final Command EDIT1_CMD = new Command(Locale.get("guisearch.Edit")/*Edit OSM data*/, Command.OK, 1);
 	//#endif
 	//#endif
 
@@ -235,7 +236,18 @@ public class GuiSearch extends Canvas implements CommandListener,
 		setCommandListener(this);
 		
 		searchThread = new SearchNames(this);
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
+		if (defaultAction == ACTION_EDIT_ENTITY) {
+			//#if polish.api.bigsearch
+			//#if polish.api.osm-editing
+			addCommand(EDIT1_CMD);			
+			//#endif
+			//#endif
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
+				addCommand(ROUTE2_CMD);			
+			} else {
+				addCommand(OK2_CMD);
+			}
+		} else if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
 			addCommand(ROUTE1_CMD);			
 			addCommand(OK2_CMD);
 		} else {
@@ -340,7 +352,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			}
 			//#if polish.api.bigsearch
 			//#if polish.api.osm-editing
-			if (c == EDIT_CMD) {
+			if (c == EDIT_CMD || c == EDIT1_CMD) {
 				if (!isCursorValid()) {
 					return;
 				}
