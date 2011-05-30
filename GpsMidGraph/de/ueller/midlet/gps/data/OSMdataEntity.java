@@ -65,6 +65,7 @@ public abstract class OSMdataEntity {
 	}
 	
 	public abstract String toXML(int commitChangesetID);
-	
+
+	public abstract String toDeleteXML(int commitChangesetID);
 }
 //#endif

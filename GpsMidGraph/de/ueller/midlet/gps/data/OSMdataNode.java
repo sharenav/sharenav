@@ -131,6 +131,19 @@ public class OSMdataNode extends OSMdataEntity implements XmlParserContentHandle
 		return xml;
 	}
 	
+	public String toDeleteXML(int commitChangesetID) {
+		String xml;
+
+		// FIXME should be correct but doesn't work, gives a 400 bad request error
+		xml  = "<?xml version='1.0' encoding='utf-8'?>\r\n";
+		xml += "<osm version='0.6' generator='GpsMid'>\r\n";
+		xml += "<node id='" + osmID + "' version='" + version + 
+				"' changeset='" + commitChangesetID + "'/>\r\n";
+		xml += "</osm>\r\n";
+		
+		return xml;
+	}
+	
 	public String toString() {
 		String res;
 		res = "\n " + Locale.get("osmdatanode.OSMnode")/*OSM node*/ + " " + osmID + "\n";

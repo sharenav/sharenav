@@ -40,9 +40,6 @@ import de.enough.polish.util.Locale;
 public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMenuReducedListener{
 	
 	private final static Logger logger = Logger.getInstance(GuiOSMPOIDisplay.class,Logger.DEBUG);
-	private final static int LOAD_POI_STATE_NONE = 0;
-	private final static int LOAD_POI_STATE_LOAD = 1;
-	private final static int LOAD_POI_STATE_UPLOAD = 2;
 	
 	private int nodeID;
 	private HTTPhelper http;
@@ -90,7 +87,6 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 			if (http == null) { 
 				http = new HTTPhelper();
 			}
-			//loadPOIxmlState = LOAD_POI_STATE_LOAD;
 			loadState = LOAD_STATE_LOAD;
 			http.getURL(url, this);
 		}
@@ -110,9 +106,25 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 		if (http == null) { 
 			http = new HTTPhelper();
 		}
-		//loadPOIxmlState = LOAD_POI_STATE_UPLOAD;
 		loadState = LOAD_STATE_UPLOAD;
 		http.uploadData(url, fullXML, true, this, Configuration.getOsmUsername(), Configuration.getOsmPwd());
+	}
+	
+	public void uploadDeleteXML() {
+		//#debug debug
+		logger.debug("Uploading XML for deleting " + this);
+		String fullXML = osmentity.toDeleteXML(changesetGui.getChangesetID());
+		String url;
+		if (nodeID < 0) {
+			url = Configuration.getOsmUrl() + "node/create";
+		} else {
+			url = Configuration.getOsmUrl() + "node/" + nodeID;
+		}
+		if (http == null) { 
+			http = new HTTPhelper();
+		}
+		loadState = LOAD_STATE_DELETE;
+		http.deleteData(url, fullXML, this, Configuration.getOsmUsername(), Configuration.getOsmPwd());
 	}
 	
 	public void commandAction(Command c, Displayable d) {
@@ -145,7 +157,17 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 		if ((c == BACK_CMD) && (showPoiTypeForm)) {
 			parent.show();
 		}
-		//FIXME add delete POI command
+		if (c == REMOVE_ENTITY_CMD) {
+			parent.show();
+			if ((changesetGui == null) || (changesetGui.getChangesetID() < 0)) {
+				loadState = LOAD_STATE_DELETE_CHANGESET;
+				changesetGui = new GuiOSMChangeset(parent,this);
+				changesetGui.show();
+			} else {
+				loadState = LOAD_STATE_DELETE;
+				uploadDeleteXML();
+			}
+		}
 	}
 
 	public void show() {
@@ -172,23 +194,33 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 				loadState = LOAD_STATE_NONE;
 				break;
 			}
+			case LOAD_STATE_DELETE:
 			case LOAD_STATE_UPLOAD: {
-				GpsMid.getInstance().alert(Locale.get("guiosmpoidisplay.SavingPOI")/*Saving POI*/, Locale.get("guiosmpoidisplay.PoiSuccessfullySaved")/*Poi was successfully saved to OpenStreetMap*/, 1000);
-				
-				if (osmentity instanceof OSMdataEntity) {
-					logger.info("Adding Waypoint to mark where POI was uploaded to OSM");
-					OSMdataNode poi = (OSMdataNode)osmentity;
-					PositionMark waypt = new PositionMark(poi.getLat()*MoreMath.FAC_DECTORAD, poi.getLon()*MoreMath.FAC_DECTORAD);
-					waypt.displayName = Locale.get("guiosmpoidisplay.POI")/*POI: */ + Legend.getNodeTypeDesc(poiType);
-					Trace.getInstance().gpx.addWayPt(waypt);
+				if (loadState == LOAD_STATE_UPLOAD) {
+					GpsMid.getInstance().alert(Locale.get("guiosmpoidisplay.SavingPOI")/*Saving POI*/, Locale.get("guiosmpoidisplay.PoiSuccessfullySaved")/*Poi was successfully saved to OpenStreetMap*/, 1000);
+					;
+					if (osmentity instanceof OSMdataEntity) {
+						logger.info("Adding Waypoint to mark where POI was uploaded to OSM");
+						OSMdataNode poi = (OSMdataNode)osmentity;
+						PositionMark waypt = new PositionMark(poi.getLat()*MoreMath.FAC_DECTORAD, poi.getLon()*MoreMath.FAC_DECTORAD);
+						waypt.displayName = Locale.get("guiosmpoidisplay.POI")/*POI: */ + Legend.getNodeTypeDesc(poiType);
+						Trace.getInstance().gpx.addWayPt(waypt);
+					}
+				}  else {
+					GpsMid.getInstance().alert(Locale.get("guiosmpoidisplay.DeletingPOI")/*Deleting POI*/, Locale.get("guiosmpoidisplay.PoiSuccessfullyDeleted")/*Poi was successfully deleted from OpenStreetMap*/, 1000);
 				}
-
 				loadState = LOAD_STATE_NONE;
 				break;
 			}
+			case LOAD_STATE_DELETE_CHANGESET:
 			case LOAD_STATE_CHANGESET: {
-				loadState = LOAD_STATE_UPLOAD;
-				uploadXML();
+				if (loadState == LOAD_STATE_CHANGESET) {
+					loadState = LOAD_STATE_UPLOAD;
+					uploadXML();
+				} else {
+					loadState = LOAD_STATE_DELETE;
+					uploadDeleteXML();
+				}
 				break;
 			}
 			}

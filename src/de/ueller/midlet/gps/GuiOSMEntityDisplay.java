@@ -43,6 +43,7 @@ public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplaya
 	protected final Command EDIT_CMD = new Command(Locale.get("guiosmentitydisplay.EditTag")/*Edit tag*/, Command.ITEM, 2);
 	protected final Command REMOVE_CMD = new Command(Locale.get("guiosmentitydisplay.RemoveTag")/*Remove tag*/, Command.ITEM, 3);
 	protected final Command UPLOAD_CMD = new Command(Locale.get("guiosmentitydisplay.UploadToOSM")/*Upload to OSM*/, Command.OK, 6);
+	protected final Command REMOVE_ENTITY_CMD = new Command(Locale.get("guiosmentitydisplay.RemoveEntity")/*Remove Entity*/, Command.ITEM, 3);
 	protected final Command CREATE_CHANGE_CMD = new Command(Locale.get("guiosmentitydisplay.CreateChangeset")/*Create changeset*/, Command.OK, 6);
 	protected final Command CLOSE_CHANGE_CMD = new Command(Locale.get("guiosmentitydisplay.CloseChangeset")/*Close changeset*/, Command.OK, 6);
 	
@@ -50,6 +51,8 @@ public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplaya
 	protected final static int LOAD_STATE_LOAD = 1;
 	protected final static int LOAD_STATE_UPLOAD = 2;
 	protected final static int LOAD_STATE_CHANGESET = 3;
+	protected final static int LOAD_STATE_DELETE_CHANGESET = 4;
+	protected final static int LOAD_STATE_DELETE = 5;
 	
 	
 	protected GpsMidDisplayable parent;
@@ -67,6 +70,7 @@ public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplaya
 		addCommand(BACK_CMD);
 		addCommand(ADD_CMD);
 		addCommand(UPLOAD_CMD);
+		addCommand(REMOVE_ENTITY_CMD);
 		addCommand(CREATE_CHANGE_CMD);
 		addCommand(CLOSE_CHANGE_CMD);
 		setCommandListener(this);

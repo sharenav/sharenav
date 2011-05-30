@@ -750,3 +750,4 @@ guidiscover.englishunits=englantilaiset yksiköt
 guisearch.Edit=Muokkaa tietoja OSM:ssä
 guiosmpoidisplay.SavingPOI=Talletetaan kohde
 guiosmpoidisplay.PoiSuccessfullySaved=Kohteen talletus OpenStreetMapiin onnistui
+guiosmentitydisplay.RemoveEntity=Poista kohde

@@ -70,6 +70,9 @@ public class SingleTile extends Tile implements QueueableTile {
 
 	public int[] phoneIdx;
 
+	//#if polish.api.osm-editing
+	public int[] osmID;
+	//#endif
 	//#if polish.api.bigstyles
 	public short[] type;
 	//#else
@@ -583,6 +586,15 @@ public class SingleTile extends Tile implements QueueableTile {
 			   sr.lat = nodeLat[i] * MoreMath.FIXPT_MULT_INV + centerLat;
 			   sr.lon = nodeLon[i] * MoreMath.FIXPT_MULT_INV + centerLon;
 			   sr.nameIdx = nameIdx[i];
+			   //#if polish.api.bigsearch
+			   //#if polish.api.osm-editing
+			   System.out.println("fileId: " + fileId + " i: " + i);
+			   if (Legend.enableEdits) {
+				   System.out.println("osm id: " + osmID[i]);
+				   sr.osmID = osmID[i];
+			   }
+			   //#endif
+			   //#endif
 			   if (Legend.enableUrlTags) {
 				   sr.urlIdx = urlIdx[i];
 			   }

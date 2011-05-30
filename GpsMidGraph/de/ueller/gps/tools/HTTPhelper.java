@@ -41,6 +41,7 @@ public class HTTPhelper implements Runnable{
 	private String password;
 	private String data;
 	private boolean methodPut;
+	private boolean methodDelete;
 	
 	public void getURL(String url, UploadListener ul) {
 		if ((ul == null) || (url == null)) {
@@ -58,7 +59,16 @@ public class HTTPhelper implements Runnable{
 		}
 	}
 	
+	// FIXME consider removing this and changing calls to uploadData
 	public void uploadData(String url, String data, boolean putMethod, UploadListener ul, String username, String password) {
+		uploadData(url, data, putMethod, false, ul, username, password);
+	}
+
+	public void deleteData(String url, String data, UploadListener ul, String username, String password) {
+		uploadData(url, data, false, true, ul, username, password);
+	}
+
+	public void uploadData(String url, String data, boolean putMethod, boolean deleteMethod, UploadListener ul, String username, String password) {
 		if ((ul == null) || (url == null)) {
 			logger.error(Locale.get("httphelper.BrokenCodePostingToUrl")/*Broken code posting to url */ + url);
 			return;
@@ -71,6 +81,7 @@ public class HTTPhelper implements Runnable{
 			this.url = url;
 			this.data = data;
 			this.methodPut = putMethod;
+			this.methodDelete = deleteMethod;
 			this.ul = ul;
 			this.username = username;
 			this.password = password;
@@ -103,8 +114,11 @@ public class HTTPhelper implements Runnable{
 			connection.setRequestProperty("User-Agent", "GpsMid");
 			if (methodPut) {
 				connection.setRequestProperty("X_HTTP_METHOD_OVERRIDE", "PUT");
+				logger.info("HTTP METHOD OVERRIDE: PUT: " + url);
+			} else if (methodDelete) {
+				connection.setRequestProperty("X_HTTP_METHOD_OVERRIDE", "DELETE");
+				logger.info("HTTP METHOD OVERRIDE: DELETE: " + url);
 			}
-			
 			
 			if ((username != null) && (password != null)) {
 				connection.setRequestProperty("Authorization", "Basic " + Base64.encode(username +":" + password));

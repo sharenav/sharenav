@@ -191,6 +191,11 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			tt.nodeLat = radlat;
 			tt.nodeLon = radlon;
 			tt.type = type;
+			//#if polish.api.osm-editing
+			if (Legend.enableEdits) {
+				tt.osmID = osmID;
+			}
+			//#endif
 		} catch (RuntimeException e) {
 			throwError(e, "Reading nodes", tt);
 		}

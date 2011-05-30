@@ -125,6 +125,19 @@ public class OSMdataWay extends OSMdataEntity implements XmlParserContentHandler
 		return xml;
 	}
 	
+	public String toDeleteXML(int commitChangesetID) {
+		String xml;
+		
+		// FIXME test and correct this functions if necessary
+		xml  = "<?xml version='1.0' encoding='utf-8'?>\r\n";
+		xml += "<osm version='0.6' generator='GpsMid'>\r\n";
+		xml += "<way id='" + osmID + "' version='" + version + 
+				"' changeset='" + commitChangesetID + "'/>\r\n";
+		xml += "</osm>\r\n";
+		
+		return xml;
+	}
+	
 	public String toString() {
 		String res;
 		res = "\n" + Locale.get("osmdataway.OSMway")/*OSM way*/ + " " + osmID + "\n";
