@@ -23,6 +23,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 	LayoutElement iconToggleRoute; 
 	LayoutElement iconOnlineInfo; 
 	LayoutElement iconAddPOI;
+	LayoutElement iconEditPOI;
 	LayoutElement iconAddAddr;
 	LayoutElement iconEditWay;
 	
@@ -62,6 +63,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		// Osm
 		mp = createAndAddMenuPage(Locale.get("traceiconmenu.OsmTop")/* Osm */, 3, 3);
 		iconEditWay =		mp.createAndAddIcon(Locale.get("traceiconmenu.EditWay")/*Edit way*/, "i_editway", Trace.RETRIEVE_XML);
+		iconEditPOI =		mp.createAndAddIcon(Locale.get("traceiconmenu.EditPOI")/*Edit POI*/, "i_addpoi", Trace.EDIT_ENTITY);
 		iconAddPOI =		mp.createAndAddIcon(Locale.get("traceiconmenu.AddPOI")/*Add POI*/, "i_addpoi", Trace.RETRIEVE_NODE);
 		iconAddAddr =		mp.createAndAddIcon(Locale.get("traceiconmenu.AddAddr")/*Add Address*/, "i_addpoi", Trace.EDIT_ADDR_CMD);
 		mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);

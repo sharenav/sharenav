@@ -325,7 +325,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 				if (trace == null) {
 					trace = Trace.getInstance();
 				}
-				GuiSearch search = new GuiSearch(trace);
+				GuiSearch search = new GuiSearch(trace, GuiSearch.ACTION_DEFAULT);
 				search.show();
 			} catch (Exception e) {
 				log.exception("Failed to display search screen ", e);

@@ -1214,3 +1214,4 @@ guiosmpoidisplay.PoiSuccessfullySaved=Poi was successfully saved to OpenStreetMa
 guiosmentitydisplay.RemoveEntity=Remove entity
 guiosmpoidisplay.DeletingPOI=Deleting POI
 guiosmpoidisplay.PoiSuccessfullyDeleted=Poi was successfully deleted from OpenStreetMap
+traceiconmenu.EditPOI=Edit POI

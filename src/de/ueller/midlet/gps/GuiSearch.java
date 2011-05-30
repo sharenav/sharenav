@@ -121,6 +121,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	private volatile static long lastPaintTime = 0;
 
+	private volatile int defaultAction = ACTION_DEFAULT;
+	private volatile boolean poisSearched = false;
+
 	private StringBuffer searchCanon = new StringBuffer();
 
 	private boolean searchAlpha = false;
@@ -151,6 +154,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 	public volatile int filter;
 	public final static byte FILTER_BIT_URLS = 1;
 	public final static byte FILTER_BIT_PHONES = 2;
+	
+	public final static byte ACTION_DEFAULT = 0;
+	public final static byte ACTION_EDIT_ENTITY = 1;
 	
 	public final static byte STATE_MAIN = 0;
 	public final static byte STATE_POI = 1;
@@ -222,8 +228,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private boolean spacePressed = false;
 	public volatile String words = "";
 
-	public GuiSearch(Trace parent) throws Exception {
+	public GuiSearch(Trace parent, int action) throws Exception {
 		super();
+		this.defaultAction = action;
 		this.parent = parent;
 		setCommandListener(this);
 		
@@ -337,18 +344,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				if (!isCursorValid()) {
 					return;
 				}
-				SearchResult sr = (SearchResult) result.elementAt(cursor);
-				if (Legend.enableEdits) {
-					// FIXME this should be made to work for areas & ways or at least should give a more accurate error message
-					//System.out.println("Trying to retrieve node " + sr.osmID + " lat: " + sr.lat + " lon " + sr.lon);
-					GuiOSMPOIDisplay guiNode = new GuiOSMPOIDisplay((int) sr.osmID, null,
-											sr.lat, sr.lon, parent);
-					guiNode.show();
-					guiNode.refresh();
-				} else {
-					logger.error(Locale.get("trace.EditingIsNotEnabled")/*Editing is not enabled in this map*/);
-				}
-				return;
+				editOSM((SearchResult) result.elementAt(cursor));
 			}
 			//#endif
 			//#endif
@@ -356,6 +352,14 @@ public class GuiSearch extends Canvas implements CommandListener,
 				if (!isCursorValid()) {
 					return;
 				}
+				//#if polish.api.bigsearch
+				//#if polish.api.osm-editing
+				if (defaultAction == ACTION_EDIT_ENTITY) {
+					editOSM((SearchResult) result.elementAt(cursor));
+					return;
+				}
+				//#endif
+				//#endif
 				SearchResult sr = (SearchResult) result.elementAt(cursor);
 				//			System.out.println("select " + sr);
 				RoutePositionMark positionMark = new RoutePositionMark(sr.lat,sr.lon);
@@ -571,6 +575,23 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	}
 
+	//#if polish.api.bigsearch
+	//#if polish.api.osm-editing
+	private void editOSM(SearchResult sr) {
+		if (Legend.enableEdits) {
+			// FIXME this should be made to work for areas & ways or at least should give a more accurate error message
+			//System.out.println("Trying to retrieve node " + sr.osmID + " lat: " + sr.lat + " lon " + sr.lon);
+			GuiOSMPOIDisplay guiNode = new GuiOSMPOIDisplay((int) sr.osmID, null,
+									sr.lat, sr.lon, parent);
+			guiNode.show();
+			guiNode.refresh();
+		} else {
+			logger.error(Locale.get("trace.EditingIsNotEnabled")/*Editing is not enabled in this map*/);
+		}
+		return;
+	}
+	//#endif
+	//#endif
 	private void destroy() {
 		searchThread.shutdown();
 		searchThread=null;
@@ -583,6 +604,20 @@ public class GuiSearch extends Canvas implements CommandListener,
 		gsl = new GuiSearchLayout(0, 0, width, height);
 		potentialDoubleClick = false;
 		pointerDragged = false;
+		if (defaultAction == ACTION_EDIT_ENTITY && !poisSearched) {
+			System.out.println("Starting POI search");
+			state = STATE_POI;
+			filter = 0;
+			try{
+				poiTypeForm = new GuiPOItypeSelectMenu(this, this);
+				poiTypeForm.show();
+			} catch (Exception e) {
+				logger.exception(Locale.get("guisearch.FailedToSelectPOIType")/*Failed to select POI type*/, e);
+				state = STATE_MAIN;
+				show();
+			}
+			poisSearched = true;
+		} else {
 		if (state == STATE_SEARCH_PROGRESS) {
 			Form f = new Form(Locale.get("guisearch.SearchingdotsForm")/*Searching...*/);
 			f.addCommand(BACK_CMD);
@@ -593,6 +628,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			//Display.getDisplay(parent.getParent()).setCurrent(this);
 		}
 		repaint();
+		}
 	}
 
 	public void sizeChanged(int w, int h) {

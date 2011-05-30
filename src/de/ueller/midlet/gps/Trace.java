@@ -158,8 +158,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	protected static final int TOGGLE_GPS_CMD = 58;
 	protected static final int CELLID_LOCATION_CMD = 59;
 	protected static final int MANUAL_LOCATION_CMD = 60;
+	protected static final int EDIT_ENTITY = 61;
 
-	private final Command [] CMDS = new Command[61];
+	private final Command [] CMDS = new Command[62];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -438,6 +439,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		CMDS[DATASCREEN_CMD] = new Command(Locale.get("trace.Tacho")/*Tacho*/, Command.ITEM, 15);
 		CMDS[OVERVIEW_MAP_CMD] = new Command(Locale.get("trace.OverviewFilterMap")/*Overview/Filter map*/, Command.ITEM, 20);
 		CMDS[RETRIEVE_XML] = new Command(Locale.get("trace.RetrieveXML")/*Retrieve XML*/,Command.ITEM, 200);
+		CMDS[EDIT_ENTITY] = new Command(Locale.get("traceiconmenu.EditPOI")/*Edit POI*/,Command.ITEM, 200);
 		CMDS[PAN_LEFT25_CMD] = new Command(Locale.get("trace.left25")/*left 25%*/,Command.ITEM, 100);
 		CMDS[PAN_RIGHT25_CMD] = new Command(Locale.get("trace.right25")/*right 25%*/,Command.ITEM, 100);
 		CMDS[PAN_UP25_CMD] = new Command(Locale.get("trace.up25")/*up 25%*/,Command.ITEM, 100);
@@ -818,6 +820,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		addCommand(CMDS[ONLINE_INFO_CMD]);
 		//#if polish.api.osm-editing
 		addCommand(CMDS[RETRIEVE_XML]);
+		addCommand(CMDS[EDIT_ENTITY]);
 		addCommand(CMDS[RETRIEVE_NODE]);
 		addCommand(CMDS[EDIT_ADDR_CMD]);
 		//#endif
@@ -860,6 +863,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		removeCommand(CMDS[ONLINE_INFO_CMD]);
 		//#if polish.api.osm-editing
 		removeCommand(CMDS[RETRIEVE_XML]);
+		removeCommand(CMDS[EDIT_ENTITY]);
 		removeCommand(CMDS[RETRIEVE_NODE]);
 		removeCommand(CMDS[EDIT_ADDR_CMD]);
 		//#endif
@@ -1082,7 +1086,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 
 			if (c == CMDS[SEARCH_CMD]) {
-				GuiSearch guiSearch = new GuiSearch(this);
+				GuiSearch guiSearch = new GuiSearch(this, GuiSearch.ACTION_DEFAULT);
 				guiSearch.show();
 				return;
 			}
@@ -1613,6 +1617,20 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 							guiWay.show();
 							guiWay.refresh();
 						}
+					} else {
+						parent.alert("Editing", "Editing support was not enabled in Osm2GpsMid", Alert.FOREVER);
+					}
+				}
+				if (c == CMDS[EDIT_ENTITY]) {
+					if (Legend.enableEdits) {
+						// FIXME: do the following:
+						// * set a flag that default operation is OSM edit
+						// * do a search for nearby POIs, asking for type
+						// * when the user selects, open OSM editing
+
+						GuiSearch guiSearch = new GuiSearch(this, GuiSearch.ACTION_EDIT_ENTITY);
+						guiSearch.show();
+						return;
 					} else {
 						parent.alert("Editing", "Editing support was not enabled in Osm2GpsMid", Alert.FOREVER);
 					}

@@ -8,9 +8,9 @@
     *** Routing user interface ***
     - communicate to user more prominently that the calculation speed setting allows poor routes,
       optionally warn (warning on by default) of poor routes if accepted by setting
-    *** OSM editing ***
-    - support for editing and deleting OSM POIs; currently a bit awkward, will have to do it
-      via name or POI search and then select Edit OSM data from the search result menu
+    *** OSM POI editing ***
+    - support for editing and deleting OSM POIs; available in OSM edit menu which will show nearby POIs
+      and also via name or POI search (select Edit OSM data from the search result menu)
     *** Osm2GpsMid ***
     - show size of OSM XML data read, thanks walter9
     *** Bug fixes **
