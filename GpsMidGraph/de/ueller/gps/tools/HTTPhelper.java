@@ -149,7 +149,12 @@ public class HTTPhelper implements Runnable{
 				int length = (int) connection.getLength();
 				//#debug debug
 				logger.debug("Retrieving String of length: " + length);
+				//#if polish.android
+				// For some reason, getLength() is too small on Android
+				if (length != -1 && false) {
+				//#else
 				if (length != -1) {
+				//#endif
 					byte incomingData[] = new byte[length];
 					int idx = 0;
 					while (idx < length) {
@@ -208,7 +213,12 @@ public class HTTPhelper implements Runnable{
 				int length = (int) connection.getLength();
 				//#debug debug
 				logger.debug("Retrieving String of length: " + length);
+				//#if polish.android
+				// For some reason, getLength() is too small on Android
+				if (length != -1 && false) {
+				//#else
 				if (length != -1) {
+				//#endif
 					byte incomingData[] = new byte[length];
 					int idx = 0;
 					while (idx < length) {
