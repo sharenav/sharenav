@@ -10,7 +10,7 @@
       optionally warn (warning on by default) of poor routes if accepted by setting
     *** OSM editing ***
     - support for editing and deleting OSM POIs; currently a bit awkward, will have to do it
-      via name or POI search and select Edit OSM data from the search result menu. Deleting fails currently.
+      via name or POI search and then select Edit OSM data from the search result menu
     *** Osm2GpsMid ***
     - show size of OSM XML data read, thanks walter9
     *** Bug fixes **

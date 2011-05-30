@@ -137,8 +137,9 @@ public class OSMdataNode extends OSMdataEntity implements XmlParserContentHandle
 		// FIXME should be correct but doesn't work, gives a 400 bad request error
 		xml  = "<?xml version='1.0' encoding='utf-8'?>\r\n";
 		xml += "<osm version='0.6' generator='GpsMid'>\r\n";
-		xml += "<node id='" + osmID + "' version='" + version + 
-				"' changeset='" + commitChangesetID + "'/>\r\n";
+		xml += "<node id='" + osmID + "' version='" + version + "'"
+			+ " lat='" + lat + "' lon='" + lon
+			+ "' changeset='" + commitChangesetID + "'/>\r\n";
 		xml += "</osm>\r\n";
 		
 		return xml;
