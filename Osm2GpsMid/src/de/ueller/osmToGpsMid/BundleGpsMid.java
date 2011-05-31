@@ -427,6 +427,11 @@ public class BundleGpsMid implements Runnable {
 					+ "     please fix your .properties file");
 			System.exit(1);
 		}
+		if ((config.getPlanetName() == null || config.getPlanetName().equals(""))) {
+			System.out.println("ERROR: You haven't specified a planet file\n"
+					   + "     please fix your .properties file");
+			System.exit(1);
+		}
 	}
 
 	/* (non-Javadoc)

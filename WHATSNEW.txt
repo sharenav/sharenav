@@ -17,6 +17,8 @@
     - show size of OSM XML data read, thanks walter9
     - some housenumber relation handling bug fixes
     - fix crash at handling of some small maps doesn't crash
+    - allow start with java -jar Osm2GpsMid.jar propertyfile.properties for easy batch
+      processing (map source specified in .properties)
     *** Bug fixes **
     - routing bug fixes, e.g. related to fixing incorrect penalties for bogus turns
     - fixes for showing non-metric units, thanks brait

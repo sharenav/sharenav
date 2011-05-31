@@ -478,7 +478,7 @@ public class Configuration {
 						mapName = arg.substring(11);
 					}
 					if (arg.startsWith("--help")) {
-						System.err.println("Usage: Osm2GpsMid [--bounds=left,bottom,right,top] [--cellID=filename] planet.osm.bz2 [location]");
+						System.err.println("Usage: Osm2GpsMid [--bounds=left,bottom,right,top] [--cellID=filename] planet.osm.bz2 | planet.osm.pbf | http://address.to.planet/file.osm.pbf | properties.properties [properties] ");
 						System.err.println("  \"--bounds=\" specifies the set of bounds to use in GpsMid ");
 						System.err.println("       Can be left out to use the regions specified in location.properties");
 						System.err.println("       or if you want to create a GpsMid for the whole region");
@@ -491,11 +491,11 @@ public class Configuration {
 						System.err.println("  \"--nogui\" don't start the GUI (to be used with --properties= if map name is specified in properties)");
 						System.err.println("  planet.osm.bz2: points to a (compressed) .osm file, overrides possible .properties mapSource");
 						System.err.println("       By specifying osmXapi, the data can be fetched straight from the server (only works for small areas)");
-						System.err.println("  location: points to a .properties file specifying additional parameters");
+						System.err.println("  properties: points to a .properties file specifying additional parameters");
 						System.exit(0);
 					}
 					
-				} else if (planet == null || planet.equals("")) {
+				} else if ((planet == null || planet.equals("")) && !arg.endsWith(".properties")) {
 					planet = arg;
 				} else {
 					propFile = arg;
