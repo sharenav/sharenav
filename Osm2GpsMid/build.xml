@@ -22,7 +22,7 @@
 	<property name="lib.dir" value="${basedir}/lib"/>
 
    	<property name="dist.dir" value="${basedir}/dist"/>
-	<property name="version" value="0.7.51"/>
+	<property name="version" value="0.7.52"/>
 	<property name="mapversion" value="67"/>
 	<property name="buildlib" value="buildlib/explode.jar"/>
 
