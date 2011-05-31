@@ -206,6 +206,8 @@ public class Relations {
 									n.resetType(conf);
 									n.getType(conf);
 									parser.addNode(n);
+								} else {
+									System.out.println("Warning: ignoring map data: __wayid in house number relation was already set for way: " + housew.toUrl());
 								}
 							} else {
 								houseNumberRelationProblemCount++;
