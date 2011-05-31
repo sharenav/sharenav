@@ -184,6 +184,10 @@ public class Relations {
 								//  System.out.println("setting node " + n + " __wayid to " + w.id);
 								if (housew.containsKey("addr:interpolation")) {
 									// FIXME add handling of interpolations, see http://wiki.openstreetmap.org/wiki/Proposed_features/House_numbers/Karlsruhe_Schema
+									//
+									// How this is done:
+									// * look at the existing housenumber and do the interpolation calculations
+									// * for each housenumber to add, do housenumber adding like is done below inside if (!n.containsKey("__wayid"))
 									//System.out.println("Warning: Relation " + r.toUrl() + " - ignoring interpolation way " + housew.toUrl());
 									houseNumberInterpolationIgnoreCount++;
 								} else if (!n.containsKey("__wayid")) {
