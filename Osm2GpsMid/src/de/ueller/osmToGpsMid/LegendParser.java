@@ -308,6 +308,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 		// FIXME: switch this on a flag, if true, index all
 		// nodes with addr:housenumber, regardless of whether there's a housenumberindex element
 		if (config.useHouseNumbers) {
+			relevantKeys.add("addr:interpolation");
 			relevantKeys.add("addr:housenumber");
 			relevantKeys.add("addr:street");
 		}
