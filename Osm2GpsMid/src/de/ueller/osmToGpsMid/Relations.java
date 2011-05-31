@@ -63,6 +63,7 @@ public class Relations {
 		int validRelationCount = 0;
 		int invalidRelationCount = 0;
 		int houseNumberCount = 0;
+		int houseNumberInterpolationIgnoreCount = 0;
 		int houseNumberRelationAcceptCount = 0;
 		int houseNumberRelationProblemCount = 0;
 		int houseNumberRelationIgnoreCount = 0;
@@ -181,8 +182,13 @@ public class Relations {
 							if (n != null) {
 								// add tag to point from
 								//  System.out.println("setting node " + n + " __wayid to " + w.id);
-								if (!n.containsKey("__wayid")) {
+								if (housew.containsKey("addr:interpolation")) {
+									// FIXME add handling of interpolations, see http://wiki.openstreetmap.org/wiki/Proposed_features/House_numbers/Karlsruhe_Schema
+									//System.out.println("Warning: Relation " + r.toUrl() + " - ignoring interpolation way " + housew.toUrl());
+									houseNumberInterpolationIgnoreCount++;
+								} else if (!n.containsKey("__wayid")) {
 									w.houseNumberAdd(n);
+									// FIXME we should do this without fake ids like this is done for ordinary houses
 									n.id = FakeIdGenerator.makeFakeId();
 									n.setAttribute("__wayid", w.id.toString());
 									houseNumberCount++;
@@ -338,6 +344,7 @@ public class Relations {
 		System.out.println("info: ignored " + invalidRelationCount + " non-valid relations");
 		System.out.println("info: accepted " + houseNumberCount + " housenumber-to-street connections from associatedStreet relations");
 		System.out.println("info: ignored " + houseNumberRelationIgnoreCount + " associatedStreet (housenumber) relations");
+		System.out.println("info: ignored " + houseNumberInterpolationIgnoreCount + " associatedStreet (housenumber) relation interpolation ways");
 		System.out.println("info: processed " + houseNumberRelationAcceptCount + " associatedStreet (housenumber) relations"
 			+ ", of which " +  houseNumberRelationProblemCount + " had problems");
 		System.out.println("info: ignored " + boundaryIgnore + " boundary=administrative multipolygon relations");
