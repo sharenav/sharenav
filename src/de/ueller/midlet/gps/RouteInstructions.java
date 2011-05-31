@@ -277,6 +277,10 @@ public class RouteInstructions {
 				    	// distance to next instruction or when the next instruction is the destination to the closest point on the destination way
 				    	finalRouteSeg = iNow == route.size() - 1;
 				    	distNow = ProjMath.getDistance(center.radlat, center.radlon, finalRouteSeg ? closestPointOnDestWay.radlat : cNow.to.lat, finalRouteSeg ? closestPointOnDestWay.radlon : cNow.to.lon);
+					// if necessary, convert to yards for voice output
+					if (!Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
+						distNow = distNow / 0.9144 + 0.5;
+					}
 				    	
 						intDistNow=new Double(distNow).intValue();
 						if (iNow < route.size() - 1) {
