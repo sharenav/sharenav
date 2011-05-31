@@ -68,7 +68,7 @@ public class QDGpxParser extends QDParser implements DocHandler, GpxParser {
 			return false;
 		}
 		try {
-			QDParser.parse( (DocHandler) this, new InputStreamReader(in));
+			QDParser.parse( (DocHandler) this, new InputStreamReader(in,Configuration.getUtf8Encoding()));
 			return true;
 		} catch (Exception e) {
 			logger.exception(Locale.get("qdgpxparser.ErrorParsingXML")/*Error while parsing the XML file*/, e);

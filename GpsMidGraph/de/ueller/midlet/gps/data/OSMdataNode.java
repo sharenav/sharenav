@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.HTTPhelper;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.importexport.QDGpxParser;
@@ -60,8 +61,11 @@ public class OSMdataNode extends OSMdataEntity implements XmlParserContentHandle
 	protected void parseXML() {
 		QDGpxParser parser = new QDGpxParser();
 		logger.debug("Starting Node XML parsing with QDXML");
-		InputStream in = new ByteArrayInputStream(fullXML.getBytes());
-		parser.parse(in, this);
+		try {
+			InputStream in = new ByteArrayInputStream(fullXML.getBytes(Configuration.getUtf8Encoding()));
+			parser.parse(in, this);
+		} catch (java.io.UnsupportedEncodingException uee) {
+		}
 	}
 	
 	public void characters(char[] ch, int start, int length) {

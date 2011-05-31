@@ -13,6 +13,7 @@ package de.ueller.midlet.gps.data;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -21,6 +22,7 @@ import de.ueller.gps.tools.HTTPhelper;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.importexport.QDGpxParser;
 import de.ueller.midlet.gps.importexport.XmlParserContentHandler;
+import de.ueller.gps.data.Configuration;
 
 import de.enough.polish.util.Locale;
 
@@ -41,8 +43,11 @@ public class OSMdataWay extends OSMdataEntity implements XmlParserContentHandler
 		
 		QDGpxParser parser = new QDGpxParser();
 		logger.debug("Starting Way XML parsing with QDXML");
-		InputStream in = new ByteArrayInputStream(fullXML.getBytes());
-		parser.parse(in, this);
+		try {
+			InputStream in = new ByteArrayInputStream(fullXML.getBytes(Configuration.getUtf8Encoding()));
+			parser.parse(in, this);
+		} catch (java.io.UnsupportedEncodingException uee) {
+		}
 	}
 	
 	public void characters(char[] ch, int start, int length) {
