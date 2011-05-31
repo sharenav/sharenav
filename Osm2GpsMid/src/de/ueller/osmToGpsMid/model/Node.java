@@ -82,6 +82,37 @@ public class Node extends Entity {
 		return lon;
 	}
 	
+	/**
+	 * @return Longitude (in map units) of this node for isClockWise()
+	 */
+	public long getLongLon() {
+		return toMapUnit(lon);
+	}
+	
+	/**
+	 * @return Longitude (in map units) of this node for isClockWise()
+	 */
+	public long getLongLat() {
+		return toMapUnit(lat);
+	}
+	
+	/* from mkgmap by Steve Ratcliffe */
+
+    	/**
+         * A map unit is an integer value that is 1/(2^24) degrees of latitude or
+         * longitude.
+         *
+         * @param l The lat or long as decimal degrees.
+         * @return An integer value in map units.
+         */
+        private static int toMapUnit(float l) {
+                double DELTA = 360.0D / (1 << 24) / 2; //Correct rounding
+                if (l > 0)
+                        return (int) ((l + DELTA) * (1 << 24)/360);
+                else
+                        return (int) ((l - DELTA) * (1 << 24)/360);
+        }
+
 	@Override
 	public String getName() {
 		if (type != -1) {

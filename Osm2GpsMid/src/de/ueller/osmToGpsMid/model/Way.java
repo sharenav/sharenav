@@ -590,6 +590,14 @@ public class Way extends Entity implements Comparable<Way> {
 	/**
 	 * @return Node in the middle or null if way has no nodes
 	 */
+	public Node getMidPointNodeByBounds() {
+		Bounds b = getBounds();
+		return (new Node((b.maxLat + b.minLat) / 2, (b.maxLon + b.minLon) / 2, -1));
+	}
+
+	/**
+	 * @return Node in the middle or null if way has no nodes
+	 */
 	public Node getMidPoint() {
 		if (isArea()) {
 			Bounds b = getBounds();
@@ -1057,6 +1065,30 @@ public class Way extends Entity implements Comparable<Way> {
 	/** 
 	 * @return True if the way is a closed polygon with a clockwise direction.
 	 */
+	public boolean isCounterClockwise() {
+		// adapted from isCclockwise()
+		
+		if (getNodes().size() < 3 || 
+				!getNodes().get(0).equals(getNodes().get(getNodes().size() - 1))) {
+			return false;
+		}
+
+		long area = 0;
+		Node n1 = getNodes().get(getNodes().size()-1);
+		for (int i = getNodes().size()-2; i >= 0; --i) {
+			Node n2 = getNodes().get(i);
+			area += ((long)n1.getLongLon() * n2.getLongLat() - 
+					 (long)n2.getLongLon() * n1.getLongLat());
+			n1 = n2;
+		}
+
+		// this test looks to be inverted but gives the expected result!
+		return area < 0;
+	}
+
+	/** 
+	 * @return True if the way is a closed polygon with a clockwise direction.
+	 */
 	public boolean isClockwise() {
 		// This method was ported from mkgmap (uk.me.parabola.mkgmap.reader.osm.Way).
 		
@@ -1069,8 +1101,8 @@ public class Way extends Entity implements Comparable<Way> {
 		Node n1 = getNodes().get(0);
 		for (int i = 1; i < getNodes().size(); ++i) {
 			Node n2 = getNodes().get(i);
-			area += ((long)n1.getLon() * n2.getLat() - 
-					 (long)n2.getLon() * n1.getLat());
+			area += ((long)n1.getLongLon() * n2.getLongLat() - 
+					 (long)n2.getLongLon() * n1.getLongLat());
 			n1 = n2;
 		}
 

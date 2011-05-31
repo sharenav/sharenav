@@ -178,19 +178,22 @@ public class Relations {
 						}
 						for (Long wayref : r.getWayIds(Member.ROLE_HOUSE)) {
 							Way housew = wayHashMap.get(wayref);
-							Node n = housew.getMidPoint();
-							if (n != null) {
-								// add tag to point from
-								//  System.out.println("setting node " + n + " __wayid to " + w.id);
-								if (housew.containsKey("addr:interpolation")) {
-									// FIXME add handling of interpolations, see http://wiki.openstreetmap.org/wiki/Proposed_features/House_numbers/Karlsruhe_Schema
-									//
-									// How this is done:
-									// * look at the existing housenumber and do the interpolation calculations
-									// * for each housenumber to add, do housenumber adding like is done below inside if (!n.containsKey("__wayid"))
-									//System.out.println("Warning: Relation " + r.toUrl() + " - ignoring interpolation way " + housew.toUrl());
-									houseNumberInterpolationIgnoreCount++;
-								} else if (!n.containsKey("__wayid")) {
+							if (housew.containsKey("addr:interpolation")) {
+								// FIXME add handling of interpolations, see http://wiki.openstreetmap.org/wiki/Proposed_features/House_numbers/Karlsruhe_Schema
+								//
+								// How this is done:
+								// * look at the existing housenumber and do the interpolation calculations
+								// * for each housenumber to add, do housenumber adding like is done below inside if (!n.containsKey("__wayid"))
+								//System.out.println("Warning: Relation " + r.toUrl() + " - ignoring interpolation way " + housew.toUrl());
+								houseNumberInterpolationIgnoreCount++;
+							} else if (housew.isArea() || housew.isClockwise() || housew.isCounterClockwise()) {
+								// won't use just isArea() as some house roles won't work properly:
+								// fenced areas, caravan sites or others not recognized as areas by GpsMid
+								// examples:
+								// http://www.openstreetmap.org/browse/way/82294062
+								// http://www.openstreetmap.org/browse/way/42270858
+								Node n = housew.getMidPointNodeByBounds();
+								if (n != null && !n.containsKey("__wayid")) {
 									w.houseNumberAdd(n);
 									// FIXME we should do this without fake ids like this is done for ordinary houses
 									n.id = FakeIdGenerator.makeFakeId();
@@ -206,7 +209,7 @@ public class Relations {
 								}
 							} else {
 								houseNumberRelationProblemCount++;
-								System.out.println("Warning: ignoring map data: could not get midpoint for housenumber area (typically building)" + housew);
+								System.out.println("Warning: ignoring map data: house number relation way was not an area or a an interpolation way: " + housew.toUrl());
 							}
 						}
 					}
