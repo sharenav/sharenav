@@ -163,11 +163,15 @@ public class Relations {
 						Way w = wayHashMap.get(ref);
 						for (Long noderef : r.getNodeIds(Member.ROLE_HOUSE)) {
 							Node n = nodeHashMap.get(noderef);
-							w.houseNumberAdd(n);
-							// add tag to point from
-							//  System.out.println("setting node " + n + " __wayid to " + w.id);
-							houseNumberCount++;
-							n.setAttribute("__wayid", w.id.toString());
+							if (n != null) {
+								w.houseNumberAdd(n);
+								// add tag to point from
+								//  System.out.println("setting node " + n + " __wayid to " + w.id);
+								houseNumberCount++;
+								n.setAttribute("__wayid", w.id.toString());
+							} else {
+								System.out.println("Warning: Relation " + r.toUrl() + ": ignoring house node noderef " + noderef);
+							}
 							//System.out.println("Housenumber relation " + r.toUrl() + " - added node " + );
 						}
 						for (Long wayref : r.getWayIds(Member.ROLE_HOUSE)) {
