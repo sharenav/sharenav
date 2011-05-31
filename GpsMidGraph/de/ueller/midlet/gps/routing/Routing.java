@@ -14,6 +14,7 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.RouteBaseTile;
 import de.ueller.gpsMid.mapData.Tile;
+import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.RouteInstructions;
 import de.ueller.midlet.gps.Trace;
@@ -96,7 +97,7 @@ public class Routing implements Runnable {
 		if (Configuration.getRouteEstimationFac() > 0) {
 			if (!Configuration.getCfgBitState(Configuration.CFGBIT_SUPPRESS_ROUTE_WARNING)) {
 				parent.alert(Locale.get("routing.RoutingWarningTitle")/*Routing warning*/,
-					     Locale.get("routing.RoutingWarning")/*Routes may be longer than necessary, as allow poor routes setting is on*/, 5000);
+					     Locale.get("routing.RoutingWarning")/*Routes may be longer than necessary, as allow poor routes setting is on*/, GpsMid.isRunningInMicroEmulator() ? 1500 : 5000);
 			}
 		}
 		maxEstimationSpeed = (int) ( (Configuration.getTravelMode().maxEstimationSpeed * 10) / 36);
