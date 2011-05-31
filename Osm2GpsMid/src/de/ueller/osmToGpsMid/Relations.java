@@ -170,7 +170,8 @@ public class Relations {
 								houseNumberCount++;
 								n.setAttribute("__wayid", w.id.toString());
 							} else {
-								System.out.println("Warning: Relation " + r.toUrl() + ": ignoring house node noderef " + noderef);
+								System.out.println("Warning: Relation " + r.toUrl() + " - ignoring house node noderef " + noderef + ", nodeHashMap.get(" + noderef + ") returned null");
+								System.out.println(" -- possibly because the way the node http://www.openstreetmap.org/browse/node/" + noderef + " belongs to is a member of two different housenumber relations");
 							}
 							//System.out.println("Housenumber relation " + r.toUrl() + " - added node " + );
 						}
