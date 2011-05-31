@@ -15,10 +15,14 @@
       and also via name or POI search (select Edit OSM data from the search result menu)
     *** Osm2GpsMid ***
     - show size of OSM XML data read, thanks walter9
+    - some housenumber relation handling bug fixes
+    - fix crash at handling of some small maps doesn't crash
     *** Bug fixes **
     - routing bug fixes, e.g. related to fixing incorrect penalties for bogus turns
     - fixes for showing non-metric units, thanks brait
     - log debug output in utf8, thanks brait
+    - bugfix for Nokia S60 utf-8 latin handling in OSM edit
+    - workaround for Android OSM POI editing
     *** Build scripts ***
     - add some scripts (for GNU/Linux etc.) to build GpsMid with a minimal map
 
