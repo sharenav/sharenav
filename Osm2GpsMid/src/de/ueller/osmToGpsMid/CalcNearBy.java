@@ -146,6 +146,9 @@ public class CalcNearBy {
 				nearestWay = null;
 				retrieveN = 25;
 				dist = maxDistanceTested;
+				if (retrieveN > kdWaysSize) {
+					retrieveN = kdWaysSize;
+				}
 				//System.out.println ("First way " + nearestWay + " at dist " + dist);
 				nearWays = nearByWays.nearest(MyMath.latlon2XYZ(thisNode), retrieveN);
 				// then look for other named ways
