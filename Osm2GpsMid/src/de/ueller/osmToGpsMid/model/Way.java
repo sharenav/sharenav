@@ -1083,6 +1083,7 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 
 		// this test looks to be inverted but gives the expected result!
+		//System.out.println("Counterclockwise for way " + toUrl() + " area = " + area);
 		return area < 0;
 	}
 

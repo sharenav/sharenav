@@ -44,6 +44,7 @@ public class CellIdProvider {
 	private static final int CELLMETHOD_DEBUG = 5;
 	private static final int CELLMETHOD_ANDROID = 6;
 	private static final int CELLMETHOD_SAMSUNG = 7;
+	private static final int CELLMETHOD_LG = 8;
 	
 	private static CellIdProvider singelton;
 	
@@ -127,6 +128,24 @@ public class CellIdProvider {
 			}
 		} catch (Exception e) {
 			logger.silentexception("Retrieving CellID as a Samsung failed", e);
+			//Nothing to do here, just fall through to the next method
+		}
+		try {
+			//#debug info
+			logger.info("Trying to see if LG method is available");
+			GSMCell cell = obtainLGCell();
+			if (cell != null) {
+				logger.error(Locale.get("cellidprovider.MotorolaCellIDPleseCheck")/*Motorola CellID is experimental and may be wrong. Please check data before uploading*/);
+				cellRetrievelMethod = CELLMETHOD_LG;
+				//#debug info
+				logger.info("   Yes, the LG method works");
+				return;
+			} else {
+				//#debug info
+				logger.info("   No, need to use a different method");
+			}
+		} catch (Exception e) {
+			logger.silentexception("Retrieving CellID as an LG failed", e);
 			//Nothing to do here, just fall through to the next method
 		}
 		try {
@@ -343,6 +362,40 @@ public class CellIdProvider {
 		return cell;
 	}
 	
+	private GSMCell obtainLGCell() {
+		String cellidS = null;
+		String mccS = null;
+		String mncS = null;
+		GSMCell cell = new GSMCell();
+		
+		if (System.getProperty("com.lge.lgjp") == null) {
+			// should be "LGJP1", "LGJP2" or "LGJP3 according to https://sourceforge.net/tracker/index.php?func=detail&aid=3310226&group_id=192084&atid=939977
+			// FIXME should we check the value?
+			return null;
+		}
+		cellidS = System.getProperty("com.lge.net.cellid");
+		mccS  = System.getProperty("com.lge.net.cmcc");
+		mncS = System.getProperty("com.lge.net.cmnc");
+		// apparently we can't get LAC
+		if ((cellidS == null) || (mccS == null) || (mncS == null)) {
+			//#debug debug
+			logger.debug("No valid cell-id");
+			return null;
+		}
+		
+		try {
+			cell.cellID = Integer.parseInt(cellidS);
+			cell.mcc = (short) Integer.parseInt(mccS);
+			cell.mnc = (short) Integer.parseInt(mncS);
+		} catch (NumberFormatException nfe) {
+			logger.silentexception("Failed to parse cell-id (cellid: " + cellidS +
+					" mcc: " + mccS + " mnc: " + mncS, nfe);
+			return null;
+		}
+		
+		return cell;
+	}
+	
 	private GSMCell obtainSocketCell() {
 		int retval;
 		retval = SocketGateway.getSocketData(SocketGateway.TYPE_CELLID);
@@ -419,6 +472,9 @@ public class CellIdProvider {
 			break;
 		case CELLMETHOD_SAMSUNG:
 			cachedCell =  obtainMotoOrSamsungCell(true);
+			break;
+		case CELLMETHOD_LG:
+			cachedCell =  obtainLGCell(true);
 			break;
 		case CELLMETHOD_S60FP2:
 			cachedCell = obtainS60FP2Cell();
