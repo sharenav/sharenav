@@ -474,7 +474,7 @@ public class CellIdProvider {
 			cachedCell =  obtainMotoOrSamsungCell(true);
 			break;
 		case CELLMETHOD_LG:
-			cachedCell =  obtainLGCell(true);
+			cachedCell =  obtainLGCell();
 			break;
 		case CELLMETHOD_S60FP2:
 			cachedCell = obtainS60FP2Cell();
