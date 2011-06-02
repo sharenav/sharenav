@@ -4,14 +4,11 @@
 #
 
 user=PUT_YOUR_SOURCEFORGE_USERNAME_HERE
-ver=0.7.32-map66
+ver=0.7.52-map66
 
 ant clean
-#
-# workaround for the first i18n-messages failure
-#
-ant -propertyfile android.properties -Ddevice=Generic/android-hiresonline
-ant -propertyfile android.properties -Ddevice=Generic/android
+
+ant -propertyfile android.properties android
 
 # normal build 
 

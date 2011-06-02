@@ -11,15 +11,10 @@ android.home=/path/to/android-sdk/set/in/build.properties
 
 #Building for android requires a newer J2ME-Polish than
 #2.1.4, set path to it here
-polish.home=/set/path/to/J2ME-Polish-nightly/in/android.properties
+polish.home=/set/path/to/J2ME-Polish-2.2.1-or-nightly/in/android.properties
 
 # Alternatively, You can build by tuning the parameterrs on the ant command line
 
-# ant -Ddevice=Generic/android-desire -Dfullscreen=no -DusePolishGui=true
-# ant -Dpolish.home=/path/to/J2ME-Polish-nightly -Ddevice=Generic/android-desire -Dfullscreen=no -DusePolishGui=true
+# use "ant -propertyfile android.properties android" to build android .apk's
 
-fullscreen=no
-usePolishGui=true
-device=Generic/android
-gpsmid.test_device=Generic/android-hiresonline
 gpsmid.test_device=Generic/android-hiresonline
