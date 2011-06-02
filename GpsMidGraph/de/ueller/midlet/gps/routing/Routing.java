@@ -336,14 +336,7 @@ public class Routing implements Runnable {
 				}
 				Connection nodeSuccessor=successor[cl];
 				// do not try a u-turn back to the route node we are coming from
-				if ( (currentNode.parent != null && nodeSuccessor.toId == currentNode.parent.state.toId)
-						||
-				// do not uses motorways if not allowed
-					 (!useMotorways && nodeSuccessor.isMotorwayConnection())
-						||
-				// do not uses toll roads if not allowed
-					 (!useTollRoads && nodeSuccessor.isTollRoadConnection())
-				) {
+				if ( (currentNode.parent != null && nodeSuccessor.toId == currentNode.parent.state.toId)) {
 					continue;
 				}
 
@@ -351,6 +344,15 @@ public class Routing implements Runnable {
 				//System.out.println ("currentNode frombearing " + currentNode.fromBearing
 				//		    + " nodeSuccessor.startBearing " + nodeSuccessor.startBearing);
 				successorCost = currentNode.costs + nodeSuccessor.getCost()+turnCost;
+				
+				/* make motorways and toll roads very expensive if they are not allowed
+				  but still make them usable as the route might start on them */
+				if ( !useMotorways && nodeSuccessor.isMotorwayConnection()
+						||
+					 !useTollRoads && nodeSuccessor.isTollRoadConnection()
+				) {
+					successorCost += (100 * nodeSuccessor.getCost() + 100000);
+				}
 				//System.out.println("successor " + nodeSuccessor + " cost " + successorCost + " turnCost : " + turnCost + " node " + currentNode + " current node costs " + currentNode.costs + " nodesucc cost " + nodeSuccessor.getCost());
 				// when the next connection starts at traffic signals and the current one isn't also starting at a traffic signal but we are not on a motorway connection
 				if (nodeSuccessor.startsAtTrafficSignals() && !currentNode.state.startsAtTrafficSignals() && !nodeSuccessor.isMotorwayConnection() ) {
