@@ -1215,3 +1215,8 @@ guiosmentitydisplay.RemoveEntity=Remove entity
 guiosmpoidisplay.DeletingPOI=Deleting POI
 guiosmpoidisplay.PoiSuccessfullyDeleted=Poi was successfully deleted from OpenStreetMap
 traceiconmenu.EditPOI=Edit POI
+routing.RouteContainsTitle=Route contains
+routing.RouteContainsUnavoidableMotorways=unavoidable motorways
+routing.RouteContainsUnavoidableTollroads=unavoidable toll roads
+routing.RouteContainsTollroads=toll roads
+

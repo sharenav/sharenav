@@ -7,6 +7,7 @@ package de.ueller.midlet.gps;
 
 import java.util.Vector;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.Tile;
@@ -81,6 +82,32 @@ public class RouteLineProducer implements Runnable {
 					//#debug debug
 					logger.debug("Connection2Ways found: " + connsFound + "/" + (route.size()-1) + " in " + (long)(System.currentTimeMillis() - startTime) + " ms");
 					trace.receiveMessage (Locale.get("routelineproducer.Route")/*Route: */ + Trace.showDistance((int) routeLen, Trace.DISTANCE_ROAD) + (connsFound==(route.size()-1)?"":" (" + connsFound + "/" + (route.size()-1) + ")"));
+
+					ConnectionWithNode c;
+					boolean hasMotorways = false;
+					boolean hasTollRoads = false;
+					for (int i=0; i < route.size() - 1; i++){
+						c = (ConnectionWithNode) route.elementAt(i);
+						if ((c.wayRouteFlags & Legend.ROUTE_FLAG_TOLLROAD) != 0) {
+							hasTollRoads = true;				
+						}
+						if ((c.wayRouteFlags & (Legend.ROUTE_FLAG_MOTORWAY | Legend.ROUTE_FLAG_MOTORWAY_LINK)) != 0) {
+							hasMotorways = true;
+						}
+					}
+					String routeWarning = "";
+					if (hasTollRoads) {
+						routeWarning +=	Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_USE_TOLLROADS)? Locale.get("routing.RouteContainsTollroads") : Locale.get("routing.RouteContainsUnavoidableTollroads");				
+					}
+					if (hasMotorways && !Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_USE_MOTORWAYS)) {
+						if (routeWarning.length() != 0) {
+							routeWarning +=	", ";
+						}							
+						routeWarning +=	Locale.get("routing.RouteContainsUnavoidableMotorways");
+					}
+					if (routeWarning.length() != 0) {
+						trace.alert(Locale.get("routing.RouteContainsTitle"), routeWarning, 5000);
+					}
 				} else {
 					//#debug debug
 					logger.debug("RouteLineProducer aborted at " + connsFound + "/" + (route.size()-1));					

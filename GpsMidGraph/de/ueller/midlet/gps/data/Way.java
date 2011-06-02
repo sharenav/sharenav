@@ -701,6 +701,7 @@ public class Way extends Entity {
 				if (isRoundAbout()) routeFlags += Legend.ROUTE_FLAG_ROUNDABOUT;
 				if (isTunnel()) routeFlags += Legend.ROUTE_FLAG_TUNNEL;
 				if (isBridge()) routeFlags += Legend.ROUTE_FLAG_BRIDGE;
+				if (isTollRoad()) routeFlags += Legend.ROUTE_FLAG_TOLLROAD;
 				if (isOneDirectionOnly()) routeFlags += Legend.ROUTE_FLAG_ONEDIRECTION_ONLY;
 				pc.conWayRouteFlags = routeFlags;
 				
