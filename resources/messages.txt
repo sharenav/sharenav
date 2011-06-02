@@ -1219,4 +1219,3 @@ routing.RouteContainsTitle=Route contains
 routing.RouteContainsUnavoidableMotorways=unavoidable motorways
 routing.RouteContainsUnavoidableTollroads=unavoidable toll roads
 routing.RouteContainsTollroads=toll roads
-
