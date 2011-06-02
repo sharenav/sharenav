@@ -291,7 +291,7 @@ public class SearchNames implements Runnable {
 				if (Legend.enableBigStyles) {
 					type = ds.readShort();
 				} else {
-					type = ds.readByte();
+					type = ds.readByte() & 0xff;
 				}
 								
 				while (type != 0) {					
@@ -388,7 +388,7 @@ public class SearchNames implements Runnable {
 					if (Legend.enableBigStyles) {
 						type = ds.readShort();
 					} else {
-						type = ds.readByte();
+						type = ds.readByte() & 0xff;
 					}
 				} // while (type != 0)
 			} // while (true)
