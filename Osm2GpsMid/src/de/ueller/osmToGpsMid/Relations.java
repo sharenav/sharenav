@@ -178,12 +178,16 @@ public class Relations {
 						}
 						for (Long wayref : r.getWayIds(Member.ROLE_HOUSE)) {
 							Way housew = wayHashMap.get(wayref);
+							//System.out.println("Adding area way " + housew + " to housenumber relation " + r.toUrl());
 							if (housew.containsKey("addr:interpolation")) {
 								// FIXME add handling of interpolations, see http://wiki.openstreetmap.org/wiki/Proposed_features/House_numbers/Karlsruhe_Schema
 								//
 								// How this is done:
 								// * look at the existing housenumber and do the interpolation calculations
 								// * for each housenumber to add, do housenumber adding like is done below inside if (!n.containsKey("__wayid"))
+								// A practical note: Apparently the great majority of these (at least in Germany where they're used a lot) are simple straight lines, ways with
+								// two nodes, so just adding the simple code for interpolating for two-node ways would go a long way in practice to have
+								// more GpsMid-findable addresses.
 								//System.out.println("Warning: Relation " + r.toUrl() + " - ignoring interpolation way " + housew.toUrl());
 								houseNumberInterpolationIgnoreCount++;
 							} else if (housew.isArea() || housew.isClockwise() || housew.isCounterClockwise()) {
@@ -192,20 +196,26 @@ public class Relations {
 								// examples:
 								// http://www.openstreetmap.org/browse/way/82294062
 								// http://www.openstreetmap.org/browse/way/42270858
-								Node n = housew.getMidPointNodeByBounds();
-								if (n != null && !n.containsKey("__wayid")) {
-									w.houseNumberAdd(n);
+								// There's no need to add a node at this stage, as this will be indexed as a building.
+								// Node n = housew.getMidPointNodeByBounds();
+								if (!housew.containsKey("__wayid")) {
+									// if (n != null && !n.containsKey("__wayid")) {
+									// FIXME if we want to have nodes for housenumbers in GpsMid
+									// (if we want to list housenumber nodes in way data structure),
+									// we'll probably need to create fake IDs and add the nodes to parser. Takes more space and gets more complicated.
+									// w.houseNumberAdd(n);
 									// FIXME we should do this without fake ids like this is done for ordinary houses
-									n.id = FakeIdGenerator.makeFakeId();
-									n.setAttribute("__wayid", w.id.toString());
+									//n.id = FakeIdGenerator.makeFakeId();
+									// n.setAttribute("__wayid", w.id.toString());
+									w.setAttribute("__wayid", w.id.toString());
 									houseNumberCount++;
 									//System.out.println("Housenumber relation " + r.toUrl() + " - added node " + );
-									for (String t : housew.getTags()) {
-										n.setAttribute(t, housew.getAttribute(t));
-									}
-									n.resetType(conf);
-									n.getType(conf);
-									parser.addNode(n);
+									//for (String t : housew.getTags()) {
+									//	n.setAttribute(t, housew.getAttribute(t));
+									//}
+									//n.resetType(conf);
+									//n.getType(conf);
+									//parser.addNode(n);
 								} else {
 									System.out.println("Warning: ignoring map data: __wayid in house number relation was already set for way: " + housew.toUrl());
 								}
