@@ -332,9 +332,15 @@ public class CalcNearBy {
 				Node n = w.getMidPoint();
 				long way = calcWayForHouseNumber((Entity) n, wayHashMap);
 				if (way != (long) 0) {
+					// if there's a relation, __wayid has already been set at relation handling
 					if (!w.containsKey("__wayid")) {
 						w.setAttribute("__wayid", Long.toString(way));
 					}
+					// FIXME if we want to have nodes for housenumbers in GpsMid
+					// (if we want to list housenumber nodes in way data structure),
+					// we'll probably need to create fake IDs and add the nodes to parser. Takes more space and gets more complicated.
+
+					// w.houseNumberAdd(n);
 					//System.out.println("Adding housenumber helper tag __wayid " + way + " to way " + w + " midpoint: " + n );
 				}
 				//n.wayToPOItransfer(w);
