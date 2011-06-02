@@ -297,6 +297,9 @@ public class Configuration {
 		/** Path name of the file containing the cell IDs */
 		private String cellSource;
 		
+		/** Path name of the file containing the cell IDs */
+		private boolean cellIDnoLAC = false; 
+
 		/** TODO: Explain: Is this only true/false or can it have other values? */
 		private String cellOperator;
 		
@@ -700,6 +703,7 @@ public class Configuration {
 			appParam = getString("app");
 			enableEditingSupport = getString("enableEditing").equalsIgnoreCase("true");
 			cellOperator = getString("useCellID");
+			cellIDnoLAC = getString("cellIDnoLAC").equalsIgnoreCase("true");
 		}
 
 		public void setPlanetName(String p) {
@@ -853,6 +857,10 @@ public class Configuration {
 				return cellSource;
 			}
 			return getString("cellSource");
+		}
+
+		public boolean getCellIDnoLAC() {
+			return  cellIDnoLAC;
 		}
 
 		/** Returns the name of the Map (as it will be shown on the phone).
@@ -1137,6 +1145,10 @@ public class Configuration {
 			cellSource = src;
 		}
 
+		public void setCellIDnoLAC(boolean noLAC) {
+			cellIDnoLAC = noLAC;
+		}
+
 		public InputStream getCharMapStream() throws IOException{
 			InputStream cmis = null;
 			try {
@@ -1417,6 +1429,7 @@ public class Configuration {
 			confString += "  Planet source: " + planet + "\n";
 			confString += "  Included CellID data: " + getCellOperator() + "\n";
 			confString += "  CellID source: " + cellSource + "\n";
+			confString += "  Include CellID data for phones with no LAC: " + cellIDnoLAC + "\n";
 			confString += "  Use url tags: " + useUrlTags + "\n";
 			confString += "  Use phone tags: " + usePhoneTags + "\n";
 			confString += "  Use house numbers for search: " + useHouseNumbers + "\n";

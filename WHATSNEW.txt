@@ -29,6 +29,9 @@
     - add some scripts (for GNU/Linux etc.) to build GpsMid with a minimal map
     *** Platforms ***
     - add cellid suport for LG devices
+    - allow cellid database to contain entries which can be used with
+      phones which can't access LAC (some Nokia models, LG phones),
+      option cellIDnoLAC=true in .properties
 
 GpsMid 0.7.5
     *** ERRATA for style file with more than 126 POI elements ***

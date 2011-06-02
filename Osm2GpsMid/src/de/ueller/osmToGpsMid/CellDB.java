@@ -173,11 +173,14 @@ public class CellDB {
 			 * quite a few LACs for which there is only a single cell in the
 			 * db. In order to reduce the number of small files, we combine
 			 * all LACs with less than 20 cells into a big operator file.
+			 * If CellIDnoLOC option is set, write all cell id data
+			 * into the file with no LAC in the name, for the benefit
+			 * of users of Nokia and LG phones which can't get the LAC code.
 			 */
 			for (ArrayList<Cell> lacCells : cells.values()) {
 				Cell c = lacCells.get(0);
-				DataOutputStream dos;
-				if (lacCells.size() < 20) {
+				DataOutputStream dos = null;
+				if (conf.getCellIDnoLAC() || lacCells.size() < 20) {
 					String fname = conf.getTempDir() + "/c" + c.mcc + c.mnc
 							+ ".id";
 					f = new File(fname);
@@ -185,20 +188,28 @@ public class CellDB {
 						f.createNewFile();
 					}
 					dos = new DataOutputStream(new FileOutputStream(f, true));
-				} else {
+					for (Cell c2 : lacCells) {
+						dos.writeInt(c2.lac);
+						dos.writeInt(c2.cellid);
+						dos.writeFloat((float) c2.lat);
+						dos.writeFloat((float) c2.lon);
+					}
+					dos.close();
+				}
+				if (lacCells.size() >= 20) {
 					String fname = conf.getTempDir() + "/c" + c.mcc + c.mnc
 							+ c.lac + ".id";
 					f = new File(fname);
 					f.createNewFile();
 					dos = new DataOutputStream(new FileOutputStream(f));
+					for (Cell c2 : lacCells) {
+						dos.writeInt(c2.lac);
+						dos.writeInt(c2.cellid);
+						dos.writeFloat((float) c2.lat);
+						dos.writeFloat((float) c2.lon);
+					}
+					dos.close();
 				}
-				for (Cell c2 : lacCells) {
-					dos.writeInt(c2.lac);
-					dos.writeInt(c2.cellid);
-					dos.writeFloat((float) c2.lat);
-					dos.writeFloat((float) c2.lon);
-				}
-				dos.close();
 			}
 
 		} catch (FileNotFoundException e) {
