@@ -27,6 +27,8 @@
     - workaround for Android OSM POI editing
     *** Build scripts ***
     - add some scripts (for GNU/Linux etc.) to build GpsMid with a minimal map
+    *** Platforms ***
+    - add cellid suport for LG devices
 
 GpsMid 0.7.5
     *** ERRATA for style file with more than 126 POI elements ***
