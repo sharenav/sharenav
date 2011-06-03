@@ -25,6 +25,7 @@
     - log debug output in utf8, thanks brait
     - bugfix for Nokia S60 utf-8 latin handling in OSM edit
     - workaround for Android OSM POI editing
+    - fixes for more than 126 POI/way styles: search works now, maybe other fixes too
     *** Build scripts & building ***
     - add some scripts (for GNU/Linux etc.) to build GpsMid with a minimal map
     - release and nightly now built with J2MEPolish 2.2.1 (earlier was with 2.1.4)
