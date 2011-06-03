@@ -449,6 +449,10 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 		String filename = "/c" + cellLoc.mcc + cellLoc.mnc + cellLoc.lac + ".id";
 		InputStream is ;
 		try {
+			// assuming here 0 for LAC is not valid; don't try to open the db for an invalid LAC
+			if (cellLoc.lac == 0) {
+				throw new IOException("LAC == 0");
+			}
 			is = Configuration.getMapResource(filename);
 		} catch (IOException ioe) {
 			//#debug debug
@@ -476,7 +480,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 					int cellID = dis.readInt();
 					float lat = dis.readFloat();
 					float lon = dis.readFloat();
-					if ((cellLAC == cellLoc.lac) && (cellID == cellLoc.cellID)) {
+					if ((cellLoc.lac == 0 || cellLAC == cellLoc.lac) && (cellID == cellLoc.cellID)) {
 						ret = new GSMCell();
 						ret.mcc = cellLoc.mcc;
 						ret.mnc = cellLoc.mnc;
