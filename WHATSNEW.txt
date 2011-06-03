@@ -1,42 +1,40 @@
-    *** Search user interface ***
-    - optionally warn (warning on by default) of incomplete search results when search limit is reached
     *** Routing ***
-    - allow for non-integer (decimal) speeds for travel modes
-    - optionally warn (warning on by default) of poor routes if accepted by setting
-    - support for distances in English units (yards) in navigation instructions (changes also in syntax.cfg
-      for this)
-    - bug fixes to route line and remove wrong check direction warnings in some roundabout situations
-    - a route is no more calculated against a roundabout's direction when walking. This makes instructions clearer.
-    - a route start at a toll road / motorway is now allowed even if in settings is selected to not use those
+    - routing bug fixes, e.g. related to fixing incorrect penalties for bogus turns
+    - a route start at a toll road / motorway is now allowed even if option to use those is not set
     - a warning is shown after route line completion if the route had unavoidable motorways / toll roads
     - an info is shown after route line completion if the route contains toll roads
-    *** Routing user interface ***
-    - communicate to user more prominently that the calculation speed setting allows poor routes,
-      optionally warn (warning on by default) of poor routes if accepted by setting
+    - info about possible poor route result in calculation speed setting label
+    - optionally warn (warning on by default) of poor routes if calculation speed is not 0
+    - bug fixes to route line and remove wrong check direction warnings in some roundabout situations
+    - a route is no more calculated against a roundabout's direction when walking. This makes instructions clearer.
+    - non-integer (decimal) speeds are now allowed for travel modes
+    - fixes for showing non-metric units, thanks brait
+    - support for distances in English units (yards) in navigation instructions (changes also in syntax.cfg
+      for this)
+    *** Searching ***
+    - optionally warn (warning on by default) of incomplete search results when search limit is reached
+    - fixes for more than 126 POI/way styles: search works now, maybe other fixes too
     *** OSM POI editing ***
     - support for editing and deleting OSM POIs; available in OSM edit menu which will show nearby POIs
       and also via name or POI search (select Edit OSM data from the search result menu)
+    - OSM POI editing is only available with "Generic/editing"
     *** Osm2GpsMid ***
     - show size of OSM XML data read, thanks walter9
     - some housenumber relation handling bug fixes
     - fix crash at handling of some small maps doesn't crash
     - allow start with java -jar Osm2GpsMid.jar propertyfile.properties for easy batch
       processing (map source specified in .properties)
-    *** Bug fixes **
-    - routing bug fixes, e.g. related to fixing incorrect penalties for bogus turns
-    - fixes for showing non-metric units, thanks brait
-    - log debug output in utf8, thanks brait
-    - bugfix for Nokia S60 utf-8 latin handling in OSM edit
-    - workaround for Android OSM POI editing
-    - fixes for more than 126 POI/way styles: search works now, maybe other fixes too
-    *** Build scripts & building ***
-    - add some scripts (for GNU/Linux etc.) to build GpsMid with a minimal map
-    - release and nightly now built with J2MEPolish 2.2.1 (earlier was with 2.1.4)
     *** Platforms ***
+    - workaround for Android OSM POI editing
+    - bugfix for Nokia S60 utf-8 latin handling in OSM edit
+    - log debug output in utf8, thanks brait
     - add cellid suport for LG devices
     - allow cellid database to contain entries which can be used with
       phones which can't access LAC (some Nokia models, LG phones),
       option cellIDnoLAC=true in .properties
+    *** Build scripts & building ***
+    - add some scripts (for GNU/Linux etc.) to build GpsMid with a minimal map
+    - release and nightly now built with J2MEPolish 2.2.1 (earlier was with 2.1.4)
 
 GpsMid 0.7.5
     *** ERRATA for style file with more than 126 POI elements ***
