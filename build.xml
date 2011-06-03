@@ -319,6 +319,8 @@
 			<or>
 				<requirement name="Identifier" value="Generic/android" />
 				<requirement name="Identifier" value="Generic/android-hiresonline" />
+				<requirement name="Identifier" value="Generic/android2.2-hiresonline" />
+				<requirement name="Identifier" value="Generic/android2.3-hiresonline" />
 			</or>
 		</deviceRequirements>
 		

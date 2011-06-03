@@ -17,7 +17,7 @@ at large.
 
 	<device supportsPolishGui="true">
 		<identifier>Generic/android-hiresonline</identifier>
-		<parent>HTC/NexusOne</parent>
+		<parent>Generic/android2.1</parent>
 		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing.
 		</description>
 		<features>isVirtual</features>
@@ -27,14 +27,49 @@ at large.
 		<capability name="JavaConfiguration" value="Android/2.1" />
 		<capability name="GpsMid.editing" value="true"/>
 		<!-- add "bigstyles" to be able to handle more than 255 style file elements -->
-		<capability name="JavaPackage" value="osm-editing, online, bigsearch"/>
+		<capability name="JavaPackage" value="btapi, osm-editing, online, bigsearch"/>
+		<capability name="Emulator.Skin" value="WVGA800" />
+		<capability name="ScreenSize" value="800x480" />
+		<capability name="CanvasSize" value="800x480" />
+		<capability name="FullCanvasSize" value="800x480" />
+	</device>
+	<device supportsPolishGui="true">
+		<identifier>Generic/android2.2-hiresonline</identifier>
+		<parent>Generic/android2.2</parent>
+		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing.
+		</description>
+		<features>isVirtual</features>
+		<description>An Android compatible device with the 2.2 firmware.</description>
+		<groups>android</groups>
+		<capability name="JavaPlatform" value="Android/2.2" />
+		<capability name="JavaConfiguration" value="Android/2.2" />
+		<capability name="GpsMid.editing" value="true"/>
+		<!-- add "bigstyles" to be able to handle more than 255 style file elements -->
+		<capability name="JavaPackage" value="btapi, osm-editing, online, bigsearch"/>
 		<capability name="Emulator.Skin" value="WVGA800" />
 		<capability name="ScreenSize" value="800x480" />
 		<capability name="CanvasSize" value="800x480" />
 		<capability name="FullCanvasSize" value="800x480" />
 	</device>
 
-
+	<device supportsPolishGui="true">
+		<identifier>Generic/android2.3-hiresonline</identifier>
+		<parent>Generic/android2.3</parent>
+		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing.
+		</description>
+		<features>isVirtual</features>
+		<description>An Android compatible device with the 2.3 firmware.</description>
+		<groups>android</groups>
+		<capability name="JavaPlatform" value="Android/2.3" />
+		<capability name="JavaConfiguration" value="Android/2.3" />
+		<capability name="GpsMid.editing" value="true"/>
+		<!-- add "bigstyles" to be able to handle more than 255 style file elements -->
+		<capability name="JavaPackage" value="btapi, osm-editing, online, bigsearch"/>
+		<capability name="Emulator.Skin" value="WVGA800" />
+		<capability name="ScreenSize" value="800x480" />
+		<capability name="CanvasSize" value="800x480" />
+		<capability name="FullCanvasSize" value="800x480" />
+	</device>
 	<device supportsPolishGui="true">
 		<identifier>Generic/microemulator</identifier>
 		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing for microemulator testing.
