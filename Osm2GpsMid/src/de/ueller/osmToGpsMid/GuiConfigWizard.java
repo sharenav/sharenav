@@ -175,6 +175,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	private static final String JCB_EDITING = "Enable online OSM editing support";
 	
 	private static final String JCB_HOUSENUMBERS = "Enable house number support";
+
+	private static final String JCB_CELLIDNOLAC = "Store cellids in a format usable by phones with no LAC support";
 	
 	private static final String ORS_URL="http://openrouteservice.org/php/OpenLSRS_DetermineRoute.php";
 	
@@ -210,6 +212,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	JTextField jtfName;
 	JComboBox jcbSoundFormats;
 	JCheckBox jcbEditing;
+	JCheckBox jcbcellIDnoLAC;
 	JCheckBox jcbHousenumbers;
 	String langList[] = {
 		"*",
@@ -537,6 +540,13 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.weighty = 0;
 		jpOptions2.add(jcbHousenumbers, gbc);
 		
+		jcbcellIDnoLAC = new JCheckBox(JCB_CELLIDNOLAC);
+		jcbcellIDnoLAC.addActionListener(this);
+		gbc.gridx = 0;
+		gbc.gridy = 2;
+		gbc.weighty = 0;
+		jpOptions2.add(jcbcellIDnoLAC, gbc);
+		
 		jcbSoundFormats = new JComboBox(soundFormats);
 		jcbSoundFormats.setSelectedIndex(1);
 		jcbSoundFormats.addActionListener(this);
@@ -557,7 +567,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jcbCellSource.addActionListener(this);
 		jcbCellSource.setToolTipText("Select a source of the Cell ID db for cell based location.");
 		gbc.gridx = 0;
-		gbc.gridy = 2;
+		gbc.gridy = 3;
 		gbc.weighty = 0;
 		jpOptions2.add(jcbCellSource, gbc);
 		
@@ -635,6 +645,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jcbCellSource.setEnabled(false);
 		jcbEditing.setEnabled(false);
 		jcbHousenumbers.setEnabled(false);
+		jcbcellIDnoLAC.setEnabled(false);
 		destList.setVisible(false);
 		jbCalcRoute.setEnabled(false);
 		jbClearRoute.setEnabled(false);
@@ -764,6 +775,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		guiSettingsFromConfig();
 		jcbEditing.setSelected(config.enableEditingSupport);
 		jcbHousenumbers.setSelected(config.useHouseNumbers);
+		jcbcellIDnoLAC.setSelected(config.getCellIDnoLAC());
 	}
 
 	/** Finds all files in the Osm2GpsMid JAR that match the pattern "GpsMid-*.jar"
@@ -1037,6 +1049,11 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				fw.write("useCellID = " + config.getString("useCellID") + "\r\n");
 			}
 			fw.write("\r\n");
+			fw.write("# Store cellids for phones without LAC.\r\n");
+			fw.write("cellIDnoLAC = " + config.getCellIDnoLAC() + "\r\n");
+			fw.write("\r\n");
+
+			fw.write("\r\n");
 			fw.write("# You can have up to 9 regions.\r\n");
 			fw.write("# Ways and POIs in any of the regions will be written to the bundle.\r\n");
 			Vector<Bounds> bounds = config.getBounds();
@@ -1165,6 +1182,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			destList.repaint();
 		} else if (JCB_HOUSENUMBERS.equalsIgnoreCase(event.getActionCommand())) {
 			config.useHouseNumbers = ((JCheckBox)event.getSource()).isSelected();
+		} else if (JCB_CELLIDNOLAC.equalsIgnoreCase(event.getActionCommand())) {
+			config.setCellIDnoLAC(((JCheckBox)event.getSource()).isSelected());
 		} else if ("CalculateRoute-click".equalsIgnoreCase(event.getActionCommand())) {
 			handleCalculateRoute();
 		} else if (JCB_EDITING.equalsIgnoreCase(event.getActionCommand())) {
