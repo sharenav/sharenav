@@ -6,7 +6,10 @@
     - support for distances in English units (yards) in navigation instructions (changes also in syntax.cfg
       for this)
     - bug fixes to route line and remove wrong check direction warnings in some roundabout situations
-    - a route is no more calculated against a roundabout's direction when walking. This makes instructions clearer. 
+    - a route is no more calculated against a roundabout's direction when walking. This makes instructions clearer.
+    - a route start at a toll road / motorway is now allowed even if in settings is selected to not use those
+    - a warning is shown after route line completion if the route had unavoidable motorways / toll roads
+    - an info is shown after route line completion if the route contains toll roads
     *** Routing user interface ***
     - communicate to user more prominently that the calculation speed setting allows poor routes,
       optionally warn (warning on by default) of poor routes if accepted by setting
