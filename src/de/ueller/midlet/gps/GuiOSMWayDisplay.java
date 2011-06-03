@@ -37,9 +37,9 @@ import de.ueller.midlet.gps.data.OSMdataWay;
 
 import de.enough.polish.util.Locale;
 
-public class GUIosmWayDisplay extends GuiOSMEntityDisplay implements GpsMidDisplayable, CommandListener, UploadListener, ItemCommandListener {
+public class GuiOSMWayDisplay extends GuiOSMEntityDisplay implements GpsMidDisplayable, CommandListener, UploadListener, ItemCommandListener {
 	
-	private final static Logger logger = Logger.getInstance(GUIosmWayDisplay.class,Logger.DEBUG);
+	private final static Logger logger = Logger.getInstance(GuiOSMWayDisplay.class,Logger.DEBUG);
 
     private final Command REVERSE_CMD = new Command(Locale.get("guiosmwaydisplay.ReverseDirection")/*Reverse direction*/, Command.ITEM, 4);
     private final Command PRESET_CMD = new Command(Locale.get("guiosmwaydisplay.AddPreset")/*Add preset*/, Command.ITEM, 5);
@@ -50,7 +50,7 @@ public class GUIosmWayDisplay extends GuiOSMEntityDisplay implements GpsMidDispl
 	private SingleTile t;
 	private List presets;
 	
-	public GUIosmWayDisplay(EditableWay way, SingleTile t, GpsMidDisplayable parent) {
+	public GuiOSMWayDisplay(EditableWay way, SingleTile t, GpsMidDisplayable parent) {
 	        super(Locale.get("guiosmwaydisplay.Way")/*Way */ + way.osmID, parent);
 		this.eway = way;
 		addCommand(REVERSE_CMD);

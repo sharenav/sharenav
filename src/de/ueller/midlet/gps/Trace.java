@@ -54,7 +54,7 @@ import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gps.urls.Urls;
 import de.ueller.gpsMid.mapData.DictReader;
 //#if polish.api.osm-editing
-import de.ueller.gpsMid.GUIosmWayDisplay;
+import de.ueller.gpsMid.GuiOSMWayDisplay;
 import de.ueller.midlet.gps.data.EditableWay;
 //#endif
 import de.ueller.gpsMid.CancelMonitorInterface;
@@ -1613,7 +1613,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 						if ((pc.actualWay != null) && (pc.actualWay instanceof EditableWay)) {
 							EditableWay eway = (EditableWay)pc.actualWay;
-							GUIosmWayDisplay guiWay = new GUIosmWayDisplay(eway, pc.actualSingleTile, this);
+							GuiOSMWayDisplay guiWay = new GuiOSMWayDisplay(eway, pc.actualSingleTile, this);
 							guiWay.show();
 							guiWay.refresh();
 						}
