@@ -911,7 +911,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	}
 
-	private void commandAction(int actionId) {
+	public void commandAction(int actionId) {
 		commandAction(CMDS[actionId], null);
 	}
 

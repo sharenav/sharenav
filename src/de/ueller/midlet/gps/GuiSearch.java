@@ -41,6 +41,7 @@ import de.ueller.gpsMid.CancelMonitorInterface;
 //#if polish.api.bigsearch
 //#if polish.api.osm-editing
 import de.ueller.midlet.gps.GuiOSMPOIDisplay;
+import de.ueller.midlet.gps.GuiOSMWayDisplay;
 //#endif
 //#endif
 import de.ueller.midlet.gps.GuiPOItypeSelectMenu.POItypeSelectMenuItem;
@@ -591,12 +592,30 @@ public class GuiSearch extends Canvas implements CommandListener,
 	//#if polish.api.osm-editing
 	private void editOSM(SearchResult sr) {
 		if (Legend.enableEdits) {
-			// FIXME this should be made to work for areas & ways or at least should give a more accurate error message
 			//System.out.println("Trying to retrieve node " + sr.osmID + " lat: " + sr.lat + " lon " + sr.lon);
-			GuiOSMPOIDisplay guiNode = new GuiOSMPOIDisplay((int) sr.osmID, null,
-									sr.lat, sr.lon, parent);
-			guiNode.show();
-			guiNode.refresh();
+			if (sr.type < 0) {
+				GuiOSMPOIDisplay guiNode = new GuiOSMPOIDisplay((int) sr.osmID, null,
+										sr.lat, sr.lon, parent);
+				guiNode.show();
+				guiNode.refresh();
+			} else {
+				// FIXME add code for relation & area editing, at least for 
+				// tags - probably needs some changes to data structures to pass
+				// relation id & area way id from Osm2GpsMid to GpsMid
+
+				// FIXME maybe there's a better method to get a way by sr.osmID?
+				// (though strictly we'd only need the id for downloading XML)
+				// try with showing the node and loading via RETRIEVE_XML
+				// a side effect is that position changes, fix if we don't want that
+				parent.receivePosition(sr.lat, sr.lon, Configuration.getRealBaseScale());				
+				parent.show();				
+				parent.commandAction(Trace.RETRIEVE_XML);
+				//EditableWay eway = (EditableWay)pc.actualWay;
+				//GuiOSMWayDisplay guiWay = new GuiOSMWayDisplay(eway, pc.actualSingleTile, this);
+				//guiWay.show();
+				//guiWay.refresh();
+
+			}
 		} else {
 			logger.error(Locale.get("trace.EditingIsNotEnabled")/*Editing is not enabled in this map*/);
 		}
