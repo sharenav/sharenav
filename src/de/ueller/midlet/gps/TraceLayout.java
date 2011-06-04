@@ -128,9 +128,10 @@ public class TraceLayout extends LayoutManager {
 
 		e = ele[ALTITUDE]; addElement(e,
 				LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
-				LayoutElement.FLAG_FONT_SMALL
+				LayoutElement.FLAG_FONT_SMALL | LayoutElement.FLAG_BACKGROUND_BOX 
 			);
-			e.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
+			e.setColor(Legend.COLORS[Legend.COLOR_ALTITUDE_TEXT]);
+			e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ALTITUDE_BACKGROUND]);
 			e.setAdditionalOffsX(-8);
 			e.setHRelative(ele[SOLUTION]);
 			e.setVRelative(ele[TITLEBAR]);

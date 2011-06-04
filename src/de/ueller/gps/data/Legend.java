@@ -184,7 +184,9 @@ public class Legend {
 	public final static int COLOR_SEARCH_BUTTON_BORDER = 84;
 	public final static int COLOR_MENU_BACKGROUND = 85;
 	public final static int COLOR_MENU_TEXT = 86;
-	public final static int COLOR_COUNT = 87;
+	public final static int COLOR_ALTITUDE_BACKGROUND = 87;
+	public final static int COLOR_ALTITUDE_TEXT = 88;
+	public final int COLOR_COUNT = 89;
 	
 	public static int COLORS[] = new int[COLOR_COUNT];
 
@@ -336,6 +338,11 @@ public class Legend {
 		 * Read colors
 		 */
 		int count = (int) ds.readShort();
+
+		if (mapFormatVersion < 67) {
+			COLOR_COUNT = 87;
+		}
+
 		if (count != COLOR_COUNT) {
 			throw new IOException("Map file contains " + count + "colors but midlet's COLOR_COUNT is " + COLOR_COUNT);
 		}
@@ -343,6 +350,11 @@ public class Legend {
 			COLORS[i] = readDayOrNightColor(ds);
 		}
 		
+		if (mapFormatVersion < 67) {
+			COLORS[COLOR_ALTITUDE_BACKGROUND] = COLORS[COLOR_SOLUTION_BACKGROUND];
+			COLORS[COLOR_ALTITUDE_TEXT] = COLORS[COLOR_SOLUTION_TEXT];
+		}
+
 		/*
 		 * Read Tile Scale Levels
 		 */

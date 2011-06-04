@@ -14,6 +14,8 @@
     *** Searching ***
     - optionally warn (warning on by default) of incomplete search results when search limit is reached
     - fixes for more than 126 POI/way styles: search works now, maybe other fixes too
+    *** Maps display ***
+    - configurable text & background colors for altitude display
     *** OSM POI editing ***
     - support for editing and deleting OSM POIs; available in OSM edit menu which will show nearby POIs
       and also via name or POI search (select Edit OSM data from the search result menu)

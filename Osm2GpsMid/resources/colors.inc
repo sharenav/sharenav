@@ -9,6 +9,8 @@
 	<color of="titleBar_text" is="00000000" isAtNight="00FFFFFF"/>
 	<color of="solution_background" is="00FFFFFF" isAtNight="00777777"/>
 	<color of="solution_text" is="00000000" isAtNight="00FFFFFF"/>
+	<color of="altitude_background" is="00FFFFFF" isAtNight="00777777"/>
+	<color of="altitude_text" is="00000000" isAtNight="00FFFFFF"/>
 	<color of="wayName_background" is="00FFFFFF" isAtNight="00222222"/>
 	<color of="wayName_text" is="00000000" isAtNight="00FFFFFF"/>
 	<color of="area_label_text" is="00000000" isAtNight="00FFFFFF"/>	

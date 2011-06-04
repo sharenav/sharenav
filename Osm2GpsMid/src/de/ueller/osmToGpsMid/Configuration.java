@@ -149,7 +149,9 @@ public class Configuration {
 	public final static int COLOR_SEARCH_BUTTON_BORDER = 84;
 	public final static int COLOR_MENU_BACKGROUND = 85;
 	public final static int COLOR_MENU_TEXT = 86;
-	public final static int COLOR_COUNT = 87;
+	public final static int COLOR_ALTITUDE_BACKGROUND = 87;
+	public final static int COLOR_ALTITUDE_TEXT = 88;
+	public final static int COLOR_COUNT = 89;
 	
 	public final static String COLORNAMES[] =
 			{"map_background",
@@ -238,7 +240,9 @@ public class Configuration {
 			 "search_button_text",
 			 "search_button_border",
 			 "menu_background",
-			 "menu_text"
+			 "menu_text",
+			 "altitude_background",
+			 "altitude_text"
 			};
 
 	public static int COLORS[] = new int[COLOR_COUNT];
