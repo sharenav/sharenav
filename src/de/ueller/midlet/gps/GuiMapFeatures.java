@@ -15,37 +15,37 @@ import de.ueller.midlet.gps.GpsMidMenu;
 public class GuiMapFeatures extends Form implements CommandListener {
 	// Groups
 	private ChoiceGroup elemsGroup;
-	private	String [] elems = new String[10];
-	private boolean[] selElems = new boolean[10];
+	private final	String [] elems = new String[10];
+	private final boolean[] selElems = new boolean[10];
 
 	private ChoiceGroup altInfosGroup;
-	private	String [] altInfos = new String[2];
-	private	boolean[] selAltInfos = new boolean[2];
+	private final	String [] altInfos = new String[2];
+	private final	boolean[] selAltInfos = new boolean[2];
 
 	private ChoiceGroup rotationGroup;
 	private	String [] rotation = new String[2];
 	
 	private ChoiceGroup modesGroup;
-	private	String [] modes = new String[3];
-	private	boolean[] selModes = new boolean[3];
+	private final	String [] modes = new String[3];
+	private final	boolean[] selModes = new boolean[3];
 
 	private TextField  tfBaseScale;
 	
 	private ChoiceGroup otherGroup;
-	private	String [] other = new String[2];
-	private	boolean[] selOther = new boolean[2];
+	private final	String [] other = new String[2];
+	private final	boolean[] selOther = new boolean[2];
 	
 	
 	private Gauge gaugeDetailBoost; 
 	private Gauge gaugeDetailBoostPOI; 
 
 	// commands
-	private static final Command CMD_APPLY = new Command(Locale.get("guimapfeatures.Apply")/*Apply*/, GpsMidMenu.OK, 1);
+	private static final Command CMD_APPLY = new Command(Locale.get("guimapfeatures.Apply")/*Apply*/, GpsMidMenu.BACK, 1);
 	private static final Command CMD_SAVE = new Command(Locale.get("guimapfeatures.Save")/*Save*/, GpsMidMenu.OK, 2);
-	//private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.CANCEL, 3);
+	//private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.BACK, 3);
 	
 	// other
-	private Trace parent;
+	private final Trace parent;
 	
 	public GuiMapFeatures(Trace tr) {
 		super(Locale.get("guimapfeatures.MapFeatures")/*Map features*/);

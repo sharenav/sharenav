@@ -58,7 +58,7 @@ import de.enough.polish.util.Locale;
  */
 public class GuiCamera extends Canvas implements CommandListener, ItemCommandListener, GuiCameraInterface, SelectionListener, GpsMidDisplayable {
 
-	private final Command CANCEL_CMD = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.CANCEL, 5);
+	private final Command CANCEL_CMD = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.BACK, 5);
 	private final Command OK_CMD = new Command(Locale.get("generic.OK")/*Ok*/, GpsMidMenu.OK, 5);
 	private final Command CAPTURE_CMD = new Command(Locale.get("guicamera.Capture")/*Capture*/, Command.OK, 5);
 	private final Command STORE_CMD = new Command(Locale.get("guicamera.SelectDir")/*Select directory*/, Command.ITEM, 5);
@@ -376,8 +376,9 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		}
 		if (keyCode == Configuration.KEYCODE_CAMERA_COVER_CLOSE) {
 			//#if polish.api.mmapi
-			if (mPlayer != null)
+			if (mPlayer != null) {
 				mPlayer.close();
+			}
 			//#endif
 			parent.show();
 		}
@@ -394,8 +395,9 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		if (c == CANCEL_CMD) {
 			if (disp == this) {
 				//#if polish.api.mmapi
-				if (mPlayer != null)
+				if (mPlayer != null) {
 					mPlayer.close();
+				}
 				//#endif
 				parent.show();
 			} else {
@@ -479,7 +481,9 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 			}
 			String [] encStrings = new String[0];
 			String setEnc = Configuration.getPhotoEncoding();
-			if (setEnc == null) setEnc = "";
+			if (setEnc == null) {
+				setEnc = "";
+			}
 			int encodingSel = -1;
 			if (encodings != null) {
 				encStrings = StringTokenizer.getArray(encodings, " ");
@@ -493,8 +497,9 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 			} else {
 				encStrings = new String [0];
 			}
-			if (encodingSel == -1)
-					encodingSel = encStrings.length;
+			if (encodingSel == -1) {
+				encodingSel = encStrings.length;
+			}
 			String [] tmp = new String[encStrings.length + 1];
 			System.arraycopy(encStrings, 0, tmp, 0, encStrings.length);
 			tmp[encStrings.length] = Locale.get("guicamera.Custom")/*Custom*/;
@@ -538,8 +543,9 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 			}
 			
 			String encType = encodingCG.getString(encodingCG.getSelectedIndex());
-			if (encType.equals(Locale.get("guicamera.Custom")/*Custom*/))
+			if (encType.equals(Locale.get("guicamera.Custom")/*Custom*/)) {
 				encType = encodingTF.getString();
+			}
 			Configuration.setPhotoEncoding(encType);
 			
 			if (parent == null) {
@@ -601,15 +607,15 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 
 		
 
-		if (lat > 0)
+		if (lat > 0) {
 			newImage[60] = 0x4e; //N orth
-		else {
+		} else {
 			newImage[60] = 0x53; //S outh
 			lat *= -1;
 		}
-		if (lon > 0)
+		if (lon > 0) {
 			newImage[84] = 0x45; //E ast
-		else {
+		} else {
 			newImage[84] = 0x57; //W est
 			lon *= -1;
 		}

@@ -31,7 +31,7 @@ public class GuiSetupRecordings extends Form implements CommandListener {
 	private static final Command CMD_SAVE = new Command(Locale.get("generic.Save")/*Save*/, 
 			GpsMidMenu.OK, 1);
 	private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, 
-			GpsMidMenu.CANCEL, 2);
+			GpsMidMenu.BACK, 2);
 	
 	// Other
 	private final GpsMidDisplayable parent;

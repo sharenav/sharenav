@@ -23,7 +23,7 @@ public class GuiSetupGui extends Form implements CommandListener {
 	private static final Command CMD_SAVE = new Command(Locale.get("generic.Save")/*Save*/, 
 			GpsMidMenu.OK, 2);
 	private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, 
-			GpsMidMenu.CANCEL, 3);
+			GpsMidMenu.BACK, 3);
 	
 	// other
 	private final GpsMidDisplayable parent;

@@ -18,25 +18,25 @@ public class GuiSetupSound extends Form implements CommandListener {
 	
 	// Groups
 	private ChoiceGroup sndGpsGroup;
-	private	String [] sndGps = new String[3];
-	private boolean[] selSndGps = new boolean[3];
+	private final	String [] sndGps = new String[3];
+	private final boolean[] selSndGps = new boolean[3];
 
 	private ChoiceGroup sndRoutingGroup=null;
-	private	String [] sndRouting = new String[2];
-	private	boolean[] selSndRouting = new boolean[2];
+	private final	String [] sndRouting = new String[2];
+	private final	boolean[] selSndRouting = new boolean[2];
 
 	private ChoiceGroup spdAlertGroup=null;
-	private	String [] spdAlert = new String[3];
-	private	boolean[] selSpdAlert = new boolean[3];
+	private final	String [] spdAlert = new String[3];
+	private final	boolean[] selSpdAlert = new boolean[3];
 
         private TextField spdAlertTolerance=null;
 
 	// commands
 	private static final Command CMD_SAVE = new Command(Locale.get("generic.OK")/*Ok*/, GpsMidMenu.OK, 2);
-	private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.CANCEL, 3);
+	private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.BACK, 3);
 	
 	// other
-	private GuiDiscover parent;
+	private final GuiDiscover parent;
 	
 	public GuiSetupSound(GuiDiscover parent) {
 		super(Locale.get("guisetupsound.SoundsAlerts")/*Sounds & Alerts*/);

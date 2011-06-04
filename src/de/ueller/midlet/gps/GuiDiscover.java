@@ -131,7 +131,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	/** Soft button for exiting to RootMenu. */
 	private final Command EXIT_CMD = new Command(Locale.get("generic.Back")/*Back*/, GpsMidMenu.BACK, 2);
 
-	private final Command BACK_CMD = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.CANCEL, 2);
+	private final Command BACK_CMD = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.BACK, 2);
 
 	/** Soft button for discovering BT. */
 	private final Command OK_CMD = new Command(Locale.get("generic.OK")/*Ok*/, GpsMidMenu.OK, 1);
