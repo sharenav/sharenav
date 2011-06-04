@@ -186,7 +186,7 @@ public class Legend {
 	public final static int COLOR_MENU_TEXT = 86;
 	public final static int COLOR_ALTITUDE_BACKGROUND = 87;
 	public final static int COLOR_ALTITUDE_TEXT = 88;
-	public final int COLOR_COUNT = 89;
+	public static int COLOR_COUNT = 89;
 	
 	public static int COLORS[] = new int[COLOR_COUNT];
 
