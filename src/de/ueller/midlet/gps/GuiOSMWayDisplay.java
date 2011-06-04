@@ -8,7 +8,7 @@
  * Copyright (C) 2009  Kai Krueger
  */
 //#if polish.api.osm-editing
-package de.ueller.gpsMid;
+package de.ueller.midlet.gps;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -58,6 +58,14 @@ public class GuiOSMWayDisplay extends GuiOSMEntityDisplay implements GpsMidDispl
 		this.t = t;
 		typeImage = bearingArrow();
 	}
+	
+	//public GuiOSMWayDisplay(int wayID, GpsMidDisplayable parent) {
+	//        super(Locale.get("guiosmwaydisplay.Way")/*Way */ + way.osmID, parent);
+	//	this.eway = way;
+	//	addCommand(REVERSE_CMD);
+	//	addCommand(PRESET_CMD);
+	//	typeImage = bearingArrow();
+	//}
 	
 	private Image bearingArrow() {
 		Image img = Image.createImage(16, 16);

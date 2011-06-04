@@ -54,7 +54,7 @@ import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gps.urls.Urls;
 import de.ueller.gpsMid.mapData.DictReader;
 //#if polish.api.osm-editing
-import de.ueller.gpsMid.GuiOSMWayDisplay;
+import de.ueller.midlet.gps.GuiOSMWayDisplay;
 import de.ueller.midlet.gps.data.EditableWay;
 //#endif
 import de.ueller.gpsMid.CancelMonitorInterface;
