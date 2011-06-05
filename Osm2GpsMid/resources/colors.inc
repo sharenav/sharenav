@@ -41,16 +41,16 @@
 	<color of="clock_background" is="009BFF9B"/>
 	<color of="clock_text" is="00000000"/>
 	<!-- Routing -->
-	<color of="ri_at_dest" is="00B0B030"/>	
+	<color of="ri_at_dest" is="00C4C435"/>	
 	<color of="ri_on_route" is="00B7FBBA"/>	
 	<color of="ri_off_route_slight" is="00FFCD9B"/>	
 	<color of="ri_off_route_full" is="00FF5402"/>	
 	<color of="ri_not_at_route_line_yet" is="00808080"/>
 	<color of="ri_check_direction" is="00FFFF64"/>
 	<color of="ri_text" is="00000000"/>
-	<color of="ri_distance_background" is="00B0B030"/>
+	<color of="ri_distance_background" is="00C4C435"/>
 	<color of="ri_distance_text" is="00000000"/>
-	<color of="ri_eta_background" is="00B0B030"/>
+	<color of="ri_eta_background" is="00C4C435"/>
 	<color of="ri_eta_text" is="00000000"/>
 	<color of="ri_off_distance_text" is="00000000"/>
 	<color of="routeLine" is="0000C0C0"/>
