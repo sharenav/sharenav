@@ -607,13 +607,13 @@ public class GuiSearch extends Canvas implements CommandListener,
 				// (though strictly we'd only need the id for downloading XML)
 				// try with showing the node and loading via RETRIEVE_XML
 				// a side effect is that position changes, fix if we don't want that
-				parent.receivePosition(sr.lat, sr.lon, Configuration.getRealBaseScale());				
-				parent.show();				
-				parent.commandAction(Trace.RETRIEVE_XML);
+				//parent.receivePosition(sr.lat, sr.lon, Configuration.getRealBaseScale());				
+				//parent.show();				
+				//parent.commandAction(Trace.RETRIEVE_XML);
 				//EditableWay eway = (EditableWay)pc.actualWay;
-				//GuiOSMWayDisplay guiWay = new GuiOSMWayDisplay(eway, pc.actualSingleTile, this);
-				//guiWay.show();
-				//guiWay.refresh();
+				GuiOSMWayDisplay guiWay = new GuiOSMWayDisplay(sr.osmID, parent);
+				guiWay.show();
+				guiWay.refresh();
 
 			}
 		} else {

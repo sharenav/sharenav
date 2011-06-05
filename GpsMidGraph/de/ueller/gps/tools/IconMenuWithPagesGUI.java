@@ -312,11 +312,9 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 				inTabRow = false;
 				repaint();
 			} else {
-				parent.show();
 				performIconAction(getActiveMenuPage().getActiveEleActionId());
 			}
 		} else if (c == BACK_CMD) {
-			parent.show();
 			performIconAction(IconActionPerformer.BACK_ACTIONID);
 		}
 	}
@@ -337,7 +335,6 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		}
 //#if polish.android
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			parent.show();
 			performIconAction(IconActionPerformer.BACK_ACTIONID);
 			return;
 		}
@@ -418,7 +415,6 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 						repaint();
 				} else {
 					if(iconFromKeyCode < getActiveMenuPage().size()){
-						parent.show();
 						performIconAction(getActiveMenuPage().getElementAt(iconFromKeyCode).actionID);
 					}
 				}
@@ -446,7 +442,6 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 				} else {
 					int actionId = getActiveMenuPage().getActionIdAtPointer(x, y);
 					if (actionId >= 0) {
-						parent.show();
 						performIconAction(actionId);
 						return;
 					}

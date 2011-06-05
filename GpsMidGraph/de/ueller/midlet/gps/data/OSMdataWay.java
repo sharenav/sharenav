@@ -37,6 +37,10 @@ public class OSMdataWay extends OSMdataEntity implements XmlParserContentHandler
 		
 	}
 	
+	public OSMdataWay(int osmID) {
+		super(osmID);
+	}
+	
 	protected void parseXML() {
 		nodes = new Vector();
 		tags = new Hashtable();

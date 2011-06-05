@@ -35,18 +35,26 @@ import de.ueller.midlet.gps.UploadListener;
 import de.ueller.midlet.gps.data.EditableWay;
 import de.ueller.midlet.gps.data.OSMdataWay;
 
+//#if polish.api.online
+import de.ueller.gps.data.Configuration;
+import de.ueller.gps.tools.HTTPhelper;
+//#endif
+
 import de.enough.polish.util.Locale;
 
 public class GuiOSMWayDisplay extends GuiOSMEntityDisplay implements GpsMidDisplayable, CommandListener, UploadListener, ItemCommandListener {
 	
 	private final static Logger logger = Logger.getInstance(GuiOSMWayDisplay.class,Logger.DEBUG);
 
-    private final Command REVERSE_CMD = new Command(Locale.get("guiosmwaydisplay.ReverseDirection")/*Reverse direction*/, Command.ITEM, 4);
-    private final Command PRESET_CMD = new Command(Locale.get("guiosmwaydisplay.AddPreset")/*Add preset*/, Command.ITEM, 5);
+	private final Command REVERSE_CMD = new Command(Locale.get("guiosmwaydisplay.ReverseDirection")/*Reverse direction*/, Command.ITEM, 4);
+	private final Command PRESET_CMD = new Command(Locale.get("guiosmwaydisplay.AddPreset")/*Add preset*/, Command.ITEM, 5);
 	
-	
-	
+	//#if polish.api.online
+	private UploadListener ul;
+	private HTTPhelper http = null;
+	//#endif
 	private EditableWay eway;
+	private int wayID;
 	private SingleTile t;
 	private List presets;
 	
@@ -59,13 +67,14 @@ public class GuiOSMWayDisplay extends GuiOSMEntityDisplay implements GpsMidDispl
 		typeImage = bearingArrow();
 	}
 	
-	//public GuiOSMWayDisplay(int wayID, GpsMidDisplayable parent) {
-	//        super(Locale.get("guiosmwaydisplay.Way")/*Way */ + way.osmID, parent);
-	//	this.eway = way;
-	//	addCommand(REVERSE_CMD);
-	//	addCommand(PRESET_CMD);
-	//	typeImage = bearingArrow();
-	//}
+	public GuiOSMWayDisplay(long wayID, GpsMidDisplayable parent) {
+	        super(Locale.get("guiosmwaydisplay.Way")/*Way */ + wayID, parent);
+		this.wayID = (int) wayID;
+		osmentity = new OSMdataWay(this.wayID);
+		//addCommand(REVERSE_CMD);
+		//addCommand(PRESET_CMD);
+		//typeImage = bearingArrow();
+	}
 	
 	private Image bearingArrow() {
 		Image img = Image.createImage(16, 16);
@@ -160,7 +169,21 @@ public class GuiOSMWayDisplay extends GuiOSMEntityDisplay implements GpsMidDispl
 	}
 	
 	public void refresh() {
-		eway.loadXML(this);
+		//#if polish.api.online
+		if (eway != null) {
+			eway.loadXML(this);
+		} else {
+			//#debug debug
+			logger.debug("Retrieving XML for " + this);
+			this.ul = ul;
+			loadState = LOAD_STATE_LOAD;
+			String url = Configuration.getOsmUrl() + "way/" + wayID;
+			if (http == null) { 
+				http = new HTTPhelper();
+			}
+			http.getURL(url, this);
+			//#endif
+		}
 	}
 
 	public void completedUpload(boolean success, String message) {
@@ -168,6 +191,10 @@ public class GuiOSMWayDisplay extends GuiOSMEntityDisplay implements GpsMidDispl
 			if (loadState == LOAD_STATE_CHANGESET) {
 				loadState = LOAD_STATE_UPLOAD;
 				eway.uploadXML(changesetGui.getChangesetID(),this);
+			} else if (loadState == LOAD_STATE_LOAD) {
+				osmentity = new OSMdataWay(http.getData(), wayID);
+				setupScreen();
+				loadState = LOAD_STATE_NONE;
 			} else {
 				if (GpsMid.getInstance().shouldBeShown() == this) {
 					osmentity = eway.getOSMdata();

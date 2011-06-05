@@ -912,6 +912,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 
 	public void commandAction(int actionId) {
+		// take care we'll update actualWay
+		if (actionId == RETRIEVE_XML || actionId == EDIT_ADDR_CMD) {
+			repaint();
+		}
 		commandAction(CMDS[actionId], null);
 	}
 
@@ -3472,6 +3476,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		
 	/** interface for received actions from the IconMenu GUI */
 	public void performIconAction(int actionId) {
+		//#if not polish.android
+		show();
+		//#endif
 		updateLastUserActionTime();
 		// when we are low on memory or during route calculation do not cache the icon menu (including scaled images)
 		if (routeCalc || GpsMid.getInstance().needsFreeingMemory()) {
