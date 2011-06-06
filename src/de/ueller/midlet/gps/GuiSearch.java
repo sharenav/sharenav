@@ -280,7 +280,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 		//#if polish.api.bigsearch
 		//#if polish.api.osm-editing
 		if (Legend.enableEdits) {
-			addCommand(EDIT_CMD);
+			if (defaultAction != ACTION_EDIT_ENTITY) {
+				addCommand(EDIT_CMD);
+			}
 		}
 		//#endif
 		//#endif
