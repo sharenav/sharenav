@@ -93,9 +93,15 @@ public class Way extends Entity implements Comparable<Way> {
 		this.path = new Path();
 	}
 
+	/**
+	 * create a new Way with path clone from the other way, but doesn't share tags
+	 * used e.g. for relation expansion
+	 * 
+	 * @param other
+	 */
 	public Way(long id, Way other) {
 		this.id = id;
-		this.path = other.path;
+		this.path = new Path(other.path);
 	}
 
 	/**
