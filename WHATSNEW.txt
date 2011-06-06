@@ -20,6 +20,7 @@
     - support for editing and deleting OSM POIs; available in OSM edit menu which will show nearby POIs
       and also for ways and POIs via name or POI search (select Edit OSM data from the search result menu)
     - OSM POI editing is only available with "Generic/editing" and requires internet access on the mobile
+    - minor UI changes
     *** Osm2GpsMid ***
     - show size of OSM XML data read, thanks walter9
     - some housenumber relation handling bug fixes
