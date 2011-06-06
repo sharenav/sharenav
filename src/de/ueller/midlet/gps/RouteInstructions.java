@@ -1302,7 +1302,7 @@ public class RouteInstructions {
 			return trace.getName(c.wayNameIdx);
 		} else {
 			WayDescription wayDesc = Legend.getWayDescription(c.wayType);
-			return "(unnamed " + wayDesc.description + ")";
+			return Locale.get("imagecollector.unnamed")/*(unnamed */ + wayDesc.description + ")";
 		}
 	}
 
