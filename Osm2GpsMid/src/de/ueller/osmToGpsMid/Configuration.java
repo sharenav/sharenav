@@ -626,7 +626,9 @@ public class Configuration {
 				rb = new PropertyResourceBundle(propIS);
 			}
 			
-			vb = new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
+
+			URL propertiesAddress = getClass().getResource("/version.properties");
+			vb = new PropertyResourceBundle(propertiesAddress.openStream());
 			
 			setRouting(getString("useRouting"));
 			useUrlTags = getString("useUrlTags").equalsIgnoreCase("true");
