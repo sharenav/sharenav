@@ -86,13 +86,6 @@ public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplaya
 				this.append(new StringItem(Locale.get("guiosmentitydisplay.NoDataAvailable")/*No Data available*/,"..."));
 				return;
 			}
-			if (osmentity.getVersion() > 0) {
-				this.append(new StringItem(Locale.get("guiosmentitydisplay.Edited")/*Edited */, null));
-				this.append(new StringItem(Locale.get("guiosmentitydisplay.at")/*    at:*/, osmentity.getEditTime()));
-				this.append(new StringItem(Locale.get("guiosmentitydisplay.by")/*    by:*/, osmentity.getEditor()));
-				this.append(new StringItem(Locale.get("guiosmentitydisplay.ver")/*    ver:*/, Integer.toString(osmentity.getVersion())));
-			}
-
 			Hashtable tags = osmentity.getTags();
 			if (tags == null)
 				return;
@@ -105,6 +98,13 @@ public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplaya
 				i.setItemCommandListener(this);
 				this.append(i);
 			}
+			if (osmentity.getVersion() > 0) {
+				this.append(new StringItem(Locale.get("guiosmentitydisplay.Edited")/*Edited */, null));
+				this.append(new StringItem(Locale.get("guiosmentitydisplay.at")/*    at:*/, osmentity.getEditTime()));
+				this.append(new StringItem(Locale.get("guiosmentitydisplay.by")/*    by:*/, osmentity.getEditor()));
+				this.append(new StringItem(Locale.get("guiosmentitydisplay.ver")/*    ver:*/, Integer.toString(osmentity.getVersion())));
+			}
+
 		} catch (Exception e) { 
 			logger.exception(Locale.get("guiosmentitydisplay.InitialisingEntityTagScreenFailed")/*Initialising entity tag screen failed: */ , e);
 		}
