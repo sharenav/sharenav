@@ -49,7 +49,7 @@ public class RouteLineProducer implements Runnable {
 		RouteLineProducer.trace = trace;
 		RouteLineProducer.route = route;		
 		producerThread = new Thread(this, "RouteLineProducer");
-		producerThread.setPriority(Thread.MIN_PRIORITY);
+		//producerThread.setPriority(Thread.MIN_PRIORITY);
 		producerThread.start();
 	}
 	
