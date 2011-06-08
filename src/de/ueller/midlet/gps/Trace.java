@@ -2297,7 +2297,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		g.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 		// only try to show compass id and cell id if user has somehow switched them on
 		GSMCell cell = null;
-		if (cellIDLocationProducer != null || Configuration.getLocationProvider() == Configuration.LOCATIONPROVIDER_SECELL) {
+		if (cellIDLocationProducer != null || Configuration.getLocationProvider() == Configuration.LOCATIONPROVIDER_SECELL || Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_LOGGING)) {
 			cell = CellIdProvider.getInstance().obtainCachedCellID();
 		}
 		Compass compass = null;
