@@ -3506,11 +3506,15 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			int MajorUnit = meters / 1000;
 			int MinorUnit = meters % 1000;
-			String MinorShort = (MinorUnit / 10 < 10 ? "0" : "") + (MinorUnit / 10);
+			// km.mm
+			//String MinorShort = (MinorUnit / 10 < 10 ? "0" : "") + (MinorUnit / 10);
+			// km.m
+			String MinorShort = Integer.toString((int)MinorUnit / 100);
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_DISTANCE_VIEW) && (type != DISTANCE_ALTITUDE)) {
-				if (MajorUnit >= 10) {
-					return Integer.toString(MajorUnit) + Locale.get("guitacho.km");
-				} else if (MajorUnit == 0) {
+				//if (MajorUnit >= 10) {
+				//	return Integer.toString(MajorUnit) + Locale.get("guitacho.km");
+				//} else 
+				if (MajorUnit == 0) {
 					return Integer.toString(MinorUnit) + Locale.get("guitacho.m");
 				} else {
 					// FIXME use e.g. getDecimalSeparator() for decimal comma/point selection
@@ -3525,11 +3529,15 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			int MajorUnit = (int)(meters / 1609.344f);
 			int MinorUnit = (int)(meters % 1609.344f + 0.5f);
-			String MinorShort = (MinorUnit / 16.09344f < 10.0f ? "0" : "") + (int)(MinorUnit / 16.09344f);
+			// mi.dd
+			//String MinorShort = (MinorUnit / 16.09344f < 10.0f ? "0" : "") + (int)(MinorUnit / 16.09344f);
+			// mi.d
+			String MinorShort = Integer.toString((int)(MinorUnit / 160.9344f));
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_DISTANCE_VIEW) && (type != DISTANCE_ALTITUDE)) {
-				if (MajorUnit >= 10) {
-					return Integer.toString(MajorUnit) + Locale.get("guitacho.mi");
-				} else if (MajorUnit == 0) {
+				//if (MajorUnit >= 10) {
+				//	return Integer.toString(MajorUnit) + Locale.get("guitacho.mi");
+				//} else
+				if (MajorUnit == 0) {
 					return Integer.toString(MinorUnit) + Locale.get("guitacho.yd");
 				} else {
 					return Integer.toString(MajorUnit) + "." + MinorShort + Locale.get("guitacho.mi");
