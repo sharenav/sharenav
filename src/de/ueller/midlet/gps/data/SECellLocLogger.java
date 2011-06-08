@@ -242,12 +242,12 @@ public class SECellLocLogger implements LocationMsgReceiver {
 
 	public void receiveStatus(byte status, int satsReceived) {
 		if (LocationMsgReceiverList.isPosValid(status)) {
-			posValid = false;
+			posValid = true;
 			if (noValid > 0) {
 				noValid = 0;
 			}
 		} else {
-			posValid = true;
+			posValid = false;
 		}
 	}
 
