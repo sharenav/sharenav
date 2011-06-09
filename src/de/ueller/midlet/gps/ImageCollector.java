@@ -371,7 +371,7 @@ public class ImageCollector implements Runnable {
 	
 	public void restart() {
 		processorThread = new Thread(this, "ImageCollector");
-		//processorThread.setPriority(Thread.MIN_PRIORITY);
+		processorThread.setPriority(Thread.MIN_PRIORITY);
 		processorThread.start();
 	}
 
