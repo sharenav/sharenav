@@ -1,3 +1,4 @@
+GpsMid 0.7.6
     *** Routing ***
     - routing bug fixes, e.g. related to fixing incorrect penalties for bogus turns
     - a route start at a toll road / motorway is now allowed even if option to use those is not set
