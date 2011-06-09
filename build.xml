@@ -290,7 +290,7 @@
 	<j2mepolish>
 		<info
 			name="GpsMid"
-			version="0.7.53"
+			version="0.7.55"
 			description="Shows moving map made from OpenStreetMap data"
 			vendorName="Harald Mueller"
 			infoUrl="http://gpsmid.sourceforge.net"
