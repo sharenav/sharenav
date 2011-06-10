@@ -1587,7 +1587,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 				// Select entry slide: sliding left at least the fontHeight
 				} else if (xDist < -fontSize ) {
 					logger.debug("Select entry slide");
-					cursor = clickIdxAtSlideStart;					
+					cursor = clickIdxAtSlideStart;
+					resetTicker();
 					repaint();
 				}
 			}
