@@ -115,41 +115,49 @@ public class ImageCollector implements Runnable {
 		byte crash = 0;
 		do {
 		try {
+			
 			while (!shutdown) {
+
 				if (!needRedraw || suspended) {
 					synchronized (this) {
 						try {
-							/* FIXME: We still have some situations where redraw is not done automatically immediately,
-							 * e.g. on Nokia 5800 after returning from another Displayable
-							 * Therefore reduce the timeout for redrawing anyway from 30 seconds to 1 seconds 
-							 * if the last user interaction happened less than 1.5 secs before 
-							if (Trace.getDurationSinceLastUserActionTime() > 1500 ) {
-								wait(30000);
-							} else {
-								wait(1000);
-							}
-							 */
-							wait(30000);
+							wait();
 						} catch (InterruptedException e) {
 							continue; // Recheck condition of the loop
 						}
 					}
 				}
+				
+				needRedraw = false;	//moved here and deleted from the bottom of this routine
+					
 				//#debug debug
 				logger.debug("Redrawing Map");
-				synchronized (this) {
-					while (pc[nextCreate].state != PaintContext.STATE_READY && !shutdown) {
-						try {
-							// System.out.println("img not ready");
-							wait(1000);
-						} catch (InterruptedException e) {
+				
+			
+				boolean su_or_sh = false;
+				
+				while (true){		//loop is now rearanged to spend minimum time in synchronized block
+					if(suspended || shutdown ) { su_or_sh = true; break;}
+											
+					synchronized (this) {
+						
+						if(pc[nextCreate].state == PaintContext.STATE_READY ){
+							pc[nextCreate].state = PaintContext.STATE_IN_CREATE;
+							break;
 						}
-					}
-					if (suspended || shutdown)
-						continue;
-					pc[nextCreate].state = PaintContext.STATE_IN_CREATE;
+					}		
+					
+					// System.out.println("img not ready");
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {}
+					
 				}
-				createPC = pc[nextCreate];				
+				
+				if (su_or_sh) continue;
+
+
+				createPC = pc[nextCreate];			
 				
 				long startTime = System.currentTimeMillis();
 
@@ -319,7 +327,7 @@ public class ImageCollector implements Runnable {
 					newCollected();
 				}
 				createImageCount++;				
-				needRedraw = false;
+				//needRedraw = false;
 				tr.cleanup();
 				// System.out.println("create ready");
 				//System.gc();
