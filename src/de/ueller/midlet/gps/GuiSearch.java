@@ -1528,6 +1528,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				// else position the cursor
 				potentialDoubleClick = true;			
 				cursor = clickIdx;
+				resetTicker();
 			}		
 		}
 		if (gsl != null) {
