@@ -269,6 +269,7 @@ public class ImageCollector implements Runnable {
 								//System.out.println("waysPainted: " + createPC.waysPainted);
 							} else {
 								// FIXME: Sometimes there are ImageCollector loop with no way pained even when ways would be there and tile data is fully loaded
+								// Update 2011-06-11: Might be fixed with the patch from gojkos at [ gpsmid-Bugs-3310178 ] Delayed map draw on LG cookie phone 
 								System.out.println("No ways painted in this ImageCollector loop");
 							}
 						}
