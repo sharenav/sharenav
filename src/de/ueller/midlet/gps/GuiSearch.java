@@ -920,6 +920,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 					tickerAtEnd();
 				}
 			}
+			if (tickerUse >= name.length()) {
+				tickerUse = name.length() - 1;
+			}
 			name = name.substring(tickerUse);
 			if (name != null) {
 				// avoid index out of bounds 
