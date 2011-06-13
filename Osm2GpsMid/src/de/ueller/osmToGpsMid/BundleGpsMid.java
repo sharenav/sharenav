@@ -35,6 +35,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import de.ueller.osmToGpsMid.area.SeaGenerator;
+import de.ueller.osmToGpsMid.area.SeaGenerator2;
 import de.ueller.osmToGpsMid.model.Damage;
 import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.RouteAccessRestriction;
@@ -495,7 +496,10 @@ public class BundleGpsMid implements Runnable {
 			createPath(target);
 			
 			OsmParser parser = config.getPlanetParser();
-
+			
+			SeaGenerator2 sg2 = new SeaGenerator2();
+			//sg2.generateSeaMultiPolygon(parser);
+			
 			new Relations(parser, config);
 
 			/**
