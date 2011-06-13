@@ -144,32 +144,20 @@ public class ImageCollector implements Runnable {
 				//#debug debug
 				logger.debug("Redrawing Map");
 				
-			
-				boolean su_or_sh = false;
-				
-				while (true){		//loop is now rearanged to spend minimum time in synchronized block
-					if(suspended || shutdown ) { su_or_sh = true; break;}
-											
-					synchronized (this) {
-						
-						if(pc[nextCreate].state == PaintContext.STATE_READY ){
-							pc[nextCreate].state = PaintContext.STATE_IN_CREATE;
-							break;
+				synchronized (this) {
+					while (pc[nextCreate].state != PaintContext.STATE_READY && !shutdown) {
+						try {
+							// System.out.println("img not ready");
+							wait(1000);
+						} catch (InterruptedException e) {
 						}
-					}		
-					
-					// System.out.println("img not ready");
-					try {
-						wait(100);
-					} catch (InterruptedException e) {}
-					
+					}
+					if (suspended || shutdown)
+						continue;
+					pc[nextCreate].state = PaintContext.STATE_IN_CREATE;
 				}
-				
-				if (su_or_sh) continue;
+				createPC = pc[nextCreate];				
 
-
-				createPC = pc[nextCreate];			
-				
 				long startTime = System.currentTimeMillis();
 
 				// create PaintContext
