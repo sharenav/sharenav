@@ -43,7 +43,7 @@ import de.ueller.osmToGpsMid.model.Path;
 public class SeaGenerator {
 	private static final Logger log = Logger.getLogger(SeaGenerator.class);
 
-	private static final String[] landTag = { "natural", "land" };
+	private static final String[] landTag = { "natural", "generated-land" };
 
 	private static boolean generateSea = true;
 	private static boolean generateSeaUsingMP = false;
@@ -244,6 +244,7 @@ public class SeaGenerator {
 						pStart.toString(), pEnd.toString(),
 						pStart.toUrl(), pEnd.toUrl());
 				log.warn(msg);
+				System.out.println(msg);
 
 				/*
 				 * This problem occurs usually when the shoreline is cut by osmosis (e.g. country-extracts from geofabrik)
@@ -293,11 +294,37 @@ public class SeaGenerator {
 					}
 				}
 				else if(allowSeaSectors) {
+					System.out.println("in allowSeaSectors");
 					seaId = FakeIdGenerator.makeFakeId();
 					sea = new Way(seaId);
 					sea.getNodes().addAll(points);
-					sea.addNode(new Node(pEnd.getLat(), pStart.getLon(), 
-											FakeIdGenerator.makeFakeId()));
+					//sea.addNode(new Node(pEnd.getLat(), pStart.getLon(), 
+					//						FakeIdGenerator.makeFakeId()));
+					// FIXME seems to only work for one tile
+
+					Node p;
+					int startedge = 0;
+					int endedge = 3;
+					EdgeHit startEdgeHit = getNextEdgeHit(seaBounds, pStart) ;
+					EdgeHit endEdgeHit = getNextEdgeHit(seaBounds, pEnd) ;
+					startedge = startEdgeHit.edge;
+					endedge = endEdgeHit.edge;
+					System.out.println("startedge: " + startedge + " endedge: " + endedge);
+					if (endedge < startedge) {
+						endedge += 4;
+					}
+
+					for (int i=endedge; i > startedge; i--) {
+						int edge = i % 4;
+						float val = 0.0f;
+						System.out.println("edge: " + edge + " val: " + val);
+						EdgeHit corner = new EdgeHit(edge, val);
+						p = corner.getPoint(seaBounds);
+						log.debug("way: ", corner, p);
+						System.out.println("way: corner: " + corner + " p: " + p);
+
+						sea.addNodeIfNotEqualToLastNode(p);
+					}
 					sea.addNode(pStart);
 					// TODO: Is natural=sea good to get it shown? 
 					// Is something else (colours?) needed for Osm2GpsMid?
