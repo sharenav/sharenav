@@ -293,6 +293,8 @@ public class Configuration {
 	public final static byte CFGBIT_SUPPRESS_SEARCH_WARNING = 113;
 	/** bit 114: Flag whether to suppress the warning about poor routes */
 	public final static byte CFGBIT_SUPPRESS_ROUTE_WARNING = 114;
+	/** bit 115: Flag whether to simplify map drawing when busy */
+	public final static byte CFGBIT_SIMPLIFY_MAP_WHEN_BUSY = 115;
 	
 	/**
 	 * These are the database record IDs for each configuration option

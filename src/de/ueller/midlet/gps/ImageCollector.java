@@ -237,6 +237,16 @@ public class ImageCollector implements Runnable {
 				 * have no osm layer tag or layer = 0.
 				 */
 				for (byte layer = 0; layer < layersToRender.length; layer++) {
+					if (needRedraw &&
+					    Configuration.getCfgBitState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY) &&
+					    ((layer < 5) ||
+					     (layer == 14))) {
+						// EXPERIMENTAL
+						// skip update if next
+						// is queued
+						continue;
+					}
+
 					// render only highlight layers which actually have highlighted path segments
 					if (
 						(layersToRender[layer] & Tile.LAYER_HIGHLIGHT) > 0

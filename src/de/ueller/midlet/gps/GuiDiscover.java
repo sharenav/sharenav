@@ -235,6 +235,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup directionOpts;
 	private ChoiceGroup renderOpts;
 	private ChoiceGroup visualOpts;
+	private ChoiceGroup perfTuneOpts;
 	private ChoiceGroup metricUnits;
 	private ChoiceGroup distanceViews;
 	private TextField	tfAutoRecenterToGpsSecs;
@@ -498,6 +499,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		visuals[1] = Locale.get("guidiscover.roundroadends")/*round road ends*/;
 		visualOpts = new ChoiceGroup(Locale.get("guidiscover.VisualOptions")/*Visual Options:*/, Choice.MULTIPLE, visuals, null);
 		menuDisplayOptions.append(visualOpts);
+		
+		String [] perfTune = new String[1];
+		perfTune[0] = Locale.get("guidiscover.simplify")/*Simplify map when busy*/;
+		perfTuneOpts = new ChoiceGroup(Locale.get("guidiscover.PerfTuneOptions")/*Performance tuning options:*/, Choice.MULTIPLE, perfTune, null);
+		menuDisplayOptions.append(perfTuneOpts);
 		
 		String [] metricUnit = new String[2];
 		metricUnit[0] = Locale.get("guidiscover.metricunits")/*metric units*/;
@@ -1043,6 +1049,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_METRIC, (metricUnits.getSelectedIndex() == 0));
 				
+				sellight = new boolean[1];
+				perfTuneOpts.getSelectedFlags(sellight);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY, sellight[0]);
+
 				sellight = new boolean[2];
 				visualOpts.getSelectedFlags(sellight);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS, ! sellight[0]);
@@ -1270,7 +1280,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				mapInfoOpts.setSelectedIndex(5, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_WHEN_ROUTING));
 				mapInfoOpts.setSelectedIndex(6, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP));
 				metricUnits.setSelectedIndex(Configuration.getCfgBitSavedState(Configuration.CFGBIT_METRIC) ? 0 : 1, true);
-
+				perfTuneOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY));
 				visualOpts.setSelectedIndex(0, ! Configuration.getCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS));
 				visualOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUND_WAY_ENDS));
 				SingleTile.newPOIFont();

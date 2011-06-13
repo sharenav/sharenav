@@ -1,3 +1,7 @@
+    *** Map display ***
+    - optionally simplify whan drawing when busxxxxy drawing the map (due to panning or
+    not being able to keep up with map updates)
+
 GpsMid 0.7.6
     *** Routing ***
     - routing bug fixes, e.g. related to fixing incorrect penalties for bogus turns
