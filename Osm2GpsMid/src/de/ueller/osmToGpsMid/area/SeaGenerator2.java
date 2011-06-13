@@ -59,14 +59,13 @@ public class SeaGenerator2 {
 		sea.addNode(se);
 		sea.addNode(ne);
 		sea.addNode(nw);
-		sea.setAttribute("natural", "water");
-		sea.setAttribute("layer", "-2");
 
 		// create a multipolygon relation containing water as outer role
 		Member mOuter = new Member("way", sea.id, "outer");
 		long multiId = FakeIdGenerator.makeFakeId();
 		Relation seaRelation = new Relation(multiId);
 		seaRelation.setAttribute("type", "multipolygon");
+		seaRelation.setAttribute("natural", "water");
 		seaRelation.add(mOuter);
 
 		// remember coastlines and add them to landways
@@ -87,9 +86,6 @@ public class SeaGenerator2 {
 		
 		// add landways to parser and to sea relation
 		for (Way lw: landWays) {
-			lw.setAttribute("natural", "land");
-			lw.setAttribute("layer", "-1");
-			lw.setAttribute("area", "yes");
 			parser.addWay(lw);
 			mInner = new Member("way", lw.id, "inner");
 			seaRelation.add(mInner);			
@@ -100,6 +96,8 @@ public class SeaGenerator2 {
 			parser.addWay(sea);			
 			parser.addRelation(seaRelation);
 //		}
+	
+		System.out.println(seaRelation.toString());
 	}
 
 }
