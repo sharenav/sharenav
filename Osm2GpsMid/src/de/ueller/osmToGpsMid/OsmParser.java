@@ -175,6 +175,13 @@ public abstract class OsmParser {
 	}
 
 	/**
+	 * @param r
+	 */
+	public void addRelation(Relation r) {
+		relations.put(r.id, r);
+	}
+	
+	/**
 	 * @param w
 	 */
 	public void addNode(Node n) {
