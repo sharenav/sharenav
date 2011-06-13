@@ -1,9 +1,9 @@
-package de.ueller.midlet.graphics;
-
 /*
  * GpsMid - Copyright (c) 2008 Kai Krueger apmon at users dot sourceforge dot net 
- * See Copying
+ * See file COPYING
  */
+
+package de.ueller.midlet.graphics;
 
 import java.io.IOException;
 
@@ -14,6 +14,7 @@ import de.ueller.gps.tools.ImageTools;
 import de.ueller.midlet.gps.Logger;
 
 import de.enough.polish.util.Locale;
+
 
 public class LcdNumericFont {
 
@@ -28,15 +29,23 @@ public class LcdNumericFont {
 	private final static byte SEGMENT_BOTTOM = 32;
 	private final static byte SEGMENT_MIDDLE = 64;
 
-	private Image vert_bar_orig; //Original sized image
+	/** Original sized image of vertical bar */
+	private Image vert_bar_orig;
+	/** Original sized image of horizontal bar */
 	private Image horiz_bar_orig;
-	private Image vert_bar; //Image scaled to the current font size
+	/** Image of vertical bar scaled to the current font size */
+	private Image vert_bar;
+	/** Image of horizontal bar scaled to the current font size */
 	private Image horiz_bar;
-	private Image vert_bar_cache; //Image scaled to previouse size for faster switching
+	/** Image of vertical bar scaled to previous size for faster switching */
+	private Image vert_bar_cache;
+	/** Image of horizontal bar scaled to previous size for faster switching */
 	private Image horiz_bar_cache;
 	
-	private int fontSize = 48; //Current font size
-	private int fontSize_cache = -1; //Font size corresponding to the cached images
+	/** Current font size */
+	private int fontSize = 48;
+	/** Font size corresponding to the cached images */
+	private int fontSize_cache = -1;
 
 	public LcdNumericFont() {
 		try {
@@ -45,10 +54,14 @@ public class LcdNumericFont {
 			vert_bar = vert_bar_orig;
 			horiz_bar = horiz_bar_orig;
 		} catch (IOException ioe) {
-			logger.exception(Locale.get("lcdnumericfont.CouldNotLoadLCDFontSegments")/*Could not load the LCD font segments*/, ioe);
+			logger.exception(Locale.get("lcdnumericfont.CouldNotLoadLCDFontSegments")
+					/*Could not load the LCD font segments*/, ioe);
 		}
 	}
 
+	/** Sets the font size.
+	 * @param size Font size in 
+	 */
 	public void setFontSize(int size) {
 		if (fontSize == size) {
 			return;
@@ -149,10 +162,17 @@ public class LcdNumericFont {
 		}
 	}
 	
+	/**
+	 * Draw one digit to the graphics canvas in the LCD font
+	 * @param g Graphics context for drawing
+	 * @param digit Digit to draw, -1 (dash) to 9
+	 * @param x x-coordinate of the bottom right corner
+	 * @param y y-coordinate of the bottom right corner
+	 */
 	private void drawDigit(Graphics g, byte digit, int x, int y) {
 		switch (digit) {
 		case -1: {
-			drawSegment(g, (byte) (SEGMENT_MIDDLE), x, y);
+			drawSegment(g, (SEGMENT_MIDDLE), x, y);
 			break;
 		}
 		case 0: {
@@ -167,14 +187,12 @@ public class LcdNumericFont {
 			break;
 		}
 		case 2: {
-			drawSegment(g,
-					(byte) (SEGMENT_BOTTOM | SEGMENT_TOP | SEGMENT_MIDDLE
+			drawSegment(g, (byte) (SEGMENT_BOTTOM | SEGMENT_TOP | SEGMENT_MIDDLE
 							| SEGMENT_BOTTOM_LEFT | SEGMENT_TOP_RIGHT), x, y);
 			break;
 		}
 		case 3: {
-			drawSegment(g,
-					(byte) (SEGMENT_BOTTOM | SEGMENT_TOP | SEGMENT_MIDDLE
+			drawSegment(g, (byte) (SEGMENT_BOTTOM | SEGMENT_TOP | SEGMENT_MIDDLE
 							| SEGMENT_BOTTOM_RIGHT | SEGMENT_TOP_RIGHT), x, y);
 			break;
 		}
@@ -184,8 +202,7 @@ public class LcdNumericFont {
 			break;
 		}
 		case 5: {
-			drawSegment(g,
-					(byte) (SEGMENT_BOTTOM | SEGMENT_TOP | SEGMENT_MIDDLE
+			drawSegment(g, (byte) (SEGMENT_BOTTOM | SEGMENT_TOP | SEGMENT_MIDDLE
 							| SEGMENT_BOTTOM_RIGHT | SEGMENT_TOP_LEFT), x, y);
 			break;
 		}
@@ -196,28 +213,32 @@ public class LcdNumericFont {
 			break;
 		}
 		case 7: {
-			drawSegment(
-					g,
+			drawSegment(g,
 					(byte) (SEGMENT_TOP | SEGMENT_BOTTOM_RIGHT | SEGMENT_TOP_RIGHT),
 					x, y);
 			break;
 		}
 		case 8: {
-			drawSegment(g,
-					(byte) (SEGMENT_BOTTOM | SEGMENT_TOP | SEGMENT_MIDDLE
+			drawSegment(g, (byte) (SEGMENT_BOTTOM | SEGMENT_TOP | SEGMENT_MIDDLE
 							| SEGMENT_BOTTOM_LEFT | SEGMENT_BOTTOM_RIGHT
 							| SEGMENT_TOP_LEFT | SEGMENT_TOP_RIGHT), x, y);
 			break;
 		}
 		case 9: {
-			drawSegment(g,
-					(byte) (SEGMENT_TOP | SEGMENT_MIDDLE | SEGMENT_BOTTOM_RIGHT
+			drawSegment(g, (byte) (SEGMENT_TOP | SEGMENT_MIDDLE | SEGMENT_BOTTOM_RIGHT
 							| SEGMENT_TOP_LEFT | SEGMENT_TOP_RIGHT), x, y);
 			break;
 		}
 		}
 	}
 
+	/**
+	 * Draw the segments of a number to the graphics canvas in the LCD font
+	 * @param g Graphics context for drawing
+	 * @param segments Bit field specifying the digits to draw
+	 * @param x x-coordinate of the bottom right corner
+	 * @param y y-coordinate of the bottom right corner
+	 */
 	private void drawSegment(Graphics g, byte segments, int x, int y) {
 		if ((segments & SEGMENT_BOTTOM_RIGHT) != 0) {
 			g.drawImage(vert_bar, x, y, Graphics.BOTTOM | Graphics.RIGHT);

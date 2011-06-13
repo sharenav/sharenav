@@ -93,13 +93,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 	//#endif
 	//#endif
 
-	//private Form form;
-
 	private final Image waypointIcon = Image.createImage("/waypoint.png");
 
 	private final Trace parent;
 
-	private Vector result = new Vector();
+	private final Vector result = new Vector();
 	
 	// this array is used to get a copy of the waypoints for the favorites
 	public PositionMark[] wayPts = null;
@@ -113,7 +111,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	 * so that we only have to synchronize threads
 	 * at the end of painting
 	 */
-	private Vector result2 = new Vector();
+	private final Vector result2 = new Vector();
 
 	private int carret=0;
 
@@ -126,7 +124,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private volatile int defaultAction = ACTION_DEFAULT;
 	private volatile boolean poisSearched = false;
 
-	private StringBuffer searchCanon = new StringBuffer();
+	private final StringBuffer searchCanon = new StringBuffer();
 
 	private boolean searchAlpha = false;
 
@@ -501,7 +499,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 			return;
 		}
 		if (c == BOOKMARK_CMD) {
-			if (cursor >= result.size()) return;
+			if (cursor >= result.size()) {
+				return;
+			}
 			SearchResult sr = (SearchResult) result.elementAt(cursor);
 			PositionMark positionMark = new PositionMark(sr.lat,sr.lon);
 			positionMark.displayName=nameForResult(sr);
@@ -745,8 +745,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 			gc.setFont(fontLarge);
 		}
 		lastPaintTime = System.currentTimeMillis();
-		if (fontSize == 0)
-			fontSize = gc.getFont().getHeight();		
+		if (fontSize == 0) {
+			fontSize = gc.getFont().getHeight();
+		}		
 		int yc=scrollOffset;
 		int reducedName=0;
 		gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BACKGROUND]);
@@ -834,8 +835,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 			} else { // type > 0
 				img = Legend.getWayOrAreaSearchImage(sr.type);
 			}
-			if (img != null)
+			if (img != null) {
 				gc.drawImage(img, 8, yc + fontSize / 2 - 1, Graphics.VCENTER | Graphics.HCENTER);
+			}
 			String name = null;
 			//#if polish.api.bigsearch
 			if (state != STATE_FAVORITES || sr.source != SearchNames.INDEX_WAYPOINTS) {
@@ -977,9 +979,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 						gc.drawLine(cx-1,yc+fontSize,cx+1,yc+fontSize); 
 					}
 				}
-			}
-			else 
+			} else {
 				gc.drawString("..." + sr.nameIdx,17, yc, Graphics.TOP | Graphics.LEFT);
+			}
 			yc+=fontSize;
 		}
 	}
@@ -1070,8 +1072,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 				return;
 			} else {
 				displayReductionLevel++;
-				if (displayReductionLevel > 4)
+				if (displayReductionLevel > 4) {
 					displayReductionLevel = 0;
+				}
 				repaint(0, 0, getWidth(), getHeight());
 				return;
 			}
@@ -1107,30 +1110,35 @@ public class GuiSearch extends Canvas implements CommandListener,
 			return;
 //#endif
 		} else if (action == UP) {
-			if (cursor > 0)
-				cursor--;			
+			if (cursor > 0) {
+				cursor--;
+			}			
 			if (cursor * fontSize + scrollOffset < 0) {
 				scrollOffset += 3*fontSize;
 			}
-			if (scrollOffset > 0)
+			if (scrollOffset > 0) {
 				scrollOffset = 0;
+			}
 			repaint(0, 0, getWidth(), getHeight());
 			return;
 		} else if (action == DOWN) {
-			if (cursor < result.size() - 1)
-				cursor++;			
+			if (cursor < result.size() - 1) {
+				cursor++;
+			}			
 			if (((cursor + 1) * fontSize + scrollOffset) > getHeight()) {
 				scrollOffset -= 3*fontSize;
 			}
 
-			if (scrollOffset > 0)
+			if (scrollOffset > 0) {
 				scrollOffset = 0;
+			}
 
 			repaint(0, 0, getWidth(), getHeight());
 			return;
 		} else if (action == LEFT) {
-			if (carret > 0)
+			if (carret > 0) {
 				carret--;
+			}
 			repaint(0, 0, getWidth(), getHeight());
 			return;
 		} else if (action == RIGHT) {

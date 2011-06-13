@@ -80,8 +80,7 @@ public class IconMenuPage extends LayoutManager {
 		// load icon highlighter image
 		this.hlImage = loadIconImage("i_hl.png");
 	}
-	
-	
+
 	public void setCursor(int eleId) {
 		this.currentCol = eleId % numCols;
 		this.currentRow = eleId / numCols;
@@ -97,7 +96,6 @@ public class IconMenuPage extends LayoutManager {
 		rememberEleId = eleId;
 	}
 	
-		
 	public LayoutElement createAndAddIcon(String label, String imageName, int actionId) {
 		LayoutElement e = super.createAndAddElement(
 			LayoutElement.FLAG_ICONMENU_ICON |
