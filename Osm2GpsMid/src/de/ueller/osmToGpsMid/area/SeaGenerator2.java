@@ -65,7 +65,7 @@ public class SeaGenerator2 {
 		long multiId = FakeIdGenerator.makeFakeId();
 		Relation seaRelation = new Relation(multiId);
 		seaRelation.setAttribute("type", "multipolygon");
-		seaRelation.setAttribute("natural", "water");
+		seaRelation.setAttribute("natural", "sea");
 		seaRelation.add(mOuter);
 
 		// remember coastlines and add them to landways
