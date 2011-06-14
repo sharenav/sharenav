@@ -37,6 +37,11 @@ public class SeaGenerator2 {
 	public float maxLat = Float.MIN_VALUE;
 	public float maxLon = Float.MIN_VALUE;
 
+	public float minMapLat = Float.MAX_VALUE;
+	public float minMapLon = Float.MAX_VALUE;
+	public float maxMapLat = Float.MIN_VALUE;
+	public float maxMapLon = Float.MIN_VALUE;
+
 	private static boolean generateSea = true;
 	private static boolean generateSeaUsingMP = false;
 	private static boolean allowSeaSectors = false;
@@ -50,6 +55,7 @@ public class SeaGenerator2 {
 	private static final String[] landTag = { "natural", "generated-land" };
 
 	Bounds seaBounds;
+	Bounds mapBounds;
 
 	/** 
 	 * Set various options for generating sea areas
@@ -77,15 +83,19 @@ public class SeaGenerator2 {
 		for (Node n: parser.getNodes()) {
 			if (n.lat <= minLat) {
 				minLat = n.lat - 0.0002f;
+				minMapLat = n.lat;
 			}
 			if (n.lat >= maxLat) {
 				maxLat = n.lat + 0.0002f;
+				maxMapLat = n.lat;
 			}
 			if (n.lon <= minLon) {
 				minLon = n.lon - 0.0002f;
+				minMapLon = n.lon;
 			}
 			if (n.lon >= maxLon) {
 				maxLon = n.lon + 0.0002f;
+				maxMapLon = n.lon;
 			}
 		}
 		
@@ -94,6 +104,12 @@ public class SeaGenerator2 {
 		seaBounds.minLon = minLon;
 		seaBounds.maxLat = maxLat;
 		seaBounds.maxLon = maxLon;
+
+		mapBounds = new Bounds();
+		mapBounds.minLat = minMapLat;
+		mapBounds.minLon = minMapLon;
+		mapBounds.maxLat = maxMapLat;
+		mapBounds.maxLon = maxMapLon;
 
 		System.out.println("seaBounds: " + seaBounds);
 		// create a sea area covering the whole midlet
@@ -188,8 +204,8 @@ public class SeaGenerator2 {
 			Node pStart = points.get(0);
 			Node pEnd = points.get(points.size()-1);
 
-			EdgeHit hStart = getEdgeHit(seaBounds, pStart);
-			EdgeHit hEnd = getEdgeHit(seaBounds, pEnd);
+			EdgeHit hStart = getEdgeHit(mapBounds, pStart);
+			EdgeHit hEnd = getEdgeHit(mapBounds, pEnd);
 			if (hStart == null || hEnd == null) {
 				String msg = String.format(
 						"Non-closed coastline segment does not hit bounding box: start %s end %s\n" +
@@ -257,8 +273,8 @@ public class SeaGenerator2 {
 					seaSector.getNodes().addAll(points);
 					//seaSector.addNode(new Node(pEnd.getLat(), pStart.getLon(), 
 					//						FakeIdGenerator.makeFakeId()));
-					EdgeHit startEdgeHit = getNextEdgeHit(seaBounds, pStart);
-					EdgeHit endEdgeHit = getNextEdgeHit(seaBounds, pEnd);
+					EdgeHit startEdgeHit = getNextEdgeHit(mapBounds, pStart);
+					EdgeHit endEdgeHit = getNextEdgeHit(mapBounds, pEnd);
 					int startedge = startEdgeHit.edge;
 					int endedge = endEdgeHit.edge;
 
@@ -276,7 +292,7 @@ public class SeaGenerator2 {
 							float val = 0.0f;
 							System.out.println("edge: " + edge + " val: " + val);
 							EdgeHit corner = new EdgeHit(edge, val);
-							p = corner.getPoint(seaBounds);
+							p = corner.getPoint(mapBounds);
 							//log.debug("way: ", corner, p);
 							System.out.println("way: corner: " + corner + " p: " + p);
 
@@ -330,10 +346,10 @@ public class SeaGenerator2 {
 					for(Node p : segment.getNodes()) {
 						w.addNodeIfNotEqualToLastNode(p);
 					}
-					hNext = getEdgeHit(seaBounds, segment.getNodes().get(segment.getNodes().size()-1));
+					hNext = getEdgeHit(mapBounds, segment.getNodes().get(segment.getNodes().size()-1));
 				}
 				else {
-					w.addNodeIfNotEqualToLastNode(hit.getPoint(seaBounds));
+					w.addNodeIfNotEqualToLastNode(hit.getPoint(mapBounds));
 					hNext = hits.higher(hit);
 					if (hNext == null) {
 						hNext = hFirst;
@@ -344,7 +360,7 @@ public class SeaGenerator2 {
 						//log.info("joining: ", hit, hNext);
 						for (int i=hit.edge; i<hNext.edge; i++) {
 							EdgeHit corner = new EdgeHit(i, 1.0);
-							p = corner.getPoint(seaBounds);
+							p = corner.getPoint(mapBounds);
 							//log.debug("way: ", corner, p);
 							w.addNodeIfNotEqualToLastNode(p);
 						}
@@ -353,18 +369,18 @@ public class SeaGenerator2 {
 						System.out.println("joining: " + hit + " hNext: " + hNext);
 						for (int i=hit.edge; i<4; i++) {
 							EdgeHit corner = new EdgeHit(i, 1.0);
-							p = corner.getPoint(seaBounds);
+							p = corner.getPoint(mapBounds);
 							//log.debug("way: ", corner, p);
 							w.addNodeIfNotEqualToLastNode(p);
 						}
 						for (int i=0; i<hNext.edge; i++) {
 							EdgeHit corner = new EdgeHit(i, 1.0);
-							p = corner.getPoint(seaBounds);
+							p = corner.getPoint(mapBounds);
 							//log.debug("way: ", corner, p);
 							w.addNodeIfNotEqualToLastNode(p);
 						}
 					}
-					w.addNodeIfNotEqualToLastNode(hNext.getPoint(seaBounds));
+					w.addNodeIfNotEqualToLastNode(hNext.getPoint(mapBounds));
 				}
 				hits.remove(hit);
 				hit = hNext;
