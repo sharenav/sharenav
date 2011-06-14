@@ -122,10 +122,32 @@ public class SeaGenerator2 {
 		long seaId = FakeIdGenerator.makeFakeId();
 		Way sea = new Way(seaId);
 		sea.addNode(nw);
+		int c = 5;
+		Node interim;
+		for (int i = 1 ; i < c ; i++) {
+			interim = new Node(minLat + (maxLat - minLat) * i / c, minLon,
+				FakeIdGenerator.makeFakeId());
+			sea.addNodeIfNotEqualToLastNode(interim);
+		}
 		sea.addNode(sw);
+		for (int i = 1 ; i < c ; i++) {
+			interim = new Node(maxLat, minLon + (maxLon - minLon) * i / c,
+				FakeIdGenerator.makeFakeId());
+			sea.addNodeIfNotEqualToLastNode(interim);
+		}
 		sea.addNode(se);
+		for (int i = 1 ; i < c ; i++) {
+			interim = new Node(maxLat - (maxLat - minLat) * i / c, maxLon,
+				FakeIdGenerator.makeFakeId());
+			sea.addNodeIfNotEqualToLastNode(interim);
+		}
 		sea.addNode(ne);
-		sea.addNode(nw);
+		for (int i = 1 ; i < c ; i++) {
+			interim = new Node(minLat, maxLon - (maxLon - minLon) * i / c,
+				FakeIdGenerator.makeFakeId());
+			sea.addNodeIfNotEqualToLastNode(interim);
+		}
+		sea.addNodeIfNotEqualToLastNode(nw);
 
 		long multiId = FakeIdGenerator.makeFakeId();
 		Relation seaRelation = new Relation(multiId);
