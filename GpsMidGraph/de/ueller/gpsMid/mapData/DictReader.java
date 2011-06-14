@@ -55,7 +55,7 @@ public class DictReader implements Runnable {
 	}
 
 	private void readData(byte zl) throws IOException {
-		String filename = "/dat/dict-" + zl + ".dat";
+		String filename = "/dict-" + zl + ".dat";
 		//#debug info
 		logger.info("open " + filename);
 		try {

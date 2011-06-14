@@ -201,6 +201,7 @@ public class Legend {
 	public static boolean enableBigStyles;
 	public static boolean enableMap66Search;
 	public static boolean enableMap67Sounds;
+	public static boolean enableMap68Filenames;
 	public static short numUiLang;
 	public static short numNaviLang;
 	public static short numOnlineLang;
@@ -254,8 +255,8 @@ public class Legend {
 		COLORS[COLOR_SEARCH_BACKGROUND] = 0x00FFFFFF;
 		COLORS[COLOR_SEARCH_SELECTED_REST] = 0x00FF0000;
 		
-		InputStream is = Configuration.getMapResource("/dat/legend.dat");
-		
+		InputStream is = Configuration.getMapResource("/legend.dat");
+
 		if (is == null) {
 			logger.error(Locale.get("legend.FailedOpeningLegend")/*Failed to open the legend file*/);
 			return;			
@@ -273,8 +274,13 @@ public class Legend {
 		if (mapFormatVersion >= 67) {
 			enableMap67Sounds = true;
 		}
+		if (mapFormatVersion >= 68) {
+			enableMap68Filenames = true;
+		}
 		// we can read versions 67, 66 and 65
-		if (mapFormatVersion != MAP_FORMAT_VERSION && mapFormatVersion != 65 && mapFormatVersion != 66) {
+		if (mapFormatVersion != MAP_FORMAT_VERSION && mapFormatVersion != 65
+		    && mapFormatVersion != 66
+		    && mapFormatVersion != 67) {
 		        Trace.getInstance().alert(Locale.get("legend.wrongmapvertitle"),
 				     Locale.get("legend.wrongmapvermsg1") + " " + MAP_FORMAT_VERSION
 				     + " " + Locale.get("legend.wrongmapvermsg2") + " " + mapFormatVersion,

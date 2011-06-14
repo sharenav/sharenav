@@ -250,7 +250,7 @@ public class CreateGpsMidData implements FilenameFilter {
 		String outputMedia;
 		try {
 			FileTools.createPath(new File(path + "/dat"));
-			foi = new FileOutputStream(path + "/dat/legend.dat");
+			foi = new FileOutputStream(path + "/legend.dat");
 			DataOutputStream dsi = new DataOutputStream(foi);
 			dsi.writeShort(Configuration.MAP_FORMAT_VERSION);
 			Configuration config = Configuration.getConfiguration();

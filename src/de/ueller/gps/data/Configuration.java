@@ -1556,6 +1556,12 @@ public class Configuration {
 	 */
 	public static InputStream getMapResource(String name) throws IOException {
 		InputStream is = null;
+		if (name.toLowerCase().endsWith(".dat")) {
+			// backwards compatibility - remove the enableMap68Filenames test after a time period
+			if (Legend.enableMap68Filenames && !name.toLowerCase().equals("legend.dat")) {
+				name = "/dat" + name;
+			}
+		}
 		if (mapFromJar
 			|| (Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS)
 				&& name.toLowerCase().endsWith(".png"))

@@ -165,17 +165,21 @@ public class SearchNames implements Runnable {
 			StringBuffer current = new StringBuffer();
 //			System.out.println("compare: " + compare);
 			
-			String fnPrefix = "";
+			String fnPrefix = "/search";
+			// backwards compatibility - remove after a time period
+			if (!Legend.enableMap68Filenames) {
+				fnPrefix = "";
+			}
 			if (iType == INDEX_WORD) {
-				fnPrefix = "/search/w";
+				fnPrefix += "/w";
 			} else if (iType == INDEX_WHOLEWORD) {
-				fnPrefix = "/search/ww";
+				fnPrefix += "/ww";
 			} else if (iType == INDEX_HOUSENUMBER) {
-				fnPrefix = "/search/h";
+				fnPrefix += "/h";
 			} else if (iType == INDEX_BIGNAME) {
-				fnPrefix = "/search/n";
+				fnPrefix += "/n";
 			} else if (iType == INDEX_NAME) {
-				fnPrefix = "/search/s";
+				fnPrefix += "/s";
 			}
 			String fileName = fnPrefix + fn + ".d";
 			//System.out.println("open " + fileName);
@@ -198,6 +202,10 @@ public class SearchNames implements Runnable {
 				 */
 				if (iType == INDEX_BIGNAME && !Legend.enableMap66Search) {
 					fnPrefix = "/search/s";
+					// backwards compatibility - remove after a time period
+					if (!Legend.enableMap68Filenames) {
+						fnPrefix = "/s";
+					}
 					fileName = fnPrefix + fn + ".d";
 					try {
 						stream = Configuration.getMapResource(fileName);
