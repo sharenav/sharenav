@@ -95,6 +95,7 @@ public class SeaGenerator2 {
 		seaBounds.maxLat = maxLat;
 		seaBounds.maxLon = maxLon;
 
+		System.out.println("seaBounds: " + seaBounds);
 		// create a sea area covering the whole midlet
 		Node nw = new Node(minLat, minLon, FakeIdGenerator.makeFakeId());
 		Node ne = new Node(minLat, maxLon, FakeIdGenerator.makeFakeId());
