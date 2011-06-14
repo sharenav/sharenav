@@ -70,32 +70,6 @@ public class GpsMid extends MIDlet implements CommandListener {
 	/** Class variable with the Singleton reference. */
 	private volatile static GpsMid instance;
 
-	/** A menu list instance */
-	private static final String[] elements = { Locale.get("gpsmid.Map")/*Map*/, Locale.get("generic.Search")/*Search*/, Locale.get("gpsmid.Setup")/*Setup*/,
-						   Locale.get("generic.About")/*About*/, Locale.get("gpsmid.Log")/*Log*/ };
-	
-	/** Soft button for exiting GpsMid. */
-	private final Command EXIT_CMD = new Command(Locale.get("generic.Exit")/*Exit*/, Command.EXIT, 2);
-	
-	/** Soft button for launching a client or server. */
-	private final Command OK_CMD = new Command(Locale.get("generic.OK")/*Ok*/, Command.SCREEN, 1);
-	
-	/** Soft button to go back from about screen. */
-	private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 1);
-
-	/** Soft button to show Debug Log. */
-	// private final Command DEBUG_CMD = new Command("", Command.BACK, 1);
-
-	/** Soft button to go back from about screen. */
-	private final Command CLEAR_DEBUG_CMD = new Command(Locale.get("gpsmid.Clear")/*Clear*/, Command.BACK, 1);
-
-	/** A menu list instance */
-	private final List menu = new List(Locale.get("gpsmid.GPSMid")/*GPSMid*/, 
-			Choice.IMPLICIT, elements, null);
-	// private boolean isInit=false;
-
-	//private final List loghist = new List(Locale.get("gpsmid.LogHist")/*Log Hist*/, Choice.IMPLICIT);
-
 	// #debug
 	private Logger log;
 
@@ -113,6 +87,8 @@ public class GpsMid extends MIDlet implements CommandListener {
 
 	private Displayable shouldBeDisplaying;
 	private Displayable prevDisplayable;
+	/** Flag whether an Alert (not our custom alert with timeout) is currently open. */
+	private boolean bAlertOpen = false;
 
 	/** Runtime detected properties of the phone */
 	private long phoneMaxMemory;
@@ -128,6 +104,8 @@ public class GpsMid extends MIDlet implements CommandListener {
 	private PowerManager.WakeLock wl = null;
 	private PowerManager pm = null;
 //#endif
+
+
 	public GpsMid() {
 	}
 
@@ -242,14 +220,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 				}
 			}
 
-			phoneMaxMemory = determinPhoneMaxMemory();		
-		
-			menu.addCommand(EXIT_CMD);
-			menu.addCommand(OK_CMD);
-			menu.setCommandListener(this);
-			//loghist.addCommand(BACK_CMD);
-			//loghist.addCommand(CLEAR_DEBUG_CMD);
-			//loghist.setCommandListener(this);
+			phoneMaxMemory = determinePhoneMaxMemory();		
 
 			if (errorMsg != null) {
 				log.fatal(errorMsg);
@@ -296,59 +267,11 @@ public class GpsMid extends MIDlet implements CommandListener {
 	}
 
 	public void commandAction(Command c, Displayable d) {
-		if (c == EXIT_CMD) {
-			exit();
+		if (c == Alert.DISMISS_COMMAND) {
+			bAlertOpen = false;
+			show(shouldBeDisplaying);
 			return;
 		}
-		if (c == BACK_CMD) {
-			show();
-			return;
-		}
-		if (c == CLEAR_DEBUG_CMD) {
-			//loghist.deleteAll();
-		}
-		switch (menu.getSelectedIndex()) {
-		case 0:
-			try {
-				if (trace == null) {
-					trace = Trace.getInstance();
-				}
-				trace.resume();
-				trace.show();
-			} catch (Exception e) {
-				log.exception("Failed to display map ", e);
-				return;
-			}
-			break;
-		case 1:
-			try {
-				if (trace == null) {
-					trace = Trace.getInstance();
-				}
-				GuiSearch search = new GuiSearch(trace, GuiSearch.ACTION_DEFAULT);
-				search.show();
-			} catch (Exception e) {
-				log.exception("Failed to display search screen ", e);
-			}
-			break;
-		case 2:
-			new GuiDiscover(this);
-			break;
-		case 3:
-			new Splash(this, initDone);
-			break;
-		case 4:
-			//show(loghist);
-			break;
-		default:
-			//#debug
-			System.err.println("Unexpected choice...");
-
-			break;
-		}
-
-		// isInit = true;
-
 	}
 
 	public void restart() {
@@ -356,7 +279,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 			trace.pause();
 			trace = null;
 			System.gc();
-			show();
+			show(shouldBeDisplaying);
 		}
 	}
 
@@ -393,11 +316,11 @@ public class GpsMid extends MIDlet implements CommandListener {
 //		notifyPaused();
 //	}
 
-	/** Shows main menu of MIDlet on the screen. */
-	public void show() {
-		show(menu);
+	public void alert(String title, String message, Displayable nextDisplayable) {
+		shouldBeDisplaying = nextDisplayable;
+		alert(title, message, Alert.FOREVER);
 	}
-
+	
 	public void alert(String title, String message, int timeout) {
 		//#debug info
 		log.info("Showing Alert: " + message);
@@ -407,13 +330,14 @@ public class GpsMid extends MIDlet implements CommandListener {
 			Alert alert = new Alert(title);
 			alert.setTimeout(timeout);
 			alert.setString(message);
+			alert.setCommandListener(this);
 			try {
 				if (shouldBeDisplaying == null) {
 					Display.getDisplay(this).setCurrent(alert);
 				} else {
-					Display.getDisplay(this).setCurrent(alert,
-							shouldBeDisplaying);
+					Display.getDisplay(this).setCurrent(alert, shouldBeDisplaying);
 				}
+				bAlertOpen = true;
 			} catch (IllegalArgumentException iae) {
 				/**
 				 * Nokia S40 phones seem to throw an exception if one tries to
@@ -434,12 +358,14 @@ public class GpsMid extends MIDlet implements CommandListener {
 	}
 
 	public void show(Displayable d) {
-		try {
-			prevDisplayable = shouldBeDisplaying;
-			Display.getDisplay(this).setCurrent(d);
-		} catch (IllegalArgumentException iae) {
-			log.info("Could not display the new displayable " + d + ", "
-					+ iae.getMessage());
+		if (bAlertOpen == false) {
+			try {
+				prevDisplayable = shouldBeDisplaying;
+				Display.getDisplay(this).setCurrent(d);
+			} catch (IllegalArgumentException iae) {
+				log.info("Could not display the new displayable " + d + ", "
+						+ iae.getMessage());
+			}
 		}
 		/**
 		 * Keep track of what the Midlet should be displaying. This is
@@ -451,7 +377,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 		 * This can cause problems, if an Alert is set just after a call to
 		 * setDisplay. The call uses getDisplay to determine what to show after
 		 * the Alert is dismissed, but the setDisplay might not have had an
-		 * effect yet. Hence, keep manually track.
+		 * effect yet. Hence, keep track manually.
 		 */
 		shouldBeDisplaying = d;
 	}
@@ -661,7 +587,6 @@ public class GpsMid extends MIDlet implements CommandListener {
 		}
 	}
 
-
 	public void showBackLightLevel() {
 		if ( Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON,
 				false) ) {
@@ -710,7 +635,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 		stopBackLightTimer();
 		startBackLightTimer();
 	}
-	
+
 	/**
 	 * Try and determine the maximum available memory. As some phones have
 	 * dynamic growing heaps, we need to try and cause a out of memory error, as
@@ -718,7 +643,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 	 * 
 	 * @return maximum heap size
 	 */
-	private long determinPhoneMaxMemory() {
+	private long determinePhoneMaxMemory() {
 		long maxMem = Runtime.getRuntime().totalMemory();
 		log.info("Maximum phone memory: " + maxMem);
 		if (maxMem < Configuration.getPhoneAllTimeMaxMemory()) {
@@ -732,8 +657,6 @@ public class GpsMid extends MIDlet implements CommandListener {
 		return phoneMaxMemory;
 	}
 
-	
-	
 	public boolean needsFreeingMemory() {
 		Runtime runt = Runtime.getRuntime();
 		long totalMem = runt.totalMemory();

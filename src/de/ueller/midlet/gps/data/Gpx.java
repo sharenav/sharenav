@@ -1034,11 +1034,12 @@ public class Gpx extends Tile implements Runnable, InputListener {
 			RecordEnumeration p = trackDatabase.enumerateRecords(null, null, false);
 			logger.info("Enumerating tracks: " + p.numRecords());
 			int i = 0;
+			boolean bExceptionOccurred = false;
 			while (p.hasNextElement()) {
 				int idx = p.nextRecordId();
 				PersistEntity trk = new PersistEntity();
 
-				try{
+				try {
 					while (trackDatabase.getRecordSize(idx) > record.length) {
 						record = new byte[record.length + 16000];
 						dis = new DataInputStream(new ByteArrayInputStream(record));
@@ -1054,14 +1055,20 @@ public class Gpx extends Tile implements Runnable, InputListener {
 					trk.setTrackSize(noTrackPoints);
 				} catch (RecordStoreFullException e) {
 					trk.displayName = Locale.get("gpx.ErrorRecordStoreFullException")/*Error (RecordStoreFullException)*/;
-					logger.error(Locale.get("gpx.RecordStoreFullList")/*Record Store is full, can not load list */ + i + Locale.get("gpx.WithIndex")/* with index */ + idx + ":" + e.getMessage());
+					logger.error(Locale.get("gpx.RecordStoreFullList")/*Record Store is full, can not load list */ + 
+							i + Locale.get("gpx.WithIndex")/* with index */ + idx + ":" + e.getMessage());
 				} catch (RecordStoreNotFoundException e) {
 					trk.displayName = Locale.get("gpx.ErrorRecordStoreNotFoundException")/*Error (RecordStoreNotFoundException)*/;
-					logger.error(Locale.get("gpx.RecordStoreNotFoundList")/*Record Store not found, can not load list */ + i + Locale.get("gpx.WithIndex")/* with index */ + idx + ": " + e.getMessage());
+					logger.error(Locale.get("gpx.RecordStoreNotFoundList")/*Record Store not found, can not load list */ + 
+							i + Locale.get("gpx.WithIndex")/* with index */ + idx + ": " + e.getMessage());
 				} catch (RecordStoreException e) {
 					trk.displayName = Locale.get("gpx.ErrorRecordStoreException")/*Error (RecordStoreException)*/;
-					logger.error(Locale.get("gpx.RecordStoreExceptionTrack")/*Record Store exception, can not load track */ + i + Locale.get("gpx.WithIndex")/* with index */ + idx + ": " + e.getMessage());
+					logger.error(Locale.get("gpx.RecordStoreExceptionTrack")/*Record Store exception, can not load track */ + 
+							i + Locale.get("gpx.WithIndex")/* with index */ + idx + ": " + e.getMessage());
 					logger.error( e.toString());
+				} catch (Exception e) {
+					System.out.println("Exception: " + e.toString());
+					bExceptionOccurred = true;
 				}
 				trk.id = idx;
 				trks[i++] = trk;
@@ -1069,6 +1076,11 @@ public class Gpx extends Tile implements Runnable, InputListener {
 			logger.info("Enumerated tracks");
 			trackDatabase.closeRecordStore();
 			trackDatabase = null;
+			
+			if (bExceptionOccurred) {
+				logger.error(Locale.get("gpx.ExceptionReadingTracks")/*At least one of...*/);
+			}
+			
 			return trks;
 		} catch (RecordStoreFullException e) {
 			logger.error(Locale.get("gpx.RecordStoreFullList2")/*Record Store is full, can not load list: */ + e.getMessage());
@@ -1076,8 +1088,6 @@ public class Gpx extends Tile implements Runnable, InputListener {
 			logger.error(Locale.get("gpx.RecordStoreNotFoundList2")/*Record Store not found, can not load list: */ + e.getMessage());
 		} catch (RecordStoreException e) {
 			logger.error(Locale.get("gpx.RecordStoreExceptionList2")/*Record Store exception, can not load list: */ + e.getMessage());
-		} catch (IOException e) {
-			logger.error(Locale.get("gpx.IOExceptionList")/*IO exception, can not load list: */ + e.getMessage());
 		}
 		return null;
 	}
