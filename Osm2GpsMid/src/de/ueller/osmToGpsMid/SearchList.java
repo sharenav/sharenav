@@ -12,6 +12,7 @@
 package de.ueller.osmToGpsMid;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,6 +27,7 @@ import de.ueller.osmToGpsMid.model.name.Names;
 import de.ueller.osmToGpsMid.model.name.WayRedirect;
 import de.ueller.osmToGpsMid.model.url.Url;
 import de.ueller.osmToGpsMid.model.url.Urls;
+import de.ueller.osmToGpsMid.tools.FileTools;
 
 /**
  * @author hmueller
@@ -57,30 +59,34 @@ public class SearchList {
 		try {
 			FileOutputStream fo = null;
 			DataOutputStream ds = null;
-			String lastStr=null;
-			String lastFid="";
-			int curPos=0;
+			String lastStr = null;
+			String lastFid = "";
+			int curPos = 0;
+			FileTools.createPath(new File(path + "/search"));
 			for (Name mapName : ((listType == INDEX_NAME || listType == INDEX_BIGNAME) ? names.getCanons()
 					     : (listType == INDEX_WORD ? names.getWordCanons()
 						: (listType == INDEX_WHOLEWORD ? names.getWholeWordCanons() : names.getHouseNumberCanons())))) {
 				String string=mapName.getCanonFileName(mapName.getCanonFileId());
 				int eq=names.getEqualCount(string,lastStr);
-				if (! lastFid.equals(mapName.getCanonFileId())){
-					if (ds != null) ds.close();
-					lastFid=mapName.getCanonFileId();
-					String fileName = path+
-						(listType == INDEX_BIGNAME ? "/n" :
-						 (listType == INDEX_NAME ? "/s" : (listType == INDEX_WORD ? "/w"
-										  : (listType == INDEX_WHOLEWORD ? "/ww" : "/h")))) +
-						lastFid+".d";
-					//System.out.println("open "+fileName);
+				if (! lastFid.equals(mapName.getCanonFileId())) {
+					if (ds != null) {
+						ds.close();
+					}
+					lastFid = mapName.getCanonFileId();
+					String fileName = path +
+						(listType == INDEX_BIGNAME ? "/search/n" :
+							(listType == INDEX_NAME ? "/search/s" : 
+								(listType == INDEX_WORD ? "/search/w" :
+									(listType == INDEX_WHOLEWORD ? "/search/ww" : "/search/h")))) +
+						lastFid + ".d";
+					//System.out.println("open " + fileName);
 					fo = new FileOutputStream(fileName);
 					ds = new DataOutputStream(fo);
-					curPos=0;
-					eq=0;
-					lastStr=null;
+					curPos = 0;
+					eq = 0;
+					lastStr = null;
 				}
-				String wrString=string.substring(eq);				
+				String wrString = string.substring(eq);				
 				
 				/**
 				 * Encoding of delta plus flags in bits:
@@ -311,36 +317,38 @@ public class SearchList {
 		try {
 			FileOutputStream fo = null;
 			DataOutputStream ds = null;
-			FileOutputStream foi = new FileOutputStream(path+"/names-idx.dat");
+			FileOutputStream foi = new FileOutputStream(path + "/dat/names-idx.dat");
 			DataOutputStream dsi = new DataOutputStream(foi);
-			String lastStr=null;
-			fo = new FileOutputStream(path+"/names-0.dat");
+			String lastStr = null;
+			fo = new FileOutputStream(path + "/dat/names-0.dat");
 			ds = new DataOutputStream(fo);
-			int curPos=0;
-			int idx=0;
-			short fnr=1;
-			short fcount=0;
+			int curPos = 0;
+			int idx = 0;
+			short fnr = 1;
+			short fcount = 0;
 			for (Name mapName : names.getNames()) {
-				String string=mapName.getName();
-				int eq=names.getEqualCount(string,lastStr);				
-				if (ds.size() > Configuration.getConfiguration().maxTileSize){
+				String string = mapName.getName();
+				int eq = names.getEqualCount(string, lastStr);				
+				if (ds.size() > Configuration.getConfiguration().maxTileSize) {
 					dsi.writeInt(idx);
-					if (ds != null) ds.close();
-					fo = new FileOutputStream(path+"/names-"+fnr+".dat");
+					if (ds != null) {
+						ds.close();
+					}
+					fo = new FileOutputStream(path + "/dat/names-" + fnr + ".dat");
 					ds = new DataOutputStream(fo);
 //					System.out.println("wrote names " + fnr + " with "+ fcount + " names");
 					fnr++;
-					curPos=0;
-					eq=0;
-					fcount=0;
-					lastStr=null;
+					curPos = 0;
+					eq = 0;
+					fcount = 0;
+					lastStr = null;
 				}
-				ds.writeByte(eq-curPos);
+				ds.writeByte(eq - curPos);
 				ds.writeUTF(string.substring(eq));
 //				ds.writeShort(getWayNameIndex(mapName.getIs_in(), null));
-//				System.out.println("" + (eq-curPos) + "'" +string.substring(eq)+"' '"+string);
-				curPos=eq;
-				lastStr=string;
+//				System.out.println("" + (eq-curPos) + "'" +string.substring(eq) + "' '" + string);
+				curPos = eq;
+				lastStr = string;
 				idx++;
 				fcount++;
 //				ds.writeUTF(string);
@@ -356,6 +364,5 @@ public class SearchList {
 			e.printStackTrace();
 		}
 	}
-
 
 }

@@ -37,7 +37,7 @@ public class SearchNames implements Runnable {
 	private volatile static int indexType;
 	private volatile static boolean noWaypointSearch = false;
 
-	private int SEARCH_MAX_COUNT = Configuration.getSearchMax();
+	private final int SEARCH_MAX_COUNT = Configuration.getSearchMax();
 
 	public static final int INDEX_NAME = 0;
 	public static final int INDEX_WORD = 1;
@@ -167,15 +167,15 @@ public class SearchNames implements Runnable {
 			
 			String fnPrefix = "";
 			if (iType == INDEX_WORD) {
-				fnPrefix = "/w";
+				fnPrefix = "/search/w";
 			} else if (iType == INDEX_WHOLEWORD) {
-				fnPrefix = "/ww";
+				fnPrefix = "/search/ww";
 			} else if (iType == INDEX_HOUSENUMBER) {
-				fnPrefix = "/h";
+				fnPrefix = "/search/h";
 			} else if (iType == INDEX_BIGNAME) {
-				fnPrefix = "/n";
+				fnPrefix = "/search/n";
 			} else if (iType == INDEX_NAME) {
-				fnPrefix = "/s";
+				fnPrefix = "/search/s";
 			}
 			String fileName = fnPrefix + fn + ".d";
 			//System.out.println("open " + fileName);
@@ -197,7 +197,7 @@ public class SearchNames implements Runnable {
 				 * with map format 65, try opening the NAME index as fallback
 				 */
 				if (iType == INDEX_BIGNAME && !Legend.enableMap66Search) {
-					fnPrefix = "/s";
+					fnPrefix = "/search/s";
 					fileName = fnPrefix + fn + ".d";
 					try {
 						stream = Configuration.getMapResource(fileName);

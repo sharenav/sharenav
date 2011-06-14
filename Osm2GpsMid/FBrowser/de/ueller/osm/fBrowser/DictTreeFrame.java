@@ -28,8 +28,9 @@ import sun.reflect.generics.tree.Tree;
  *
  */
 public class DictTreeFrame extends JInternalFrame implements TreeSelectionListener {
-	private static final long	serialVersionUID	= 1L;
-	static final int xOffset = 30, yOffset = 30;
+	private static final long serialVersionUID = 1L;
+	static final int xOffset = 30
+	static final int yOffset = 30;
 	static int openFrameCount = 0;
 	private Tile dict;
 	private int	level;
@@ -39,7 +40,7 @@ public class DictTreeFrame extends JInternalFrame implements TreeSelectionListen
 	/**
 	 * 
 	 */
-	public DictTreeFrame(String slevel,FBrowser fBrowser) {
+	public DictTreeFrame(String slevel, FBrowser fBrowser) {
 		super("Dict Tree " + slevel,
 		          true, //resizable
 		          true, //closable
@@ -48,10 +49,10 @@ public class DictTreeFrame extends JInternalFrame implements TreeSelectionListen
 		this.fBrowser = fBrowser;
 		this.root = fBrowser.getRoot();
 		openFrameCount++;
-		level=Integer.parseInt(slevel.substring(5, 6));
-		setLocation(xOffset*openFrameCount, yOffset*openFrameCount);
+		level = Integer.parseInt(slevel.substring(5, 6));
+		setLocation(xOffset * openFrameCount, yOffset * openFrameCount);
 		try {
-			JTree tree=new JTree(readDict((byte)level));
+			JTree tree = new JTree(readDict((byte)level));
 			tree.addTreeSelectionListener(this);
 			add(new JScrollPane(tree));
 		} catch (IOException e) {
@@ -66,24 +67,24 @@ public class DictTreeFrame extends JInternalFrame implements TreeSelectionListen
 	 * @param tree
 	 */
 	private Tile readDict(byte zl) throws IOException {
-		InputStream is = new FileInputStream(root+"/dict-"+zl+".dat");
-		DataInputStream ds=new DataInputStream(is);
+		InputStream is = new FileInputStream(root + "/dat/dict-" + zl + ".dat");
+		DataInputStream ds = new DataInputStream(is);
 		if (! "DictMid".equals(ds.readUTF())){
 			throw new IOException("not a DictMid-file");
 		}
-		byte type=ds.readByte();
+		byte type = ds.readByte();
 		switch (type) {
 			case Tile.TYPE_MAP:
-				dict=new SingleTile(ds,1,zl,root);
+				dict = new SingleTile(ds, 1, zl, root);
 				break;
 			case Tile.TYPE_CONTAINER:
-				dict=new ContainerTile(ds,1,zl,root);
+				dict = new ContainerTile(ds, 1, zl, root);
 				break;
 			case Tile.TYPE_EMPTY:
 				// empty tile;
 				break;
 			case Tile.TYPE_FILETILE:
-				dict=new FileTile(ds,1,zl,root);
+				dict = new FileTile(ds, 1, zl, root);
 				break;
 
 			default:
@@ -101,7 +102,7 @@ public class DictTreeFrame extends JInternalFrame implements TreeSelectionListen
 	public void valueChanged(TreeSelectionEvent e) {
 		TreePath path = e.getPath();
 		JTree tree = (JTree) e.getSource();
-		Object sel=tree.getLastSelectedPathComponent();
+		Object sel = tree.getLastSelectedPathComponent();
 		if (sel instanceof Tile){
 			fBrowser.setSelected((Tile) sel);
 		} 

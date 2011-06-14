@@ -99,6 +99,11 @@ public class FileTools {
     	return new FileOutputStream(f);	
     }
     
+	/**
+	 * Ensures that the path denoted with <code>f</code> will exist
+	 * on the file-system.
+	 * @param f File whose directory must exist
+	 */
     public static void createPath(File f) {
 		if (! f.canWrite()) {
 			createPath(f.getParentFile());

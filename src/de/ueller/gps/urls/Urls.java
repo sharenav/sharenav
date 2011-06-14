@@ -31,13 +31,13 @@ import de.enough.polish.util.Locale;
 public class Urls implements Runnable {
 //	#debug
 	private final static Logger logger = Logger.getInstance(Urls.class, Logger.TRACE);
-	private intTree queue2 = new intTree();	
-	private intTree addQueue2 = new intTree();
+	private final intTree queue2 = new intTree();	
+	private final intTree addQueue2 = new intTree();
 	private int[] startIndexes = null;
 	boolean shutdown = false;
 	boolean cleanup = false;
-	private intTree stringCache = new intTree();
-	private Thread processorThread;
+	private final intTree stringCache = new intTree();
+	private final Thread processorThread;
 	boolean isReady = false;
 
 	public Urls() {
@@ -89,7 +89,7 @@ public class Urls implements Runnable {
 	}
 
 	private void readIndex() throws IOException {
-		InputStream is = Configuration.getMapResource("/urls-idx.dat");
+		InputStream is = Configuration.getMapResource("/dat/urls-idx.dat");
 //		logger.info("read urls-idx");
 		DataInputStream ds = new DataInputStream(is);
 
@@ -127,8 +127,8 @@ public class Urls implements Runnable {
 
 	public String getFirstWord(int fid) {
 		try {
-//			System.out.println("readFirstWord: /urls-" + fid + ".dat");
-			InputStream is = Configuration.getMapResource("/urls-" + fid + ".dat");
+//			System.out.println("readFirstWord: /dat/urls-" + fid + ".dat");
+			InputStream is = Configuration.getMapResource("/dat/urls-" + fid + ".dat");
 			DataInputStream ds = new DataInputStream(is);
 			ds.readByte();
 			String firstWord = ds.readUTF();
@@ -171,7 +171,7 @@ public class Urls implements Runnable {
 		try {
 			for (int i = fid; i < startIndexes.length; i++) {
 				if (startIndexes[i] > idx) {
-					is = Configuration.getMapResource("/urls-" + fid + ".dat");
+					is = Configuration.getMapResource("/dat/urls-" + fid + ".dat");
 					count = startIndexes[i] - startIndexes[fid];
 					actIdx = startIndexes[fid];
 					break;

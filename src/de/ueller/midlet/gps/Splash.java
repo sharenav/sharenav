@@ -84,7 +84,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	private final int space;
 	private double scale = 1;
 	private String mapVersion; 
-	private String appVersion; 
+	private final String appVersion; 
 	private boolean initDone = false;
 
 
@@ -94,8 +94,8 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		try {
 			splash = Image.createImage("/Gps-splash.png");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			splash = Image.createImage(176, 220);
 		}
 		if (splash.getWidth() < getWidth() ) {
 			double scaleW = (double) getWidth() / (double) splash.getWidth();

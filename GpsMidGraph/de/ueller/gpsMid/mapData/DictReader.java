@@ -16,7 +16,7 @@ import de.ueller.midlet.gps.Trace;
 
 import de.enough.polish.util.Locale;
 
-/** Reads the dict-files (/dict-[1..4].dat) from the map source
+/** Reads the dict-files (/dat/dict-[1..4].dat) from the map source
  *  and creates tiles from them.
  */
 public class DictReader implements Runnable {
@@ -55,7 +55,7 @@ public class DictReader implements Runnable {
 	}
 
 	private void readData(byte zl) throws IOException {
-		String filename = "/dict-" + zl + ".dat";
+		String filename = "/dat/dict-" + zl + ".dat";
 		//#debug info
 		logger.info("open " + filename);
 		try {

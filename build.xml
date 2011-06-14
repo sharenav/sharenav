@@ -24,17 +24,16 @@
 <property file="build.properties" />
 <property file="midlet.properties" />
 <property file="${polish.home}/global.properties" />
-	
+
 <!-- Definition of the J2ME Polish task:                      -->
 
 <taskdef name="j2mepolish" 
 	classname="de.enough.polish.ant.PolishTask" 
 	classpath="${polish.home}/lib/enough-j2mepolish-build.jar:${polish.home}/lib/jdom.jar"/>
-
 	
-<!-- build targets, each target can be called via "ant [name]", 
+	<!-- build targets, each target can be called via "ant [name]", 
 	 e.g. "ant clean", "ant test j2mepolish" or just "ant" for calling the default target -->
-
+	
 	<target name="set_test_device" unless="gpsmid.test_device">
 		<property name="gpsmid.test_device" value="Generic/full"/>
 	</target>
@@ -78,9 +77,9 @@
 	<property name="dir.work" value="build/real/${customization}" />
 	<property name="dir.dist" value="dist/${customization}" />
 	<property name="deploy-url" value="" />
-	<property name="mapversion" value="67" />
+	<property name="mapversion" value="68" />
 </target>
- 
+
 <!-- In this target the J2ME Polish task is used.             -->
 <!-- It has 3 sections:                                       -->
 <!--    1. The info-section defines some general information  -->
@@ -106,7 +105,7 @@
 			icon="gpsmid.png"
 			jarName="GpsMid-${polish.vendor}-${polish.name}-${polish.version}-map${mapversion}.jar"
 			jarUrl="${deploy-url}${polish.jarName}"
-			copyright="Copyright 2007 - 2010 Harald Mueller and others"
+			copyright="Copyright 2007 - 2011 Harald Mueller and others"
 			deleteConfirm="Do you really want to kill me?"
 			optionalPermissions="javax.microedition.io.Connector.file.read,javax.microedition.io.Connector.file.write,javax.microedition.io.Connector.bluetooth.client,javax.microedition.location.Location,javax.microedition.media.control.RecordControl,javax.microedition.media.control.VideoControl.getSnapshot,javax.microedition.io.Connector.sms,javax.wireless.messaging.sms.receive,javax.wireless.messaging.sms.send,javax.microedition.io.Connector.comm,javax.microedition.io.Connector.cbs,javax.wireless.messaging.cbs.receive,javax.microedition.io.Connector.socket,javax.microedition.io.PushRegistry"
 		/>
@@ -297,7 +296,7 @@
 			icon="gpsmid.png"
 			jarName="GpsMid-${polish.vendor}-${polish.name}-${polish.version}-map${mapversion}.jar"
 			jarUrl="${deploy-url}${polish.jarName}"
-			copyright="Copyright 2007 - 2010 Harald Mueller and others"
+			copyright="Copyright 2007 - 2011 Harald Mueller and others"
 			deleteConfirm="Do you really want to kill me?"
 			optionalPermissions="javax.microedition.io.Connector.file.read,javax.microedition.io.Connector.file.write,javax.microedition.io.Connector.bluetooth.client,javax.microedition.location.Location,javax.microedition.media.control.RecordControl,javax.microedition.media.control.VideoControl.getSnapshot,javax.microedition.io.Connector.sms,javax.wireless.messaging.sms.receive,javax.wireless.messaging.sms.send,javax.microedition.io.Connector.comm,javax.microedition.io.Connector.cbs,javax.wireless.messaging.cbs.receive,javax.microedition.io.Connector.socket,javax.microedition.io.PushRegistry"
 		/>

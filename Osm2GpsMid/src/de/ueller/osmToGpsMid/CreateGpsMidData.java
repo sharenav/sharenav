@@ -249,7 +249,8 @@ public class CreateGpsMidData implements FilenameFilter {
 		FileOutputStream foi;
 		String outputMedia;
 		try {
-			foi = new FileOutputStream(path + "/legend.dat");
+			FileTools.createPath(new File(path + "/dat"));
+			foi = new FileOutputStream(path + "/dat/legend.dat");
 			DataOutputStream dsi = new DataOutputStream(foi);
 			dsi.writeShort(Configuration.MAP_FORMAT_VERSION);
 			Configuration config = Configuration.getConfiguration();
@@ -380,7 +381,7 @@ public class CreateGpsMidData implements FilenameFilter {
 					outputMedia = copyMediaToMid(poi.image, path, "png");
 					dsi.writeUTF(outputMedia);
 				}
-				if ((flags & LEGEND_FLAG_SEARCH_IMAGE) > 0) {					
+				if ((flags & LEGEND_FLAG_SEARCH_IMAGE) > 0) {
 					outputMedia = copyMediaToMid(poi.searchIcon, path, "png");
 					dsi.writeUTF(outputMedia);
 				}
@@ -468,7 +469,7 @@ public class CreateGpsMidData implements FilenameFilter {
 					outputMedia = copyMediaToMid(way.image, path, "png");
 					dsi.writeUTF(outputMedia);
 				}
-				if ((flags & LEGEND_FLAG_SEARCH_IMAGE) > 0) {					
+				if ((flags & LEGEND_FLAG_SEARCH_IMAGE) > 0) {
 					outputMedia = copyMediaToMid(way.searchIcon, path, "png");
 					dsi.writeUTF(outputMedia);
 				}
@@ -913,7 +914,7 @@ public class CreateGpsMidData implements FilenameFilter {
 		OsmParser.printMemoryUsage(1);
 		long outputLength = 0;
 		try {
-			FileOutputStream fo = new FileOutputStream(path + "/dict-" + zl + ".dat");
+			FileOutputStream fo = new FileOutputStream(path + "/dat/dict-" + zl + ".dat");
 			DataOutputStream ds = new DataOutputStream(fo);
 			// magic number
 			ds.writeUTF("DictMid");
@@ -1713,18 +1714,6 @@ public class CreateGpsMidData implements FilenameFilter {
 	 */
 	public void setRouteData(RouteData rd) {
 		this.rd = rd;
-	}
-
-	/**
-	 * Ensures that the path denoted with <code>f</code> will exist
-	 * on the file-system.
-	 * @param f File whose directory must exist
-	 */
-	private void createPath(File f) {
-		if (! f.canWrite()) {
-			createPath(f.getParentFile());
-		}
-		f.mkdir();
 	}
 
 }

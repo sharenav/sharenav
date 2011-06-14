@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.microedition.lcdui.Image;
-import javax.microedition.midlet.MIDlet;
 import javax.microedition.media.Manager;
 
 import de.ueller.midlet.gps.Logger;
@@ -29,7 +28,7 @@ public class Legend {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 67;
+	public final static short MAP_FORMAT_VERSION = 68;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -240,9 +239,9 @@ public class Legend {
 	
 	public static void readLegend() throws IOException {
 		isValid = false;
-		/* Set some essential default colors in case legend.dat can not be opened/read for using 
-		 * e.g. GpsMid-Generic-Full directly (to configure external map using 
-		 * icon menu which will include legend.dat with colors).
+		/* Set some essential default colors in case legend.dat can not be opened/read.
+		 * Without this, it wouldn't be possible to configure external map usage 
+		 * (which contains legend.dat with the colors) when using icon menus.  
 		 */
 		COLORS[COLOR_MAP_BACKGROUND] = 0x002020FF;
 		COLORS[COLOR_WAYNAME_BACKGROUND] = 0x00FFFFFF;
@@ -255,10 +254,9 @@ public class Legend {
 		COLORS[COLOR_SEARCH_BACKGROUND] = 0x00FFFFFF;
 		COLORS[COLOR_SEARCH_SELECTED_REST] = 0x00FF0000;
 		
-		InputStream is = Configuration.getMapResource("/legend.dat");
+		InputStream is = Configuration.getMapResource("/dat/legend.dat");
 		
 		if (is == null) {
-
 			logger.error(Locale.get("legend.FailedOpeningLegend")/*Failed to open the legend file*/);
 			return;			
 		}
@@ -337,7 +335,7 @@ public class Legend {
 		/*
 		 * Read colors
 		 */
-		int count = (int) ds.readShort();
+		int count = ds.readShort();
 
 		if (mapFormatVersion < 67) {
 			COLOR_COUNT = 87;
@@ -365,7 +363,7 @@ public class Legend {
 		/*
 		 * Read Travel Modes
 		 */
-		count = (int) ds.readByte();
+		count = ds.readByte();
 		midletTravelModes = new TravelMode[count];
 		for (int i = 0; i < count; i++) {
 			midletTravelModes[i] = new TravelMode();
@@ -387,7 +385,7 @@ public class Legend {
 		/*
 		 * Read sound formats
 		 */
-		count = (int) ds.readByte();
+		count = ds.readByte();
 		String soundFormatsToTry[] = new String[count];
 		for (int i = 0; i < count; i++) {
 			soundFormatsToTry[i] = ds.readUTF();
@@ -428,7 +426,7 @@ public class Legend {
 		/*
 		 * Read sound directories
 		 */
-		count = (int) ds.readByte();
+		count = ds.readByte();
 		soundDirectories = new String[count];
 		for (int i = 0; i < count; i++) {
 			soundDirectories[i] = ds.readUTF();

@@ -43,35 +43,37 @@ public class UrlList {
 		try {
 			FileOutputStream fo = null;
 			DataOutputStream ds = null;
-			FileOutputStream foi = new FileOutputStream(path+"/urls-idx.dat");
+			FileOutputStream foi = new FileOutputStream(path + "/dat/urls-idx.dat");
 			DataOutputStream dsi = new DataOutputStream(foi);
-			String lastStr=null;
-			fo = new FileOutputStream(path+"/urls-0.dat");
+			String lastStr = null;
+			fo = new FileOutputStream(path + "/dat/urls-0.dat");
 			ds = new DataOutputStream(fo);
-			int curPos=0;
-			int idx=0;
-			short fnr=1;
-			short fcount=0;
+			int curPos = 0;
+			int idx = 0;
+			short fnr = 1;
+			short fcount = 0;
 			for (Url mapUrl : urls.getUrls()) {
-				String string=mapUrl.getUrl();
-				int eq=urls.getEqualCount(string,lastStr);				
+				String string = mapUrl.getUrl();
+				int eq = urls.getEqualCount(string, lastStr);				
 				if (ds.size() > Configuration.getConfiguration().maxTileSize){
 					dsi.writeInt(idx);
-					if (ds != null) ds.close();
-					fo = new FileOutputStream(path+"/urls-"+fnr+".dat");
+					if (ds != null) {
+						ds.close();
+					}
+					fo = new FileOutputStream(path + "/dat/urls-" + fnr + ".dat");
 					ds = new DataOutputStream(fo);
 //					System.out.println("wrote urls " + fnr + " with "+ fcount + " urls");
 					fnr++;
-					curPos=0;
-					eq=0;
-					fcount=0;
-					lastStr=null;
+					curPos = 0;
+					eq = 0;
+					fcount = 0;
+					lastStr = null;
 				}
-				ds.writeByte(eq-curPos);
+				ds.writeByte(eq - curPos);
 				ds.writeUTF(string.substring(eq));
-//				System.out.println("" + (eq-curPos) + "'" +string.substring(eq)+"' '"+string)
-				curPos=eq;
-				lastStr=string;
+//				System.out.println("" + (eq-curPos) + "'" +string.substring(eq) + "' '" + string);
+				curPos = eq;
+				lastStr = string;
 				idx++;
 				fcount++;
 //				ds.writeUTF(string);
