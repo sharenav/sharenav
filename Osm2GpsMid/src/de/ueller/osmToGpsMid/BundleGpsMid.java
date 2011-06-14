@@ -498,6 +498,7 @@ public class BundleGpsMid implements Runnable {
 			OsmParser parser = config.getPlanetParser();
 			
 			SeaGenerator2 sg2 = new SeaGenerator2();
+			SeaGenerator2.setOptions(config, true, true, true, true, 100);
 			if (config.getGenerateSea()) {
 				sg2.generateSeaMultiPolygon(parser);
 			}
