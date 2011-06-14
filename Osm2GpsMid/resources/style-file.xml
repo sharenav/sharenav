@@ -2189,14 +2189,6 @@ end -->
   				<scale scale = "19"/>
   				<lineColor color = "000000CC" colorAtNight="0000009A"/>
 			</Wvalue>  			
-  			<Wvalue name = "sea">
-  				<description desc = "Sea"/>
-  				<namekey tag = "name"/>  				
-  				<isArea area = "true"/>
-  				<scale scale = "19"/>
-  				<lineColor color = "000000CC" colorAtNight="0000009A"/>
-				<force_to layer = "1"/>
-			</Wvalue>  			
   			<Wvalue name = "wood">
   				<description desc = "Natural wood"/>
   				<namekey tag = "name"/>  				

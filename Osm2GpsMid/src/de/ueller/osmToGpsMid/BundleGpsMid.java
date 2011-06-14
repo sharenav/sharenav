@@ -450,9 +450,7 @@ public class BundleGpsMid implements Runnable {
 			config.parseLegend();
 			
 			// Maybe some of these should be configurable in the future.
-			//SeaGenerator. setOptions(config, false, false, false, true, 100);
-			//SeaGenerator. setOptions(config, true, false, false, true, 100);
-			SeaGenerator. setOptions(config, true, true, false, true, 100);
+			SeaGenerator.setOptions(config, false, false, false, true, 100);
 			
 			startTime = Calendar.getInstance();
 

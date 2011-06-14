@@ -1929,7 +1929,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 				setPointOfTheCompass();
 			}
-			//showMovement(g);
+			showMovement(g);
 
 			// Show gpx track recording status
 			LayoutElement eSolution = tl.ele[TraceLayout.SOLUTION];
@@ -2058,7 +2058,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			
 			tl.paint(g);
-			showMovement(g);
 			
 			if (currentAlertsOpenCount > 0) {
 				showCurrentAlert(g);
