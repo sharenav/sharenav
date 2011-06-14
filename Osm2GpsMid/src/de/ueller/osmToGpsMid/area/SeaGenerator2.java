@@ -250,7 +250,7 @@ public class SeaGenerator2 {
 						parser.addWay(w);
 					}
 				}
-				else if(allowSeaSectors || false) {  // this part appears to cause trouble
+				else if(allowSeaSectors && false) {  // this part appears to cause trouble
 					System.out.println("handling allowSeaSectors coastline: " + w);
 					seaId = FakeIdGenerator.makeFakeId();
 					seaSector = new Way(seaId);
