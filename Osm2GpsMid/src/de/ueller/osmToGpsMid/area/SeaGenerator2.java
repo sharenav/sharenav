@@ -180,8 +180,7 @@ public class SeaGenerator2 {
 		// * possible map bugs
 		SortedMap<EdgeHit, Way> hitMap = new TreeMap<EdgeHit, Way>();
 
-		long replacementSeaId = 0;
-		Way replacementSea = null;
+		Way seaSector = null;
 
 		for (Way w : landWays) {
 			List<Node> points = w.getNodes();
@@ -250,39 +249,42 @@ public class SeaGenerator2 {
 						parser.addWay(w);
 					}
 				}
-				else if(allowSeaSectors && false) {
+				else if(allowSeaSectors || false) {  // this part appears to cause trouble
 					System.out.println("handling allowSeaSectors coastline: " + w);
 					seaId = FakeIdGenerator.makeFakeId();
-					replacementSea = new Way(seaId);
-					replacementSea.getNodes().addAll(points);
-					//sea.addNode(new Node(pEnd.getLat(), pStart.getLon(), 
+					seaSector = new Way(seaId);
+					seaSector.getNodes().addAll(points);
+					//seaSector.addNode(new Node(pEnd.getLat(), pStart.getLon(), 
 					//						FakeIdGenerator.makeFakeId()));
-					Node p;
-					int startedge = 0;
-					int endedge = 3;
-					EdgeHit startEdgeHit = getNextEdgeHit(seaBounds, pStart) ;
-					EdgeHit endEdgeHit = getNextEdgeHit(seaBounds, pEnd) ;
-					startedge = startEdgeHit.edge;
-					endedge = endEdgeHit.edge;
+					EdgeHit startEdgeHit = getNextEdgeHit(seaBounds, pStart);
+					EdgeHit endEdgeHit = getNextEdgeHit(seaBounds, pEnd);
+					int startedge = startEdgeHit.edge;
+					int endedge = endEdgeHit.edge;
+
 					System.out.println("startedge: " + startedge + " endedge: " + endedge);
-					if (endedge < startedge) {
-						endedge += 4;
-					}
 
-					for (int i=endedge; i > startedge; i--) {
-						int edge = i % 4;
-						float val = 0.0f;
-						System.out.println("edge: " + edge + " val: " + val);
-						EdgeHit corner = new EdgeHit(edge, val);
-						p = corner.getPoint(seaBounds);
-						//log.debug("way: ", corner, p);
-						System.out.println("way: corner: " + corner + " p: " + p);
+					if (false || false) {
+						Node p;
+						//System.out.println("edge: " + edge + " val: " + val);
+						if (endedge < startedge) {
+							endedge += 4;
+						}
 
-						replacementSea.addNodeIfNotEqualToLastNode(p);
+						for (int i=endedge; i > startedge; i--) {
+							int edge = i % 4;
+							float val = 0.0f;
+							System.out.println("edge: " + edge + " val: " + val);
+							EdgeHit corner = new EdgeHit(edge, val);
+							p = corner.getPoint(seaBounds);
+							//log.debug("way: ", corner, p);
+							System.out.println("way: corner: " + corner + " p: " + p);
+
+							seaSector.addNodeIfNotEqualToLastNode(p);
+						}
 					}
-					replacementSea.addNode(pStart);
-					replacementSea.setAttribute("natural", "sea");
-					replacementSea.setAttribute("area", "yes");
+					seaSector.addNode(pStart);
+					//seaSector.setAttribute("natural", "sea");
+					//seaSector.setAttribute("area", "yes");
 					/* This line is not unnecessary as it triggers the calculation of the way's type
 					 * (which is why making this method sound like it's a simple getter is 
 					 * a bloody bad idea).
@@ -290,9 +292,10 @@ public class SeaGenerator2 {
 					// polish.api.bigstyles
 					short t = sea.getType(configuration);
 					if (generateSeaUsingMP) {
-						Member mOuter = new Member("way", w.id, "outer");
-						seaRelation.add(mOuter);
-						System.out.println("Added outer member to sea relation: " + seaRelation.toString());
+						parser.addWay(seaSector);
+						mInner = new Member("way", seaSector.id, "inner");
+						seaRelation.add(mInner);
+						System.out.println("Added inner to sea relation: " + seaRelation.toString());
 					}
 					generateSeaBackground = false;
 				}
@@ -369,7 +372,6 @@ public class SeaGenerator2 {
 			if (!w.isClosed()) {
 				w.getNodes().add(w.getNodes().get(0));
 			}
-			//replacementSea = w;
 			parser.addWay(w);
 			Member mOuter = new Member("way", w.id, "inner");
 			seaRelation.add(mOuter);
@@ -383,11 +385,9 @@ public class SeaGenerator2 {
 		if (foundCoast) {
 			if (generateSeaUsingMP) {
 				// create a multipolygon relation containing water as outer role
-				if (replacementSea == null) {
-					mInner = new Member("way", sea.id, "outer");
-					seaRelation.add(mInner);
-					parser.addWay(sea);			
-				}
+				mInner = new Member("way", sea.id, "outer");
+				seaRelation.add(mInner);
+				parser.addWay(sea);			
 				parser.addRelation(seaRelation);
 				System.out.println("Adding sea relation: " + seaRelation.toString());
 			} else {

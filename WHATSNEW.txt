@@ -7,7 +7,7 @@
       * when the map area consists of islands&islets with closed outlines consisting of natural=coastline in the sea
       * when the map area consists of land with no coastlines
       * when coastline of an island or continent crosses the map border (some cases)
-      Known to fail (in most cases with sea flooding over land)
+      Known to fail (in most cases with sea flooding over land, sometimes swapping sea & land)
       * when coastline has interruptions
       * when coastline of an island or continent crosses the map border (some cases)
       * when map area is sea with no coastlines (Osm2GpsMid interprets it as land)
