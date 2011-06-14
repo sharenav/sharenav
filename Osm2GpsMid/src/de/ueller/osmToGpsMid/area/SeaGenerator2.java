@@ -347,8 +347,7 @@ public class SeaGenerator2 {
 						w.addNodeIfNotEqualToLastNode(p);
 					}
 					hNext = getEdgeHit(mapBounds, segment.getNodes().get(segment.getNodes().size()-1));
-				}
-				else {
+				} else { // segment == null
 					w.addNodeIfNotEqualToLastNode(hit.getPoint(mapBounds));
 					hNext = hits.higher(hit);
 					if (hNext == null) {
@@ -367,14 +366,13 @@ public class SeaGenerator2 {
 					}
 					else if (hit.compareTo(hNext) > 0) {
 						System.out.println("joining: " + hit + " hNext: " + hNext);
-						for (int i=hit.edge; i<4; i++) {
-							EdgeHit corner = new EdgeHit(i, 1.0);
-							p = corner.getPoint(mapBounds);
-							//log.debug("way: ", corner, p);
-							w.addNodeIfNotEqualToLastNode(p);
+						int hNextEdge = hNext.edge;
+						if (hit.edge > hNext.edge) {
+							hNextEdge += 4;
 						}
-						for (int i=0; i<hNext.edge; i++) {
-							EdgeHit corner = new EdgeHit(i, 1.0);
+
+						for (int i=hit.edge; i < hNextEdge; i++) {
+							EdgeHit corner = new EdgeHit(i % 4, 1.0);
 							p = corner.getPoint(mapBounds);
 							//log.debug("way: ", corner, p);
 							w.addNodeIfNotEqualToLastNode(p);
@@ -490,7 +488,10 @@ public class SeaGenerator2 {
 		// mkgmap uses ints for lat/lon where a digit is 1 / (2^24) of a degree
 		// (see Utils.toMapUnit()). So a tolerance of 10 is 0.000214576721191 degrees
 		// or about 0.72 arc seconds.
-		return getEdgeHit(a, p, 0.0004f);
+		// this might need adjustment - was 0.0004, now is more to cover for ways
+		// cut far from edge by Osm2GpsMid.
+		// if we add a clipping polygon and clip ways, probably should be set back to 0.0004f.
+		return getEdgeHit(a, p, 0.0006f);
 	}
 
 	private static EdgeHit getEdgeHit(Bounds a, Node p, float tolerance)
