@@ -177,6 +177,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	private static final String JCB_HOUSENUMBERS = "Enable house number support";
 
 	private static final String JCB_CELLIDNOLAC = "Store cellids in a format usable by phones with no LAC support";
+	private static final String JCB_GENERATESEA = "Generate sea from coastlines";
 	
 	private static final String ORS_URL="http://openrouteservice.org/php/OpenLSRS_DetermineRoute.php";
 	
@@ -213,6 +214,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	JComboBox jcbSoundFormats;
 	JCheckBox jcbEditing;
 	JCheckBox jcbcellIDnoLAC;
+	JCheckBox jcbGenerateSea;
 	JCheckBox jcbHousenumbers;
 	String langList[] = {
 		"*",
@@ -546,6 +548,13 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.gridy = 2;
 		gbc.weighty = 0;
 		jpOptions2.add(jcbcellIDnoLAC, gbc);
+
+		jcbGenerateSea = new JCheckBox(JCB_GENERATESEA);
+		jcbGenerateSea.addActionListener(this);
+		gbc.gridx = 0;
+		gbc.gridy = 3;
+		gbc.weighty = 0;
+		jpOptions2.add(jcbGenerateSea, gbc);
 		
 		jcbSoundFormats = new JComboBox(soundFormats);
 		jcbSoundFormats.setSelectedIndex(1);
@@ -646,6 +655,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jcbEditing.setEnabled(false);
 		jcbHousenumbers.setEnabled(false);
 		jcbcellIDnoLAC.setEnabled(false);
+		jcbGenerateSea.setEnabled(false);
 		destList.setVisible(false);
 		jbCalcRoute.setEnabled(false);
 		jbClearRoute.setEnabled(false);
@@ -776,6 +786,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jcbEditing.setSelected(config.enableEditingSupport);
 		jcbHousenumbers.setSelected(config.useHouseNumbers);
 		jcbcellIDnoLAC.setSelected(config.getCellIDnoLAC());
+		jcbGenerateSea.setSelected(config.getGenerateSea());
 	}
 
 	/** Finds all files in the Osm2GpsMid JAR that match the pattern "GpsMid-*.jar"
@@ -1054,6 +1065,11 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("\r\n");
 
 			fw.write("\r\n");
+			fw.write("# Generate sea from coastlines.\r\n");
+			fw.write("generateSea = " + config.getGenerateSea() + "\r\n");
+			fw.write("\r\n");
+
+			fw.write("\r\n");
 			fw.write("# You can have up to 9 regions.\r\n");
 			fw.write("# Ways and POIs in any of the regions will be written to the bundle.\r\n");
 			Vector<Bounds> bounds = config.getBounds();
@@ -1184,6 +1200,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			config.useHouseNumbers = ((JCheckBox)event.getSource()).isSelected();
 		} else if (JCB_CELLIDNOLAC.equalsIgnoreCase(event.getActionCommand())) {
 			config.setCellIDnoLAC(((JCheckBox)event.getSource()).isSelected());
+		} else if (JCB_GENERATESEA.equalsIgnoreCase(event.getActionCommand())) {
+			config.setGenerateSea(((JCheckBox)event.getSource()).isSelected());
 		} else if ("CalculateRoute-click".equalsIgnoreCase(event.getActionCommand())) {
 			handleCalculateRoute();
 		} else if (JCB_EDITING.equalsIgnoreCase(event.getActionCommand())) {
