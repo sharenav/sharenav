@@ -2187,7 +2187,7 @@ end -->
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "000000CC" colorAtNight="0000009A"/>
+  				<lineColor color = "0083BCC5" colorAtNight="0000009A"/>
 			</Wvalue>  			
   			<Wvalue name = "wood">
   				<description desc = "Natural wood"/>
