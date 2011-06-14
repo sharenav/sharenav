@@ -81,20 +81,22 @@ public class SeaGenerator2 {
 		
 		// find minimum/maximum lat and lon for the midlet
 		for (Node n: parser.getNodes()) {
+			
+			// tuning of the gap may be needed
 			if (n.lat <= minLat) {
-				minLat = n.lat - 0.0002f;
+				minLat = n.lat - 0.00005f;
 				minMapLat = n.lat;
 			}
 			if (n.lat >= maxLat) {
-				maxLat = n.lat + 0.0002f;
+				maxLat = n.lat + 0.00005f;
 				maxMapLat = n.lat;
 			}
 			if (n.lon <= minLon) {
-				minLon = n.lon - 0.0002f;
+				minLon = n.lon - 0.00005f;
 				minMapLon = n.lon;
 			}
 			if (n.lon >= maxLon) {
-				maxLon = n.lon + 0.0002f;
+				maxLon = n.lon + 0.00005f;
 				maxMapLon = n.lon;
 			}
 		}
@@ -488,9 +490,7 @@ public class SeaGenerator2 {
 		// mkgmap uses ints for lat/lon where a digit is 1 / (2^24) of a degree
 		// (see Utils.toMapUnit()). So a tolerance of 10 is 0.000214576721191 degrees
 		// or about 0.72 arc seconds.
-		// this might need adjustment - was 0.0004, now is more to cover for ways
-		// cut far from edge by Osm2GpsMid.
-		// if we add a clipping polygon and clip ways, probably should be set back to 0.0004f.
+		// this might need adjustment - was 0.0004
 		return getEdgeHit(a, p, 0.0006f);
 	}
 
