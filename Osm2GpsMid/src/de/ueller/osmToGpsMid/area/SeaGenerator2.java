@@ -388,8 +388,8 @@ public class SeaGenerator2 {
 				w.getNodes().add(w.getNodes().get(0));
 			}
 			parser.addWay(w);
-			Member mOuter = new Member("way", w.id, "inner");
-			seaRelation.add(mOuter);
+			mInner = new Member("way", w.id, "inner");
+			seaRelation.add(mInner);
 			System.out.println("Added outer member to sea relation: " + seaRelation.toString());
 			//System.out.println("adding non-island landmass, hits.size()=" + hits.size());
 			//islands.add(w);
