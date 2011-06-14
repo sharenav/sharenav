@@ -75,16 +75,16 @@ public class SeaGenerator2 {
 		
 		// find minimum/maximum lat and lon for the midlet
 		for (Node n: parser.getNodes()) {
-			if (n.lat < minLat) {
+			if (n.lat <= minLat) {
 				minLat = n.lat - 0.0002f;
 			}
-			if (n.lat > maxLat) {
+			if (n.lat >= maxLat) {
 				maxLat = n.lat + 0.0002f;
 			}
-			if (n.lon < minLon) {
+			if (n.lon <= minLon) {
 				minLon = n.lon - 0.0002f;
 			}
-			if (n.lon > maxLon) {
+			if (n.lon >= maxLon) {
 				maxLon = n.lon + 0.0002f;
 			}
 		}
