@@ -2,9 +2,14 @@
     - optionally simplify whan drawing when busxxxxy drawing the map (due to panning or
     not being able to keep up with map updates)
     *** Osm2GpsMid ***
-    - support for sea generation with generateSea=true in .properties. Works only in
-      some cases, at 2011-06-14 only
-      * when the map area consists of islands with closed outlines in the sea
+    - support for sea generation with generateSea=true in .properties
+      Known to works only in some cases, at 2011-06-14 tested to work with
+      * when the map area consists of islands&islets with closed outlines consisting of natural=coastline in the sea
+      noted to fail in tests for
+      * when the map area consists of land with no coastlines
+      Known to fail
+      * when coastline has interruptions
+      * when map area is sea with no coastlines (Osm2GpsMid interprets it as land)
 
 GpsMid 0.7.6
     *** Routing ***

@@ -92,10 +92,10 @@ public class SeaGenerator2 {
 		}
 
 		// add sea relation
-//		if (landWays.size() != 0 ) {
+		if (landWays.size() > 0 ) {
 			parser.addWay(sea);			
 			parser.addRelation(seaRelation);
-//		}
+		}
 	
 		System.out.println(seaRelation.toString());
 	}
