@@ -390,7 +390,7 @@ public class SeaGenerator2 {
 			parser.addWay(w);
 			mInner = new Member("way", w.id, "inner");
 			seaRelation.add(mInner);
-			System.out.println("Added outer member to sea relation: " + seaRelation.toString());
+			System.out.println("Added inner member to sea relation: " + seaRelation.toString());
 			//System.out.println("adding non-island landmass, hits.size()=" + hits.size());
 			//islands.add(w);
 			shorelineReachesBoundary = true;
