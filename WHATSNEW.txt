@@ -1,6 +1,10 @@
     *** Map display ***
     - optionally simplify whan drawing when busxxxxy drawing the map (due to panning or
     not being able to keep up with map updates)
+    *** Osm2GpsMid ***
+    - support for sea generation with generateSea=true in .properties. Works only in
+      some cases, at 2011-06-14 only
+      * when the map area consists of islands with closed outlines in the sea
 
 GpsMid 0.7.6
     *** Routing ***

@@ -304,6 +304,9 @@ public class Configuration {
 		/** Path name of the file containing the cell IDs */
 		private boolean cellIDnoLAC = false; 
 
+		/** Whether to generate sea */
+		private boolean generateSea = false; 
+
 		/** TODO: Explain: Is this only true/false or can it have other values? */
 		private String cellOperator;
 		
@@ -710,6 +713,7 @@ public class Configuration {
 			enableEditingSupport = getString("enableEditing").equalsIgnoreCase("true");
 			cellOperator = getString("useCellID");
 			cellIDnoLAC = getString("cellIDnoLAC").equalsIgnoreCase("true");
+			generateSea = getString("generateSea").equalsIgnoreCase("true");
 		}
 
 		public void setPlanetName(String p) {
@@ -866,7 +870,11 @@ public class Configuration {
 		}
 
 		public boolean getCellIDnoLAC() {
-			return  cellIDnoLAC;
+			return cellIDnoLAC;
+		}
+
+		public boolean getGenerateSea() {
+			return generateSea;
 		}
 
 		/** Returns the name of the Map (as it will be shown on the phone).
@@ -1155,6 +1163,10 @@ public class Configuration {
 			cellIDnoLAC = noLAC;
 		}
 
+		public void setGenerateSea(boolean sea) {
+			generateSea = sea;
+		}
+
 		public InputStream getCharMapStream() throws IOException{
 			InputStream cmis = null;
 			try {
@@ -1436,6 +1448,7 @@ public class Configuration {
 			confString += "  Included CellID data: " + getCellOperator() + "\n";
 			confString += "  CellID source: " + cellSource + "\n";
 			confString += "  Include CellID data for phones with no LAC: " + cellIDnoLAC + "\n";
+			confString += "  Generate sea: " + generateSea + "\n";
 			confString += "  Use url tags: " + useUrlTags + "\n";
 			confString += "  Use phone tags: " + usePhoneTags + "\n";
 			confString += "  Use house numbers for search: " + useHouseNumbers + "\n";

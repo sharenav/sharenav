@@ -100,6 +100,7 @@
    		<entry key="style-file" value="style-file.xml"/>
    		<entry key="enableEditing" value="false"/>
    		<entry key="useCellID" value="false"/>
+   		<entry key="generateSea" value="false"/>
    		<entry key="cellIDnoLAC" value="false"/>
    		<entry key="useIcons" value="true"/>
    		<entry key="useSounds" value="amr"/>
