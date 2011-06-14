@@ -5,11 +5,11 @@
     - support for sea generation with generateSea=true in .properties
       Known to works only in some cases, at 2011-06-14 tested to work with
       * when the map area consists of islands&islets with closed outlines consisting of natural=coastline in the sea
-      noted to fail in tests for
       * when the map area consists of land with no coastlines
       Known to fail
       * when coastline has interruptions
       * when map area is sea with no coastlines (Osm2GpsMid interprets it as land)
+      * when coastline crosses the map border
 
 GpsMid 0.7.6
     *** Routing ***
