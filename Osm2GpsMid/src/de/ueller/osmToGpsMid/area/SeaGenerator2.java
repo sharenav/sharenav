@@ -122,7 +122,8 @@ public class SeaGenerator2 {
 		long seaId = FakeIdGenerator.makeFakeId();
 		Way sea = new Way(seaId);
 		sea.addNode(nw);
-		int c = 5;
+		// FIXME set this by distance
+		int c = 100;
 		Node interim;
 		for (int i = 1 ; i < c ; i++) {
 			interim = new Node(minLat + (maxLat - minLat) * i / c, minLon,
