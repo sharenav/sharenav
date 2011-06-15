@@ -1137,7 +1137,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			}
 			
 			if (unsplittableTile && tooLarge) {
-				System.out.println("WARNING: Tile is unsplittable, but too large. Can't deal with this!");
+				System.out.println("ERROR: Tile is unsplittable, but too large. Can't deal with this! Some map data has not been processed.");
 			}
 
 			// Split tile if more then 255 Ways or binary content > MAX_TILE_FILESIZE but not if only one Way
