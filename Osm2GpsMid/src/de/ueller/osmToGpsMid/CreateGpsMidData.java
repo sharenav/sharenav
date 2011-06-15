@@ -1059,6 +1059,23 @@ public class CreateGpsMidData implements FilenameFilter {
 				maxWays = configuration.getMaxTileWays(t.zl);
 
 				ways = getWaysInBound(t.ways, t.zl, tileBound, realBound);
+
+				if (realBound.getFixPtSpan() > 65000
+//				    && (t.nodes.size() == nodes.size()) && (t.ways.size() == ways.size())
+				    && (tileBound.maxLat - tileBound.minLat < 0.001)) {
+					System.out.println("ERROR: Tile spacially too large (" + 
+							   MAX_RAD_RANGE +	"tileBound: " + tileBound);
+					System.out.println("ERROR:: Could not reduce tile size for tile " + t);
+					System.out.println("  t.ways=" + t.ways.size() + ", t.nodes=" + t.nodes.size());
+					System.out.println("  realBound=" + realBound);
+					System.out.println("  tileBound.maxLat " + tileBound.maxLat
+							   + " tileBound.minLat: " + tileBound.minLat);
+					for (Way w : t.ways) {
+						System.out.println("  Way: " + w);						
+					}
+					System.out.println("Trying to recover, but at least some map data is lost");
+					realBound = tileBound;
+				}
 				nodes = getNodesInBound(t.nodes, t.zl, tileBound);
 				// System.out.println("found " + nodes.size() + " node and " + 
 				//		ways.size() + " ways maxSize=" + maxSize + " maxWay=" + maxWays);
@@ -1120,6 +1137,10 @@ public class CreateGpsMidData implements FilenameFilter {
 					}
 					
 					unsplittableTile = true;										
+					if (tooLarge) {
+						out = createMidContent(ways, nodes, t);
+						outputLength += out.length;						
+					}
 				}
 				t.nodes = nodes;
 				t.ways = ways;
@@ -1138,7 +1159,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			}
 			
 			if (unsplittableTile && tooLarge) {
-				System.out.println("ERROR: Tile is unsplittable, but too large. Can't deal with this! Some map data has not been processed.");
+				System.out.println("ERROR: Tile is unsplittable, but too large. Can't deal with this! Will try to recover, but some map data has not been processed and the map will probably have errors.");
 			}
 
 			// Split tile if more then 255 Ways or binary content > MAX_TILE_FILESIZE but not if only one Way
