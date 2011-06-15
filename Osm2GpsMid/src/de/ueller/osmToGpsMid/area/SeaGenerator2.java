@@ -514,7 +514,7 @@ public class SeaGenerator2 {
 		// (see Utils.toMapUnit()). So a tolerance of 10 is 0.000214576721191 degrees
 		// or about 0.72 arc seconds.
 		// this might need adjustment - was 0.0004
-		return getEdgeHit(a, p, 0.0005f);
+		return getEdgeHit(a, p, 0.04f);
 	}
 
 	private static EdgeHit getEdgeHit(Bounds a, Node p, float tolerance)
