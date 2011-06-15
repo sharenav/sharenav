@@ -296,6 +296,7 @@ public class Relations {
 							}
 						}
 						parser.addWay(w2);
+						removeWays.add(w);
 					}
 					for (Long ref : r.getWayIds(Member.ROLE_INNER)) {
 						Way w = wayHashMap.get(ref);
@@ -308,9 +309,9 @@ public class Relations {
 						Outline no = createOutline(w);
 						if (no != null) {
 							a.addHole(no);
-							if (w.getType(conf) < 1) {
+							//if (w.getType(conf) < 1) {
 								removeWays.add(w);
-							}
+							//}
 						}
 					}
 					try {
