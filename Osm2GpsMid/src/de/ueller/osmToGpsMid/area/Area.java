@@ -107,7 +107,7 @@ public class Area {
 			//System.err.println("Starting to do the cutOneEar thing");
 			while (outline.vertexCount() > 2) {
 				loop++;
-				if (loop > 50000) {
+				if (loop > 100000) {
 					System.err.println("Break because of infinite loop for outline " + outline.getWayId());
 					System.err.println("  see http://www.openstreetmap.org/browse/way/" + outline.getWayId());
 					break;
