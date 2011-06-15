@@ -1071,6 +1071,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				int mostlyInBound = ways.size();
 				addWaysCompleteInBound(ways, t.ways, t.zl, realBound);
 				
+				//System.out.println("ways.size : " + ways.size() + " mostlyInBound: " + mostlyInBound);		
 				if (ways.size() > 2 * mostlyInBound) {
 					// System.out.println("ways.size > 2 * mostlyInBound, mostlyInBound: " + mostlyInBound);		
 					realBound = new Bounds();
@@ -1653,11 +1654,24 @@ public class CreateGpsMidData implements FilenameFilter {
 		double tmpLat = (MyMath.degToRad(n.lat - t.centerLat)) * MyMath.FIXPT_MULT;
 		double tmpLon = (MyMath.degToRad(n.lon - t.centerLon)) * MyMath.FIXPT_MULT;
 		if ((tmpLat > Short.MAX_VALUE) || (tmpLat < Short.MIN_VALUE)) {
-			System.err.println("ERROR: Numeric overflow of latitude for node: " + n.id);
+			System.err.println("ERROR: Numeric overflow of latitude for node: " + n.id + ", trying to handle");
+			if (tmpLat > Short.MAX_VALUE) {
+				tmpLat = Short.MAX_VALUE;
+			}
+			if (tmpLat < Short.MIN_VALUE) {
+				tmpLat = Short.MIN_VALUE;
+			}
 		}
 		if ((tmpLon > Short.MAX_VALUE) || (tmpLon < Short.MIN_VALUE)) {
-			System.err.println("ERROR: Numeric overflow of longitude for node: " + n.id);
+			System.err.println("ERROR: Numeric overflow of longitude for node: " + n.id + ", trying to handle");
+			if (tmpLon > Short.MAX_VALUE) {
+				tmpLon = Short.MAX_VALUE;
+			}
+			if (tmpLon < Short.MIN_VALUE) {
+				tmpLon = Short.MIN_VALUE;
+			}
 		}
+
 		ds.writeShort((short)tmpLat);
 		ds.writeShort((short)tmpLon);
 		
