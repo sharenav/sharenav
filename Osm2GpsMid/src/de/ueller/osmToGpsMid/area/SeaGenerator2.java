@@ -84,19 +84,19 @@ public class SeaGenerator2 {
 			
 			// tuning of the gap may be needed
 			if (n.lat <= minLat) {
-				minLat = n.lat - 0.00005f;
+				minLat = n.lat - 0.00003f;
 				minMapLat = n.lat;
 			}
 			if (n.lat >= maxLat) {
-				maxLat = n.lat + 0.00005f;
+				maxLat = n.lat + 0.00003f;
 				maxMapLat = n.lat;
 			}
 			if (n.lon <= minLon) {
-				minLon = n.lon - 0.00005f;
+				minLon = n.lon - 0.00003f;
 				minMapLon = n.lon;
 			}
 			if (n.lon >= maxLon) {
-				maxLon = n.lon + 0.00005f;
+				maxLon = n.lon + 0.00003f;
 				maxMapLon = n.lon;
 			}
 		}
@@ -514,7 +514,7 @@ public class SeaGenerator2 {
 		// (see Utils.toMapUnit()). So a tolerance of 10 is 0.000214576721191 degrees
 		// or about 0.72 arc seconds.
 		// this might need adjustment - was 0.0004
-		return getEdgeHit(a, p, 0.0006f);
+		return getEdgeHit(a, p, 0.0005f);
 	}
 
 	private static EdgeHit getEdgeHit(Bounds a, Node p, float tolerance)
