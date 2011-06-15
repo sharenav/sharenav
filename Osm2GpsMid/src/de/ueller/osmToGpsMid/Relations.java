@@ -355,9 +355,8 @@ public class Relations {
 		int numMultipolygonMembersNotRemoved = 0;
 		for (Way w : removeWays) {
 			if (!w.isAccessForAnyRouting()) {
-				// don't remove, because this can be a member of other relations not yet processed
-				// FIXME check if not removing this causes harm (e.g. duplicate drawing of map objects)
-				//parser.removeWay(w);
+				// all relations have been handled, remove ways not needed for routing
+				parser.removeWay(w);
 			}
 			else {
 				numMultipolygonMembersNotRemoved++;
