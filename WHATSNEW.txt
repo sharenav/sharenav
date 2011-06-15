@@ -3,16 +3,20 @@
     not being able to keep up with map updates)
     *** Osm2GpsMid ***
     - partial support for sea generation with generateSea=true in .properties
-      Known to works only in some cases, at 2011-06-14 tested to work with
-      * when the map area consists of islands&islets with closed outlines consisting of natural=coastline in the sea
+      Known to works
+      * when the map area is small enough and consists of islands&islets with closed outlines
+         consisting of natural=coastline in the sea, no coastlines crossing map
       * when the map area consists of land with no coastlines
-      * when coastline of an island or continent crosses the map border (some cases)
+      * most cases work when coastline of an island or continent crosses the map border
       Known to fail (in most cases with sea flooding over land, sometimes swapping sea & land)
       * when coastline has interruptions
-      * when coastline of an island or continent crosses the map border (some cases)
+      * when coastline of an island or continent crosses the map border - some cases, especially when
+        the coastline way crosses the map boundary more than two times
       * when map area is sea with no coastlines (Osm2GpsMid interprets it as land)
-      * when map area is too big (message WARNING: Tile is unsplittable, but too large. Can't deal with this!)
+      * when map area is too big (message "Tile is unsplittable, but too large. Can't deal with this!)
         - no sea appears to be generated when this problem appears
+      * when map area is too big (no messages at generation, but failures at map loading in GpsMid)
+        - triangle artifacts in the map
 
 GpsMid 0.7.6
     *** Routing ***
