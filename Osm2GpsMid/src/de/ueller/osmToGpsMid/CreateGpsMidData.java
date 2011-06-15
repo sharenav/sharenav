@@ -1111,6 +1111,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				{
 					System.out.println("WARNING: Could not reduce tile size for tile " + t);
 					System.out.println("  t.ways=" + t.ways.size() + ", t.nodes=" + t.nodes.size());
+					System.out.println("  t.bounds=" + t.bounds);
 					for (Way w : t.ways) {
 						System.out.println("  Way: " + w);						
 					}
