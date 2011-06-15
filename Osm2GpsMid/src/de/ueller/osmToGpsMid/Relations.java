@@ -317,10 +317,20 @@ public class Relations {
 						List<Triangle> areaTriangles = a.triangulate();
 						firstWay.triangles = areaTriangles;
 						firstWay.recreatePath();
-						r.getTags().remove("type");
-						if (r.getTags().size() > 0) {
-							firstWay.replaceTags(r);
+						// neither methdod below to remove type tag works
+						//r.getTags().remove("type");
+						//if (r.containsKey("type")) {
+						//	r.deleteTag("type");
+						//}
+						// so move all tags except type
+						for (String key : r.getTags()) {
+							if (!"type".equals(key)) {
+								firstWay.setAttribute(key, r.getAttribute(key));
+							}
 						}
+						//if (r.getTags().size() > 0) {
+						//	firstWay.replaceTags(r);
+						//}
 						triangles += areaTriangles.size();
 //					System.out.println("areaTriangles.size for relation " + r.toUrl() + " :" + areaTriangles.size());
 						areas += 1;
