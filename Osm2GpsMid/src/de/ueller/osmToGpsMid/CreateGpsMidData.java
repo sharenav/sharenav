@@ -1112,6 +1112,8 @@ public class CreateGpsMidData implements FilenameFilter {
 					System.out.println("WARNING: Could not reduce tile size for tile " + t);
 					System.out.println("  t.ways=" + t.ways.size() + ", t.nodes=" + t.nodes.size());
 					System.out.println("  t.bounds=" + t.bounds);
+					System.out.println("  tileBound.maxLat " + tileBound.maxLat
+							   + " tileBound.minLat: " + tileBound.minLat);
 					for (Way w : t.ways) {
 						System.out.println("  Way: " + w);						
 					}
@@ -1120,7 +1122,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				}
 				t.nodes = nodes;
 				t.ways = ways;
-				t.generateSeaPolygon();
+				//t.generateSeaPolygon();
 				// TODO: Check if createMidContent() should be here.
 			} else {
 				// Route Nodes
