@@ -122,33 +122,10 @@ public class SeaGenerator2 {
 		long seaId = FakeIdGenerator.makeFakeId();
 		Way sea = new Way(seaId);
 		sea.addNode(nw);
-		// FIXME set this by distance
-		int c = 100;
-		Node interim;
-		for (int i = 1 ; i < c ; i++) {
-			interim = new Node(minLat + (maxLat - minLat) * i / c, minLon,
-				FakeIdGenerator.makeFakeId());
-			sea.addNodeIfNotEqualToLastNode(interim);
-		}
-		sea.addNode(sw);
-		for (int i = 1 ; i < c ; i++) {
-			interim = new Node(maxLat, minLon + (maxLon - minLon) * i / c,
-				FakeIdGenerator.makeFakeId());
-			sea.addNodeIfNotEqualToLastNode(interim);
-		}
-		sea.addNode(se);
-		for (int i = 1 ; i < c ; i++) {
-			interim = new Node(maxLat - (maxLat - minLat) * i / c, maxLon,
-				FakeIdGenerator.makeFakeId());
-			sea.addNodeIfNotEqualToLastNode(interim);
-		}
-		sea.addNode(ne);
-		for (int i = 1 ; i < c ; i++) {
-			interim = new Node(minLat, maxLon - (maxLon - minLon) * i / c,
-				FakeIdGenerator.makeFakeId());
-			sea.addNodeIfNotEqualToLastNode(interim);
-		}
-		sea.addNodeIfNotEqualToLastNode(nw);
+		sea.addNodeIfNotEqualToLastNodeWithInterimNodes(sw);
+		sea.addNodeIfNotEqualToLastNodeWithInterimNodes(se);
+		sea.addNodeIfNotEqualToLastNodeWithInterimNodes(ne);
+		sea.addNodeIfNotEqualToLastNodeWithInterimNodes(nw);
 
 		long multiId = FakeIdGenerator.makeFakeId();
 		Relation seaRelation = new Relation(multiId);
@@ -321,7 +298,7 @@ public class SeaGenerator2 {
 							//log.debug("way: ", corner, p);
 							System.out.println("way: corner: " + corner + " p: " + p);
 
-							seaSector.addNodeIfNotEqualToLastNode(p);
+							seaSector.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
 						}
 					}
 					seaSector.addNode(pStart);
@@ -332,7 +309,7 @@ public class SeaGenerator2 {
 					 * a bloody bad idea).
 					 */
 					// polish.api.bigstyles
-					short t = sea.getType(configuration);
+					//short t = sea.getType(configuration);
 					if (generateSeaUsingMP) {
 						parser.addWay(seaSector);
 						mInner = new Member("way", seaSector.id, "inner");
@@ -382,15 +359,16 @@ public class SeaGenerator2 {
 					Node p;
 					if (hit.compareTo(hNext) < 0) {
 						//log.info("joining: ", hit, hNext);
+						System.out.println("joining compareTo < 0, hit: " +  hit + " hNext: " + hNext);
 						for (int i=hit.edge; i<hNext.edge; i++) {
 							EdgeHit corner = new EdgeHit(i, 1.0);
 							p = corner.getPoint(mapBounds);
 							//log.debug("way: ", corner, p);
-							w.addNodeIfNotEqualToLastNode(p);
+							w.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
 						}
 					}
 					else if (hit.compareTo(hNext) > 0) {
-						System.out.println("joining: " + hit + " hNext: " + hNext);
+						System.out.println("joining compareTo > 0: " + hit + " hNext: " + hNext);
 						int hNextEdge = hNext.edge;
 						if (hit.edge > hNext.edge) {
 							hNextEdge += 4;
@@ -400,7 +378,7 @@ public class SeaGenerator2 {
 							EdgeHit corner = new EdgeHit(i % 4, 1.0);
 							p = corner.getPoint(mapBounds);
 							//log.debug("way: ", corner, p);
-							w.addNodeIfNotEqualToLastNode(p);
+							w.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
 						}
 					}
 					w.addNodeIfNotEqualToLastNode(hNext.getPoint(mapBounds));
@@ -419,6 +397,21 @@ public class SeaGenerator2 {
 			//System.out.println("adding non-island landmass, hits.size()=" + hits.size());
 			//islands.add(w);
 			shorelineReachesBoundary = true;
+			// FIXME instead of adding inner members to define land here,
+			// we could track the outline and add outer members to define sea.
+			// Depending on the map area, the resulting multipolygons could be lighter
+			// to handle in triangulation and the tile & way splitting.
+			// In country-level cases where a country has coast at only one border
+			// the savings could be significant.
+			// Some issues with this
+			// * sea might not be in only one closed way, but multiple ways
+			// ** relation code currently copes with one outer member, not mutiple
+			// ** trianglulation code probably needs to know which inner polygons
+			//    belong to which outer polygon, so code would be needed for that
+			// * others?
+			// I think the more typical case however is that sea is in one piece.
+			// We can probably check if sea is in one or more pieces, and decide
+			// which kind of multipolygon to produce.
 		}
 
 		// add sea relation

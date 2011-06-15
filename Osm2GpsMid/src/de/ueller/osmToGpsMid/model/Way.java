@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import uk.me.parabola.mkgmap.reader.osm.FakeIdGenerator;
+
 import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.Constants;
 import de.ueller.osmToGpsMid.LegendParser;
@@ -869,6 +871,29 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public void addNodeIfNotEqualToLastNode(Node node) {
+		if (path.getNodeCount() == 0 || !node.equals(path.getNode(path.getNodeCount() - 1))) {
+			path.add(node);
+		}
+	}
+
+	// add node with interim nodes to make splitting possible
+	public void addNodeIfNotEqualToLastNodeWithInterimNodes(Node node) {
+		if (path.getNodeCount() != 0) {
+			Node oldNode = path.getNode(path.getNodeCount() - 1);
+			if (oldNode != null && !node.equals(oldNode)) {
+				double dist = MyMath.dist(oldNode, node);
+				System.out.println("Dist = " + dist);
+				int count = (int) dist / 50;
+				float oldLat = oldNode.getLat();
+				float oldLon = oldNode.getLon();
+				float latDiff = node.getLat() - oldLat;
+				float lonDiff = node.getLon() - oldLon;
+				for (int i = 1 ; i < count ; i++) {
+					Node interim = new Node(oldLat + latDiff * i / count, oldLon + lonDiff * i / count, FakeIdGenerator.makeFakeId());					
+					path.add(interim);
+				}
+			}
+		}
 		if (path.getNodeCount() == 0 || !node.equals(path.getNode(path.getNodeCount() - 1))) {
 			path.add(node);
 		}
