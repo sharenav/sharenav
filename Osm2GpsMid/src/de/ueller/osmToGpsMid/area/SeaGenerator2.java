@@ -34,13 +34,13 @@ import de.ueller.osmToGpsMid.model.Way;
 public class SeaGenerator2 {
 	public float minLat = Float.MAX_VALUE;
 	public float minLon = Float.MAX_VALUE;
-	public float maxLat = Float.MIN_VALUE;
-	public float maxLon = Float.MIN_VALUE;
+	public float maxLat = -Float.MAX_VALUE;
+	public float maxLon = -Float.MAX_VALUE;
 
 	public float minMapLat = Float.MAX_VALUE;
 	public float minMapLon = Float.MAX_VALUE;
-	public float maxMapLat = Float.MIN_VALUE;
-	public float maxMapLon = Float.MIN_VALUE;
+	public float maxMapLat = -Float.MAX_VALUE;
+	public float maxMapLon = -Float.MAX_VALUE;
 
 	private static boolean generateSea = true;
 	private static boolean generateSeaUsingMP = false;
