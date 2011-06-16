@@ -3247,6 +3247,15 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 
 	public void receiveStatus(byte status, int satsReceived) {
+		if (status != LocationMsgReceiver.STATUS_ON
+		    && status != LocationMsgReceiver.STATUS_2D
+		    && status != LocationMsgReceiver.STATUS_3D
+		    && status != LocationMsgReceiver.STATUS_DGPS) {
+			// no fix, invalidate speed heuristic
+			prevCourse = -1;
+			secondPrevCourse = -1;
+			thirdPrevCourse = -1;
+		}
 		// FIXME signal a sound on location gained or lost
 		solution = status;
 		solutionStr = LocationMsgReceiverList.getCurrentStatusString(status, satsReceived);
