@@ -140,7 +140,7 @@ public class SeaGenerator2 {
 			natural = w.getAttribute("natural");
 			if (natural != null) {
 				if ("coastline".equals(natural)) {
-					System.out.println("Create land from coastline  " + w.toUrl());
+					//System.out.println("Create land from coastline  " + w.toUrl());
 					// for closed ways, save memory and do not create new ways
 					if (w.isClosed()) {
 						landWays.add(w);
@@ -167,7 +167,7 @@ public class SeaGenerator2 {
 		while (it.hasNext()) {
 			Way w = it.next();
 			if (w.isClosed()) {
-				System.out.println("adding island " + w);
+				//System.out.println("adding island " + w);
 				parser.addWay(w);
 				it.remove();
 				mInner = new Member("way", w.id, "inner");
