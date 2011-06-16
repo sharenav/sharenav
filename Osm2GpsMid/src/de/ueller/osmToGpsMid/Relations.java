@@ -357,7 +357,16 @@ public class Relations {
 		for (Way w : removeWays) {
 			if (!w.isAccessForAnyRouting()) {
 				// all relations have been handled, remove ways not needed for routing
-				parser.removeWay(w);
+				// FIXME - I think this is wrong - ways which are members of a multipolygon
+				// can have other tags which makes them renderable, and this removes them if they're not
+				// routable. Actually we should check whether the way is used for any rendering (check the type?)
+				// maybe like this: 
+				if (w.getType(conf) < 1) {
+					//System.out.println("Removing way: " + w);
+					parser.removeWay(w);
+				} else {
+					//System.out.println("Not removing way because type >= 1: " + w);
+				}
 			}
 			else {
 				numMultipolygonMembersNotRemoved++;
