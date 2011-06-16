@@ -43,6 +43,17 @@ public class Triangle {
 		return new String("tri " + getVert()[0] + getVert()[1] + getVert()[2]);
 	}
 	
+	// probably is faster than the getMidpoint(), not used but retain for now
+	public Vertex getAverageMidpoint() {
+		float lat = 0f;
+		float lon = 0f;
+                for (int i = 0; i < 3; i++) {
+			lat += getVert()[i].getLat();
+			lon += getVert()[i].getLon();
+                }
+		return new Vertex(lat / 3, lon / 3, 0l);
+        }
+        
 	public Vertex getMidpoint() {
 		float lat = 0f;
 		float lon = 0f;
