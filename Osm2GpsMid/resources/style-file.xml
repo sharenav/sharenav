@@ -1224,6 +1224,18 @@ in the main index as well as in housenumber index.
   				<routing with="bicycle" accessible="true" speed="15" />
   				<routing with="foot" accessible="true" speed="4" />  	
   			</Wvalue>
+			<Wvalue name = "tertiary_link" priority = "10">
+  				<description desc = "secondary link"/>
+  				<namekey tag = "name"/>
+				<namefallback tag = "ref"/>
+  				<isArea area = "false"/>
+  				<scale scale = "18"/>
+				<lineColor color="00FDBF6F" colorAtNight="00598798" />
+  				<wayWidth width="4" />
+  				<routing with="motorcar" accessible="true" speed="40" />
+  				<routing with="bicycle" accessible="true" speed="10" />
+  				<routing with="foot" accessible="true" speed="4" />  	
+  			</Wvalue>
   			<Wvalue name = "unclassified" priority = "9">  					        
   				<description desc = "small road"/>
   				<namekey tag = "name"/>  				
