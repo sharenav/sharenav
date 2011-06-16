@@ -3260,6 +3260,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		solution = status;
 		solutionStr = LocationMsgReceiverList.getCurrentStatusString(status, satsReceived);
 		repaint();
+		// to update e.g. tacho
+		if (locationUpdateListeners != null && !TrackPlayer.isPlaying) {
+			synchronized (locationUpdateListeners) {
+				for (int i = 0; i < locationUpdateListeners.size(); i++) {
+					((LocationUpdateListener)locationUpdateListeners.elementAt(i)).loctionUpdated();
+				}
+			}
+		}
 	}
 
 	public String getName(int idx) {
