@@ -98,7 +98,8 @@ public class LocationMsgReceiverList implements LocationMsgReceiver {
 			mCurrentStatusString = Locale.get("solution.SecEx");
 			break;
 		case LocationMsgReceiver.STATUS_NOFIX:
-			mCurrentStatusString = Locale.get("solution.NoFix");
+			mCurrentStatusString = Locale.get("solution.NoFix")
+			    + ((mCurrentNumSats != 0) ? mCurrentNumSats + "S" : "");
 			break;
 		case LocationMsgReceiver.STATUS_RECONNECT:
 			mCurrentStatusString = Locale.get("solution.tildes");
@@ -180,7 +181,8 @@ public class LocationMsgReceiverList implements LocationMsgReceiver {
 		case LocationMsgReceiver.STATUS_SECEX:
 			return Locale.get("solution.SecEx");
 		case LocationMsgReceiver.STATUS_NOFIX:
-			return Locale.get("solution.NoFix");
+			return Locale.get("solution.NoFix")
+			    + ((satsReceived != 0) ? satsReceived + "S" : "");
 		case LocationMsgReceiver.STATUS_RECONNECT:
 			return Locale.get("solution.tildes");
 		case LocationMsgReceiver.STATUS_ON: // JSR-179, num of sats unknown

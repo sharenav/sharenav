@@ -115,6 +115,14 @@ public class NmeaMessage {
 		decodeMessage(buffer.toString(), true);
 	}
 
+	public Position getPosition() {
+		return pos;
+	}
+
+	public int getMAllSatellites() {
+		return mAllSatellites;
+	}
+
 	/** This method does the actual decoding work. It puts the data into
 	 * member variables and forwards it to the LocationMsgReceiver.
 	 * 
@@ -174,7 +182,7 @@ public class NmeaMessage {
 				String valSolution = (String)param.elementAt(2);
 				if (valSolution.equals("V")) {
 					this.qual = 0;
-					receiver.receiveStatus(LocationMsgReceiver.STATUS_NOFIX, 0);
+					receiver.receiveStatus(LocationMsgReceiver.STATUS_NOFIX, mAllSatellites);
 					return;
 				}
 				if (valSolution.equalsIgnoreCase("A") && this.qual == 0) {
@@ -207,7 +215,7 @@ public class NmeaMessage {
 				pos.altitude = alt;
 				pos.speed = speed;
 				pos.course = head;
-				pos.pdop = pdop;
+				//pos.pdop = pdop;
 				pos.type = Position.TYPE_GPS;
 
 				// Get Date from Calendar
@@ -265,7 +273,7 @@ public class NmeaMessage {
 				/**
 				 * PDOP (dilution of precision)
 				 */
-				pdop = getFloatToken((String)param.elementAt(15));
+				pos.pdop = getFloatToken((String)param.elementAt(15));
 				/**
 			     *  Horizontal dilution of precision (HDOP)
 			     *  Vertical dilution of precision (VDOP)

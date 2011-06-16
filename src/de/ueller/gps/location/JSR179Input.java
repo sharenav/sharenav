@@ -58,6 +58,8 @@ public class JSR179Input
 	private NmeaMessage smsg;
 	Position pos = new Position(0f, 0f, 0f, 0f, 0f, 0, System.currentTimeMillis());
 
+	private int numSatellites = 0;
+
 	private OutputStream rawDataLogger;
 
 	
@@ -154,6 +156,7 @@ public class JSR179Input
 		if (location == null) {
 			return;
 		}
+		numSatellites = 0;
 		//#debug debug
 		logger.debug("received Location: " + location.getLocationMethod());
 		
@@ -203,6 +206,9 @@ public class JSR179Input
 					logger.info("Decoding: " + nmeaMessage);
 					if ((nmeaMessage != null) && (nmeaMessage.length() > 5)) {
 						smsg.decodeMessage(nmeaMessage, false);
+						// get PDOP from the message
+						pos.pdop = smsg.getPosition().pdop;
+						numSatellites = smsg.getMAllSatellites();
 					}
 				}
 			}
@@ -230,7 +236,7 @@ public class JSR179Input
 			receiverList.receivePosition(pos);
 		} else {
 			if (receiverList != null) {
-				receiverList.receiveStatus(LocationMsgReceiver.STATUS_NOFIX, 0);
+				receiverList.receiveStatus(LocationMsgReceiver.STATUS_NOFIX, numSatellites);
 			}
 		}
 		// logger.trace("exit locationUpdated(provider,location)");
