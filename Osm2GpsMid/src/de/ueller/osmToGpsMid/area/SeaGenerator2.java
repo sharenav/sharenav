@@ -79,62 +79,10 @@ public class SeaGenerator2 {
 	
 	public void generateSeaMultiPolygon(OsmParser parser) {
 		
-		// find minimum/maximum lat and lon for the midlet
-		for (Node n: parser.getNodes()) {
-			
-			// tuning of the gap may be needed
-			if (n.lat <= minLat) {
-				minLat = n.lat - 0.00003f;
-				minMapLat = n.lat;
-			}
-			if (n.lat >= maxLat) {
-				maxLat = n.lat + 0.00003f;
-				maxMapLat = n.lat;
-			}
-			if (n.lon <= minLon) {
-				minLon = n.lon - 0.00003f;
-				minMapLon = n.lon;
-			}
-			if (n.lon >= maxLon) {
-				maxLon = n.lon + 0.00003f;
-				maxMapLon = n.lon;
-			}
-		}
-		
 		seaBounds = new Bounds();
-		seaBounds.minLat = minLat;
-		seaBounds.minLon = minLon;
-		seaBounds.maxLat = maxLat;
-		seaBounds.maxLon = maxLon;
-
-		mapBounds = new Bounds();
-		mapBounds.minLat = minMapLat;
-		mapBounds.minLon = minMapLon;
-		mapBounds.maxLat = maxMapLat;
-		mapBounds.maxLon = maxMapLon;
-
-		System.out.println("seaBounds: " + seaBounds);
-		// create a sea area covering the whole midlet
-		Node nw = new Node(minLat, minLon, FakeIdGenerator.makeFakeId());
-		Node ne = new Node(minLat, maxLon, FakeIdGenerator.makeFakeId());
-		Node sw = new Node(maxLat, minLon, FakeIdGenerator.makeFakeId());
-		Node se = new Node(maxLat, maxLon, FakeIdGenerator.makeFakeId());
-		long seaId = FakeIdGenerator.makeFakeId();
-		Way sea = new Way(seaId);
-		sea.addNode(nw);
-		sea.addNodeIfNotEqualToLastNodeWithInterimNodes(sw);
-		sea.addNodeIfNotEqualToLastNodeWithInterimNodes(se);
-		sea.addNodeIfNotEqualToLastNodeWithInterimNodes(ne);
-		sea.addNodeIfNotEqualToLastNodeWithInterimNodes(nw);
-
-		long multiId = FakeIdGenerator.makeFakeId();
-		Relation seaRelation = new Relation(multiId);
-		seaRelation.setAttribute("type", "multipolygon");
-		seaRelation.setAttribute("natural", "sea");
 
 		// remember coastlines and add them to landways
 		String natural;
-		Member mInner;
 		ArrayList<Way> landWays = new ArrayList<Way>();
 		for (Way w: parser.getWays()) {
 			natural = w.getAttribute("natural");
@@ -149,11 +97,44 @@ public class SeaGenerator2 {
 						Way wLand = new Way(landId, w);
 						landWays.add(wLand);
 					}
+					// find minimum/maximum lat and lon for the midlet
+					seaBounds.extend(w.getBounds());
 				}
 			}
 		}
 		
-		boolean generateSeaBackground = false;
+		mapBounds = seaBounds.clone();
+
+		float seaMargin = 0.00003f;
+
+		seaBounds.minLat -= seaMargin;
+		seaBounds.minLon -= seaMargin;
+		seaBounds.maxLat += seaMargin;
+		seaBounds.maxLon += seaMargin;
+
+		System.out.println("seaBounds: " + seaBounds);
+		System.out.println("mapBounds: " + mapBounds);
+
+		// create a sea area covering the whole sea area of the midlet
+		Node nw = new Node(seaBounds.minLat, seaBounds.minLon, FakeIdGenerator.makeFakeId());
+		Node ne = new Node(seaBounds.minLat, seaBounds.maxLon, FakeIdGenerator.makeFakeId());
+		Node sw = new Node(seaBounds.maxLat, seaBounds.minLon, FakeIdGenerator.makeFakeId());
+		Node se = new Node(seaBounds.maxLat, seaBounds.maxLon, FakeIdGenerator.makeFakeId());
+
+		long seaId = FakeIdGenerator.makeFakeId();
+		Way sea = new Way(seaId);
+		sea.addNode(nw);
+		sea.addNodeIfNotEqualToLastNodeWithInterimNodes(sw);
+		sea.addNodeIfNotEqualToLastNodeWithInterimNodes(se);
+		sea.addNodeIfNotEqualToLastNodeWithInterimNodes(ne);
+		sea.addNodeIfNotEqualToLastNodeWithInterimNodes(nw);
+
+		long multiId = FakeIdGenerator.makeFakeId();
+		Relation seaRelation = new Relation(multiId);
+		seaRelation.setAttribute("type", "multipolygon");
+		seaRelation.setAttribute("natural", "sea");
+
+		Member mInner;
 
 		if (landWays.size() > 0 ) {
 			foundCoast = true;
@@ -316,7 +297,6 @@ public class SeaGenerator2 {
 						seaRelation.add(mInner);
 						System.out.println("Added inner to sea relation: " + seaRelation.toString());
 					}
-					generateSeaBackground = false;
 				}
 			} else {
 				//log.debug("hits: ", hStart, hEnd);
