@@ -46,11 +46,25 @@ public class Triangle {
 	public Vertex getMidpoint() {
 		float lat = 0f;
 		float lon = 0f;
+		float minLat = Float.MAX_VALUE;
+		float minLon = Float.MAX_VALUE;
+		float maxLat = -Float.MAX_VALUE;
+		float maxLon = -Float.MAX_VALUE;
 		for (int i = 0; i < 3; i++) {
-			lat += getVert()[i].getLat();
-			lon += getVert()[i].getLon();
+			if (getVert()[i].getLat() <= minLat) {
+				minLat = getVert()[i].getLat();
+			}
+			if (getVert()[i].getLat() >= maxLat) {
+				maxLat = getVert()[i].getLat();
+			}
+			if (getVert()[i].getLon() <= minLon) {
+				minLon = getVert()[i].getLon();
+			}
+			if (getVert()[i].getLon() >= maxLon) {
+				maxLon = getVert()[i].getLon();
+			}
 		}
-		return new Vertex(lat / 3, lon / 3, 0l);
+		return new Vertex((maxLat - minLat) / 2 + minLat, (maxLon - minLon) / 2 + minLon,0l);
 	}
 	
 	public Bounds extendBound(Bounds b) {
