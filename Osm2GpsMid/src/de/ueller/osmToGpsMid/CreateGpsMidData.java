@@ -629,6 +629,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				e.printStackTrace();
 			}
 			
+			dsi.writeFloat((float)Configuration.mapPrecisionInMeters);
 			dsi.close();
 			foi.close();
 			

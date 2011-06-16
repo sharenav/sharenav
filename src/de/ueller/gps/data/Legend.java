@@ -28,7 +28,7 @@ public class Legend {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 68;
+	public final static short MAP_FORMAT_VERSION = 69;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -192,6 +192,8 @@ public class Legend {
 	public static String soundFormats[];
 	public static String soundDirectories[];
 	
+	public static float mapPrecision;
+
 	public static String mapVersion;
 	public static String bundleDate;
 	public static boolean isValid = false;
@@ -202,6 +204,7 @@ public class Legend {
 	public static boolean enableMap66Search;
 	public static boolean enableMap67Sounds;
 	public static boolean enableMap68Filenames;
+	public static boolean enableMap69Precision;
 	public static short numUiLang;
 	public static short numNaviLang;
 	public static short numOnlineLang;
@@ -277,10 +280,14 @@ public class Legend {
 		if (mapFormatVersion >= 68) {
 			enableMap68Filenames = true;
 		}
+		if (mapFormatVersion >= 69) {
+			enableMap69Precision = true;
+		}
 		// we can read versions 67, 66 and 65
 		if (mapFormatVersion != MAP_FORMAT_VERSION && mapFormatVersion != 65
 		    && mapFormatVersion != 66
-		    && mapFormatVersion != 67) {
+		    && mapFormatVersion != 67
+		    && mapFormatVersion != 68) {
 		        Trace.getInstance().alert(Locale.get("legend.wrongmapvertitle"),
 				     Locale.get("legend.wrongmapvermsg1") + " " + MAP_FORMAT_VERSION
 				     + " " + Locale.get("legend.wrongmapvermsg2") + " " + mapFormatVersion,
@@ -439,6 +446,11 @@ public class Legend {
 		}
 
 		isValid = true;
+
+		mapPrecision = 1f;
+		if (enableMap69Precision) {
+			mapPrecision = ds.readFloat();
+		}
 		ds.close();
 	}
 	

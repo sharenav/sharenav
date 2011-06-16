@@ -22,8 +22,8 @@
 	<property name="lib.dir" value="${basedir}/lib"/>
 
    	<property name="dist.dir" value="${basedir}/dist"/>
-	<property name="version" value="0.7.56"/>
-	<property name="mapversion" value="68"/>
+	<property name="version" value="0.7.57"/>
+	<property name="mapversion" value="69"/>
 	<property name="buildlib" value="buildlib/explode.jar"/>
 
    <available property="clover.available" classname="org.apache.tools.ant.taskdefs.CloverCompilerAdapter"/>
@@ -102,6 +102,7 @@
    		<entry key="useCellID" value="false"/>
    		<entry key="generateSea" value="false"/>
    		<entry key="cellIDnoLAC" value="false"/>
+		<entry key="mapPrecisionInMeters" value="1"/>
    		<entry key="useIcons" value="true"/>
    		<entry key="useSounds" value="amr"/>
    		<entry key="mapSource" value=""/>

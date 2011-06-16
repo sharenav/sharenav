@@ -24,6 +24,7 @@ package de.ueller.midlet.gps.data;
 
 
 //import de.ueller.m.midlet.gps.Logger;
+import de.ueller.gps.data.Legend;
 
 /**
  * MoreMath provides functions that are not part of the standard Math class.
@@ -98,7 +99,7 @@ public class MoreMath {
 	 * 
 	 * This constant has to be in synchrony with the value in Osm2GpsMid.
 	 */
-	public static final float FIXPT_MULT = PLANET_RADIUS; 
+	public static final float FIXPT_MULT = PLANET_RADIUS / Legend.mapPrecision; 
 
 	/**
 	 * 1 / FIXPT_MULT, this saves a floating point division.

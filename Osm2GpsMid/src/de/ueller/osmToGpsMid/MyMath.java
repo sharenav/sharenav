@@ -33,7 +33,7 @@ public class MyMath {
 	 * 
 	 * This constant has to be in synchrony with the value in GpsMid.
 	 */
-	public static final double FIXPT_MULT = PLANET_RADIUS;
+	public static final double FIXPT_MULT = PLANET_RADIUS / Configuration.mapPrecisionInMeters;
 
 	public static final float FEET_TO_METER = 0.3048f;
 

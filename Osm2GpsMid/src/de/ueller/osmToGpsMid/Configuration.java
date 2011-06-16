@@ -60,7 +60,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write.
 	 * This constant must be in sync with GpsMid.
 	 */
-	public final static short MAP_FORMAT_VERSION = 68;
+	public final static short MAP_FORMAT_VERSION = 69;
 
 	public final static int COLOR_MAP_BACKGROUND = 0;
 	public final static int COLOR_MAP_TEXT = 1;
@@ -385,6 +385,9 @@ public class Configuration {
 		/** TODO: Explain this, what is behind the "dict depth"? */
 		private int maxDictDepth = 5;
 		
+		/** Max. map precision in meters */
+	    	public static double mapPrecisionInMeters = 1d;
+
 		/** Maximum ways that are allowed to be stored into a tile of the zoom levels. */
 		public int maxTileWays[] = new int[4];
 
@@ -701,6 +704,7 @@ public class Configuration {
 			}
 			maxTileSize = Integer.parseInt(getString("maxTileSize"));
 			maxDictDepth = Integer.parseInt(getString("maxDictDepth"));
+			mapPrecisionInMeters = Double.parseDouble(getString("mapPrecisionInMeters"));
 			
 			for (int i=0; i<=3; i++) {
 				maxTileWays[i] = Integer.parseInt(getString("maxTileWays" + i));
@@ -1454,6 +1458,7 @@ public class Configuration {
 			confString += "  Use house numbers for search: " + useHouseNumbers + "\n";
 			confString += "  Use words for search: " + useWordSearch + "\n";
 			confString += "  Enable editing support: " + enableEditingSupport + "\n";
+			confString += "  Map precision in meters: " + mapPrecisionInMeters + "\n";
 			confString += "  Adding menu entries for languages: " + getUseLang() + " (" + getUseLangName() + ")" + "\n";
 			confString += "  Don't compress files ending with: " + getDontCompress() + "\n";
 			if (allLang) {

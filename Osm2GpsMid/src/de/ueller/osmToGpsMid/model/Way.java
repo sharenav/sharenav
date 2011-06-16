@@ -882,7 +882,7 @@ public class Way extends Entity implements Comparable<Way> {
 			Node oldNode = path.getNode(path.getNodeCount() - 1);
 			if (oldNode != null && !node.equals(oldNode)) {
 				double dist = MyMath.dist(oldNode, node);
-				System.out.println("Dist = " + dist);
+				// System.out.println("Dist = " + dist);
 				int count = (int) dist / 50;
 				float oldLat = oldNode.getLat();
 				float oldLon = oldNode.getLon();
@@ -1013,6 +1013,7 @@ public class Way extends Entity implements Comparable<Way> {
 			}
 		}
 		if (tri.size() == triangles.size()) {
+			// System.out.println("split area triangles: all " + tri.size() + " would go the other way");
 			// all triangles would go to the other way
 			return null;
 		}

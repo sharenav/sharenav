@@ -78,7 +78,7 @@
 	<property name="dir.work" value="build/real/${customization}" />
 	<property name="dir.dist" value="dist/${customization}" />
 	<property name="deploy-url" value="" />
-	<property name="mapversion" value="68" />
+	<property name="mapversion" value="69" />
 </target>
 
 <!-- In this target the J2ME Polish task is used.             -->
@@ -99,7 +99,7 @@
             <!-- lowercase icon name required for Android, before Android support was icon="GpsMid.png" -->
 		<info
 			name="GpsMid"
-			version="0.7.56"
+			version="0.7.57"
 			description="Shows moving map made from OpenStreetMap data"
 			vendorName="Harald Mueller"
 			infoUrl="http://gpsmid.sourceforge.net"

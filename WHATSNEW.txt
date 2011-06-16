@@ -2,6 +2,8 @@
     - optionally simplify whan drawing when busxxxxy drawing the map (due to panning or
     not being able to keep up with map updates)
     *** Osm2GpsMid ***
+    - allow user to select map accuracy in .properties file with mapPrecisionInMeters=X
+      (default 1 meter)
     - partial support for sea generation with generateSea=true in .properties
       Known to works
       * when the map area is small enough and consists of islands&islets with closed outlines
