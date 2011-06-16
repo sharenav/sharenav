@@ -7,14 +7,11 @@
 
 #The android.home property should point to the directory
 #containing the Android SDK.
-android.home=/path/to/android-sdk/set/in/build.properties
+#Generally it's better to set this in J2MEPolish (at install)
+#android.home=/path/to/android-sdk/set/in/build.properties
 
 #Building for android requires a newer J2ME-Polish than
-#2.1.4, set path to it here
-polish.home=/set/path/to/J2ME-Polish-2.2.1-or-nightly/in/android.properties
+#2.1.4, set path to it here. Moslty obsolete now when 2.2.1 supports android
+#polish.home=/set/path/to/J2ME-Polish-2.2.1-or-nightly/in/android.properties
 
-# Alternatively, You can build by tuning the parameterrs on the ant command line
-
-# use "ant -propertyfile android.properties android" to build android .apk's
-
-gpsmid.test_device=Generic/android-hiresonline
+#gpsmid.test_device=Generic/android-hiresonline

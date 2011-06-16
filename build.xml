@@ -21,6 +21,7 @@
 	name="GpsMid" 
 	default="j2mepolish">
 	
+<property file="android.properties" />
 <property file="build.properties" />
 <property file="midlet.properties" />
 <property file="${polish.home}/global.properties" />
