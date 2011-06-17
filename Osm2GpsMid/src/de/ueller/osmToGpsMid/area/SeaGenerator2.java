@@ -52,8 +52,6 @@ public class SeaGenerator2 {
 
 	private boolean foundCoast = false;
 	
-	private static final String[] landTag = { "natural", "generated-land" };
-
 	Bounds seaBounds;
 	Bounds mapBounds;
 
@@ -227,26 +225,7 @@ public class SeaGenerator2 {
 						short t = w.getType(configuration);
 						parser.addWay(w);
 					} else {
-						if(!FakeIdGenerator.isFakeId(w.getId())) {
-							Way w1 = new Way(FakeIdGenerator.makeFakeId());
-							w1.getNodes().addAll(w.getNodes());
-							// only copy the name tags
-							for(String tag : w.getTags()) {
-								if(tag.equals("name") || tag.endsWith(":name")) {
-									w1.setAttribute(tag, w.getAttribute(tag));
-								}
-							}
-							w = w1;
-						}
-						w.setAttribute(landTag[0], landTag[1]);
-						w.setAttribute("area", "yes");
-						/* This line is not unnecessary as it triggers the calculation of the way's type
-						 * (which is why making this method sound like it's a simple getter is 
-						 * a bloody bad idea).
-						 */
-						// polish.api.bigstyles
-						short t = w.getType(configuration);
-						parser.addWay(w);
+						System.out.println("ERROR: SeaGenerator: can only create sea properly as relations");
 					}
 				}
 				else if(allowSeaSectors && false) {  // this part appears to cause trouble
