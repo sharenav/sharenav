@@ -23,20 +23,6 @@ public class Triangle {
 		getVert()[2] = n3;
 	}
 		
-	public Triangle(Node n1,Node n2, Node n3) {
-		Outline o = new Outline();
-		Vertex v1 = new Vertex(n1, null);
-		o.append(v1);
-		Vertex v2 = new Vertex(n2, null);
-		o.append(v2);
-		Vertex v3 = new Vertex(n3, null);
-		o.append(v3);
-		o.append(v1);
-		getVert()[0] = v1;
-		getVert()[1] = v2;
-		getVert()[2] = v3;
-	}
-		
 	public boolean isVertexInside(Vertex n){
 		if (n == getVert()[0] && n == getVert()[1] && n == getVert()[2]) {
 			return false;

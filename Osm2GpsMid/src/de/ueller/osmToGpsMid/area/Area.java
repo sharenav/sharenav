@@ -32,7 +32,8 @@ public class Area {
 	public  boolean debug = false;
 
 	public double maxdist = 0d;
-	double limitdist = 10000d;
+	double limitdist = 25000d;
+	//double limitdist = 10000d;
 
 	private static OsmParser parser;
 
@@ -149,9 +150,13 @@ public class Area {
 		if (dist1 > limitdist ||
 			    dist2 > limitdist ||
 			    dist3 > limitdist) {
+
 			Vertex t2n1 = t1.getVert()[0];
 			Vertex t2n2 = t1.getVert()[1];
 			Vertex t2n3 = t1.getVert()[2];
+
+			Triangle t2 = new Triangle(t2n1, t2n2, t2n3);
+
 			int longest = 0;
 			double longestDist = 0d;
 			Node newNode = null;
@@ -169,12 +174,14 @@ public class Area {
 			}
 			System.out.println("Splitting triangle " + t1 + ", dist= " + longestDist);
 			System.out.println("Longest edge: " + longest);
+
 			switch(longest) {
 			case 1: 
 				newNode = n1.midNode(n2, FakeIdGenerator.makeFakeId());
 				//triangleList.add(new Triangle(n1, newNode, n3));
 				//triangleList.add(new Triangle(n2, newNode, n3));
 				t1.getVert()[1] = new Vertex(newNode,t1.getVert()[1].getOutline());
+				t2.getVert()[0] = new Vertex(newNode,t1.getVert()[1].getOutline());
 				//t1.getVert()[1].setLat(newNode.getLat());
 				//t1.getVert()[1].setLon(newNode.getLon());
 				//parser.addNode(newNode);
@@ -183,6 +190,7 @@ public class Area {
 				//triangleList.add(new Triangle(n2, newNode, n1));
 				//triangleList.add(new Triangle(n3, newNode, n1));
 				t1.getVert()[2] = new Vertex(newNode,t1.getVert()[2].getOutline());
+				t2.getVert()[1] = new Vertex(newNode,t1.getVert()[2].getOutline());
 				//t1.getVert()[2].setLat(newNode.getLat());
 				//t1.getVert()[2].setLon(newNode.getLon());
 				//parser.addNode(newNode);
@@ -191,6 +199,7 @@ public class Area {
 				//triangleList.add(new Triangle(n3, newNode, n2));
 				//triangleList.add(new Triangle(n1, newNode, n2));
 				t1.getVert()[0] = new Vertex(newNode,t1.getVert()[0].getOutline());
+				t2.getVert()[2] = new Vertex(newNode,t1.getVert()[0].getOutline());
 				//t1.getVert()[0].setLat(newNode.getLat());
 				//t1.getVert()[0].setLon(newNode.getLon());
 				//parser.addNode(newNode);
@@ -201,7 +210,7 @@ public class Area {
 			} else {
 				splitTriangleIfNeeded(t1, ret, recurselevel + 1);
 				// FIXME add creation of the new triangle t2 also
-				//splitTriangleIfNeeded(t2, ret, recurselevel + 1);
+				splitTriangleIfNeeded(t2, ret, recurselevel + 1);
 			}
 			//triangleList.remove(t1);
 		} else {
