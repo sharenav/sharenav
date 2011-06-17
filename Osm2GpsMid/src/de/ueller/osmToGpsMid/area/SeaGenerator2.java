@@ -274,7 +274,7 @@ public class SeaGenerator2 {
 						parser.addWay(seaSector);
 						mInner = new Member("way", seaSector.id, "inner");
 						seaRelation.add(mInner);
-						System.out.println("Added inner to sea relation: " + seaRelation.toString());
+						//System.out.println("Added inner to sea relation: " + seaRelation.toString());
 					}
 				}
 			} else {
