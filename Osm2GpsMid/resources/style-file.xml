@@ -2199,7 +2199,7 @@ end -->
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "10"/>
-  				<lineColor color = "0083BCC5" colorAtNight="0000009A"/>
+  				<lineColor color = "005A74B5" colorAtNight="0000009A"/>
 				<force_to layer = "-2"/> 
 			</Wvalue>  			
   			<Wvalue name = "wood">
