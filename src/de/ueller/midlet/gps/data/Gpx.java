@@ -637,6 +637,8 @@ public class Gpx extends Tile implements Runnable, InputListener {
 		mTrkByteOutStream = new ByteArrayOutputStream();
 		mTrkOutStream = new DataOutputStream(mTrkByteOutStream);
 		trackDatabaseRecordId = -1;
+		oldlat = 0.0f;
+		oldlon = 0.0f;
 		trkOdo = 0.0f;
 		trkVmax = 0.0f;
 		trkVertSpd = 0.0f;
