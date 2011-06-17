@@ -151,6 +151,11 @@ public class Area {
 			    dist2 > limitdist ||
 			    dist3 > limitdist) {
 
+			if (recurselevel > 10) {
+				System.out.println("Recurselevel > 10, giving up splitting triangle " + t1);
+				ret.add(t1);
+			}
+
 			Vertex t2n1 = t1.getVert()[0];
 			Vertex t2n2 = t1.getVert()[1];
 			Vertex t2n3 = t1.getVert()[2];
@@ -204,15 +209,8 @@ public class Area {
 				//t1.getVert()[0].setLon(newNode.getLon());
 				//parser.addNode(newNode);
 			}
-			if (recurselevel > 10) {
-				System.out.println("Recurselevel > 10, giving up splitting triangle " + t1);
-				ret.add(t1);
-			} else {
-				splitTriangleIfNeeded(t1, ret, recurselevel + 1);
-				// FIXME add creation of the new triangle t2 also
-				splitTriangleIfNeeded(t2, ret, recurselevel + 1);
-			}
-			//triangleList.remove(t1);
+			splitTriangleIfNeeded(t1, ret, recurselevel + 1);
+			splitTriangleIfNeeded(t2, ret, recurselevel + 1);
 		} else {
 			ret.add(t1);
 		}
