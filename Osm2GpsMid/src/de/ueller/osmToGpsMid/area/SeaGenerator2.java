@@ -122,10 +122,10 @@ public class SeaGenerator2 {
 		long seaId = FakeIdGenerator.makeFakeId();
 		Way sea = new Way(seaId);
 		sea.addNode(nw);
-		sea.addNodeIfNotEqualToLastNodeWithInterimNodes(sw);
-		sea.addNodeIfNotEqualToLastNodeWithInterimNodes(se);
-		sea.addNodeIfNotEqualToLastNodeWithInterimNodes(ne);
-		sea.addNodeIfNotEqualToLastNodeWithInterimNodes(nw);
+		sea.addNodeIfNotEqualToLastNode(sw);
+		sea.addNodeIfNotEqualToLastNode(se);
+		sea.addNodeIfNotEqualToLastNode(ne);
+		sea.addNodeIfNotEqualToLastNode(nw);
 
 		long multiId = FakeIdGenerator.makeFakeId();
 		Relation seaRelation = new Relation(multiId);
@@ -258,7 +258,7 @@ public class SeaGenerator2 {
 							//log.debug("way: ", corner, p);
 							System.out.println("way: corner: " + corner + " p: " + p);
 
-							seaSector.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
+							seaSector.addNodeIfNotEqualToLastNode(p);
 						}
 					}
 					seaSector.addNode(pStart);
@@ -323,7 +323,7 @@ public class SeaGenerator2 {
 							EdgeHit corner = new EdgeHit(i, 1.0);
 							p = corner.getPoint(mapBounds);
 							//log.debug("way: ", corner, p);
-							w.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
+							w.addNodeIfNotEqualToLastNode(p);
 						}
 					}
 					else if (hit.compareTo(hNext) > 0) {
@@ -337,7 +337,7 @@ public class SeaGenerator2 {
 							EdgeHit corner = new EdgeHit(i % 4, 1.0);
 							p = corner.getPoint(mapBounds);
 							//log.debug("way: ", corner, p);
-							w.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
+							w.addNodeIfNotEqualToLastNode(p);
 						}
 					}
 					w.addNodeIfNotEqualToLastNode(hNext.getPoint(mapBounds));
@@ -381,7 +381,7 @@ public class SeaGenerator2 {
 				seaRelation.add(mInner);
 				parser.addWay(sea);			
 				parser.addRelation(seaRelation);
-				System.out.println("Adding sea relation: " + seaRelation.toString());
+				//System.out.println("Adding sea relation: " + seaRelation.toString());
 			} else {
 				System.out.println("ERROR: SeaGenerator: can only create sea properly as relations");
 			}

@@ -83,6 +83,14 @@ public class Node extends Entity {
 	}
 	
 	/**
+	 * @return Node in the middle of this node and another node
+	 */
+	public Node midNode(Node old, long newID) {
+		return new Node((lat + old.lat) / 2,
+			    (lon + old.lon) / 2, newID);
+	}
+	
+	/**
 	 * @return Longitude (in map units) of this node for isClockWise()
 	 */
 	public long getLongLon() {

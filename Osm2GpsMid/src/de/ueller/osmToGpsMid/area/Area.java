@@ -15,8 +15,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import de.ueller.osmToGpsMid.MyMath;
+import de.ueller.osmToGpsMid.OsmParser;
 import de.ueller.osmToGpsMid.model.Bounds;
-
+import de.ueller.osmToGpsMid.model.Node;
+import uk.me.parabola.mkgmap.reader.osm.FakeIdGenerator;
 
 public class Area {
 	private ArrayList<Outline>	outlineList	= new ArrayList<Outline>();
@@ -28,7 +31,13 @@ public class Area {
 	public Vertex	edgeInside;
 	public  boolean debug = false;
 
-	public Area() {
+	public double maxdist = 0d;
+	double limitdist = 10000d;
+
+	private static OsmParser parser;
+
+	public static void setParser(OsmParser setParser) {
+		parser = setParser;
 	}
 	
 
@@ -112,7 +121,8 @@ public class Area {
 					System.err.println("  see http://www.openstreetmap.org/browse/way/" + outline.getWayId());
 					break;
 				}
-				ret.add(cutOneEar(outline, holeList, dir));
+				Triangle t = cutOneEar(outline, holeList, dir);
+				splitTriangleIfNeeded(t, ret, 0);
 				dir = (dir + 1) % 4;
 			}
 			//System.err.println("Finished doing the cutOneEar thing");
@@ -122,10 +132,91 @@ public class Area {
 		//System.err.println("Starting to optimize");
 		optimize();
 		ret.trimToSize();
+		//splitBigTriangles();
 		//System.err.println("Finished optimizing");
 		return ret;
 
 	}
+	// return true if triangle has been split
+	private void splitTriangleIfNeeded(Triangle t1, ArrayList<Triangle> ret, int recurselevel) {
+		// check the size; if a line is too long, split the tringle
+		Node n1 = t1.getVert()[0].getNode();
+		Node n2 = t1.getVert()[1].getNode();
+		Node n3 = t1.getVert()[2].getNode();
+		double dist1 = MyMath.dist(n1, n2);
+		double dist2 = MyMath.dist(n2, n3);
+		double dist3 = MyMath.dist(n3, n1);
+		if (dist1 > limitdist ||
+			    dist2 > limitdist ||
+			    dist3 > limitdist) {
+			Vertex t2n1 = t1.getVert()[0];
+			Vertex t2n2 = t1.getVert()[1];
+			Vertex t2n3 = t1.getVert()[2];
+			int longest = 0;
+			double longestDist = 0d;
+			Node newNode = null;
+			if (dist1 > longestDist) {
+				longestDist = dist1;
+				longest = 1;
+			}
+			if (dist2 > longestDist) {
+				longestDist = dist2;
+				longest = 2;
+			}
+			if (dist3 > longestDist) {
+				longestDist = dist3;
+				longest = 3;
+			}
+			System.out.println("Splitting triangle " + t1 + ", dist= " + longestDist);
+			System.out.println("Longest edge: " + longest);
+			switch(longest) {
+			case 1: 
+				newNode = n1.midNode(n2, FakeIdGenerator.makeFakeId());
+				//triangleList.add(new Triangle(n1, newNode, n3));
+				//triangleList.add(new Triangle(n2, newNode, n3));
+				t1.getVert()[1] = new Vertex(newNode,t1.getVert()[1].getOutline());
+				//t1.getVert()[1].setLat(newNode.getLat());
+				//t1.getVert()[1].setLon(newNode.getLon());
+				//parser.addNode(newNode);
+			case 2: 
+				newNode = n2.midNode(n3, FakeIdGenerator.makeFakeId());
+				//triangleList.add(new Triangle(n2, newNode, n1));
+				//triangleList.add(new Triangle(n3, newNode, n1));
+				t1.getVert()[2] = new Vertex(newNode,t1.getVert()[2].getOutline());
+				//t1.getVert()[2].setLat(newNode.getLat());
+				//t1.getVert()[2].setLon(newNode.getLon());
+				//parser.addNode(newNode);
+			case 3: 
+				newNode = n3.midNode(n1, FakeIdGenerator.makeFakeId());
+				//triangleList.add(new Triangle(n3, newNode, n2));
+				//triangleList.add(new Triangle(n1, newNode, n2));
+				t1.getVert()[0] = new Vertex(newNode,t1.getVert()[0].getOutline());
+				//t1.getVert()[0].setLat(newNode.getLat());
+				//t1.getVert()[0].setLon(newNode.getLon());
+				//parser.addNode(newNode);
+			}
+			if (recurselevel > 10) {
+				System.out.println("Recurselevel > 10, giving up splitting triangle " + t1);
+				ret.add(t1);
+			} else {
+				splitTriangleIfNeeded(t1, ret, recurselevel + 1);
+				// FIXME add creation of the new triangle t2 also
+				//splitTriangleIfNeeded(t2, ret, recurselevel + 1);
+			}
+			//triangleList.remove(t1);
+		} else {
+			ret.add(t1);
+		}
+	}
+	//private void splitBigTriangles() {
+	//	Iterator<Triangle> it = triangleList.iterator();
+	//	while (it.hasNext()) {
+	//		Triangle t1 = it.next();
+	//		if (splitTriangleIfNeeded(t1)) {
+	//			it.remove();
+	//		}
+	//	}
+	//}
 	private void optimize() {
 		for (Triangle t:triangleList) {
 			t.opt = false;

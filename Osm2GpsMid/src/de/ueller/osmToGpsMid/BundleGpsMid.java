@@ -34,6 +34,7 @@ import java.util.zip.ZipOutputStream;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import de.ueller.osmToGpsMid.area.Area;
 import de.ueller.osmToGpsMid.area.SeaGenerator;
 import de.ueller.osmToGpsMid.area.SeaGenerator2;
 import de.ueller.osmToGpsMid.model.Damage;
@@ -503,6 +504,7 @@ public class BundleGpsMid implements Runnable {
 				sg2.generateSeaMultiPolygon(parser);
 			}
 			
+			Area.setParser(parser);
 			new Relations(parser, config);
 
 			/**
