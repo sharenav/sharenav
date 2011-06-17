@@ -128,43 +128,42 @@ public class Area {
 			}
 			//System.err.println("Finished doing the cutOneEar thing");
 		}
-//		System.out.println(ret);
-//		System.out.println("loops :" + loop);
+		//System.out.println(ret);
+		//System.out.println("loops :" + loop);
 		//System.err.println("Starting to optimize");
 		optimize();
 		ret.trimToSize();
-		//splitBigTriangles();
 		//System.err.println("Finished optimizing");
 		return ret;
 
 	}
-	// return true if triangle has been split
-	private void splitTriangleIfNeeded(Triangle t1, ArrayList<Triangle> ret, int recurselevel) {
+	private void splitTriangleIfNeeded(Triangle t, ArrayList<Triangle> ret, int recurselevel) {
 		// check the size; if a line is too long, split the tringle
-		Node n1 = t1.getVert()[0].getNode();
-		Node n2 = t1.getVert()[1].getNode();
-		Node n3 = t1.getVert()[2].getNode();
+		Node n0 = t.getVert()[0].getNode();
+		Node n1 = t.getVert()[1].getNode();
+		Node n2 = t.getVert()[2].getNode();
+		double dist0 = MyMath.dist(n0, n1);
 		double dist1 = MyMath.dist(n1, n2);
-		double dist2 = MyMath.dist(n2, n3);
-		double dist3 = MyMath.dist(n3, n1);
-		if (dist1 > limitdist ||
-			    dist2 > limitdist ||
-			    dist3 > limitdist) {
+		double dist2 = MyMath.dist(n2, n0);
+		if (dist0 > limitdist ||
+			    dist1 > limitdist ||
+			    dist2 > limitdist) {
 
 			if (recurselevel > 10) {
-				System.out.println("Recurselevel > 10, giving up splitting triangle " + t1);
-				ret.add(t1);
+				System.out.println("WARNING: Recurselevel > 10, giving up splitting triangle " + t);
+				ret.add(t);
+				return;
 			}
 
-			Vertex t2n1 = t1.getVert()[0];
-			Vertex t2n2 = t1.getVert()[1];
-			Vertex t2n3 = t1.getVert()[2];
-
-			Triangle t2 = new Triangle(t2n1, t2n2, t2n3);
-
+			Triangle t1 = new Triangle(t.getVert()[0], t.getVert()[1], t.getVert()[2]);
+			Triangle t2 = new Triangle(t.getVert()[0], t.getVert()[1], t.getVert()[2]);
 			int longest = 0;
 			double longestDist = 0d;
 			Node newNode = null;
+			if (dist0 > longestDist) {
+				longestDist = dist0;
+				longest = 0;
+			}
 			if (dist1 > longestDist) {
 				longestDist = dist1;
 				longest = 1;
@@ -173,57 +172,34 @@ public class Area {
 				longestDist = dist2;
 				longest = 2;
 			}
-			if (dist3 > longestDist) {
-				longestDist = dist3;
-				longest = 3;
-			}
-			System.out.println("Splitting triangle " + t1 + ", dist= " + longestDist);
-			System.out.println("Longest edge: " + longest);
+			//System.out.println("Splitting triangle " + t + ", dist= " + longestDist);
+			//System.out.println("Longest edge: " + longest);
 
 			switch(longest) {
+			case 0: 
+				newNode = n0.midNode(n1, FakeIdGenerator.makeFakeId());
+				t1.getVert()[1] = new Vertex(newNode,null);
+				t2.getVert()[0] = new Vertex(newNode,null);
+				break;
 			case 1: 
 				newNode = n1.midNode(n2, FakeIdGenerator.makeFakeId());
-				//triangleList.add(new Triangle(n1, newNode, n3));
-				//triangleList.add(new Triangle(n2, newNode, n3));
-				t1.getVert()[1] = new Vertex(newNode,t1.getVert()[1].getOutline());
-				t2.getVert()[0] = new Vertex(newNode,t1.getVert()[1].getOutline());
-				//t1.getVert()[1].setLat(newNode.getLat());
-				//t1.getVert()[1].setLon(newNode.getLon());
-				//parser.addNode(newNode);
+				t1.getVert()[2] = new Vertex(newNode,null);
+				t2.getVert()[1] = new Vertex(newNode,null);
+				break;
 			case 2: 
-				newNode = n2.midNode(n3, FakeIdGenerator.makeFakeId());
-				//triangleList.add(new Triangle(n2, newNode, n1));
-				//triangleList.add(new Triangle(n3, newNode, n1));
-				t1.getVert()[2] = new Vertex(newNode,t1.getVert()[2].getOutline());
-				t2.getVert()[1] = new Vertex(newNode,t1.getVert()[2].getOutline());
-				//t1.getVert()[2].setLat(newNode.getLat());
-				//t1.getVert()[2].setLon(newNode.getLon());
-				//parser.addNode(newNode);
-			case 3: 
-				newNode = n3.midNode(n1, FakeIdGenerator.makeFakeId());
-				//triangleList.add(new Triangle(n3, newNode, n2));
-				//triangleList.add(new Triangle(n1, newNode, n2));
-				t1.getVert()[0] = new Vertex(newNode,t1.getVert()[0].getOutline());
-				t2.getVert()[2] = new Vertex(newNode,t1.getVert()[0].getOutline());
-				//t1.getVert()[0].setLat(newNode.getLat());
-				//t1.getVert()[0].setLon(newNode.getLon());
-				//parser.addNode(newNode);
+				newNode = n2.midNode(n0, FakeIdGenerator.makeFakeId());
+				t1.getVert()[0] = new Vertex(newNode,null);
+				t2.getVert()[2] = new Vertex(newNode,null);
+				break;
 			}
 			splitTriangleIfNeeded(t1, ret, recurselevel + 1);
+			//System.out.println("Split or add triangle t2: " + t2);
 			splitTriangleIfNeeded(t2, ret, recurselevel + 1);
 		} else {
-			ret.add(t1);
+			//System.out.println("Adding side " + side + " of triangle");
+			ret.add(t);
 		}
 	}
-	//private void splitBigTriangles() {
-	//	Iterator<Triangle> it = triangleList.iterator();
-	//	while (it.hasNext()) {
-	//		Triangle t1 = it.next();
-	//		if (splitTriangleIfNeeded(t1)) {
-	//			it.remove();
-	//		}
-	//	}
-	//}
 	private void optimize() {
 		for (Triangle t:triangleList) {
 			t.opt = false;
