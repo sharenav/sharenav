@@ -2658,6 +2658,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
                                if (thirdPrevCourse != -1) {
                                        // first check for normal flow of things, we've had three valid courses after movement start
                                        updateCourse((int) pos.course);
+				       thirdPrevCourse = secondPrevCourse;
+				       secondPrevCourse = prevCourse;
+
                                } else if (prevCourse == -1) {
                                        // previous course was invalid,
                                        // don't set course yet, but set the first tentatively good course
@@ -2669,26 +2672,38 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
                                        if (Math.abs(prevCourse - (int)pos.course) < 30 || Math.abs(prevCourse - (int)pos.course) > 330) {
                                                secondPrevCourse = prevCourse;
                                        }
-                                       prevCourse = (int) pos.course;
                                } else {
                                        // we have received two previous valid curses, check for this one
                                        if (Math.abs(prevCourse - (int)pos.course) < 30 || Math.abs(prevCourse - (int)pos.course) > 330) {
                                                thirdPrevCourse = secondPrevCourse;
-                                               //No need to set these as we'll now trust courses until speed goes below limit
-					       // - unless we'll later add averaging of recent courses for poor GPS reception
-                                               //secondPrevCourse = prevCourse;
-                                               //prevCourse = (int) pos.course;
+                                               secondPrevCourse = prevCourse;
                                                updateCourse((int) pos.course);
                                        } else {
-                                               prevCourse = (int) pos.course;
                                                secondPrevCourse = -1;
                                        }
                                }
+			       prevCourse = (int) pos.course;
                        } else {
-                               // speed under the minimum, invalidate all prev courses
-                               prevCourse = -1;
-                               secondPrevCourse = -1;
-                               thirdPrevCourse = -1;
+                               // speed under the minimum. If it went under the limit now, do a heuristic
+				// to decide a proper course.
+				// invalidate all prev courses
+				if (thirdPrevCourse != -1) {
+					// speed just went under the threshold
+					// - if the last readings are not within the 30 degree sector of
+					// the previous one, restore course to the third previous course,
+					// it's probable that it's more reliable than the last
+					// course, as we see that at traffic light stops
+					// an incorrect course is shown relatively often
+					if ((Math.abs(prevCourse - secondPrevCourse) < 15 || Math.abs(prevCourse - secondPrevCourse) > 345)
+					    && (Math.abs(thirdPrevCourse - secondPrevCourse) < 15 || Math.abs(thirdPrevCourse - secondPrevCourse) > 345)) {
+						// we're OK
+					} else {
+						updateCourse(thirdPrevCourse);
+					}
+				}
+				prevCourse = -1;
+				secondPrevCourse = -1;
+				thirdPrevCourse = -1;
 			}
 		}
 		if (gpx.isRecordingTrk()) {
