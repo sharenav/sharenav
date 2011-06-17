@@ -1,6 +1,9 @@
     *** Map display ***
     - optionally simplify whan drawing when busxxxxy drawing the map (due to panning or
     not being able to keep up with map updates)
+    *** Tacho ***
+    - now PDOP is actually shown in tachometer on JSR179 phones
+    - fixed odometer bug where it would add extra distance to a trip at start
     *** Osm2GpsMid ***
     - allow user to select map accuracy in .properties file with mapPrecisionInMeters=X
       (default 1 meter)
