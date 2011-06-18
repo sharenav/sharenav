@@ -46,7 +46,7 @@ public class SeaGenerator2 {
 	private static boolean generateSeaUsingMP = false;
 	private static boolean allowSeaSectors = false;
 	private static boolean extendSeaSectors = true;
-	private static int maxCoastlineGap = 100;
+	private static int maxCoastlineGap = 0;
 
 	private static Configuration configuration;
 
@@ -103,12 +103,13 @@ public class SeaGenerator2 {
 		
 		mapBounds = seaBounds.clone();
 
-		float seaMargin = 0.00003f;
+		float seaMargin = 0.000005f;
 
 		seaBounds.minLat -= seaMargin;
 		seaBounds.minLon -= seaMargin;
 		seaBounds.maxLat += seaMargin;
 		seaBounds.maxLon += seaMargin;
+
 
 		System.out.println("seaBounds: " + seaBounds);
 		System.out.println("mapBounds: " + mapBounds);
@@ -157,7 +158,7 @@ public class SeaGenerator2 {
 		// while relation handling code does concatenate ways, we need
 		// this to see where the start and end for coastlines are
 		// so we can decide how to connect partial coastlines to e.g. map borders
-		concatenateWays(landWays, seaBounds, parser);
+		concatenateWays(landWays, mapBounds, parser);
 		
 		// there may be more islands now
 
@@ -228,13 +229,11 @@ public class SeaGenerator2 {
 						System.out.println("ERROR: SeaGenerator: can only create sea properly as relations");
 					}
 				}
-				else if(allowSeaSectors && false) {  // this part appears to cause trouble
+				else if (allowSeaSectors && false) {  // this part appears to cause trouble, removed
 					System.out.println("handling allowSeaSectors coastline: " + w);
 					seaId = FakeIdGenerator.makeFakeId();
 					seaSector = new Way(seaId);
-					seaSector.getNodes().addAll(points);
-					//seaSector.addNode(new Node(pEnd.getLat(), pStart.getLon(), 
-					//						FakeIdGenerator.makeFakeId()));
+
 					EdgeHit startEdgeHit = getNextEdgeHit(mapBounds, pStart);
 					EdgeHit endEdgeHit = getNextEdgeHit(mapBounds, pEnd);
 					int startedge = startEdgeHit.edge;
@@ -261,21 +260,32 @@ public class SeaGenerator2 {
 							seaSector.addNodeIfNotEqualToLastNode(p);
 						}
 					}
-					seaSector.addNode(pStart);
-					//seaSector.setAttribute("natural", "sea");
-					//seaSector.setAttribute("area", "yes");
-					/* This line is not unnecessary as it triggers the calculation of the way's type
-					 * (which is why making this method sound like it's a simple getter is 
-					 * a bloody bad idea).
-					 */
-					// polish.api.bigstyles
-					//short t = sea.getType(configuration);
 					if (generateSeaUsingMP) {
 						parser.addWay(seaSector);
 						mInner = new Member("way", seaSector.id, "inner");
 						seaRelation.add(mInner);
 						//System.out.println("Added inner to sea relation: " + seaRelation.toString());
 					}
+				}
+				else if (extendSeaSectors) {
+					// create additional points at next border to prevent triangles from point 2
+					System.out.println("Extend sea sector, way id: " + w.id);
+					if (null == hStart) {
+						hStart = getNextEdgeHit(mapBounds, pStart);
+						w.getNodes().add(0, hStart.getPoint(mapBounds));
+						System.out.println("startedge: " + hStart.edge);
+					}
+					if (null == hEnd) {
+						hEnd = getNextEdgeHit(mapBounds, pEnd);
+						w.getNodes().add(hEnd.getPoint(mapBounds));
+						System.out.println("endedge: " + hEnd.edge);
+					}
+					//log.debug("hits (second try): ", hStart, hEnd);
+					mInner = new Member("way", w.id, "inner");
+					seaRelation.add(mInner);
+					hitMap.put(hStart, w);
+					hitMap.put(hEnd, null);
+					parser.addWay(w);
 				}
 			} else {
 				//log.debug("hits: ", hStart, hEnd);
@@ -291,7 +301,7 @@ public class SeaGenerator2 {
 		while (!hits.isEmpty()) {
 			long id = FakeIdGenerator.makeFakeId();
 			Way w = new Way(id);
-			parser.addWay(w);
+			//parser.addWay(w);
 
 			EdgeHit hit =  hits.first();
 			EdgeHit hFirst = hit;
@@ -429,7 +439,7 @@ public class SeaGenerator2 {
 		}
 
 		private Node getPoint(Bounds a) {
-			System.out.print("getPoint: " + a);
+			//System.out.println("getPoint: " + a);
 			switch (edge) {
 			case 0:
 				return new Node(a.getMinLat(), 
@@ -466,7 +476,8 @@ public class SeaGenerator2 {
 		// (see Utils.toMapUnit()). So a tolerance of 10 is 0.000214576721191 degrees
 		// or about 0.72 arc seconds.
 		// this might need adjustment - was 0.0004
-		return getEdgeHit(a, p, 0.04f);
+		//return getEdgeHit(a, p, 0.04f);
+		return getEdgeHit(a, p, 0.0004f);
 	}
 
 	private static EdgeHit getEdgeHit(Bounds a, Node p, float tolerance)
@@ -478,8 +489,8 @@ public class SeaGenerator2 {
 		float minLong = a.getMinLon();
 		float maxLong = a.getMaxLon();
 
-		System.out.println(String.format("getEdgeHit: (%f %f) (%f %f %f %f)", 
-				lat, lon, minLat, minLong, maxLat, maxLong));
+		//System.out.println(String.format("getEdgeHit: (%f %f) (%f %f %f %f)", 
+		//		lat, lon, minLat, minLong, maxLat, maxLong));
 		if (lat <= minLat+tolerance) {
 			return new EdgeHit(0, ((double)(lon - minLong))/(maxLong-minLong));
 		}
@@ -591,6 +602,7 @@ public class SeaGenerator2 {
 
 		// join up coastline segments whose end points are less than
 		// maxCoastlineGap meters apart
+		// this could cause trouble near the edges
 		if(maxCoastlineGap > 0) {
 			boolean changed = true;
 			while(changed) {
