@@ -1,7 +1,11 @@
     *** Map display ***
     - optionally simplify whan drawing when busy drawing the map (due to panning or
-    not being able to keep up with map updates)
+      not being able to keep up with map updates)
     - new heuristic for displaying correct orientation when stopping e.g. at traffic lights
+    - fault tolerance for GPX track handling: if the RecordStore for tracks is damaged,
+      an alert is now shown but the track list is shown anyway so the user can hopefully
+      recover most of the tracks
+
     *** Tacho ***
     - now PDOP is actually shown in tachometer on JSR179 phones
     - fixed odometer bug where it would add extra distance to a trip at start
