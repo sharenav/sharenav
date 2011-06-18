@@ -91,7 +91,7 @@ public class Entity extends SmallArrayMap<String,String> {
 				byte currentPrio = Byte.MIN_VALUE;
 				for (String s: tags) {
 					Hashtable<String,Set<EntityDescription>> keyValues = legend.get(s);
-//					System.out.println("Calculating type for " + toString() + " " + s + " " + keyValues);
+					//System.out.println("Calculating type for " + toString() + " " + s + " " + keyValues);
 					if (keyValues != null) {
 //						System.out.println("found key index for " + s);
 						Set<EntityDescription> ways = keyValues.get(getAttribute(s));
@@ -108,8 +108,20 @@ public class Entity extends SmallArrayMap<String,String> {
 											//System.out.println("Testing specialisation " + ct + " on " + this);
 											failedSpec = !ct.exclude;
 											if (ct.properties) {
+												// FIXME we could use a .properties value engine to avoid manually coding everything related to .properties values
 												if ("useHouseNumbers".equalsIgnoreCase(ct.key)) {
 													if (config.useHouseNumbers) {
+														failedSpec = ct.exclude;
+													}
+												}
+												if ("generateSea".equalsIgnoreCase(ct.key)) {
+													//System.out.println("Conditiontuple generateSea: key: " + ct.key + " value: " + ct.value + " exclude: " + ct.exclude);
+													if ("true".equalsIgnoreCase(ct.value) && config.getGenerateSea()) {
+														System.out.println("Conditiontuple generateSea: failedspec= " + ct.exclude);
+														failedSpec = ct.exclude;
+													}
+													if ("false".equalsIgnoreCase(ct.value) && !config.getGenerateSea()) {
+														System.out.println("Conditiontuple generateSea: failedspec= " + ct.exclude);
 														failedSpec = ct.exclude;
 													}
 												}

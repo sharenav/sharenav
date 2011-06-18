@@ -2211,6 +2211,20 @@ end -->
 				<force_to layer = "-2"/>
 			</Wvalue>  			
   			<Wvalue name = "coastline">
+			  	<specialisation key = "generateSea" value = "true" properties = "true" />
+  				<description desc = "coastline"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+				<!-- take care of natural=coastline area handling 
+				(see https://sourceforge.net/tracker/index.php?func=detail&aid=3041068&group_id=192084&atid=939974 ) -->
+  				<ignoreOsmAreaTag ignore = "true"/>
+  				<scale scale = "6"/>
+				<lineColor color = "00005555" colorAtNight="00CCFFFF"/>
+  				<wayWidth width="3" />
+				<force_to layer = "-2"/>
+			</Wvalue>  			
+  			<Wvalue name = "coastline">
+			  	<specialisation key = "generateSea" value = "false" properties="true" />
   				<description desc = "coastline"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
