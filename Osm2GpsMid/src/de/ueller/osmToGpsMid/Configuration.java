@@ -1036,7 +1036,8 @@ public class Configuration {
 				Bounds bound = bounds.elementAt(0);
 				URL url = null;
 				if (planet.equalsIgnoreCase("osmxapi")) {
-					url = new URL("http://osmxapi.informationfreeway.org/api/0.6/*[bbox=" +
+					//url = new URL("http://osmxapi.informationfreeway.org/api/0.6/*[bbox=" +
+					url = new URL("http://open.mapquestapi.com/xapi/api/0.6/*[bbox=" +
 							bound.minLon + "," + bound.minLat + "," + bound.maxLon + "," + bound.maxLat + "]");
 				} else if (planet.equalsIgnoreCase("ROMA")){
 					url = new URL("http://api1.osm.absolight.net/api/0.6/map?bbox=" +
