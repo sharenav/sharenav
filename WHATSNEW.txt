@@ -28,7 +28,7 @@
       * when coastline of an island or continent crosses the map border - some cases, especially when
         the coastline way crosses the map boundary more than two times
       * when map area is sea with no coastlines (Osm2GpsMid interprets it as land)
-      * this probably doesn't exist anymore:
+      * this appears less often now:
         when map area is too big (no messages at generation, but failures at map loading in GpsMid)
         - triangle artifacts in the map
 
