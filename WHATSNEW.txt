@@ -5,7 +5,10 @@
     - fault tolerance for GPX track handling: if the RecordStore for tracks is damaged,
       an alert is now shown but the track list is shown anyway so the user can hopefully
       recover most of the tracks
-
+    *** User interface changes ***
+    - on phones with a back hardkey, it is now possible again to leave
+      menus with this key (cancelling any changes).
+      This stopped working when back behaviour for Android was implemented.
     *** Tacho ***
     - now PDOP is actually shown in tachometer on JSR179 phones
     - fixed odometer bug where it would add extra distance to a trip at start
