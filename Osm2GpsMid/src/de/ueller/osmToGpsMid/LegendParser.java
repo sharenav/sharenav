@@ -401,6 +401,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 				} else {
 					ct.exclude = false;
 				}
+				ct.regexp = "true".equalsIgnoreCase(atts.getValue("regexp"));
 				currentPoi.specialisation.add(ct);
 			}
 			if (qName.equals("AreaPOI")) {
