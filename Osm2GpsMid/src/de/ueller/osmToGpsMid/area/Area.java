@@ -155,8 +155,8 @@ public class Area {
 			    dist1 > limitdist ||
 			    dist2 > limitdist) {
 
-			if (recurselevel > 10) {
-				System.out.println("WARNING: Recurselevel > 10, giving up splitting triangle " + t);
+			if (recurselevel > 80) {
+				System.out.println("WARNING: Recurselevel > 80, giving up splitting triangle " + t);
 				ret.add(t);
 				return;
 			}
