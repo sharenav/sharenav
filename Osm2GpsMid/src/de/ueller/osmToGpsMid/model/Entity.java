@@ -121,7 +121,7 @@ public class Entity extends SmallArrayMap<String,String> {
 														failedSpec = ct.exclude;
 													}
 													if ("false".equalsIgnoreCase(ct.value) && !config.getGenerateSea()) {
-														System.out.println("Conditiontuple generateSea: failedspec= " + ct.exclude);
+														//System.out.println("Conditiontuple generateSea: failedspec= " + ct.exclude);
 														failedSpec = ct.exclude;
 													}
 												}
