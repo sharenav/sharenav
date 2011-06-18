@@ -246,7 +246,9 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 				}
 				if (e.specialisation != null) {
 					for (ConditionTuple ct : e.specialisation) {
-						relevantKeys.add(ct.key);
+						if (!ct.properties) {
+							relevantKeys.add(ct.key);
+						}
 					}
 				}
 			}
@@ -401,7 +403,6 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 				} else {
 					ct.exclude = false;
 				}
-				ct.regexp = "true".equalsIgnoreCase(atts.getValue("regexp"));
 				currentPoi.specialisation.add(ct);
 			}
 			if (qName.equals("AreaPOI")) {
@@ -528,13 +529,14 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 				ConditionTuple ct = new ConditionTuple();
 				ct.key = atts.getValue("key");
 				ct.value = atts.getValue("value");
+				ct.regexp = "true".equalsIgnoreCase(atts.getValue("regexp"));
+				ct.properties = "true".equalsIgnoreCase(atts.getValue("properties"));
 				String condition = atts.getValue("condition");
 				if (condition.equalsIgnoreCase("exclude")) {
 					ct.exclude = true;
 				} else {
 					ct.exclude = false;
 				}
-				ct.regexp = "true".equalsIgnoreCase(atts.getValue("regexp"));
 				currentWay.specialisation.add(ct);
 			}
 			if (qName.equals("description")) {
