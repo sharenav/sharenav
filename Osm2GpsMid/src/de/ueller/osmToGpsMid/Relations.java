@@ -79,10 +79,10 @@ public class Relations {
 			Relation r = i.next();
 //			System.out.println("check relation " + r + "is valid()=" + r.isValid() );
 			if (r.isValid()) {
-//				if (validRelationCount % 10 == 0) {
-//					System.out.println("info: handled " + validRelationCount + " relations");
-//					System.out.println("info: currently handling relation type " + r.getAttribute("type"));
-//				}
+				if (validRelationCount % 100 == 0) {
+					System.out.println("info: handled " + validRelationCount + " relations");
+					System.out.println("info: currently handling relation type " + r.getAttribute("type"));
+				}
 				validRelationCount++;
 				String tagType = r.getAttribute("type");
 				String tagValue = r.getAttribute(tagType);

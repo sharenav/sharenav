@@ -33,6 +33,7 @@ public class Area {
 
 	public double maxdist = 0d;
 	double limitdist = 25000d;
+	//double limitdist = 1250000d;
 	//double limitdist = 10000d;
 
 	private static OsmParser parser;
@@ -117,6 +118,11 @@ public class Area {
 			//System.err.println("Starting to do the cutOneEar thing");
 			while (outline.vertexCount() > 2) {
 				loop++;
+				if (loop % 5000 == 0) {
+					System.err.println("Triangulating outline "
+							   + outline.getWayId() + " looped "
+							   + loop + " times");
+				}
 				if (loop > 4000000) {
 					System.err.println("Break because of infinite loop for outline " + outline.getWayId());
 					System.err.println("  see http://www.openstreetmap.org/browse/way/" + outline.getWayId());
