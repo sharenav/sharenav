@@ -23,9 +23,15 @@ public class SplitLongWays {
 	
 	public SplitLongWays(OsmParser parser) {
 		super();
+		int count = 0;
 		this.parser = parser;
 		for (Way way : parser.getWays()) {
 			testAndSplit(way);
+			count++;
+			if (count % 500 == 0) {
+				System.err.println("Tested " + count 
+						   + " ways for splitting");
+			}
 		}
 		for (Way w : added) {			
 			parser.addWay(w);
