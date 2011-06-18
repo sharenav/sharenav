@@ -1,12 +1,13 @@
     *** Map display ***
-    - optionally simplify whan drawing when busxxxxy drawing the map (due to panning or
+    - optionally simplify whan drawing when busy drawing the map (due to panning or
     not being able to keep up with map updates)
+    - new heuristic for displaying correct orientation when stopping e.g. at traffic lights
     *** Tacho ***
     - now PDOP is actually shown in tachometer on JSR179 phones
     - fixed odometer bug where it would add extra distance to a trip at start
     *** Osm2GpsMid ***
     - allow user to select map accuracy in .properties file with mapPrecisionInMeters=X
-      (default 1 meter)
+      (default 1 meter) - mainly for debugging & test purposes
     - partial support for sea generation with generateSea=true in .properties
       Known to work
       * when the map area is small enough and consists of islands&islets with closed outlines
