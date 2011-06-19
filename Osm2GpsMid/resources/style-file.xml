@@ -2223,6 +2223,16 @@ end -->
   				<wayWidth width="3" />
 				<force_to layer = "-2"/>
 			</Wvalue>  			
+			<!-- for debugging sea generator -->
+  			<Wvalue name = "seaoutline" priority = "19">
+  				<description desc = "Outline by seagen"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "19"/>
+  				<lineColor color = "00000022" colorAtNight="0000009A"/>
+				<wayWidth width = "2" />
+				<force_to layer = "3"/>
+			</Wvalue> 
   			<Wvalue name = "coastline">
 			  	<specialisation key = "generateSea" value = "false" properties="true" />
   				<description desc = "coastline"/>

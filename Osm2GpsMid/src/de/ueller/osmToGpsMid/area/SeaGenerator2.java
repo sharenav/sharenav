@@ -42,6 +42,9 @@ public class SeaGenerator2 {
 	public float maxMapLat = -Float.MAX_VALUE;
 	public float maxMapLon = -Float.MAX_VALUE;
 
+	// for debugging
+	private boolean onlyOutlines = false;
+
 	private static boolean generateSea = true;
 	private static boolean generateSeaUsingMP = false;
 	private static boolean allowSeaSectors = false;
@@ -123,15 +126,24 @@ public class SeaGenerator2 {
 		long seaId = FakeIdGenerator.makeFakeId();
 		Way sea = new Way(seaId);
 		sea.addNode(nw);
-		sea.addNodeIfNotEqualToLastNode(sw);
-		sea.addNodeIfNotEqualToLastNode(se);
-		sea.addNodeIfNotEqualToLastNode(ne);
-		sea.addNodeIfNotEqualToLastNode(nw);
 
+		if (onlyOutlines) {
+			sea.addNodeIfNotEqualToLastNodeWithInterimNodes(sw);
+			sea.addNodeIfNotEqualToLastNodeWithInterimNodes(se);
+			sea.addNodeIfNotEqualToLastNodeWithInterimNodes(ne);
+			sea.addNodeIfNotEqualToLastNodeWithInterimNodes(nw);
+		} else {
+			sea.addNodeIfNotEqualToLastNode(sw);
+			sea.addNodeIfNotEqualToLastNode(se);
+			sea.addNodeIfNotEqualToLastNode(ne);
+			sea.addNodeIfNotEqualToLastNode(nw);
+		}
 		long multiId = FakeIdGenerator.makeFakeId();
 		Relation seaRelation = new Relation(multiId);
-		seaRelation.setAttribute("type", "multipolygon");
-		seaRelation.setAttribute("natural", "sea");
+		if (!onlyOutlines) {
+			seaRelation.setAttribute("type", "multipolygon");
+			seaRelation.setAttribute("natural", "sea");
+		}
 
 		Member mInner;
 
@@ -150,6 +162,9 @@ public class SeaGenerator2 {
 				//System.out.println("adding island " + w);
 				parser.addWay(w);
 				it.remove();
+				if (onlyOutlines) {
+					w.setAttribute("natural", "seaoutline");
+				}
 				mInner = new Member("way", w.id, "inner");
 				seaRelation.add(mInner);			
 			}
@@ -170,6 +185,9 @@ public class SeaGenerator2 {
 				parser.addWay(w);
 				it.remove();
 				mInner = new Member("way", w.id, "inner");
+				if (onlyOutlines) {
+					w.setAttribute("natural", "seaoutline");
+				}
 				seaRelation.add(mInner);			
 			}
 		}
@@ -220,6 +238,9 @@ public class SeaGenerator2 {
 					// close the way
 					points.add(pStart);
 					if (generateSeaUsingMP) {
+						if (onlyOutlines) {
+							w.setAttribute("natural", "seaoutline");
+						}
 						mInner = new Member("way", w.id, "inner");
 						seaRelation.add(mInner);
 						// polish.api.bigstyles
@@ -263,6 +284,9 @@ public class SeaGenerator2 {
 					if (generateSeaUsingMP) {
 						parser.addWay(seaSector);
 						mInner = new Member("way", seaSector.id, "inner");
+						if (onlyOutlines) {
+							seaSector.setAttribute("natural", "seaoutline");
+						}
 						seaRelation.add(mInner);
 						//System.out.println("Added inner to sea relation: " + seaRelation.toString());
 					}
@@ -282,6 +306,9 @@ public class SeaGenerator2 {
 					}
 					//log.debug("hits (second try): ", hStart, hEnd);
 					mInner = new Member("way", w.id, "inner");
+					if (onlyOutlines) {
+						w.setAttribute("natural", "seaoutline");
+					}
 					seaRelation.add(mInner);
 					hitMap.put(hStart, w);
 					hitMap.put(hEnd, null);
@@ -360,6 +387,9 @@ public class SeaGenerator2 {
 				w.getNodes().add(w.getNodes().get(0));
 			}
 			parser.addWay(w);
+			if (onlyOutlines) {
+				w.setAttribute("natural", "seaoutline");
+			}
 			mInner = new Member("way", w.id, "inner");
 			seaRelation.add(mInner);
 			//System.out.println("Added inner member to sea relation: " + seaRelation.toString());
@@ -388,6 +418,9 @@ public class SeaGenerator2 {
 			if (generateSeaUsingMP) {
 				// create a multipolygon relation containing water as outer role
 				mInner = new Member("way", sea.id, "outer");
+				if (onlyOutlines) {
+					sea.setAttribute("natural", "seaoutline");
+				}
 				seaRelation.add(mInner);
 				parser.addWay(sea);			
 				parser.addRelation(seaRelation);
