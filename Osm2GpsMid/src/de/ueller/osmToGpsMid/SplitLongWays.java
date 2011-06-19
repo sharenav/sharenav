@@ -36,6 +36,17 @@ public class SplitLongWays {
 		for (Way w : added) {			
 			parser.addWay(w);
 		}
+		for (Way way : parser.getWays()) {
+			if (way.isArea()) {
+				if (way.triangles == null) {
+					way.triangulate();
+				}
+				if (way.triangles != null && way.triangles.size() > 0) {
+					way.recreatePathAvoidDuplicates();
+				}
+			}
+
+		}		
 		added=null;
 	}
 
