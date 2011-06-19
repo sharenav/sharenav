@@ -278,7 +278,11 @@ public class SeaGenerator2 {
 							//log.debug("way: ", corner, p);
 							System.out.println("way: corner: " + corner + " p: " + p);
 
-							seaSector.addNodeIfNotEqualToLastNode(p);
+							if (onlyOutlines) {
+								seaSector.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
+							} else {
+								seaSector.addNodeIfNotEqualToLastNode(p);
+							}
 						}
 					}
 					if (generateSeaUsingMP) {
@@ -342,11 +346,19 @@ public class SeaGenerator2 {
 					// add the segment and get the "ending hit"
 					System.out.println("adding sgement: " + segment);
 					for(Node p : segment.getNodes()) {
-						w.addNodeIfNotEqualToLastNode(p);
+						if (onlyOutlines) {
+							w.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
+						} else {
+							w.addNodeIfNotEqualToLastNode(p);
+						}
 					}
 					hNext = getEdgeHit(mapBounds, segment.getNodes().get(segment.getNodes().size()-1));
 				} else { // segment == null
-					w.addNodeIfNotEqualToLastNode(hit.getPoint(mapBounds));
+					if (onlyOutlines) {
+						w.addNodeIfNotEqualToLastNodeWithInterimNodes(hit.getPoint(mapBounds));
+					} else {
+						w.addNodeIfNotEqualToLastNode(hit.getPoint(mapBounds));
+					}
 					hNext = hits.higher(hit);
 					if (hNext == null) {
 						hNext = hFirst;
@@ -360,7 +372,11 @@ public class SeaGenerator2 {
 							EdgeHit corner = new EdgeHit(i, 1.0);
 							p = corner.getPoint(mapBounds);
 							//log.debug("way: ", corner, p);
-							w.addNodeIfNotEqualToLastNode(p);
+							if (onlyOutlines) {
+								w.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
+							} else {
+								w.addNodeIfNotEqualToLastNode(p);
+							}
 						}
 					}
 					else if (hit.compareTo(hNext) > 0) {
@@ -374,10 +390,18 @@ public class SeaGenerator2 {
 							EdgeHit corner = new EdgeHit(i % 4, 1.0);
 							p = corner.getPoint(mapBounds);
 							//log.debug("way: ", corner, p);
-							w.addNodeIfNotEqualToLastNode(p);
+							if (onlyOutlines) {
+								w.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
+							} else {
+								w.addNodeIfNotEqualToLastNode(p);
+							}
 						}
 					}
-					w.addNodeIfNotEqualToLastNode(hNext.getPoint(mapBounds));
+					if (onlyOutlines) {
+						w.addNodeIfNotEqualToLastNodeWithInterimNodes(hNext.getPoint(mapBounds));
+					} else {
+						w.addNodeIfNotEqualToLastNode(hNext.getPoint(mapBounds));
+					}
 				}
 				hits.remove(hit);
 				hit = hNext;
