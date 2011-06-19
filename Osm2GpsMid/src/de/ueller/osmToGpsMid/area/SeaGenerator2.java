@@ -302,21 +302,18 @@ public class SeaGenerator2 {
 						// attach start of way to edge, with interim nodes
 						// when necessary
 						hStart = getNextEdgeHit(mapBounds, pStart);
+						// without interim nodes
+						//w.getNodes().add(0, hStart.getPoint(mapBounds));
+						// with interim nodes
 						Node p = hStart.getPoint(mapBounds);
 						Way helperWay = new Way(FakeIdGenerator.makeFakeId());
 						List<Node> oldpoints = w.getNodes();
 						helperWay.addNode(p);
 						System.out.println("building the helper way");
-						helperWay.addNode(oldpoints.get(0));
 						if (onlyOutlines) {
 							helperWay.addNodeIfNotEqualToLastNodeWithInterimNodes(oldpoints.get(0));
 						} else {
 							helperWay.addNodeIfNotEqualToLastNode(oldpoints.get(0));
-						}
-						if (oldpoints.size() > 1) {
-							for (int i = 1 ; i < oldpoints.size()-1; i++) {
-								helperWay.addNode(oldpoints.get(i));
-							}
 						}
 						List<Node> helperPoints = helperWay.getNodes();
 						for (int i = helperPoints.size()-1 ; i >= 0; i--) {
