@@ -2228,7 +2228,7 @@ end -->
   				<description desc = "Outline by seagen"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "19"/>
+  				<scale scale = "6"/>
   				<lineColor color = "00000022" colorAtNight="0000009A"/>
 				<wayWidth width = "2" />
 				<force_to layer = "3"/>

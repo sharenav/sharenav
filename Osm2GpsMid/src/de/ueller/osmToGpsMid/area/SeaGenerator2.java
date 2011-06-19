@@ -173,7 +173,7 @@ public class SeaGenerator2 {
 		// while relation handling code does concatenate ways, we need
 		// this to see where the start and end for coastlines are
 		// so we can decide how to connect partial coastlines to e.g. map borders
-		concatenateWays(landWays, mapBounds, parser);
+		concatenateWays(landWays, mapBounds, parser, seaRelation, onlyOutlines);
 		
 		// there may be more islands now
 
@@ -609,7 +609,8 @@ public class SeaGenerator2 {
 		// now created the EdgeHit for found values
 		return new EdgeHit(i, l);
 	} 
-	private static void concatenateWays(List<Way> ways, Bounds bounds, OsmParser parser) {
+	private static void concatenateWays(List<Way> ways, Bounds bounds,
+					    OsmParser parser, Relation seaRelation, boolean onlyOutlines) {
 		Map<Node, Way> beginMap = new HashMap<Node, Way>();
 
 		for (Way w : ways) {
@@ -704,15 +705,21 @@ public class SeaGenerator2 {
 							wm.getNodes().addAll(points1);
 							wm.cloneTags(w1);
 						}
+						// FIXME check if this is correct
 						wm.getNodes().addAll(nearest.getNodes());
 						ways.remove(nearest);
 						// make a line that shows the filled gap
 						Way w = new Way(FakeIdGenerator.makeFakeId());
 						// TODO: So we need a style definition for this
-						w.setAttribute("natural", "coastline-gap");
+						//w.setAttribute("natural", "coastline-gap");
 						w.addNode(w1e);
 						w.addNode(w2s);
 						parser.addWay(w);
+						if (onlyOutlines) {
+							w.setAttribute("natural", "seaoutline");
+						}
+						Member  mInner = new Member("way", w.id, "inner");
+						seaRelation.add(mInner);			
 						changed = true;
 						break;
 					}
