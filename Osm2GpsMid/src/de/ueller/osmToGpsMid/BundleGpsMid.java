@@ -499,13 +499,24 @@ public class BundleGpsMid implements Runnable {
 			OsmParser parser = config.getPlanetParser();
 			
 			SeaGenerator2 sg2 = new SeaGenerator2();
+			long startTime = System.currentTimeMillis();
+			long time;
 			SeaGenerator2.setOptions(config, true, true, true, true, 100);
 			if (config.getGenerateSea()) {
+				System.out.println("Starting SeaGenerator");
 				sg2.generateSeaMultiPolygon(parser);
+				time = (System.currentTimeMillis() - startTime);
+				System.out.println("SeaGenerator run");
+				System.out.println("  Time taken: " + time / 1000 + " seconds");
 			}
 			
+			System.out.println("Starting relation handling");
+			startTime = System.currentTimeMillis();
 			Area.setParser(parser);
 			new Relations(parser, config);
+			System.out.println("Relations processed");
+			time = (System.currentTimeMillis() - startTime);
+			System.out.println("  Time taken: " + time / 1000 + " seconds");
 
 			/**
 			 * Display some stats about the type of relations we currently aren't handling
@@ -533,9 +544,12 @@ public class BundleGpsMid implements Runnable {
 			relTypes = null;
 			System.out.println("Splitting long ways");
 			int numWays = parser.getWays().size();
+			startTime = System.currentTimeMillis();
 			new SplitLongWays(parser);
+			time = (System.currentTimeMillis() - startTime);
 			System.out.println("Splitting long ways increased ways from "
 					+ numWays + " to " + parser.getWays().size());
+			System.out.println("  Time taken: " + time / 1000 + " seconds");
 			OxParser.printMemoryUsage(1);
 			
 			RouteData rd = null;
