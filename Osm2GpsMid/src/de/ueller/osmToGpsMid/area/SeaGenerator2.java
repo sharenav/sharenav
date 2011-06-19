@@ -299,13 +299,40 @@ public class SeaGenerator2 {
 					// create additional points at next border to prevent triangles from point 2
 					System.out.println("Extend sea sector, way id: " + w.id);
 					if (null == hStart) {
+						// attach start of way to edge, with interim nodes
+						// when necessary
 						hStart = getNextEdgeHit(mapBounds, pStart);
-						w.getNodes().add(0, hStart.getPoint(mapBounds));
+						Node p = hStart.getPoint(mapBounds);
+						Way helperWay = new Way(FakeIdGenerator.makeFakeId());
+						List<Node> oldpoints = w.getNodes();
+						helperWay.addNode(p);
+						System.out.println("building the helper way");
+						helperWay.addNode(oldpoints.get(0));
+						if (onlyOutlines) {
+							helperWay.addNodeIfNotEqualToLastNodeWithInterimNodes(oldpoints.get(0));
+						} else {
+							helperWay.addNodeIfNotEqualToLastNode(oldpoints.get(0));
+						}
+						if (oldpoints.size() > 1) {
+							for (int i = 1 ; i < oldpoints.size()-1; i++) {
+								helperWay.addNode(oldpoints.get(i));
+							}
+						}
+						List<Node> helperPoints = helperWay.getNodes();
+						for (int i = helperPoints.size()-1 ; i >= 0; i--) {
+							w.getNodes().add(0, helperPoints.get(i));
+						}
 						System.out.println("startedge: " + hStart.edge);
 					}
 					if (null == hEnd) {
 						hEnd = getNextEdgeHit(mapBounds, pEnd);
-						w.getNodes().add(hEnd.getPoint(mapBounds));
+						Node p = hEnd.getPoint(mapBounds);
+						//w.getNodes().add(hEnd.getPoint(mapBounds));
+						if (onlyOutlines) {
+							w.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
+						} else {
+							w.addNodeIfNotEqualToLastNode(p);
+						}
 						System.out.println("endedge: " + hEnd.edge);
 					}
 					//log.debug("hits (second try): ", hStart, hEnd);
@@ -712,8 +739,18 @@ public class SeaGenerator2 {
 						Way w = new Way(FakeIdGenerator.makeFakeId());
 						// TODO: So we need a style definition for this
 						//w.setAttribute("natural", "coastline-gap");
+
+						// no need for this probably, as we're bridging closeby nodes
+
+						//if (onlyOutlines) {
+						//	w.addNodeIfNotEqualToLastNodeWithInterimNodes(w1e);
+						//	w.addNodeIfNotEqualToLastNodeWithInterimNodes(w2s);
+						//} else {
+
 						w.addNode(w1e);
 						w.addNode(w2s);
+
+						//}
 						parser.addWay(w);
 						if (onlyOutlines) {
 							w.setAttribute("natural", "seaoutline");

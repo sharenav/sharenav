@@ -108,14 +108,14 @@ public class Path extends ArrayList<Node> {
 	}
 	
 	/**
-	 * TODO: This returns 0 if size() == 1, is this intentional?!?
+	 * TODO: This returned 0 if size() == 1 before 2011-06-19, was this intentional?!?
 	 * @return The number of nodes of this path or 0 if there is no node list.
 	 */
 	public int getNodeCount() {
 		if (this.size() == 0) {
 			return 0;
 		}
-		if (this.size() > 1) {
+		if (this.size() >= 1) {
 			return (this.size());
 		}
 		return 0;

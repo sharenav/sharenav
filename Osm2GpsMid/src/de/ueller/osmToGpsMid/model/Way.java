@@ -878,12 +878,13 @@ public class Way extends Entity implements Comparable<Way> {
 
 	// add node with interim nodes to make splitting possible
 	public void addNodeIfNotEqualToLastNodeWithInterimNodes(Node node) {
+		//System.out.println("nodecount: " + path.getNodeCount());
 		if (path.getNodeCount() != 0) {
 			Node oldNode = path.getNode(path.getNodeCount() - 1);
 			if (oldNode != null && !node.equals(oldNode)) {
 				double dist = MyMath.dist(oldNode, node);
-				// System.out.println("Dist = " + dist);
 				int count = (int) dist / 50;
+				//System.out.println("Dist = " + dist + " count= " + count);
 				float oldLat = oldNode.getLat();
 				float oldLon = oldNode.getLon();
 				float latDiff = node.getLat() - oldLat;
