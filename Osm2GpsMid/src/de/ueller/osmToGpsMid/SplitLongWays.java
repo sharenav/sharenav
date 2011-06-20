@@ -43,6 +43,7 @@ public class SplitLongWays {
 					way.triangulate();
 				}
 				if (way.triangles != null && way.triangles.size() > 0) {
+					count++;
 					if (count % 500 == 0) {
 						System.err.println("Did " + count 
 								   + " recreatePath()s");
