@@ -2190,8 +2190,9 @@ end -->
   				<description desc = "Water"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "19"/>
+  				<scale scale = "14"/>
   				<lineColor color = "000000CC" colorAtNight="0000009A"/>
+				<force_to layer = "-2"/> 
 			</Wvalue>  			
 			<!-- natural=sea is produced by sea generator in Osm2GpsMid which turns coastlines into sea for rendering with GpsMid rendering machinery -->
   			<Wvalue name = "sea">
