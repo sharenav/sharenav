@@ -309,7 +309,7 @@ public class Area {
 							repaint();
 //							Outline newOutline = new Outline();
 							Vertex nt = n;
-							boolean clockWise = outline.isClockWise();
+							boolean clockWise = outline.isClockWiseFast();
 							outline.clean();
 							do {
 								outline.append(nt);
@@ -323,7 +323,7 @@ public class Area {
 							outline.append(n.clone());
 							repaint();
 							nt = edgeInside;
-							clockWise = hole.isClockWise();
+							clockWise = hole.isClockWiseFast();
 							do {
 								outline.append(nt);
 								if (clockWise) {

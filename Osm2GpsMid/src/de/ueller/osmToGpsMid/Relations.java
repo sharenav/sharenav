@@ -315,7 +315,8 @@ public class Relations {
 					try {
 						List<Triangle> areaTriangles = a.triangulate();
 						firstWay.triangles = areaTriangles;
-						firstWay.recreatePathAvoidDuplicates();
+						//firstWay.recreatePathAvoidDuplicates();
+						firstWay.recreatePath();
 						// neither methdod below to remove type tag works
 						//r.getTags().remove("type");
 						//if (r.containsKey("type")) {
