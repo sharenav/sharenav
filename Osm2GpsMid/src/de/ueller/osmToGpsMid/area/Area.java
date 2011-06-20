@@ -323,7 +323,26 @@ public class Area {
 							outline.append(n.clone());
 							repaint();
 							nt = edgeInside;
-							clockWise = hole.isClockWiseFast();
+							// the following makes triangulation
+							// of Finnish sea fail after 75 000 triangles with:
+
+							/* Triangulating outline 4611686018427401182 looped 75000 times
+							   Something went wrong when trying to triangulate relation 
+							    http://www.openstreetmap.org/browse/relation/4611686018427388922 I'll attempt to ignore this relation
+							java.util.NoSuchElementException
+							    at java.util.ArrayList$Itr.next(ArrayList.java:757)
+							    at java.util.Collections.min(Collections.java:624)
+							    at de.ueller.osmToGpsMid.area.Outline.getLonMin(Outline.java:174)
+							    at de.ueller.osmToGpsMid.area.Outline.isClockWiseFast(Outline.java:290)
+							    at de.ueller.osmToGpsMid.area.Area.cutOneEar(Area.java:326)
+							    at de.ueller.osmToGpsMid.area.Area.triangulate(Area.java:131)
+							    at de.ueller.osmToGpsMid.Relations.processRelations(Relations.java:316)
+							    at de.ueller.osmToGpsMid.Relations.<init>(Relations.java:48)
+							    at de.ueller.osmToGpsMid.BundleGpsMid.run(BundleGpsMid.java:516)
+							    at java.lang.Thread.run(Thread.java:679) */
+
+							//clockWise = hole.isClockWiseFast();
+							clockWise = hole.isClockWise();
 							do {
 								outline.append(nt);
 								if (clockWise) {
