@@ -64,6 +64,7 @@ public class SplitLongWays {
 		Bounds b=way.getBounds();
 		if ((b.maxLat-b.minLat) > 0.09f 
 				|| (b.maxLon-b.minLon) > 0.09f ){
+			//System.err.println("Splitting " + (way.isArea() ? "area " :"way ") + way.toUrl());
 			Way newWay=way.split();
 			if (newWay != null){
 				added.add(newWay);
