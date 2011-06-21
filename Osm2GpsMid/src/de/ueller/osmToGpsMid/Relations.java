@@ -235,6 +235,13 @@ public class Relations {
 						boundaryIgnore++;
 						continue;
 					}
+					if ("archipelago".equalsIgnoreCase(r.getAttribute("place"))) {
+						// FIXME should not be blatantly ignore, but instead should be handled
+						// if enabled in style file
+						System.out.println("Warning: ignoring relation with place=archipelago tag, relation " + r);
+						//boundaryIgnore++;
+						continue;
+					}
 					if ("administrative".equalsIgnoreCase(r.getAttribute("boundary"))) {
 						// FIXME should not be blatantly ignore, but instead should be handled
 						// if enabled in style file
