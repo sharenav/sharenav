@@ -44,6 +44,8 @@ public class SeaGenerator2 {
 
 	// for debugging
 	private boolean onlyOutlines = false;
+    	// this helps some areas like Canary islands
+	private boolean interimNodes = false;
 
 	private static boolean generateSea = true;
 	private static boolean generateSeaUsingMP = false;
@@ -127,7 +129,7 @@ public class SeaGenerator2 {
 		Way sea = new Way(seaId);
 		sea.addNode(nw);
 
-		if (onlyOutlines) {
+		if (onlyOutlines || interimNodes) {
 			sea.addNodeIfNotEqualToLastNodeWithInterimNodes(sw);
 			sea.addNodeIfNotEqualToLastNodeWithInterimNodes(se);
 			sea.addNodeIfNotEqualToLastNodeWithInterimNodes(ne);
@@ -278,7 +280,7 @@ public class SeaGenerator2 {
 							//log.debug("way: ", corner, p);
 							System.out.println("way: corner: " + corner + " p: " + p);
 
-							if (onlyOutlines) {
+							if (onlyOutlines || interimNodes) {
 								seaSector.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
 							} else {
 								seaSector.addNodeIfNotEqualToLastNode(p);
@@ -310,7 +312,7 @@ public class SeaGenerator2 {
 						List<Node> oldpoints = w.getNodes();
 						helperWay.addNode(p);
 						System.out.println("building the helper way");
-						if (onlyOutlines) {
+						if (onlyOutlines || interimNodes) {
 							helperWay.addNodeIfNotEqualToLastNodeWithInterimNodes(oldpoints.get(0));
 						} else {
 							helperWay.addNodeIfNotEqualToLastNode(oldpoints.get(0));
@@ -325,7 +327,7 @@ public class SeaGenerator2 {
 						hEnd = getNextEdgeHit(mapBounds, pEnd);
 						Node p = hEnd.getPoint(mapBounds);
 						//w.getNodes().add(hEnd.getPoint(mapBounds));
-						if (onlyOutlines) {
+						if (onlyOutlines || interimNodes) {
 							w.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
 						} else {
 							w.addNodeIfNotEqualToLastNode(p);
@@ -370,7 +372,7 @@ public class SeaGenerator2 {
 					// add the segment and get the "ending hit"
 					System.out.println("adding sgement: " + segment);
 					for(Node p : segment.getNodes()) {
-						if (onlyOutlines) {
+						if (onlyOutlines || interimNodes) {
 							w.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
 						} else {
 							w.addNodeIfNotEqualToLastNode(p);
@@ -378,7 +380,7 @@ public class SeaGenerator2 {
 					}
 					hNext = getEdgeHit(mapBounds, segment.getNodes().get(segment.getNodes().size()-1));
 				} else { // segment == null
-					if (onlyOutlines) {
+					if (onlyOutlines || interimNodes) {
 						w.addNodeIfNotEqualToLastNodeWithInterimNodes(hit.getPoint(mapBounds));
 					} else {
 						w.addNodeIfNotEqualToLastNode(hit.getPoint(mapBounds));
@@ -396,7 +398,7 @@ public class SeaGenerator2 {
 							EdgeHit corner = new EdgeHit(i, 1.0);
 							p = corner.getPoint(mapBounds);
 							//log.debug("way: ", corner, p);
-							if (onlyOutlines) {
+							if (onlyOutlines || interimNodes) {
 								w.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
 							} else {
 								w.addNodeIfNotEqualToLastNode(p);
@@ -414,14 +416,14 @@ public class SeaGenerator2 {
 							EdgeHit corner = new EdgeHit(i % 4, 1.0);
 							p = corner.getPoint(mapBounds);
 							//log.debug("way: ", corner, p);
-							if (onlyOutlines) {
+							if (onlyOutlines || interimNodes) {
 								w.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
 							} else {
 								w.addNodeIfNotEqualToLastNode(p);
 							}
 						}
 					}
-					if (onlyOutlines) {
+					if (onlyOutlines || interimNodes) {
 						w.addNodeIfNotEqualToLastNodeWithInterimNodes(hNext.getPoint(mapBounds));
 					} else {
 						w.addNodeIfNotEqualToLastNode(hNext.getPoint(mapBounds));
