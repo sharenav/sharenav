@@ -1007,10 +1007,13 @@ public class Way extends Entity implements Comparable<Way> {
 		Way newWay = new Way(this);
 		Bounds newBbounds = getBounds().split()[0];
 		ArrayList<Triangle> tri = new ArrayList<Triangle>(1);
+		ArrayList<Triangle> tri2 = new ArrayList<Triangle>(1);
 		for (Triangle t : triangles) {
 			Vertex midpoint = t.getMidpoint();
 			if (!newBbounds.isIn(midpoint.getLat(), midpoint.getLon())) {
 				tri.add(t);
+			} else {
+				tri2.add(t);
 			}
 		}
 		if (tri.size() == triangles.size()) {
@@ -1018,9 +1021,11 @@ public class Way extends Entity implements Comparable<Way> {
 			// all triangles would go to the other way
 			return null;
 		}
-		for (Triangle t : tri) {
-			triangles.remove(t);
-		}
+
+//		for (Triangle t : tri) {
+//			triangles.remove(t);
+//		}
+		triangles = tri2;
 		// System.out.println("split area triangles " + "s1=" + triangles.size() + " s2=" + tri.size());
 		if (tri.size() == 0) { return null; }
 		//clearBounds();
