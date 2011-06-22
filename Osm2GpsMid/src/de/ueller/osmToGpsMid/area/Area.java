@@ -32,7 +32,10 @@ public class Area {
 	public  boolean debug = false;
 
 	public double maxdist = 0d;
-	double limitdist = 25000d;
+	//double limitdist = 25000d;
+	// mapmid format errors
+	//double limitdist = 50000d;
+	double limitdist = 32000d;
 	//double limitdist = 1250000d;
 	//double limitdist = 10000d;
 

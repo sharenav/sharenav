@@ -45,7 +45,11 @@ public class SeaGenerator2 {
 	// for debugging
 	private boolean onlyOutlines = false;
     	// this helps some areas like Canary islands
-	private boolean interimNodes = false;
+        // but may be sub-optimal, may cause smaller triangles
+        // than necessary; would be better
+        // if tile splitting code and triangle splitting code
+    	// would take care of things
+	private boolean interimNodes = true;
 
 	private static boolean generateSea = true;
 	private static boolean generateSeaUsingMP = false;
