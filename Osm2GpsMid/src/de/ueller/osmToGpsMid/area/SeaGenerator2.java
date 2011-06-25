@@ -42,6 +42,15 @@ public class SeaGenerator2 {
 	public float maxMapLat = -Float.MAX_VALUE;
 	public float maxMapLon = -Float.MAX_VALUE;
 
+	// for debugging
+	private boolean onlyOutlines = false;
+    	// this helps some areas like Canary islands
+        // but may be sub-optimal, may cause smaller triangles
+        // than necessary; would be better
+        // if tile splitting code and triangle splitting code
+    	// would take care of things
+	private boolean interimNodes = true;
+
 	private static boolean generateSea = true;
 	private static boolean generateSeaUsingMP = false;
 	private static boolean allowSeaSectors = false;
@@ -123,15 +132,24 @@ public class SeaGenerator2 {
 		long seaId = FakeIdGenerator.makeFakeId();
 		Way sea = new Way(seaId);
 		sea.addNode(nw);
-		sea.addNodeIfNotEqualToLastNode(sw);
-		sea.addNodeIfNotEqualToLastNode(se);
-		sea.addNodeIfNotEqualToLastNode(ne);
-		sea.addNodeIfNotEqualToLastNode(nw);
 
+		if (onlyOutlines || interimNodes) {
+			sea.addNodeIfNotEqualToLastNodeWithInterimNodes(sw);
+			sea.addNodeIfNotEqualToLastNodeWithInterimNodes(se);
+			sea.addNodeIfNotEqualToLastNodeWithInterimNodes(ne);
+			sea.addNodeIfNotEqualToLastNodeWithInterimNodes(nw);
+		} else {
+			sea.addNodeIfNotEqualToLastNode(sw);
+			sea.addNodeIfNotEqualToLastNode(se);
+			sea.addNodeIfNotEqualToLastNode(ne);
+			sea.addNodeIfNotEqualToLastNode(nw);
+		}
 		long multiId = FakeIdGenerator.makeFakeId();
 		Relation seaRelation = new Relation(multiId);
-		seaRelation.setAttribute("type", "multipolygon");
-		seaRelation.setAttribute("natural", "sea");
+		if (!onlyOutlines) {
+			seaRelation.setAttribute("type", "multipolygon");
+			seaRelation.setAttribute("natural", "sea");
+		}
 
 		Member mInner;
 
@@ -150,6 +168,9 @@ public class SeaGenerator2 {
 				//System.out.println("adding island " + w);
 				parser.addWay(w);
 				it.remove();
+				if (onlyOutlines) {
+					w.setAttribute("natural", "seaoutline");
+				}
 				mInner = new Member("way", w.id, "inner");
 				seaRelation.add(mInner);			
 			}
@@ -158,7 +179,7 @@ public class SeaGenerator2 {
 		// while relation handling code does concatenate ways, we need
 		// this to see where the start and end for coastlines are
 		// so we can decide how to connect partial coastlines to e.g. map borders
-		concatenateWays(landWays, mapBounds, parser);
+		concatenateWays(landWays, mapBounds, parser, seaRelation, onlyOutlines);
 		
 		// there may be more islands now
 
@@ -170,6 +191,9 @@ public class SeaGenerator2 {
 				parser.addWay(w);
 				it.remove();
 				mInner = new Member("way", w.id, "inner");
+				if (onlyOutlines) {
+					w.setAttribute("natural", "seaoutline");
+				}
 				seaRelation.add(mInner);			
 			}
 		}
@@ -220,6 +244,9 @@ public class SeaGenerator2 {
 					// close the way
 					points.add(pStart);
 					if (generateSeaUsingMP) {
+						if (onlyOutlines) {
+							w.setAttribute("natural", "seaoutline");
+						}
 						mInner = new Member("way", w.id, "inner");
 						seaRelation.add(mInner);
 						// polish.api.bigstyles
@@ -257,12 +284,19 @@ public class SeaGenerator2 {
 							//log.debug("way: ", corner, p);
 							System.out.println("way: corner: " + corner + " p: " + p);
 
-							seaSector.addNodeIfNotEqualToLastNode(p);
+							if (onlyOutlines || interimNodes) {
+								seaSector.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
+							} else {
+								seaSector.addNodeIfNotEqualToLastNode(p);
+							}
 						}
 					}
 					if (generateSeaUsingMP) {
 						parser.addWay(seaSector);
 						mInner = new Member("way", seaSector.id, "inner");
+						if (onlyOutlines) {
+							seaSector.setAttribute("natural", "seaoutline");
+						}
 						seaRelation.add(mInner);
 						//System.out.println("Added inner to sea relation: " + seaRelation.toString());
 					}
@@ -271,17 +305,44 @@ public class SeaGenerator2 {
 					// create additional points at next border to prevent triangles from point 2
 					System.out.println("Extend sea sector, way id: " + w.id);
 					if (null == hStart) {
+						// attach start of way to edge, with interim nodes
+						// when necessary
 						hStart = getNextEdgeHit(mapBounds, pStart);
-						w.getNodes().add(0, hStart.getPoint(mapBounds));
+						// without interim nodes
+						//w.getNodes().add(0, hStart.getPoint(mapBounds));
+						// with interim nodes
+						Node p = hStart.getPoint(mapBounds);
+						Way helperWay = new Way(FakeIdGenerator.makeFakeId());
+						List<Node> oldpoints = w.getNodes();
+						helperWay.addNode(p);
+						System.out.println("building the helper way");
+						if (onlyOutlines || interimNodes) {
+							helperWay.addNodeIfNotEqualToLastNodeWithInterimNodes(oldpoints.get(0));
+						} else {
+							helperWay.addNodeIfNotEqualToLastNode(oldpoints.get(0));
+						}
+						List<Node> helperPoints = helperWay.getNodes();
+						for (int i = helperPoints.size()-1 ; i >= 0; i--) {
+							w.getNodes().add(0, helperPoints.get(i));
+						}
 						System.out.println("startedge: " + hStart.edge);
 					}
 					if (null == hEnd) {
 						hEnd = getNextEdgeHit(mapBounds, pEnd);
-						w.getNodes().add(hEnd.getPoint(mapBounds));
+						Node p = hEnd.getPoint(mapBounds);
+						//w.getNodes().add(hEnd.getPoint(mapBounds));
+						if (onlyOutlines || interimNodes) {
+							w.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
+						} else {
+							w.addNodeIfNotEqualToLastNode(p);
+						}
 						System.out.println("endedge: " + hEnd.edge);
 					}
 					//log.debug("hits (second try): ", hStart, hEnd);
 					mInner = new Member("way", w.id, "inner");
+					if (onlyOutlines) {
+						w.setAttribute("natural", "seaoutline");
+					}
 					seaRelation.add(mInner);
 					hitMap.put(hStart, w);
 					hitMap.put(hEnd, null);
@@ -315,11 +376,19 @@ public class SeaGenerator2 {
 					// add the segment and get the "ending hit"
 					System.out.println("adding sgement: " + segment);
 					for(Node p : segment.getNodes()) {
-						w.addNodeIfNotEqualToLastNode(p);
+						if (onlyOutlines || interimNodes) {
+							w.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
+						} else {
+							w.addNodeIfNotEqualToLastNode(p);
+						}
 					}
 					hNext = getEdgeHit(mapBounds, segment.getNodes().get(segment.getNodes().size()-1));
 				} else { // segment == null
-					w.addNodeIfNotEqualToLastNode(hit.getPoint(mapBounds));
+					if (onlyOutlines || interimNodes) {
+						w.addNodeIfNotEqualToLastNodeWithInterimNodes(hit.getPoint(mapBounds));
+					} else {
+						w.addNodeIfNotEqualToLastNode(hit.getPoint(mapBounds));
+					}
 					hNext = hits.higher(hit);
 					if (hNext == null) {
 						hNext = hFirst;
@@ -333,7 +402,11 @@ public class SeaGenerator2 {
 							EdgeHit corner = new EdgeHit(i, 1.0);
 							p = corner.getPoint(mapBounds);
 							//log.debug("way: ", corner, p);
-							w.addNodeIfNotEqualToLastNode(p);
+							if (onlyOutlines || interimNodes) {
+								w.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
+							} else {
+								w.addNodeIfNotEqualToLastNode(p);
+							}
 						}
 					}
 					else if (hit.compareTo(hNext) > 0) {
@@ -347,10 +420,18 @@ public class SeaGenerator2 {
 							EdgeHit corner = new EdgeHit(i % 4, 1.0);
 							p = corner.getPoint(mapBounds);
 							//log.debug("way: ", corner, p);
-							w.addNodeIfNotEqualToLastNode(p);
+							if (onlyOutlines || interimNodes) {
+								w.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
+							} else {
+								w.addNodeIfNotEqualToLastNode(p);
+							}
 						}
 					}
-					w.addNodeIfNotEqualToLastNode(hNext.getPoint(mapBounds));
+					if (onlyOutlines || interimNodes) {
+						w.addNodeIfNotEqualToLastNodeWithInterimNodes(hNext.getPoint(mapBounds));
+					} else {
+						w.addNodeIfNotEqualToLastNode(hNext.getPoint(mapBounds));
+					}
 				}
 				hits.remove(hit);
 				hit = hNext;
@@ -360,6 +441,9 @@ public class SeaGenerator2 {
 				w.getNodes().add(w.getNodes().get(0));
 			}
 			parser.addWay(w);
+			if (onlyOutlines) {
+				w.setAttribute("natural", "seaoutline");
+			}
 			mInner = new Member("way", w.id, "inner");
 			seaRelation.add(mInner);
 			//System.out.println("Added inner member to sea relation: " + seaRelation.toString());
@@ -388,6 +472,9 @@ public class SeaGenerator2 {
 			if (generateSeaUsingMP) {
 				// create a multipolygon relation containing water as outer role
 				mInner = new Member("way", sea.id, "outer");
+				if (onlyOutlines) {
+					sea.setAttribute("natural", "seaoutline");
+				}
 				seaRelation.add(mInner);
 				parser.addWay(sea);			
 				parser.addRelation(seaRelation);
@@ -552,7 +639,8 @@ public class SeaGenerator2 {
 		// now created the EdgeHit for found values
 		return new EdgeHit(i, l);
 	} 
-	private static void concatenateWays(List<Way> ways, Bounds bounds, OsmParser parser) {
+	private static void concatenateWays(List<Way> ways, Bounds bounds,
+					    OsmParser parser, Relation seaRelation, boolean onlyOutlines) {
 		Map<Node, Way> beginMap = new HashMap<Node, Way>();
 
 		for (Way w : ways) {
@@ -647,15 +735,31 @@ public class SeaGenerator2 {
 							wm.getNodes().addAll(points1);
 							wm.cloneTags(w1);
 						}
+						// FIXME check if this is correct
 						wm.getNodes().addAll(nearest.getNodes());
 						ways.remove(nearest);
 						// make a line that shows the filled gap
 						Way w = new Way(FakeIdGenerator.makeFakeId());
 						// TODO: So we need a style definition for this
-						w.setAttribute("natural", "coastline-gap");
+						//w.setAttribute("natural", "coastline-gap");
+
+						// no need for this probably, as we're bridging closeby nodes
+
+						//if (onlyOutlines) {
+						//	w.addNodeIfNotEqualToLastNodeWithInterimNodes(w1e);
+						//	w.addNodeIfNotEqualToLastNodeWithInterimNodes(w2s);
+						//} else {
+
 						w.addNode(w1e);
 						w.addNode(w2s);
+
+						//}
 						parser.addWay(w);
+						if (onlyOutlines) {
+							w.setAttribute("natural", "seaoutline");
+						}
+						Member  mInner = new Member("way", w.id, "inner");
+						seaRelation.add(mInner);			
 						changed = true;
 						break;
 					}

@@ -36,6 +36,23 @@ public class SplitLongWays {
 		for (Way w : added) {			
 			parser.addWay(w);
 		}
+		count = 0;
+		for (Way way : parser.getWays()) {
+			if (way.isArea()) {
+				if (way.triangles == null) {
+					way.triangulate();
+				}
+				if (way.triangles != null && way.triangles.size() > 0) {
+					count++;
+					if (count % 500 == 0) {
+						System.err.println("Did " + count 
+								   + " recreatePath()s");
+					}
+					way.recreatePathAvoidDuplicates();
+				}
+			}
+
+		}		
 		added=null;
 	}
 
@@ -47,6 +64,7 @@ public class SplitLongWays {
 		Bounds b=way.getBounds();
 		if ((b.maxLat-b.minLat) > 0.09f 
 				|| (b.maxLon-b.minLon) > 0.09f ){
+			//System.err.println("Splitting " + (way.isArea() ? "area " :"way ") + way.toUrl());
 			Way newWay=way.split();
 			if (newWay != null){
 				added.add(newWay);

@@ -256,21 +256,37 @@ public class Outline {
 		return b.toString();
 	}
 	
-	public boolean isClockWise() {
-		boolean cw = isClockWise3();
+    //	public boolean isClockWise() {
+    //		boolean cw = isClockWise3();
 //		if (cw != isClockWise2()){
 //			System.out.println("2 and 3 not the same");
 //		}
-		return cw;
-	}
+//		return cw;
+//	}
 	
 	/**
 	 * Check if this outline (polygone) is clockwise. Therfore we get the leftmost vertex and the
 	 * booth neighbors. This edge must be convex. 
 	 * @return
 	 */
-	public boolean isClockWise3() {
+	public boolean isClockWise() {
 		calcNextPrev();
+		Vertex v = getLonMin();
+		Vertex vp = v.getPrev();
+		Vertex vn = v.getNext();
+		if (((v.getX()-vp.getX())*(vn.getY()-v.getY())-(v.getY()-vp.getY())*(vn.getX()-v.getX())) <0  ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	/**
+	 * Check if this outline (polygone) is clockwise. Therfore we get the leftmost vertex and the
+	 * booth neighbors. This edge must be convex. 
+	 * @return
+	 */
+	public boolean isClockWiseFast() {
+		//calcNextPrev();
 		Vertex v = getLonMin();
 		Vertex vp = v.getPrev();
 		Vertex vn = v.getNext();

@@ -1126,13 +1126,16 @@ public class CreateGpsMidData implements FilenameFilter {
 				 * Otherwise we can get into an endless loop of trying to split up this tile.
 				 */
 				if ((t.nodes.size() == nodes.size()) && (t.ways.size() == ways.size()) 
-					&& (tileBound.maxLat - tileBound.minLat < 0.001)) 
+					&& (tileBound.maxLat - tileBound.minLat < 0.001)
+					&& (tileBound.maxLon - tileBound.minLon < 0.001)) 
 				{
 					System.out.println("WARNING: Could not reduce tile size for tile " + t);
 					System.out.println("  t.ways=" + t.ways.size() + ", t.nodes=" + t.nodes.size());
 					System.out.println("  t.bounds=" + t.bounds);
 					System.out.println("  tileBound.maxLat " + tileBound.maxLat
 							   + " tileBound.minLat: " + tileBound.minLat);
+					System.out.println("  tileBound.maxLon " + tileBound.maxLon
+							   + " tileBound.minLon: " + tileBound.minLon);
 					for (Way w : t.ways) {
 						System.out.println("  Way: " + w);						
 					}

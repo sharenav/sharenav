@@ -108,7 +108,9 @@ public class Path extends ArrayList<Node> {
 	}
 	
 	/**
-	 * TODO: This returns 0 if size() == 1, is this intentional?!?
+	 * TODO: This returns 0 if size() == 1, this is probably intentional but can causes trouble in some use cases
+         * if it is made to be ..size() >= 1, messages like "no center for searchList for id=24429358 type=1 [ref=45 highway=motorway foot=no name=Tuusulanväylä oneway=yes maxspeed=80 bicycle=no ]"
+         * will appear
 	 * @return The number of nodes of this path or 0 if there is no node list.
 	 */
 	public int getNodeCount() {

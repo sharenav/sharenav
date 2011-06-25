@@ -1151,7 +1151,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					if (state == STATE_FAVORITES) {
 						name = wayPts[sr.nameIdx].displayName;
 					} else {
-
+						name = nameForResult(sr);
 					}
 					if (carret < name.length()) {
 						searchAlpha = true;
@@ -1161,7 +1161,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				}
 			}
 
-			repaint(0, 0, getWidth(), getHeight());
+			reSearch();
 			return;
 		} else if (keyCode == -8 || keyCode == 8 || keyCode == 127) { 
 			/** Non standard Key -8: hopefully is mapped to

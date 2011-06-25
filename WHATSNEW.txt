@@ -5,10 +5,13 @@
     - fault tolerance for GPX track handling: if the RecordStore for tracks is damaged,
       an alert is now shown but the track list is shown anyway so the user can hopefully
       recover most of the tracks
+    - show lakes at outer zooms and at the same layer as woods
     *** User interface changes ***
     - on phones with a back hardkey, it is now possible again to leave
       menus with this key (cancelling any changes).
       This stopped working when back behaviour for Android was implemented.
+    - fix cursor right behaviour: it adds the next character of the name of the object
+      under cursor
     *** Tacho ***
     - now PDOP is actually shown in tachometer on JSR179 phones
     - fixed odometer bug where it would add extra distance to a trip at start

@@ -862,12 +862,13 @@ public class Way extends Entity implements Comparable<Way> {
 
 	// add node with interim nodes to make splitting possible
 	public void addNodeIfNotEqualToLastNodeWithInterimNodes(Node node) {
+		//System.out.println("nodecount: " + path.getNodeCount());
 		if (path.getNodeCount() != 0) {
 			Node oldNode = path.getNode(path.getNodeCount() - 1);
 			if (oldNode != null && !node.equals(oldNode)) {
 				double dist = MyMath.dist(oldNode, node);
-				// System.out.println("Dist = " + dist);
 				int count = (int) dist / 50;
+				//System.out.println("Dist = " + dist + " count= " + count);
 				float oldLat = oldNode.getLat();
 				float oldLon = oldNode.getLon();
 				float latDiff = node.getLat() - oldLat;
@@ -990,10 +991,13 @@ public class Way extends Entity implements Comparable<Way> {
 		Way newWay = new Way(this);
 		Bounds newBbounds = getBounds().split()[0];
 		ArrayList<Triangle> tri = new ArrayList<Triangle>(1);
+		ArrayList<Triangle> tri2 = new ArrayList<Triangle>(1);
 		for (Triangle t : triangles) {
 			Vertex midpoint = t.getMidpoint();
 			if (!newBbounds.isIn(midpoint.getLat(), midpoint.getLon())) {
 				tri.add(t);
+			} else {
+				tri2.add(t);
 			}
 		}
 		if (tri.size() == triangles.size()) {
@@ -1001,9 +1005,11 @@ public class Way extends Entity implements Comparable<Way> {
 			// all triangles would go to the other way
 			return null;
 		}
-		for (Triangle t : tri) {
-			triangles.remove(t);
-		}
+
+//		for (Triangle t : tri) {
+//			triangles.remove(t);
+//		}
+		triangles = tri2;
 		// System.out.println("split area triangles " + "s1=" + triangles.size() + " s2=" + tri.size());
 		if (tri.size() == 0) { return null; }
 		//clearBounds();
@@ -1150,7 +1156,7 @@ public class Way extends Entity implements Comparable<Way> {
 	 * @param wayHashMap
 	 * @param r
 	 */
-	private void triangulate() {
+	public void triangulate() {
 		if (isArea()) {
 			Outline o = null;
 			o = new Outline();
@@ -1161,14 +1167,14 @@ public class Way extends Entity implements Comparable<Way> {
 			Area a = new Area();
 			a.addOutline(o);
 			triangles = a.triangulate();
-			recreatePath();
+			recreatePathAvoidDuplicates();
 		} else {
 			System.err.println("Can't triangulate normal ways");
 		}
 	}
 
 	/**
-	 * Regenerates this way's path object
+	 * Regenerates this way's path object, rough version for speed
 	 */
 	public void recreatePath() {
 		if (isArea() && triangles.size() > 0) {
@@ -1177,6 +1183,26 @@ public class Way extends Entity implements Comparable<Way> {
 		for (Triangle t : triangles) {
 			for (int l = 0; l < 3; l++) {
 				Node n = t.getVert()[l].getNode();
+				//if (!path.getNodes().contains(n)) {
+					path.add(n);
+				//}
+			}
+		}
+		((ArrayList)triangles).trimToSize();
+		trimPath();
+		//clearBounds();
+	}
+	/**
+	 * Regenerates this way's path object, avoiding duplicates
+	 */
+	public void recreatePathAvoidDuplicates() {
+		if (isArea() && triangles.size() > 0) {
+			path = new Path();
+		}
+		for (Triangle t : triangles) {
+			for (int l = 0; l < 3; l++) {
+				Node n = t.getVert()[l].getNode();
+				// FIXME this is costly
 				if (!path.getNodes().contains(n)) {
 					path.add(n);
 				}
