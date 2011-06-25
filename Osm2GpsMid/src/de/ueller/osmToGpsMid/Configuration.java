@@ -1386,18 +1386,16 @@ public class Configuration {
 			return legend.getWayDescs();
 		}
 
-		
-		public int getMaxspeedTemplate(String template) throws Exception{
+		public int getMaxspeedTemplate(String template) throws Exception {
 			Integer maxspeed = legend.getMaxspeedTemplates().get(template);
 			if (maxspeed == null) {
-				throw new Exception("Warning: Ignoring map data: Unhandled maxspeed value: " + template);
+				throw new Exception();
 			} else {
 				return maxspeed.intValue();
 			}
 		}
-		
-		
-		/*
+
+		/**
 		 * Returns the real scale level
 		 * 
 		 * For scale 0..32 a pseudo zoom level is assumed
