@@ -38,12 +38,12 @@ public class ImageCollector implements Runnable {
 	private final Tile t[];
 	private Thread processorThread;
 	/** the next run of the createloop will take these parameters */
-	private ScreenContext nextSc = new ScreenContext();
+	private final ScreenContext nextSc = new ScreenContext();
 	/** the next paint to screen */
 //	private ScreenContext currentVisibleSc = null;
 	private ScreenContext lastCreatedSc = null;
 
-	private Image[] img = new Image[2];
+	private final Image[] img = new Image[2];
 	private volatile PaintContext[] pc = new PaintContext[2];
 	public static volatile Node mapCenter = new Node();
 	public static volatile long icDuration = 0;
@@ -152,8 +152,9 @@ public class ImageCollector implements Runnable {
 						} catch (InterruptedException e) {
 						}
 					}
-					if (suspended || shutdown)
+					if (suspended || shutdown) {
 						continue;
+					}
 					pc[nextCreate].state = PaintContext.STATE_IN_CREATE;
 				}
 				createPC = pc[nextCreate];				
@@ -554,7 +555,13 @@ public class ImageCollector implements Runnable {
 					nummaxspeed = wayForName.getMaxSpeedWinter();
 					winter = Locale.get("imagecollector.Winter")/*W */;
 				}
-				if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
+				if (nummaxspeed == Legend.MAXSPEED_MARKER_NONE) {
+					maxspeed = Locale.get("imagecollector.SL")/* SL:*/ + winter + 
+						Locale.get("imagecollector.MaxSpeedNone")/*none*/;
+				} else if (nummaxspeed == Legend.MAXSPEED_MARKER_VARIABLE) {
+					maxspeed = Locale.get("imagecollector.SL")/* SL:*/ + winter + 
+					Locale.get("imagecollector.MaxSpeedVariable")/*var*/;
+				} else if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
 					maxspeed = Locale.get("imagecollector.SL")/* SL:*/ + winter + nummaxspeed;
 				} else {
 					// Round up at this point, as the the previouse two

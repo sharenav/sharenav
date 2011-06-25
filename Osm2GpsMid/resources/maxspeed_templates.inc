@@ -6,7 +6,7 @@
 	    <maxSpeedTemplate name="DE:zone30" maxspeed="30" />
      	<maxSpeedTemplate name="DE:living_street" maxspeed="7" />
 		<maxSpeedTemplate name="DE:rural" maxspeed="100" />
-     	<maxSpeedTemplate name="DE:motorway" maxspeed="-1" />
+     	<maxSpeedTemplate name="DE:motorway" maxspeed="250" />
 		<maxSpeedTemplate name="FI:urban" maxspeed="50" />
 		<maxSpeedTemplate name="nsl" maxspeed="97" />
 		<maxSpeedTemplate name="national" maxspeed="97" />

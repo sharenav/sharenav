@@ -188,6 +188,23 @@ public class Legend {
 	public static int COLOR_COUNT = 89;
 	
 	public static int COLORS[] = new int[COLOR_COUNT];
+	
+	/** Marker speed for maxspeed=none. 
+	 * MUST be in sync with the value that Osm2GpsMid writes. */
+	public static int MAXSPEED_MARKER_NONE = 250;
+	/** Marker speed for maxspeed=variable/signals. 
+	 * MUST be in sync with the value that Osm2GpsMid writes. */
+	public static int MAXSPEED_MARKER_VARIABLE = 252;
+	/** Estimated actual speed for route calculation for maxspeed=none.
+	 * One reference is here: http://www.spiegel.de/spiegel/spiegelspecial/d-9157556.html
+	 * About 130 km/h seems plausible for many situations because of the traffic density.
+	 */
+	public static int MAXSPEED_ESTIMATE_NONE = 130;
+	/** Estimated actual speed for route calculation for maxspeed=variable/signals.
+	 * As variable signals are usually found on roads with a lot of traffic,
+	 * 100 km/h should be a good value.
+	 */
+	public static int MAXSPEED_ESTIMATE_VARIABLE = 100;
 
 	public static String soundFormats[];
 	public static String soundDirectories[];

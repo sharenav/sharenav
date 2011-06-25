@@ -617,7 +617,9 @@ public class Way extends Entity {
 				containsCon1At = i;
 				
 				// System.out.println("con1 match");
-				if (containsCon1 && containsCon2) break;
+				if (containsCon1 && containsCon2) {
+					break;
+				}
 			}
 			if ( (Math.abs(t.nodeLat[idx] - searchCon2Lat) < 2)
 					&&
@@ -626,7 +628,9 @@ public class Way extends Entity {
 				containsCon2 = true;
 				containsCon2At = i;
 				// System.out.println("con2 match");
-				if (containsCon1 && containsCon2) break;
+				if (containsCon1 && containsCon2) {
+					break;
+				}
 			}   
 		}
 	  
@@ -685,12 +689,17 @@ public class Way extends Entity {
 //					if (this.nameIdx != -1) name2=Trace.getInstance().getName(this.nameIdx);
 //					System.out.println("REPLACE " + pc.conWayDistanceToNext + "m (" + Legend.getWayDescription(pc.conWayType).description + " " + (name1==null?"":name1) + ")");
 //					System.out.println("WITH " + conWayRealDistance + "m (" + Legend.getWayDescription(this.type).description + " " + (name2==null?"":name2) + ")");
-//				}				
+//				}
 				// this is currently the best path between searchCon1 and searchCon2
 				pc.conWayDistanceToNext = conWayRealDistance;
 				pc.conWayMaxSpeed = (short) getMaxSpeed();
 				if (getMaxSpeedWinter() != 0 && Configuration.getCfgBitState(Configuration.CFGBIT_MAXSPEED_WINTER)) {
 					pc.conWayMaxSpeed = (short) getMaxSpeedWinter();
+				}
+				if (pc.conWayMaxSpeed == Legend.MAXSPEED_MARKER_NONE) {
+					pc.conWayMaxSpeed = (short) Legend.MAXSPEED_ESTIMATE_NONE;
+				} else if (pc.conWayMaxSpeed == Legend.MAXSPEED_MARKER_VARIABLE) {
+					pc.conWayMaxSpeed = (short) Legend.MAXSPEED_ESTIMATE_VARIABLE;
 				}
 				pc.conWayCombinedFileAndWayNr = getWayId(t);
 				pc.conWayFromAt = containsCon1At;
@@ -698,11 +707,21 @@ public class Way extends Entity {
 				pc.conWayNameIdx= this.nameIdx;
 				pc.conWayType = this.type;
 				short routeFlags = (short) wayDesc.routeFlags; 
-				if (isRoundAbout()) routeFlags += Legend.ROUTE_FLAG_ROUNDABOUT;
-				if (isTunnel()) routeFlags += Legend.ROUTE_FLAG_TUNNEL;
-				if (isBridge()) routeFlags += Legend.ROUTE_FLAG_BRIDGE;
-				if (isTollRoad()) routeFlags += Legend.ROUTE_FLAG_TOLLROAD;
-				if (isOneDirectionOnly()) routeFlags += Legend.ROUTE_FLAG_ONEDIRECTION_ONLY;
+				if (isRoundAbout()) {
+					routeFlags += Legend.ROUTE_FLAG_ROUNDABOUT;
+				}
+				if (isTunnel()) {
+					routeFlags += Legend.ROUTE_FLAG_TUNNEL;
+				}
+				if (isBridge()) {
+					routeFlags += Legend.ROUTE_FLAG_BRIDGE;
+				}
+				if (isTollRoad()) {
+					routeFlags += Legend.ROUTE_FLAG_TOLLROAD;
+				}
+				if (isOneDirectionOnly()) {
+					routeFlags += Legend.ROUTE_FLAG_ONEDIRECTION_ONLY;
+				}
 				pc.conWayRouteFlags = routeFlags;
 				
 				// substract way we are coming from from turn options with same name
@@ -790,7 +809,9 @@ public class Way extends Entity {
 				containsCon1 = true;
 				
 //				System.out.println("con1 match");
-				if (containsCon1 && containsCon2) break;
+				if (containsCon1 && containsCon2) {
+					break;
+				}
 			}
 			if ( (Math.abs(t.nodeLat[idx] - searchCon2Lat) < 2)
 					&&
@@ -798,7 +819,9 @@ public class Way extends Entity {
 				) {
 				containsCon2 = true;
 //				System.out.println("con2 match");
-				if (containsCon1 && containsCon2) break;
+				if (containsCon1 && containsCon2) {
+					break;
+				}
 			}   
 		}
 	  
@@ -1056,11 +1079,12 @@ public class Way extends Entity {
 							float segDirVecY = fSegmentLat1 - fSegmentLat2;
 							float norm = (float) Math.sqrt((double)(segDirVecX * segDirVecX + segDirVecY * segDirVecY));
 							//This is a hack to use a linear approximation to keep computational requirements down
-							if (this.isOneway())
+							if (this.isOneway()) {
 								// Panelty for one ways can be increased until 180 degree
 								pen = scalePen * (1.0f - ((segDirVecX * courseVecX + segDirVecY * courseVecY) / norm));
-							else
+							} else {
 								pen = scalePen * (1.0f - Math.abs((segDirVecX * courseVecX + segDirVecY * courseVecY) / norm));
+							}
 							pen *= pen;
 						}
 						float dstWithPen = dst + pen;
@@ -1612,7 +1636,9 @@ public class Way extends Entity {
 		int originalX = 0;
 		int originalY = 0;
 		int wOriginal = w;
-		if (w <1) w=1;
+		if (w <1) {
+			w=1;
+		}
 		int wDraw = w;
 		int turn = 0;
 		

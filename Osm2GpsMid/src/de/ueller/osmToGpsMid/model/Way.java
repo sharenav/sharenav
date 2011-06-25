@@ -399,13 +399,18 @@ public class Way extends Entity implements Comparable<Way> {
 			try {
 				boolean mph = false;
 
-				if (maxSpeedAttr.equalsIgnoreCase("variable") || maxSpeedAttr.equalsIgnoreCase("default")
-						|| maxSpeedAttr.equalsIgnoreCase("signals") || maxSpeedAttr.equalsIgnoreCase("none")
-						|| maxSpeedAttr.equalsIgnoreCase("no")) {
+				if (maxSpeedAttr.equalsIgnoreCase("default")) {
 					/**
-					 * We can't really do anything sensible with these, so ignore them
+					 * We can't match this, so ignore it.
 					 */
 					return maxSpeed;
+				}
+				if (maxSpeedAttr.equalsIgnoreCase("variable") 
+						|| maxSpeedAttr.equalsIgnoreCase("signals")) {
+					maxSpeed = Configuration.MAXSPEED_MARKER_VARIABLE;
+				} else if (maxSpeedAttr.equalsIgnoreCase("none")
+						|| maxSpeedAttr.equalsIgnoreCase("no")) {
+					maxSpeed = Configuration.MAXSPEED_MARKER_NONE;
 				}
 				if (maxSpeedAttr.toLowerCase().endsWith("mph")) {
 					mph = true;
@@ -429,7 +434,8 @@ public class Way extends Entity implements Comparable<Way> {
 					}
 				} catch (Exception ex) {
 					if (this.id != lastUnhandledMaxSpeedWayId) {
-						System.out.println("Warning: ignoring map data: Unhandled maxspeed for way " + toString() + ": " + maxSpeedAttr);
+						System.out.println("Warning: Ignoring map data: Unhandled maxspeed for way " + 
+								toString() + ": " + maxSpeedAttr);
 						lastUnhandledMaxSpeedWayId = this.id;
 					}
 				}
@@ -479,7 +485,8 @@ public class Way extends Entity implements Comparable<Way> {
 						maxSpeed = maxs;
 					}
 				} catch (Exception ex) {
-					System.out.println("Warning: ignoring map data: Unhandled maxspeedwinter for way + " + toString() + ": " + getAttribute("maxspeed"));
+					System.out.println("Warning: Ignoring map data: Unhandled maxspeedwinter for way + " + 
+							toString() + ": " + getAttribute("maxspeed"));
 				}
 			}
 		}

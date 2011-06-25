@@ -255,6 +255,14 @@ public class Configuration {
 		"IN", "100", "200", "300", "400", "500", "600", "700", "800", "METERS", "YARDS", "INTO_TUNNEL", "OUT_OF_TUNNEL", "FOLLOW_STREET",
 		"AREA_CROSS", "AREA_CROSSED", "SPEED_LIMIT"
 	};
+
+	/** Marker speed for maxspeed=none. 
+	 * MUST be in sync with the value that GpsMid expects and 
+	 * that's used in maxspeed_template.inc. */
+	public static int MAXSPEED_MARKER_NONE = 250;
+	/** Marker speed for maxspeed=variable/signals. 
+	 * MUST be in sync with the value that GpsMid expects. */
+	public static int MAXSPEED_MARKER_VARIABLE = 252;
 	
 	/** Maximum allowed number of bounding boxes */
 	public static final int MAX_BOUND_BOXES = 9;
@@ -1382,7 +1390,7 @@ public class Configuration {
 		public int getMaxspeedTemplate(String template) throws Exception{
 			Integer maxspeed = legend.getMaxspeedTemplates().get(template);
 			if (maxspeed == null) {
-				throw new Exception("warning: ignoring map data: Unhandled maxspeed value: " + template);
+				throw new Exception("Warning: Ignoring map data: Unhandled maxspeed value: " + template);
 			} else {
 				return maxspeed.intValue();
 			}
