@@ -388,30 +388,55 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	/**
-	 * Returns the maximum speed in km/h if explicitly set for this way, if not, it returns -1.0
-	 * 
-	 * @return
+	 * Returns the maximum speed in km/h if explicitly set for this way, if not, it returns -1.0.
 	 */
 	public float getMaxSpeed() {
 		float maxSpeed = -1.0f;
-		if (containsKey("maxspeed")) {
-			String maxSpeedAttr = getAttribute("maxspeed");
+		String maxSpeedAttr = getAttribute("maxspeed");
+		if (maxSpeedAttr != null) {			
+			maxSpeed = parseMaxSpeed(maxSpeedAttr, false);
+		}
+		return maxSpeed;
+	}
+
+	/**
+	 * Returns the winter maximum speed in km/h if explicitly set for this way, if not, it returns -1.0.
+	 */
+	public float getMaxSpeedWinter() {
+		float maxSpeed = -1.0f;
+		String maxSpeedAttr = getAttribute("maxspeed:seasonal:winter");
+		if (maxSpeedAttr != null) {
+			maxSpeed = parseMaxSpeed(maxSpeedAttr, true);
+		}
+		return maxSpeed;
+	}
+
+	/** Parses the given maxspeed string
+	 * @param maxSpeedAttr String to parse
+	 * @param winterFlag Flag if it's a winter maxspeed, only needed for warning output
+	 * @return Maxspeed as float or -1.0 if the template couldn't be found 
+	 */
+	private float parseMaxSpeed(String maxSpeedAttr, boolean winterFlag) {
+		float maxSpeed = -1.0f;
+		if (maxSpeedAttr.equalsIgnoreCase("default")) {
+			/**
+			 * We can't match this, so ignore it and notify about it.
+			 */
+			if (this.id != lastUnhandledMaxSpeedWayId) {
+				System.out.println("Warning: Ignoring map data: Unhandled maxspeed"
+					+ (winterFlag ? "winter" : "") + " for way " + 
+						toString() + ": " + maxSpeedAttr);
+				lastUnhandledMaxSpeedWayId = this.id;
+			}
+		} else if (maxSpeedAttr.equalsIgnoreCase("variable") 
+				|| maxSpeedAttr.equalsIgnoreCase("signals")) {
+			maxSpeed = Configuration.MAXSPEED_MARKER_VARIABLE;
+		} else if (maxSpeedAttr.equalsIgnoreCase("none")
+				|| maxSpeedAttr.equalsIgnoreCase("no")) {
+			maxSpeed = Configuration.MAXSPEED_MARKER_NONE;
+		} else {
 			try {
 				boolean mph = false;
-
-				if (maxSpeedAttr.equalsIgnoreCase("default")) {
-					/**
-					 * We can't match this, so ignore it.
-					 */
-					return maxSpeed;
-				}
-				if (maxSpeedAttr.equalsIgnoreCase("variable") 
-						|| maxSpeedAttr.equalsIgnoreCase("signals")) {
-					maxSpeed = Configuration.MAXSPEED_MARKER_VARIABLE;
-				} else if (maxSpeedAttr.equalsIgnoreCase("none")
-						|| maxSpeedAttr.equalsIgnoreCase("no")) {
-					maxSpeed = Configuration.MAXSPEED_MARKER_NONE;
-				}
 				if (maxSpeedAttr.toLowerCase().endsWith("mph")) {
 					mph = true;
 					maxSpeedAttr = maxSpeedAttr.substring(0, maxSpeedAttr.length() - 3).trim();
@@ -434,59 +459,11 @@ public class Way extends Entity implements Comparable<Way> {
 					}
 				} catch (Exception ex) {
 					if (this.id != lastUnhandledMaxSpeedWayId) {
-						System.out.println("Warning: Ignoring map data: Unhandled maxspeed for way " + 
+						System.out.println("Warning: Ignoring map data: Unhandled maxspeed" 
+							+ (winterFlag ? "winter" : "") + " for way " + 
 								toString() + ": " + maxSpeedAttr);
 						lastUnhandledMaxSpeedWayId = this.id;
 					}
-				}
-			}
-		}
-		return maxSpeed;
-	}
-
-	/**
-	 * Returns the winter maximum speed in km/h if explicitly set for this way, if not, it returns -1.0
-	 * 
-	 * @return
-	 */
-	public float getMaxSpeedWinter() {
-		float maxSpeed = -1.0f;
-		if (containsKey("maxspeed:seasonal:winter")) {
-			String maxSpeedAttr = getAttribute("maxspeed:seasonal:winter");
-			try {
-				boolean mph = false;
-
-				if (maxSpeedAttr.equalsIgnoreCase("variable") || maxSpeedAttr.equalsIgnoreCase("default")
-						|| maxSpeedAttr.equalsIgnoreCase("signals") || maxSpeedAttr.equalsIgnoreCase("none")
-						|| maxSpeedAttr.equalsIgnoreCase("no")) {
-					/**
-					 * We can't really do anything sensible with these, so ignore them
-					 */
-					return maxSpeed;
-				}
-				if (maxSpeedAttr.toLowerCase().endsWith("mph")) {
-					mph = true;
-					maxSpeedAttr = maxSpeedAttr.substring(0, maxSpeedAttr.length() - 3).trim();
-				} else if (maxSpeedAttr.toLowerCase().endsWith("km/h")) {
-					maxSpeedAttr = maxSpeedAttr.substring(0, maxSpeedAttr.length() - 4).trim();
-				} else if (maxSpeedAttr.toLowerCase().endsWith("kmh")) {
-					maxSpeedAttr = maxSpeedAttr.substring(0, maxSpeedAttr.length() - 3).trim();
-				} else if (maxSpeedAttr.toLowerCase().endsWith("kph")) {
-					maxSpeedAttr = maxSpeedAttr.substring(0, maxSpeedAttr.length() - 3).trim();
-				}
-				maxSpeed = (Float.parseFloat(maxSpeedAttr));
-				if (mph) {
-					maxSpeed *= 1.609; // Convert to km/h
-				}
-			} catch (NumberFormatException e) {
-				try {
-					int maxs = config.getMaxspeedTemplate(maxSpeedAttr);
-					if (maxs > 0) {
-						maxSpeed = maxs;
-					}
-				} catch (Exception ex) {
-					System.out.println("Warning: Ignoring map data: Unhandled maxspeedwinter for way + " + 
-							toString() + ": " + getAttribute("maxspeed"));
 				}
 			}
 		}
