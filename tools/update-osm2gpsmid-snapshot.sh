@@ -32,8 +32,8 @@ ant
 cd ..
 cp -p Osm2GpsMid/dist/Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar
 
-ln -s Osm2GpsMid-$ver-debug.jar Osm2GpsMid-debug-latest.jar
-ln -s Osm2GpsMid-$ver.jar Osm2GpsMid-latest.jar
+ln -f -s Osm2GpsMid-$ver-debug.jar Osm2GpsMid-debug-latest.jar
+ln -f -s Osm2GpsMid-$ver.jar Osm2GpsMid-latest.jar
 
 # 
 
