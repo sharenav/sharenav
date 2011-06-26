@@ -19,8 +19,9 @@
     *** Osm2GpsMid ***
     - allow user to select map accuracy in .properties file with mapPrecisionInMeters=X
       (default 1 meter) - mainly for debugging & test purposes
-    - partial support for sea generation with generateSea=true in .properties
-      Known to work
+    *** Sea support ***
+    - Sea generation with generateSea=true in .properties is partially supported,
+      known to work:
       * when the map area is small enough and consists of islands&islets with closed outlines
          consisting of natural=coastline in the sea, no coastlines crossing map
       * when the map area consists of land with no coastlines
