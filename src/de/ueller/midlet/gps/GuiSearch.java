@@ -142,6 +142,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private volatile Timer timer;
 	
 	private boolean hideKeypad = false;
+	private boolean cursorKeypad = false;
 
 	private int width = 0;
 	private	int height = 0;
@@ -634,6 +635,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	public void show() {
 		hideKeypad = false;
+		cursorKeypad = false;
 		height = getHeight();
 		width = getWidth();
 		gsl = new GuiSearchLayout(0, 0, width, height);
@@ -769,7 +771,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					gsl = new GuiSearchLayout(0, 0, width, height);
 				}
 			
-				String letters[] = {  Locale.get("guisearch.sort")/*sort*/, "  X  ", "  <- ", 
+				String letters[] = {  Locale.get("guisearch.cursor")/*cursor*/, "  X  ", "  <- ", 
 						      Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
 						      Locale.get("guisearch.label1wordSearch")/* 1*- */ :
 						      Locale.get("guisearch.label1")/*_1*- */,
@@ -782,12 +784,35 @@ public class GuiSearch extends Canvas implements CommandListener,
 						      Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
 						      Locale.get("guisearch.pound")/*_#end*/ :
 						      Locale.get("guisearch.poundNameSearch")/*#end*/};
+				if (cursorKeypad) {
+					String keypadLetters[] = {  Locale.get("guisearch.abc")/*abc*/, "  X  ", "  <- ", 
+						       Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+						       Locale.get("guisearch.label1wordSearch")/* 1*- */ :
+						       Locale.get("guisearch.label1")/*_1*- */,
+						       Locale.get("guisearch.clabel2")/* abc2*/,
+						       Locale.get("guisearch.clabel3")/* def3*/, Locale.get("guisearch.clabel4")/* ghi4*/,
+						       Locale.get("guisearch.clabel5")/* jkl5*/, Locale.get("guisearch.clabel6")/* mno6*/,
+						       Locale.get("guisearch.clabel7")/*pqrs7*/, Locale.get("guisearch.clabel8")/* tuv8*/,
+						       Locale.get("guisearch.sort")/*sort*/, 
+						       Locale.get("guisearch.more")/*more*/, "  0  ", 
+						       Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+						       Locale.get("guisearch.pound")/*_#end*/ :
+						       Locale.get("guisearch.poundNameSearch")/*#end*/};
+					letters = keypadLetters;
+				}
+				if (hideKeypad) {
+					String hideLetters[] = { " ", "  X  " };
+					letters = hideLetters;
+				}
 				for (int i = 0; i < 15 ; i++) {
-					// hide sort when more than 2 chars typed
-					if (i == 0 /* sort */ && carret > 2) {
-						gsl.ele[i].setText(" ");
-					} else {
-						gsl.ele[i].setText(letters[i]);
+					if (!hideKeypad || i == 1) {
+						// hide sort when more than 2 chars typed
+						if (i == GuiSearchLayout.KEY_9 /* sort */
+						    && cursorKeypad && carret > 2) {
+							gsl.ele[i].setText(" ");
+						} else {
+							gsl.ele[i].setText(letters[i]);
+						}
 					}
 				}
 				gsl.paint(gc);
@@ -1519,7 +1544,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 			GuiNameEnter gne = new GuiNameEnter(this, null, Locale.get("guisearch.SearchForNamesStarting")/*Search for names starting with:*/, searchCanon.toString(), 20);
 			gne.show();
 		} else {
-			if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD) && !hideKeypad
+			if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)
+			    && !hideKeypad
 			    && gsl.getElementIdAtPointer(x, y) >= 0 && gsl.isAnyActionIdAtPointer(x, y)) {
 				int touchedElementId = gsl.getElementIdAtPointer(x, y);
 				if (touchedElementId >= 0
@@ -1560,7 +1586,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 	public void autoPointerRelease(int x, int y) {
 		int clickIdx = (y - scrollOffset)/fontSize;
 		long currTime = System.currentTimeMillis();
-		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD) && !hideKeypad
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)
+		    && !hideKeypad
 		    && gsl.getElementIdAtPointer(x, y) >= 0 && gsl.isAnyActionIdAtPointer(x, y)) {
 			int touchedElementId = gsl.getElementIdAtPointer(x, y);
 			if (touchedElementId >= 0
@@ -1572,31 +1599,60 @@ public class GuiSearch extends Canvas implements CommandListener,
 				if (touchedElementId == GuiSearchLayout.KEY_1) {
 					keyPressed('1');
 				} else if (touchedElementId == GuiSearchLayout.KEY_2) {
-					keyPressed('2');
+					if (cursorKeypad) {
+						keyPressed(getKeyCode(UP));
+					} else {
+						keyPressed('2');
+					}
 				} else if (touchedElementId == GuiSearchLayout.KEY_3) {
-					keyPressed('3');
+					if (cursorKeypad) {
+						commandAction( ROUTE1_CMD, (Displayable) null);
+					} else {
+						keyPressed('3');
+					}
 				} else if (touchedElementId == GuiSearchLayout.KEY_4) {
-					keyPressed('4');
+					if (cursorKeypad) {
+						keyPressed(getKeyCode(LEFT));
+					} else {
+						keyPressed('4');
+					}
 				} else if (touchedElementId == GuiSearchLayout.KEY_5) {
-					keyPressed('5');
+					if (cursorKeypad) {
+						commandAction( OK1_CMD, (Displayable) null);
+					} else {
+						keyPressed('5');
+					}
 				} else if (touchedElementId == GuiSearchLayout.KEY_6) {
-					keyPressed('6');
+					if (cursorKeypad) {
+						keyPressed(getKeyCode(RIGHT));
+					} else {
+						keyPressed('6');
+					}
 				} else if (touchedElementId == GuiSearchLayout.KEY_7) {
-					keyPressed('7');
+					if (cursorKeypad) {
+						commandAction( DISP_CMD, (Displayable) null);
+					} else {
+						keyPressed('7');
+					}
 				} else if (touchedElementId == GuiSearchLayout.KEY_8) {
-					keyPressed('8');
+					if (cursorKeypad) {
+						keyPressed(getKeyCode(DOWN));
+					} else {
+						keyPressed('8');
+					}
 				} else if (touchedElementId == GuiSearchLayout.KEY_9) {
 					keyPressed('9');
 				} else if (touchedElementId == GuiSearchLayout.KEY_0) {
 					keyPressed('0');
 				} else if (touchedElementId == GuiSearchLayout.KEY_STAR) {
 					keyPressed(KEY_STAR);
-				} else if (touchedElementId == GuiSearchLayout.KEY_POUND || touchedElementId == GuiSearchLayout.KEY_SORT) {
+				} else if (touchedElementId == GuiSearchLayout.KEY_POUND || (cursorKeypad && touchedElementId == GuiSearchLayout.KEY_9)) {
 					keyPressed(KEY_POUND);
 				} else if (touchedElementId == GuiSearchLayout.KEY_BACKSPACE) {
 					keyPressed(8);
+				} else if (touchedElementId == GuiSearchLayout.KEY_KEYPAD) {
+					cursorKeypad = !cursorKeypad;
 				} else if (touchedElementId == GuiSearchLayout.KEY_CLOSE) {
-					// hide keypad
 					hideKeypad = true;
 				} else if (touchedElementId == GuiSearchLayout.KEY_POUND) {
 					keyPressed(KEY_POUND);
