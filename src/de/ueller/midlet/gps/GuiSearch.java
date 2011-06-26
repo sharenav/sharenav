@@ -1049,10 +1049,17 @@ public class GuiSearch extends Canvas implements CommandListener,
 						searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_NAME);
 					}
 				}
+				//#if polish.api.bigsearch
+				// moved with cursor right; match results only for this object
+				if (resultAtCursor == 0) {
+				//#endif
 				searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_HOUSENUMBER);
 				//searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_WHOLEWORD);
 				// insert new results from search thread 
 				insertResults();
+				//#if polish.api.bigsearch
+				}
+				//#endif
 				if (matchMode()) {
 					//filterMatches();
 					//repaint(0, 0, getWidth(), getHeight());
@@ -1197,6 +1204,16 @@ public class GuiSearch extends Canvas implements CommandListener,
 					} else if (carret == name.length()) {
 						result.removeAllElements();
 						result.addElement(sr);
+						//#if polish.api.bigsearch
+						// only match result under cursor
+						//#if polish.api.bigsearch
+						resultAtCursor = sr.resultid;
+						//#endif
+						matchSources = null;
+						matchLats = null;
+						matchLons = null;
+						matchIdx = null;
+						//#endif
 						keyPressed(KEY_POUND);
 						return;
 					}
