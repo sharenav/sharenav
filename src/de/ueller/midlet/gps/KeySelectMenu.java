@@ -501,7 +501,7 @@ public class KeySelectMenu extends Canvas implements
 					keyPressed(KEY_POUND);
 				} else if (touchedElementId == GuiSearchLayout.KEY_BACKSPACE) {
 					keyPressed(8);
-				} else if (touchedElementId == GuiSearchLayout.KEY_SORT) {
+				} else if (touchedElementId == GuiSearchLayout.KEY_KEYPAD) {
 					keyPressed(KEY_POUND);
 				} else if (touchedElementId == GuiSearchLayout.KEY_CLOSE) {
 					// hide keypad
