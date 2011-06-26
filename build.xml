@@ -307,7 +307,7 @@
 		<!-- Generic/midp1 phone, but when the test-property is set to false, -->
 		<!-- the second deviceRequirements will be used instead. -->
 		<deviceRequirements if="test and !testmicroemu">
-			<requirement name="Identifier" value="Generic/android-hiresonline" />
+			<requirement name="Identifier" value="Generic/android2.1-hiresonline" />
 		</deviceRequirements>
 		<deviceRequirements if="testmicroemu">
 			<requirement name="Identifier" value="${gpsmid.microemu_device}" />
@@ -318,7 +318,7 @@
 		<deviceRequirements unless="test">
 			<or>
 				<requirement name="Identifier" value="Generic/android" />
-				<requirement name="Identifier" value="Generic/android-hiresonline" />
+				<requirement name="Identifier" value="Generic/android2.1-hiresonline" />
 				<requirement name="Identifier" value="Generic/android2.2-hiresonline" />
 				<requirement name="Identifier" value="Generic/android2.3-hiresonline" />
 			</or>

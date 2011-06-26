@@ -7,11 +7,11 @@
 
 #The android.home property should point to the directory
 #containing the Android SDK.
-#Generally it's better to set this in J2MEPolish (at install)
+#Generally it's better to set this in J2MEPolish (at J2MEPolish install time)
 #android.home=/path/to/android-sdk/set/in/build.properties
 
 #Building for android requires a newer J2ME-Polish than
 #2.1.4, set path to it here. Moslty obsolete now when 2.2.1 supports android
 #polish.home=/set/path/to/J2ME-Polish-2.2.1-or-nightly/in/android.properties
 
-#gpsmid.test_device=Generic/android-hiresonline
+#gpsmid.test_device=Generic/android2.1-hiresonline
