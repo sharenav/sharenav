@@ -117,6 +117,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	private int cursor=0;
 	
+	private volatile long resultAtCursor=0;
+	
 	private int scrollOffset = 0;
 
 	private volatile static long lastPaintTime = 0;
@@ -726,6 +728,14 @@ public class GuiSearch extends Canvas implements CommandListener,
 							}
 						} else {
 							result.addElement(res);
+							if (resultAtCursor != 0) {
+								int cursorCandidate = findResult(resultAtCursor);
+								System.out.println("findResult returned " + cursorCandidate);
+								if (cursorCandidate != 0) {
+									cursor = cursorCandidate;
+									resultAtCursor = 0;
+								}
+							}
 						}
 						//#else
 						result.addElement(res);
@@ -1138,6 +1148,30 @@ public class GuiSearch extends Canvas implements CommandListener,
 		} else if (action == LEFT) {
 			if (carret > 0) {
 				carret--;
+			} else if (matchMode()) {
+				// FIXME in multi-word search should also handle situation with more than two words
+			        // by redoing the word searches
+				// FIXME this is copied from backspace handling;
+				// might want to do a bit different thing
+				// for cursor left
+				int slen = words.length()-1;
+				searchCanon.setLength(0);
+				for (int i = 0; i < slen ; i++) {
+					searchCanon.insert(carret++, (char) words.charAt(i));
+				}
+				//#if polish.api.bigsearch
+				matchSources = null;
+				matchLats = null;
+				matchLons = null;
+				matchIdx = null;
+				//#endif
+				//System.out.println("Searchcanon tostring: " + searchCanon.toString());
+				//System.out.println("Searchcanon length: " + searchCanon.length());
+				words = "";
+				carret = slen;
+				spacePressed = false;
+				result.removeAllElements();
+				reSearch();
 			}
 			repaint(0, 0, getWidth(), getHeight());
 			return;
@@ -1145,7 +1179,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			if (carret < searchCanon.length()) {
 				carret++;
 			} else {
-				if (isCursorValid())   {
+				if (isCursorValid()) {
 					SearchResult sr = (SearchResult) result.elementAt(cursor);
 					String name = null;
 					if (state == STATE_FAVORITES) {
@@ -1157,11 +1191,20 @@ public class GuiSearch extends Canvas implements CommandListener,
 						searchAlpha = true;
 						char nameLetters[] = name.toCharArray();
 						searchCanon.insert(carret++,nameLetters[carret-1]);
+						//#if polish.api.bigsearch
+						resultAtCursor = sr.resultid;
+						//#endif
+					} else if (carret == name.length()) {
+						result.removeAllElements();
+						result.addElement(sr);
+						keyPressed(KEY_POUND);
+						return;
 					}
+					reSearch();
+					return;
 				}
 			}
-
-			reSearch();
+			repaint(0, 0, getWidth(), getHeight());
 			return;
 		} else if (keyCode == -8 || keyCode == 8 || keyCode == 127) { 
 			/** Non standard Key -8: hopefully is mapped to
@@ -1278,6 +1321,18 @@ public class GuiSearch extends Canvas implements CommandListener,
 		}
 		//#endif
 	}
+
+	//#if polish.api.bigsearch
+	private int findResult(long oldResult) {
+		int newcursor = 0;
+		for (int i = 0; i < result.size(); i++) {
+			if (((SearchResult) result.elementAt(i)).resultid == oldResult) {
+				newcursor = i;
+			}
+		}
+		return newcursor;
+	}
+	//#endif
 
 	private boolean nameBiggerThanFits(Graphics gc, String name) {
 		return 17 + gc.getFont().stringWidth(name) > getWidth();
