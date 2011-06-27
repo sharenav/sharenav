@@ -1220,9 +1220,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 						name = nameForResult(sr);
 					}
 					if (carret < name.length()) {
-						searchAlpha = true;
 						char nameLetters[] = name.toCharArray();
-						searchCanon.insert(carret++,nameLetters[carret-1]);
+						if (searchAlpha) {
+							searchCanon.insert(carret++,nameLetters[carret-1]);
+						} else {
+							searchCanon.insert(carret++,NumberCanon.canonial(String.valueOf(nameLetters[carret-1])));
+						}
 						//#if polish.api.bigsearch
 						resultAtCursor = sr.resultid;
 						//#endif
@@ -1607,6 +1610,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				} else if (touchedElementId == GuiSearchLayout.KEY_3) {
 					if (cursorKeypad) {
 						commandAction( ROUTE1_CMD, (Displayable) null);
+						return;
 					} else {
 						keyPressed('3');
 					}
@@ -1631,6 +1635,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				} else if (touchedElementId == GuiSearchLayout.KEY_7) {
 					if (cursorKeypad) {
 						commandAction( DISP_CMD, (Displayable) null);
+						return;
 					} else {
 						keyPressed('7');
 					}
