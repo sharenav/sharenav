@@ -1,0 +1,25 @@
+.mainScreen {
+	padding: 2;
+	padding-left: 10;
+	padding-right: 10;
+	layout: horizontal-center | vertical-center;
+	view-type: verticalfixed;
+}
+.mainCommand {
+	padding: 0;
+	padding-vertical: 0;
+	layout: center;
+	font-color: white;
+	font-style: normal;
+	font-size: small;
+	font-face: proportional;
+	background-color: black;
+}
+
+.mainCommand:hover {
+	font-style: bold;
+	font-size: small;
+	font-color: white;
+	font-face: proportional;
+	text-effect: shadow;
+}

@@ -1230,3 +1230,6 @@ guisearch.clabel8= v
 guisearch.sel=cursor
 guisearch.abc=abc
 guisearch.cursor=cursor
+splash.disable=Disable splash screen at startup
+splash.enable=Display splash screen at startup
+splash.select=Select
