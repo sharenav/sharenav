@@ -97,6 +97,7 @@
 	    <!-- Have a look at the <jad>-section for setting specialised attributes.
 	         You can also define localized attributes in the resources/messages.txt files -->
             <!-- lowercase icon name required for Android, before Android support was icon="GpsMid.png" -->
+	    <!-- FIXME: javax.microedition.io.Connector.http should really be only active for the editing target -->
 		<info
 			name="GpsMid"
 			version="0.7.57"
