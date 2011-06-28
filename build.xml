@@ -108,7 +108,7 @@
 			jarUrl="${deploy-url}${polish.jarName}"
 			copyright="Copyright 2007 - 2011 Harald Mueller and others"
 			deleteConfirm="Do you really want to kill me?"
-			optionalPermissions="javax.microedition.io.Connector.file.read,javax.microedition.io.Connector.file.write,javax.microedition.io.Connector.bluetooth.client,javax.microedition.location.Location,javax.microedition.media.control.RecordControl,javax.microedition.media.control.VideoControl.getSnapshot,javax.microedition.io.Connector.sms,javax.wireless.messaging.sms.receive,javax.wireless.messaging.sms.send,javax.microedition.io.Connector.comm,javax.microedition.io.Connector.cbs,javax.wireless.messaging.cbs.receive,javax.microedition.io.Connector.socket,javax.microedition.io.PushRegistry"
+			optionalPermissions="javax.microedition.io.Connector.file.read,javax.microedition.io.Connector.http,javax.microedition.io.Connector.file.write,javax.microedition.io.Connector.bluetooth.client,javax.microedition.location.Location,javax.microedition.media.control.RecordControl,javax.microedition.media.control.VideoControl.getSnapshot,javax.microedition.io.Connector.sms,javax.wireless.messaging.sms.receive,javax.wireless.messaging.sms.send,javax.microedition.io.Connector.comm,javax.microedition.io.Connector.cbs,javax.wireless.messaging.cbs.receive,javax.microedition.io.Connector.socket,javax.microedition.io.PushRegistry"
 		/>
 		
 		<!-- selection of supported devices -->
@@ -299,7 +299,7 @@
 			jarUrl="${deploy-url}${polish.jarName}"
 			copyright="Copyright 2007 - 2011 Harald Mueller and others"
 			deleteConfirm="Do you really want to kill me?"
-			optionalPermissions="javax.microedition.io.Connector.file.read,javax.microedition.io.Connector.file.write,javax.microedition.io.Connector.bluetooth.client,javax.microedition.location.Location,javax.microedition.media.control.RecordControl,javax.microedition.media.control.VideoControl.getSnapshot,javax.microedition.io.Connector.sms,javax.wireless.messaging.sms.receive,javax.wireless.messaging.sms.send,javax.microedition.io.Connector.comm,javax.microedition.io.Connector.cbs,javax.wireless.messaging.cbs.receive,javax.microedition.io.Connector.socket,javax.microedition.io.PushRegistry"
+			optionalPermissions="javax.microedition.io.Connector.file.read,javax.microedition.io.Connector.http,javax.microedition.io.Connector.file.write,javax.microedition.io.Connector.bluetooth.client,javax.microedition.location.Location,javax.microedition.media.control.RecordControl,javax.microedition.media.control.VideoControl.getSnapshot,javax.microedition.io.Connector.sms,javax.wireless.messaging.sms.receive,javax.wireless.messaging.sms.send,javax.microedition.io.Connector.comm,javax.microedition.io.Connector.cbs,javax.wireless.messaging.cbs.receive,javax.microedition.io.Connector.socket,javax.microedition.io.PushRegistry"
 		/>
 		
 		<!-- selection of supported devices -->
