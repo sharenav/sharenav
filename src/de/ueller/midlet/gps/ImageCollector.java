@@ -241,7 +241,7 @@ public class ImageCollector implements Runnable {
 					if (needRedraw &&
 					    Configuration.getCfgBitState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY) &&
 					    // group layers -2 & -1 together
-					    ((layer < 5 && layer > 0)  ||
+					    ((layer < 5 && layer > 1)  ||
 					     (layer == 14))) {
 						// EXPERIMENTAL
 						// skip update if next
