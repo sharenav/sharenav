@@ -757,3 +757,5 @@ routing.RouteContainsTitle=Reitti sisältää
 routing.RouteContainsUnavoidableMotorways=moottoriteitä joita ei voitu välttää
 routing.RouteContainsUnavoidableTollroads=maksuteitä joita ei voitu välttää
 routing.RouteContainsTollroads=maksuteitä
+guidiscover.simplify=Yksinkertaista karttaa tarvittaessa
+guidiscover.PerfTuneOptions=Suorituskyky:
