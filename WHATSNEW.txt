@@ -15,6 +15,7 @@
     - search: cursor right past end of string now shows list of housenumbers for selected way segment
     - a virtual cursor keypad for easy selection of search results for touch screen users
     - show number of satellites also with NoFix on devices which support it
+    - Show bluetooth options in GPS setup only when a BT receiver is chosen
     *** Tacho ***
     - now PDOP is actually shown in tachometer on JSR179 phones
     - fixed odometer bug where it would add extra distance to a trip at start

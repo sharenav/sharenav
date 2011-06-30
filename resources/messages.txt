@@ -1233,3 +1233,4 @@ guisearch.cursor=cursor
 splash.disable=Disable splash screen at startup
 splash.enable=Display splash screen at startup
 splash.select=Select
+guidiscover.NMEAOptions=NMEA/BT options
