@@ -825,6 +825,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				if(urlList.size() != 0) {
 					gpsUrlStr = (String) urlList.elementAt(menuBT.getSelectedIndex());
 					gpsUrl.setText((gpsUrlStr == null) ? Locale.get("guidiscover.Discover")/*<Discover>*/ : Locale.get("guidiscover.Discovered")/*<Discovered>*/);
+					Configuration.setBtUrl(gpsUrlStr);
 				}
 				state = STATE_BT_OPT;
 				show();
