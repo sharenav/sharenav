@@ -105,9 +105,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	protected static final int MENU_ITEM_CAMERA_OPT = 13;
 	protected static final int MENU_ITEM_EXPORT_CONFIG = 14;
 	protected static final int MENU_ITEM_IMPORT_CONFIG = 15;
+	protected static final int MENU_ITEM_NMEA = 16;
 	//#else
 	protected static final int MENU_ITEM_EXPORT_CONFIG = 13;
 	protected static final int MENU_ITEM_IMPORT_CONFIG = 14;
+	protected static final int MENU_ITEM_NMEA = 15;
 	//#endif
 	//#else
 	protected static final int MENU_ITEM_ONLINE_OPT = 11;
@@ -115,9 +117,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	protected static final int MENU_ITEM_CAMERA_OPT = 12;
 	protected static final int MENU_ITEM_EXPORT_CONFIG = 13;
 	protected static final int MENU_ITEM_IMPORT_CONFIG = 14;
+	protected static final int MENU_ITEM_NMEA = 15;
 	//#else
 	protected static final int MENU_ITEM_EXPORT_CONFIG = 12;
 	protected static final int MENU_ITEM_IMPORT_CONFIG = 13;
+	protected static final int MENU_ITEM_NMEA = 14;
 	//#endif
 	//#endif
 
@@ -160,6 +164,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private final List menu = new List(Locale.get("guidiscover.Setup")/*Setup*/, Choice.IMPLICIT, elements, null);
 
 	private List menuBT;
+	private List menuNMEAOptsList;
 
 	private final List menuFS = new List(Locale.get("guidiscover.Devices")/*Devices*/, Choice.IMPLICIT, empty, null);
 
@@ -181,6 +186,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private Form					menuOsmAccountOptions;
 	//#endif
 	private Form					menuOnlineOptions;
+
+	private Form					menuNMEAOptions;
 	
 	private Form					menuOpencellidOptions;
 
@@ -208,6 +215,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private final static int		STATE_URL_ENTER_GPS = 14;
 	private final static int		STATE_URL_ENTER_GPX = 15;
 	private final static int		STATE_ONLINE_OPT = 16;
+	private final static int		STATE_NMEA_OPT = 17;
 	
 	private Vector urlList;
 	private Vector friendlyName;
@@ -334,32 +342,18 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		menuDebug.append(debugOther);
 	}
 
-	private void initLocationSetupMenu() {
-		//Prepare Location Provider setup menu
-		logger.info("Starting Locationreceiver setup menu");
-
-		menuSelectLocProv = new Form(Locale.get("guidiscover.LocationReceiver")/*Location Receiver*/);
-
-		menuSelectLocProv.addCommand(BACK_CMD);
-		menuSelectLocProv.addCommand(OK_CMD);
-		menuSelectLocProv.addCommand(GPS_DISCOVER);
-		menuSelectLocProv.addCommand(FILE_MAP);
-
+	private void initNMEASetupMenu() {
+		//Prepare NMEA/Bluetooth setup menu
+		logger.info("Starting NMEA setup menu");
+		menuNMEAOptions = new Form(Locale.get("guidiscover.NMEAOptions")/*NMEA/BT options*/);
+		menuNMEAOptions.addCommand(BACK_CMD);
+		menuNMEAOptions.addCommand(OK_CMD);
+		menuNMEAOptions.addCommand(GPS_DISCOVER);
 		gpsUrl = new StringItem(Locale.get("guidiscover.GPS")/*GPS: */, null);
 		gpsUrl.setDefaultCommand(GPS_DISCOVER);
 		gpsUrl.setItemCommandListener(this);
-		locProv = new ChoiceGroup(Locale.get("guidiscover.inputfrom")/*input from:*/, Choice.EXCLUSIVE, Configuration.LOCATIONPROVIDER, new Image[Configuration.LOCATIONPROVIDER.length]);
-
-		final String[] logCategories = {Locale.get("guidiscover.CellIDs")/*Cell-IDs for OpenCellID.org*/, Locale.get("guidiscover.RawGpsData")/*Raw Gps Data*/ };
-		rawLogCG = new ChoiceGroup(LABEL_SELECT_LOGDIR_FIRST, ChoiceGroup.MULTIPLE, logCategories, new Image[2]);
-
-		String [] aconn = new String[1];
-		aconn[0] = Locale.get("guidiscover.StartGPSAtStartup")/*Start GPS at startup*/;
-		autoConnect = new ChoiceGroup(Locale.get("guidiscover.GPSstart")/*GPS start*/, ChoiceGroup.MULTIPLE, aconn, null);
-
-		String [] cellidStart = new String[1];
-		cellidStart[0] = Locale.get("guidiscover.cellIDAtStartup")/*Do a single lookup*/;
-		cellIDStartup = new ChoiceGroup(Locale.get("guidiscover.cellIDStart")/*CellID lookup at startup*/, ChoiceGroup.MULTIPLE, cellidStart, null);
+		menuNMEAOptions.append(gpsUrl);
+		menuNMEAOptions.setCommandListener(this);
 
 		String [] btka = new String[1];
 		btka[0] = Locale.get("guidiscover.Sendkeepalives")/*Send keep alives*/;
@@ -368,13 +362,34 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		String [] btar = new String[1];
 		btar[0] = Locale.get("guidiscover.AutoreconnectGPS")/*Auto reconnect GPS*/;
 		btAutoRecon = new ChoiceGroup(Locale.get("guidiscover.BTreconnect")/*BT reconnect*/, ChoiceGroup.MULTIPLE, btar, null);
+		menuNMEAOptions.append(btKeepAlive);
+		menuNMEAOptions.append(btAutoRecon);
+	}
 
-		menuSelectLocProv.append(gpsUrl);
+	private void initLocationSetupMenu() {
+		//Prepare Location Provider setup menu
+		logger.info("Starting Locationreceiver setup menu");
+
+		menuSelectLocProv = new Form(Locale.get("guidiscover.LocationReceiver")/*Location Receiver*/);
+
+		menuSelectLocProv.addCommand(BACK_CMD);
+		menuSelectLocProv.addCommand(OK_CMD);
+		locProv = new ChoiceGroup(Locale.get("guidiscover.inputfrom")/*input from:*/, Choice.EXCLUSIVE, Configuration.LOCATIONPROVIDER, new Image[Configuration.LOCATIONPROVIDER.length]);
+		menuSelectLocProv.append(locProv);
+		menuSelectLocProv.addCommand(FILE_MAP);
+
+		final String[] logCategories = {Locale.get("guidiscover.CellIDs")/*Cell-IDs for OpenCellID.org*/, Locale.get("guidiscover.RawGpsData")/*Raw Gps Data*/ };
+		rawLogCG = new ChoiceGroup(LABEL_SELECT_LOGDIR_FIRST, ChoiceGroup.MULTIPLE, logCategories, new Image[2]);
+		String [] aconn = new String[1];
+		aconn[0] = Locale.get("guidiscover.StartGPSAtStartup")/*Start GPS at startup*/;
+		autoConnect = new ChoiceGroup(Locale.get("guidiscover.GPSstart")/*GPS start*/, ChoiceGroup.MULTIPLE, aconn, null);
+
+		String [] cellidStart = new String[1];
+		cellidStart[0] = Locale.get("guidiscover.cellIDAtStartup")/*Do a single lookup*/;
+		cellIDStartup = new ChoiceGroup(Locale.get("guidiscover.cellIDStart")/*CellID lookup at startup*/, ChoiceGroup.MULTIPLE, cellidStart, null);
+
 		menuSelectLocProv.append(autoConnect);
 		menuSelectLocProv.append(cellIDStartup);
-		menuSelectLocProv.append(btKeepAlive);
-		menuSelectLocProv.append(btAutoRecon);
-		menuSelectLocProv.append(locProv);
 		menuSelectLocProv.append(rawLogCG);
 
 		menuSelectLocProv.setCommandListener(this);
@@ -704,8 +719,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			if (state == STATE_BT_GPX) {
 				state = STATE_GPX;
 			} else if (state == STATE_BT_GPS) {
-				state = STATE_LP;
+				state = STATE_NMEA_OPT;
 			} else if (state == STATE_URL_ENTER_GPS) {
+				state = STATE_NMEA_OPT;
+			} else if (state == STATE_NMEA_OPT) {
 				state = STATE_LP;
 			} else if (state == STATE_URL_ENTER_GPX) {
 				state = STATE_GPX;
@@ -772,7 +789,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			friendlyName = new Vector();
 			menuBT.deleteAll();
 			GpsMid.getInstance().show(menuBT);
-			if (state == STATE_LP) {
+			if (state == STATE_NMEA_OPT) {
 				logger.info("Discovering a bluetooth serial device");
 				state = STATE_BT_GPS;
 				gps = new DiscoverGps(this, DiscoverGps.UUDI_SERIAL);
@@ -805,7 +822,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					gpsUrlStr = (String) urlList.elementAt(menuBT.getSelectedIndex());
 					gpsUrl.setText((gpsUrlStr == null) ? Locale.get("guidiscover.Discover")/*<Discover>*/ : Locale.get("guidiscover.Discovered")/*<Discovered>*/);
 				}
-				state = STATE_LP;
+				state = STATE_NMEA_OPT;
 				show();
 				break;
 			case STATE_BT_GPX:
@@ -830,7 +847,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				show();
 				break;
 			case STATE_LP:
-				Configuration.setBtUrl(gpsUrlStr);
 				Configuration.setLocationProvider(locProv.getSelectedIndex());
 				boolean [] selraw = new boolean[2];
 				rawLogCG.getSelectedFlags(selraw);
@@ -842,6 +858,19 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_AUTO_START_GPS, selraw[0]);
 				cellIDStartup.getSelectedFlags(selraw);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_CELLID_STARTUP, selraw[0]);
+				if (Configuration.getLocationProvider() == 1 || Configuration.getLocationProvider() == 2) {
+					// show further NMEA/bluetooth options
+					//show();
+					//showSetupDialog(MENU_ITEM_NMEA);
+					//break;
+					state = STATE_NMEA_OPT;
+				} else {
+					state = STATE_ROOT;
+				}
+				show();
+				break;
+			case STATE_NMEA_OPT:
+				selraw = new boolean[2];
 				btKeepAlive.getSelectedFlags(selraw);
 				Configuration.setBtKeepAlive(selraw[0]);
 				btAutoRecon.getSelectedFlags(selraw);
@@ -1171,7 +1200,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				break;
 			case STATE_URL_ENTER_GPS:
 				gpsUrlStr = tfURL.getString();
-				state = STATE_LP;
+				state = STATE_NMEA_OPT;
+				Configuration.setBtUrl(gpsUrlStr);
 				show();
 				break;
 			
@@ -1188,11 +1218,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		switch (menuNr) {
 			case MENU_ITEM_LOCATION: // Location Receiver
 				initLocationSetupMenu();
-				gpsUrlStr = Configuration.getBtUrl();
-				gpsUrl.setText(gpsUrlStr == null ? Locale.get("guidiscover.Discover")/*<Discover>*/ : Locale.get("guidiscover.Discovered")/*<Discovered>*/);
 				int selIdx = Configuration.getLocationProvider();
 				locProv.setSelectedIndex(selIdx, true);
-				
 				String logUrl;
 				rawLogDir = Configuration.getGpsRawLoggerUrl();
 				if (rawLogDir == null) {
@@ -1209,12 +1236,20 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 
 				autoConnect.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_AUTO_START_GPS));
 				cellIDStartup.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_CELLID_STARTUP));
-				btKeepAlive.setSelectedIndex(0, Configuration.getBtKeepAlive());
-				btAutoRecon.setSelectedIndex(0, Configuration.getBtAutoRecon());
-				Display.getDisplay(parent).setCurrentItem(gpsUrl);
 				//Display.getDisplay(parent).setCurrent(menuSelectLocProv);
 				GpsMid.getInstance().show(menuSelectLocProv);
 				state = STATE_LP;
+				break;
+			case MENU_ITEM_NMEA: // NMEA Location Receiver setup
+				initNMEASetupMenu();
+				gpsUrlStr = Configuration.getBtUrl();
+				gpsUrl.setText(gpsUrlStr == null ? Locale.get("guidiscover.Discover")/*<Discover>*/ : Locale.get("guidiscover.Discovered")/*<Discovered>*/);
+
+				btKeepAlive.setSelectedIndex(0, Configuration.getBtKeepAlive());
+				btAutoRecon.setSelectedIndex(0, Configuration.getBtAutoRecon());
+				Display.getDisplay(parent).setCurrentItem(gpsUrl);
+				GpsMid.getInstance().show(menuNMEAOptions);
+				state = STATE_NMEA_OPT;
 				break;
 			case MENU_ITEM_GPX_FILTER: // Recording Rules
 				GuiSetupRecordings guiRec = new GuiSetupRecordings(this);
@@ -1465,7 +1500,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				}
 				break;
 			case STATE_LP:
+				//showSetupDialog(MENU_ITEM_LOCATION);
 				GpsMid.getInstance().show(menuSelectLocProv);
+				break;
+			case STATE_NMEA_OPT:
+				showSetupDialog(MENU_ITEM_NMEA);
+				//GpsMid.getInstance().show(menuNMEAOptions);
 				break;
 			case STATE_MAP:
 				GpsMid.getInstance().show(menuSelectMapSource);
