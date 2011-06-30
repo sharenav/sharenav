@@ -1204,6 +1204,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				Configuration.setBtUrl(gpsUrlStr);
 				//state = STATE_BT_OPT;
 				state = STATE_LP;
+				// set method to NMEA
+				Configuration.setLocationProvider(2);
 				show();
 				break;
 			
