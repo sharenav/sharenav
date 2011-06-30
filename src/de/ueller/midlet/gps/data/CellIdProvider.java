@@ -117,7 +117,6 @@ public class CellIdProvider {
 			logger.info("Trying to see if Samsung method is available");
 			GSMCell cell = obtainMotoOrSamsungCell(true);
 			if (cell != null) {
-				logger.error(Locale.get("cellidprovider.MotorolaCellIDPleseCheck")/*Motorola CellID is experimental and may be wrong. Please check data before uploading*/);
 				cellRetrievelMethod = CELLMETHOD_SAMSUNG;
 				//#debug info
 				logger.info("   Yes, the Samsung method works");
@@ -135,7 +134,6 @@ public class CellIdProvider {
 			logger.info("Trying to see if LG method is available");
 			GSMCell cell = obtainLGCell();
 			if (cell != null) {
-				logger.error(Locale.get("cellidprovider.MotorolaCellIDPleseCheck")/*Motorola CellID is experimental and may be wrong. Please check data before uploading*/);
 				cellRetrievelMethod = CELLMETHOD_LG;
 				//#debug info
 				logger.info("   Yes, the LG method works");
