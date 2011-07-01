@@ -203,7 +203,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 
 	public void commandAction(Command c, Displayable d) {
         if (c == SELECT_CMD) {
-        	shutdown = true;
+		shutdown = true;
 		int choice = menuSplash.getSelectedIndex();
 		Command choices[] = {BACK_CMD, EXIT_CMD, ENABLE_CMD, DISABLE_CMD, ENGLISH_CMD};
 		commandAction(choices[choice], null);
@@ -211,7 +211,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
         }
         if (c == BACK_CMD) {
         	shutdown = true;
-        	GpsMid.showMapScreen();
+        	GpsMid.getInstance().showMapScreen();
         	return;
         }
         if (c == EXIT_CMD) {
@@ -249,12 +249,6 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		if (!Legend.isValid) {
 			main.alert("Splash", GpsMid.errorMsg, 6000);
 		}
-//#if polish.android
-		// workaround for Android accept buttons; without this, accept/deny don't work.
-		if (initDone) {
-			main.alert("Splash", "Android!", 500);
-		}
-//#endif
 		while (! shutdown){
 			synchronized (this) {
 				try {
@@ -304,10 +298,9 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (initDone) {
 				shutdown = true;
-				GpsMid.showMapScreen();
+				GpsMid.getInstance().showMapScreen();
 				return;
 			} else {
-				main.alert("Splash", "Quitting", 3000);
 				shutdown = true;
 				Configuration.setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, false, true);
 				Configuration.setCfgBitState(Configuration.CFGBIT_RUNNING, false, true);
