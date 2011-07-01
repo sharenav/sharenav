@@ -759,3 +759,4 @@ routing.RouteContainsUnavoidableTollroads=maksuteitä joita ei voitu välttää
 routing.RouteContainsTollroads=maksuteitä
 guidiscover.simplify=Yksinkertaista karttaa tarvittaessa
 guidiscover.PerfTuneOptions=Suorituskyky:
+guidiscover.autocompass=automaattivalinta

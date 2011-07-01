@@ -499,9 +499,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		rotationGroup = new ChoiceGroup(Locale.get("guidiscover.MapProjection")/*Map Projection*/, Choice.EXCLUSIVE, Configuration.projectionsString, null);
 		menuDisplayOptions.append(rotationGroup);
 
-		String [] direction = new String[2];
+		String [] direction = new String[3];
 		direction[0] = Locale.get("guidiscover.movement")/*by movement*/;
 		direction[1] = Locale.get("guidiscover.compass")/*by compass*/;
+		direction[2] = Locale.get("guidiscover.autocompass")/*autoswitch*/;
 		directionOpts = new ChoiceGroup(Locale.get("guidiscover.DirectionOptions")/*Rotate map*/, Choice.EXCLUSIVE, direction, null);
 		menuDisplayOptions.append(directionOpts);
 
@@ -1031,6 +1032,16 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					Trace.getInstance().stopCompass();
 				}
 
+				if ((!Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION)) && directionOpts.getSelectedIndex() == 2) {
+					Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION,
+									  true);
+					Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION,
+									  true);
+				}
+				if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION) && directionOpts.getSelectedIndex() != 2) {
+					Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION,
+									  false);
+				}
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE,
 						(renderOpts.getSelectedIndex() == 1)
 				);
@@ -1308,6 +1319,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				rotationGroup.setSelectedIndex(Configuration.getProjDefault(), true);
 				renderOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE) ? 1 : 0, true);
 				directionOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION) ? 1 : 0, true);
+				if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION)) {
+					directionOpts.setSelectedIndex(2, true);
+				}
 				distanceViews.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_DISTANCE_VIEW) ? 1 : 0, true);
 				sizeOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_POI_LABELS_LARGER));
 				sizeOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_WPT_LABELS_LARGER));

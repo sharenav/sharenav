@@ -1236,3 +1236,4 @@ gpx.ExceptionReadingTracks=One or more of the tracks is damaged, probably due to
 guidiscover.simplify=Simplify map when busy
 guidiscover.PerfTuneOptions=Performance tuning options:
 guidiscover.NMEAOptions=NMEA/BT options
+guidiscover.autocompass=autoswitch
