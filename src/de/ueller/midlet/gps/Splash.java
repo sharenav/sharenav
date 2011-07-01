@@ -141,8 +141,8 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		if (!initDone) {
 			addCommand(EXIT_CMD);
 		}
-		show();
 		setCommandListener(this);
+		show();
 		processorThread = new Thread(this, "Splash");
 		processorThread.setPriority(Thread.MIN_PRIORITY);
 		processorThread.start();
@@ -211,7 +211,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
         }
         if (c == BACK_CMD) {
         	shutdown = true;
-        	GpsMid.getInstance().showMapScreen();
+		GpsMid.getInstance().showMapScreen();
         	return;
         }
         if (c == EXIT_CMD) {
