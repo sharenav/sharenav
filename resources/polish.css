@@ -60,6 +60,23 @@ title {
 	border: none;
 	layout: horizontal-center | horizontal-expand;
 }
+choicegroup {
+	focused-style: .groupFocused;
+	popup-color: gray;
+}
+.groupFocused {
+	font-face: proportional;
+	font-size: medium;
+	font-style: bold;
+	font-color: black;
+	border {
+		type: drop-shadow;
+		inner-color: #a0e0;
+		outer-color: #8888;
+		width: 3;
+		orientation: all;
+	}
+}
 info {
 	padding-right: 10;
 	background: none;
