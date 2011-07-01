@@ -17,6 +17,8 @@
     - show number of satellites also with NoFix on devices which support it
     - Show bluetooth options in GPS setup only when a BT receiver is chosen
     - add some CSS for making things nicer-looking on Android phones (and other using the J2MEPolish GUI)
+    *** Platforms ***
+    - Android: due to UI improvements with the help of CSS, using the menus is now a bit more bearable
     *** Tacho ***
     - now PDOP is actually shown in tachometer on JSR179 phones
     - fixed odometer bug where it would add extra distance to a trip at start
