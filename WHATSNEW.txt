@@ -16,6 +16,7 @@
     - a virtual cursor keypad for easy selection of search results for touch screen users
     - show number of satellites also with NoFix on devices which support it
     - Show bluetooth options in GPS setup only when a BT receiver is chosen
+    - add some CSS for making things nicer-looking on Android phones (and other using the J2MEPolish GUI)
     *** Tacho ***
     - now PDOP is actually shown in tachometer on JSR179 phones
     - fixed odometer bug where it would add extra distance to a trip at start

@@ -15,11 +15,59 @@
 	font-face: proportional;
 	background-color: black;
 }
-
 .mainCommand:hover {
 	font-style: bold;
 	font-size: small;
 	font-color: white;
 	font-face: proportional;
 	text-effect: shadow;
+}
+.trackScreen {
+	padding: 0;
+	padding-left: 0;
+	padding-right: 10;
+	margin: 10;
+	view-type: verticalfixed;
+}
+.trackCommand {
+	padding: 8;
+	padding-vertical: 28;
+	font-color: black;
+	font-style: normal;
+	font-size: medium;
+	font-face: proportional;
+	padding: 2;
+	background-color: white;
+	border-color: black;
+	min-height: 15; 
+	min-width: 80;
+	textfield-caret-color: red;
+	textfield-show-length: true;
+}
+title {
+	padding: 2;
+	margin-top: 0;
+	margin-bottom: 5;
+	margin-left: 0;
+	margin-right: 0;
+	font-face: proportional;
+	font-size: large;
+	font-style: bold;
+	font-color: white;
+	background {
+		color: gray;
+	}
+	border: none;
+	layout: horizontal-center | horizontal-expand;
+}
+info {
+	padding-right: 10;
+	background: none;
+	border-color: black;
+	font-style: plain; 
+	font-face: proportional; 
+	font-size: small; 
+	font-color: black;
+	margin-top: 28;
+	layout: right;
 }
