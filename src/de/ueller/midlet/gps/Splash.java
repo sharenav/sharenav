@@ -217,7 +217,12 @@ public class Splash extends Canvas implements CommandListener,Runnable{
         if (c == EXIT_CMD) {
         	shutdown = true;
         	Configuration.setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, false, true);
+//#if polish.android
+		Configuration.setCfgBitState(Configuration.CFGBIT_RUNNING, false, true);
+		main.notifyDestroyed();
+//#else
         	main.exit();
+//#endif
         	return;
         }
         if (c == ENGLISH_CMD) {
