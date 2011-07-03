@@ -1,9 +1,10 @@
-package de.ueller.midlet.gps;
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
  * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
- * See Copying
+ * See file COPYING
  */
+
+package de.ueller.midlet.gps;
 
 import java.io.IOException;
 import java.util.Vector;
@@ -22,96 +23,102 @@ import de.ueller.gps.tools.StringTokenizer;
 
 import de.enough.polish.util.Locale;
 
+
 public class DiscoverGps
 	//#if polish.api.btapi
 	implements Runnable, DiscoveryListener
 	//#endif
 	{
 	
-	private final static Logger logger=Logger.getInstance(DiscoverGps.class,Logger.DEBUG);
+	private final static Logger logger = Logger.getInstance(DiscoverGps.class,Logger.DEBUG);
 	
 	//#if polish.api.btapi
 	/** Shows the engine is ready to work. */
-	private static final int		READY						= 0;
+	private static final int	READY					= 0;
 
 	/** Shows the engine is searching bluetooth devices. */
-	public static final int		DEVICE_SEARCH				= 1;
+	public static final int		DEVICE_SEARCH			= 1;
 
 	/** Shows the engine is ready with searching bluetooth devices. */
-	public static final int		DEVICE_READY				= 2;
+	public static final int		DEVICE_READY			= 2;
 
 	/** Shows the engine is searching bluetooth services. */
-	public static final int		SERVICE_SEARCH				= 3;
+	public static final int		SERVICE_SEARCH			= 3;
 
 	/** the engine is wating for a serviceselection */
-	public static final int		SERVICE_SELECT				= 4;
+	public static final int		SERVICE_SELECT			= 4;
 	/** the engine is wating for a serviceselection */
 	public static final int		NODEVICE				= 5;
 
-        private static final String[]	stateText					= { Locale.get("discovergps.ready")/*ready*/,
-                                                    Locale.get("discovergps.DeviceSearch")/*device search*/, Locale.get("discovergps.DeviceSelect")/*device select*/, Locale.get("discovergps.ServiceSearch")/*service search*/,Locale.get("discovergps.SelectService")/*select service*/,Locale.get("discovergps.NoDeviceInRange")/*No Device in range*/};
+	private static final String[] stateText = { 
+		Locale.get("discovergps.ready")/*ready*/,
+		Locale.get("discovergps.DeviceSearch")/*device search*/, 
+		Locale.get("discovergps.DeviceSelect")/*device select*/, 
+		Locale.get("discovergps.ServiceSearch")/*service search*/,
+		Locale.get("discovergps.SelectService")/*select service*/,
+		Locale.get("discovergps.NoDeviceInRange")/*No Device in range*/ };
 
-	private final GuiDiscover		parent;
+	private final GuiDiscover parent;
 
 	/** Process the search/download requests. */
-	private final Thread					processorThread;
+	private final Thread processorThread;
 
 	/** Collects the remote devices found during a search. */
-	private final Vector					/* RemoteDevice */devices	= new Vector();
+	private final Vector /* RemoteDevice */devices	= new Vector();
 
 	/** Collects the services found during a search. */
-	private final Vector					/* ServiceRecord */records	= new Vector();
+	private final Vector /* ServiceRecord */records	= new Vector();
 
 	/** Keeps the device discovery return code. */
-	private int						discType					= -1;
+	private int	discType = -1;
 
 	/** Keeps the services search IDs (just to be able to cancel them). */
-	private int[]					searchIDs;
+	private int[] searchIDs;
 	/** Optimization: keeps service search pattern. */
-	private UUID[]					uuidSet;
+	private UUID[] uuidSet;
 
 	/** Optimization: keeps attributes list to be retrieved. */
-	private int[]					attrSet;
+	private int[] attrSet;
 
 	/** Keeps the current state of engine. */
-	private int						state						= READY;
+	private int state = READY;
 
 	/** Keeps the discovery agent reference. */
-	private DiscoveryAgent			discoveryAgent;
+	private DiscoveryAgent discoveryAgent;
 
-	private boolean					isClosed;
+	private boolean isClosed;
 	
-	private GuiBusy					guiBusy;
+	private GuiBusy guiBusy;
 
 	/** Keeps the device index for witch a Service discover is requested */
 	private int	selectedDevice = -1;
-	public static final long UUDI_SERIAL=0x1101;
-	public static final long UUDI_FILE=0x1105;
+	public static final long UUDI_SERIAL = 0x1101;
+	public static final long UUDI_FILE = 0x1105;
 
 	private final long searchType;
+
 	
-	public DiscoverGps(GuiDiscover parent,long searchType) {
+	public DiscoverGps(GuiDiscover parent, long searchType) {
 		this.parent = parent;
 		this.searchType = searchType;
 		// we have to initialize a system in different thread...
 		processorThread = new Thread(this);
 		processorThread.start();
-
 	}
 
-	private synchronized void cancelDeviceSearch(){
+	private synchronized void cancelDeviceSearch() {
 		if (state == DEVICE_SEARCH) {
 			discoveryAgent.cancelInquiry(this);
 		}
 	}
 
-	/** Cancel's the devices/services search. */
+	/** Cancels the devices/services search. */
 	public void cancelSearch() {
 		cancelDeviceSearch();
 		cancelServiceSearch();
 	}
 
-	private synchronized void cancelServiceSearch(){
+	private synchronized void cancelServiceSearch() {
 		if (state == SERVICE_SEARCH) {
 			for (int i = 0; i < searchIDs.length; i++) {
 				discoveryAgent.cancelServiceSearch(searchIDs[i]);
@@ -120,7 +127,7 @@ public class DiscoverGps
 	}
 
 	/**
-	 * Destroy a work with bluetooth - exits the accepting thread and close notifier.
+	 * Destroy access to bluetooth - exits the accepting thread and close notifier.
 	 */
 	void destroy() {
 		synchronized (this) {
@@ -136,8 +143,10 @@ public class DiscoverGps
 		// wait for acceptor thread is done
 		try {
 			processorThread.join();
-		} catch (InterruptedException e) {} // ignore
-		parent.addDevice(Locale.get("discovergps.Distroyed")/*distroyed*/);
+		} catch (InterruptedException e) {
+			// ignored
+		}
+		parent.addDevice(Locale.get("discovergps.Distroyed")/*Distroyed*/);
 		parent.show();
 	}
 
@@ -146,7 +155,7 @@ public class DiscoverGps
 	 */
 	public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
 		// same device may found several times during single search
-	    parent.addDevice(Locale.get("discovergps.Found")/*found */+btDevice.getBluetoothAddress());		
+	    parent.addDevice(Locale.get("discovergps.Found")/*found */ + btDevice.getBluetoothAddress());
 		if (devices.indexOf(btDevice) == -1) {
 			devices.addElement(btDevice);
 		}
@@ -176,14 +185,11 @@ public class DiscoverGps
 			notify();
 		}
 	}
-	
-	
 
 	public void run() {
 		try {
 			guiBusy = new GuiBusy();
 			guiBusy.show();
-			
 			
 //			System.out.println("Start Thread Discover Gps");
 			// initialize bluetooth first
@@ -237,7 +243,6 @@ public class DiscoverGps
 		parent.show();
 		parent.addDevice(Locale.get("discovergps.ThreadEnd")/*Thread end*/);
 		parent.btDiscoverReady();
-
 	}
 
 	private void searchDevice() {
@@ -255,13 +260,14 @@ public class DiscoverGps
 			case INQUIRY_ERROR:
 			    parent.addDevice(Locale.get("discovergps.DeviceDiscoveringError")/*Device discovering error...*/);
 				return;
+				
 			case INQUIRY_TERMINATED:
 				// make sure no garbage in found devices list
 				    parent.addDevice(Locale.get("discovergps.DeviceSearchCanceled")/*Device search canceled*/);
 
 				// nothing to report - go to next request
 				break;
-
+				
 			case INQUIRY_COMPLETED:
 				if (devices.size() == 0) {
 //					parent.addDevice("No devices in range");
@@ -272,14 +278,14 @@ public class DiscoverGps
 				   break;
 				}
 				break;
+				
 			default:
 				// what kind of system you are?... :(
 				parent.addDevice(Locale.get("discovergps.UnkRetFromDiscover")/*unknown Return from Discover*/);
 				logger.error("system error:"
 						+ " unexpected device discovery code: " + discType);
-//					destroy();
-
-		//		return;
+//				destroy();
+//				return;
 		}
 //			if (waitUntilNotify()) 
 //				return;
@@ -288,7 +294,8 @@ public class DiscoverGps
 	private void searchService() {
 		synchronized (this) {			
 			searchIDs = new int[devices.size()];
-			int i = 0; int retries = 0;
+			int i = 0; 
+			int retries = 0;
 			while (i < searchIDs.length) {				
 				if (retries > 4) {
 					//This device discovery failed.
@@ -296,7 +303,8 @@ public class DiscoverGps
 					//as serviceSerchComplete uses this to check if all searches
 					//have completed
 					searchIDs[i] = -1;
-					i++; retries = 0;
+					i++; 
+					retries = 0;
 					continue;
 				}
 				try {
@@ -322,74 +330,77 @@ public class DiscoverGps
 		}
 	}
 
-	public synchronized void selectDevice(int idx){
-		selectedDevice=idx;
-		state=SERVICE_SEARCH;
+	public synchronized void selectDevice(int idx) {
+		selectedDevice = idx;
+		state = SERVICE_SEARCH;
 		notify();
 	}
 
 	private void selectService() {
 //		while (!isClosed) {
-		// suche die devices
+		// Search the devices
 		    parent.addDevice(Locale.get("discovergps.SearchDevices")/*search devices*/);
 			searchDevice();
-			if (devices.size() == 0){
+			if (devices.size() == 0) {
 			    parent.addDevice(Locale.get("discovergps.NoDeviceFound")/*no Device found*/);
 			    return;
 			}
-			// durchsuche alle devices nach services
+			// Search all devices for their services
 			    parent.addDevice(Locale.get("discovergps.SearchServices")/*search services*/);
 			searchService();
 			if (getState() != SERVICE_SELECT) {
 				waitUntilNotify();
 			}			
 //			parent.clear();
-			if (devices.size() == 0){
+			if (devices.size() == 0) {
 				parent.addDevice(Locale.get("discovergps.NoServiceFound")/*no Service found*/);
 			    return;
 			}
-			for (int i=0; i<records.size();i++){
-				ServiceRecord service=(ServiceRecord) records.elementAt(i);
+			for (int i = 0; i < records.size(); i++) {
+				ServiceRecord service = (ServiceRecord) records.elementAt(i);
 				parent.addDevice(service.getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false));
 			}
 			// if no Services found, try with the discovered BT devices
 			// this is because RAZER V3i is after firmware update not able
 			// to discover services
-			parent.addDevice(Locale.get("discovergps.Constuct")/*constuct */+devices.size()+Locale.get("discovergps.Services")/* services*/);
-			if (records.size()==0 && devices.size() > 0){
-				for (int dl=0; dl < devices.size(); dl++){
+			parent.addDevice(Locale.get("discovergps.Constuct")/*constuct */ + devices.size() + Locale.get("discovergps.Services")/* services*/);
+			if (records.size() == 0 && devices.size() > 0) {
+				for (int dl = 0; dl < devices.size(); dl++) {
 					RemoteDevice rd = (RemoteDevice) devices.elementAt(dl);
-					parent.addDevice("btspp://"+rd.getBluetoothAddress()+":1;authenticate=false;encrypt=false;master=false",friendlyName(rd)+ "?");
+					parent.addDevice("btspp://" + rd.getBluetoothAddress() 
+							+ ":1;authenticate=false;encrypt=false;master=false",
+							friendlyName(rd) + "?");
 				}
 			}
-
 //		}
-
 	}
+	
 	public void servicesDiscovered(int transID, ServiceRecord[] servRecord) {
 		for (int i = 0; i < servRecord.length; i++) {
 //			String connectionURL = servRecord[i].getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false);
 //			parent.addDevice(connectionURL);
 			records.addElement(servRecord[i]);
 			parent.addDevice(
-					servRecord[i].getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false),
-					friendlyName(servRecord[i].getHostDevice()));
+				servRecord[i].getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false),
+				friendlyName(servRecord[i].getHostDevice()));
 		}
 	}
 	
-	private String friendlyName(RemoteDevice rd){
+	private String friendlyName(RemoteDevice rd) {
 		String address = rd.getBluetoothAddress();
 		String name = null;
 		try {
 			name = rd.getFriendlyName(false);
-		} catch (IOException ioe) {}
+		} catch (IOException ioe) {
+		}
 		// On Nokia 6230 the bluetooth stack is buggy and so it could be
 		// that getFriendlyName() fails. In this case we show at least
 		// the bluetooth address in the device list instead of a friendly name
 		if (name == null || name.trim().length() == 0) {
 			try {
 				name = rd.getFriendlyName(true);
-			} catch (IOException ioe) {}
+			} catch (IOException ioe) {
+			}
 			if (name == null || name.trim().length() == 0) {
 				name = address;
 			}
@@ -418,7 +429,8 @@ public class DiscoverGps
 		}
 
 		/*
-		 * Actually, we do not care about the response code - if device is not reachable or no records, etc.
+		 * Actually, we do not care about the response code - if device is 
+		 * not reachable or no records, etc.
 		 */
 
 		// make sure it was the last transaction
@@ -442,7 +454,6 @@ public class DiscoverGps
 		parent.showState(stateText[state]);
 	}
 
-	
 	private boolean waitUntilNotify() {
 		if (isClosed) {
 			return false;
