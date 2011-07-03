@@ -590,13 +590,25 @@ public class GpsMid extends MIDlet implements CommandListener {
 	public void showBackLightLevel() {
 		if ( Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON,
 				false) ) {
-			trace.alert(Locale.get("gpsmid.Backlight")/*Backlight*/, Locale.get("gpsmid.Backlight2")/*Backlight */
-					+ (Configuration.getBackLightLevel() == 100 ? "ON" : (Configuration.getBackLightLevel() + "%"))
-					+ (Configuration.getCfgBitState(
-							Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED)
-								? " while GPS started" : ""), 1000);
+			if ( Configuration.getCfgBitState(
+					Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED) ) {
+				String level = Integer.toString(Configuration.getBackLightLevel());
+				trace.alert( Locale.get("gpsmid.Backlight")/*Backlight*/,
+					(Configuration.getBackLightLevel() == 100 
+						? Locale.get("gpsmid.BacklightOnWhileGPS") 
+						: Locale.get("gpsmid.BacklightPercentWhileGPS", level)
+					), 1000 );
+			} else {
+				String level = Integer.toString(Configuration.getBackLightLevel());
+				trace.alert( Locale.get("gpsmid.Backlight")/*Backlight*/,
+					(Configuration.getBackLightLevel() == 100 
+						? Locale.get("gpsmid.BacklightOn") 
+						: Locale.get("gpsmid.BacklightPercent",	level)
+					), 1000 );
+			}
 		} else {
-			trace.alert(Locale.get("gpsmid.Backlight")/*Backlight*/, Locale.get("gpsmid.BacklightOff")/*Backlight off*/, 1000);
+			trace.alert(Locale.get("gpsmid.Backlight")/*Backlight*/, 
+					Locale.get("gpsmid.BacklightOff")/*Backlight off*/, 1000);
 		}
 		stopBackLightTimer();
 		startBackLightTimer();
