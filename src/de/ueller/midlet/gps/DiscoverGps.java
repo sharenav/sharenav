@@ -146,7 +146,7 @@ public class DiscoverGps
 		} catch (InterruptedException e) {
 			// ignored
 		}
-		parent.addDevice(Locale.get("discovergps.Distroyed")/*Distroyed*/);
+		parent.addDevice(Locale.get("discovergps.Destroyed")/*Destroyed*/);
 		parent.show();
 	}
 
@@ -363,7 +363,8 @@ public class DiscoverGps
 			// if no Services found, try with the discovered BT devices
 			// this is because RAZER V3i is after firmware update not able
 			// to discover services
-			parent.addDevice(Locale.get("discovergps.Constuct")/*constuct */ + devices.size() + Locale.get("discovergps.Services")/* services*/);
+			String numDevStr = Integer.toString(devices.size()); 
+			parent.addDevice(Locale.get("discovergps.ConstructedServices", numDevStr)/*Constructed {0] services*/);
 			if (records.size() == 0 && devices.size() > 0) {
 				for (int dl = 0; dl < devices.size(); dl++) {
 					RemoteDevice rd = (RemoteDevice) devices.elementAt(dl);
