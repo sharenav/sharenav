@@ -16,7 +16,7 @@ at large.
 <devices>
 
 	<device supportsPolishGui="true">
-		<identifier>Generic/android-hiresonline</identifier>
+		<identifier>Generic/android2.1-hiresonline</identifier>
 		<parent>Generic/android2.1</parent>
 		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing.
 		</description>

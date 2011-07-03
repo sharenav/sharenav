@@ -295,6 +295,8 @@ public class Configuration {
 	public final static byte CFGBIT_SUPPRESS_ROUTE_WARNING = 114;
 	/** bit 115: Flag whether to simplify map drawing when busy */
 	public final static byte CFGBIT_SIMPLIFY_MAP_WHEN_BUSY = 115;
+	/** bit 116: Flag whether to use movement for direction when moving (compass otherwise) */
+	public final static byte CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION = 116;
 	
 	/**
 	 * These are the database record IDs for each configuration option

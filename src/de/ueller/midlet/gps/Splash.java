@@ -25,6 +25,7 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.Image;
 
 import de.enough.polish.util.Locale;
@@ -36,7 +37,11 @@ import android.view.KeyEvent;
 public class Splash extends Canvas implements CommandListener,Runnable{
 	private Image splash;
 	/** Soft button to go back from about screen. */
+	private final Command SELECT_CMD = new Command(Locale.get("splash.select"), Command.OK, 1);
 	private final Command BACK_CMD = new Command(Locale.get("splash.Accept"), Command.OK, 2);
+	private final Command ENGLISH_CMD = new Command("Switch to English", Command.ITEM, 3);
+	private final Command ENABLE_CMD = new Command(Locale.get("splash.enable"), Command.ITEM, 3);
+	private final Command DISABLE_CMD = new Command(Locale.get("splash.disable"), Command.ITEM, 3);
 	private final Command EXIT_CMD = new Command(Locale.get("splash.Deny"), Command.EXIT, 1);
 	private final GpsMid main;
 	String[] txt = {
@@ -87,6 +92,8 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	private final String appVersion; 
 	private boolean initDone = false;
 
+	//#style mainScreen
+	List menuSplash = new List("GpsMid", List.IMPLICIT);
 
 	public Splash(GpsMid main, boolean initDone) {
 		this.main = main;
@@ -127,11 +134,15 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		}
 		appVersion = "V" + Legend.getAppVersion();
 		addCommand(BACK_CMD);
+		//addCommand(EXIT_CMD);
+		//addCommand(ENGLISH_CMD);
+		//addCommand(ENABLE_CMD);
+		//addCommand(DISABLE_CMD);
 		if (!initDone) {
 			addCommand(EXIT_CMD);
 		}
-		show();
 		setCommandListener(this);
+		show();
 		processorThread = new Thread(this, "Splash");
 		processorThread.setPriority(Thread.MIN_PRIORITY);
 		processorThread.start();
@@ -167,16 +178,70 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		}
 	}
 
+	public void menu() {
+		//#style mainCommand
+		menuSplash.append(Locale.get("splash.Accept"), null);
+		//#style mainCommand
+		menuSplash.append(Locale.get("splash.Deny"), null);
+		//#style mainCommand
+		menuSplash.append(Locale.get("splash.enable"), null);
+		//#style mainCommand
+		menuSplash.append(Locale.get("splash.disable"), null);
+		//#style mainCommand
+		menuSplash.append("Switch to English", null);
+		menuSplash.setCommandListener(this);
+		menuSplash.addCommand(BACK_CMD);
+		menuSplash.addCommand(EXIT_CMD);
+		menuSplash.addCommand(ENABLE_CMD);
+		menuSplash.addCommand(DISABLE_CMD);
+		menuSplash.addCommand(ENGLISH_CMD);
+		menuSplash.setTitle("GpsMid");
+		menuSplash.setSelectCommand(SELECT_CMD);
+		GpsMid.getInstance().show(menuSplash);
+	}
+	// endif
+
 	public void commandAction(Command c, Displayable d) {
+        if (c == SELECT_CMD) {
+		shutdown = true;
+		int choice = menuSplash.getSelectedIndex();
+		Command choices[] = {BACK_CMD, EXIT_CMD, ENABLE_CMD, DISABLE_CMD, ENGLISH_CMD};
+		commandAction(choices[choice], null);
+        	return;
+        }
         if (c == BACK_CMD) {
         	shutdown = true;
-        	GpsMid.showMapScreen();
+		GpsMid.getInstance().showMapScreen();
         	return;
         }
         if (c == EXIT_CMD) {
         	shutdown = true;
         	Configuration.setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, false, true);
+//#if polish.android
+		Configuration.setCfgBitState(Configuration.CFGBIT_RUNNING, false, true);
+		main.notifyDestroyed();
+//#else
         	main.exit();
+//#endif
+        	return;
+        }
+        if (c == ENGLISH_CMD) {
+		main.alert("Splash", "Switching to English", 3000);
+		Configuration.setUiLang("en");
+		Configuration.setNaviLang("en");
+		Configuration.setOnlineLang("en");
+		Configuration.setWikipediaLang("en");
+		Configuration.setNamesOnMapLang("en");
+        	return;
+        }
+        if (c == ENABLE_CMD) {
+		Configuration.setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, false, true);
+		main.alert("Splash", Locale.get("splash.ShowSplash"), 3000);
+        	return;
+        }
+        if (c == DISABLE_CMD) {
+		Configuration.setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, true, true);
+		main.alert("Splash", Locale.get("splash.HideSplash"), 3000);
         	return;
         }
 	}
@@ -189,12 +254,6 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		if (!Legend.isValid) {
 			main.alert("Splash", GpsMid.errorMsg, 6000);
 		}
-//#if polish.android
-		// workaround for Android accept buttons; without this, accept/deny don't work.
-		if (initDone) {
-			main.alert("Splash", "Android!", 500);
-		}
-//#endif
 		while (! shutdown){
 			synchronized (this) {
 				try {
@@ -214,10 +273,13 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	protected void pointerPressed(int x, int y) {
 		if (y < getHeight() / 5) {
 			keyPressed(KEY_STAR);
-		}
+		} else
 		// around the region where England is in the map
 		if (y > (2 * getHeight() / 5) && y < (3 * getHeight() / 5) ) {
 			keyPressed(KEY_POUND);
+		} else {
+			menu();
+			//repaint();
 		}
 	}
 	
@@ -232,12 +294,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 			}
 		}
 		if (keyCode == KEY_POUND) {
-			main.alert("Splash", "Switching to English", 3000);
-			Configuration.setUiLang("en");
-			Configuration.setNaviLang("en");
-			Configuration.setOnlineLang("en");
-			Configuration.setWikipediaLang("en");
-			Configuration.setNamesOnMapLang("en");
+			commandAction(ENGLISH_CMD, this);
 		}
 		// FIXME With this there's the problem that Back gets passed on to the next menu
 		// See http://developer.android.com/sdk/android-2.0.html
@@ -246,10 +303,9 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (initDone) {
 				shutdown = true;
-				GpsMid.showMapScreen();
+				GpsMid.getInstance().showMapScreen();
 				return;
 			} else {
-				main.alert("Splash", "Quitting", 3000);
 				shutdown = true;
 				Configuration.setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, false, true);
 				Configuration.setCfgBitState(Configuration.CFGBIT_RUNNING, false, true);

@@ -97,6 +97,7 @@
 	    <!-- Have a look at the <jad>-section for setting specialised attributes.
 	         You can also define localized attributes in the resources/messages.txt files -->
             <!-- lowercase icon name required for Android, before Android support was icon="GpsMid.png" -->
+	    <!-- FIXME: javax.microedition.io.Connector.http should really be only active for the editing target -->
 		<info
 			name="GpsMid"
 			version="0.7.57"
@@ -108,7 +109,7 @@
 			jarUrl="${deploy-url}${polish.jarName}"
 			copyright="Copyright 2007 - 2011 Harald Mueller and others"
 			deleteConfirm="Do you really want to kill me?"
-			optionalPermissions="javax.microedition.io.Connector.file.read,javax.microedition.io.Connector.file.write,javax.microedition.io.Connector.bluetooth.client,javax.microedition.location.Location,javax.microedition.media.control.RecordControl,javax.microedition.media.control.VideoControl.getSnapshot,javax.microedition.io.Connector.sms,javax.wireless.messaging.sms.receive,javax.wireless.messaging.sms.send,javax.microedition.io.Connector.comm,javax.microedition.io.Connector.cbs,javax.wireless.messaging.cbs.receive,javax.microedition.io.Connector.socket,javax.microedition.io.PushRegistry"
+			optionalPermissions="javax.microedition.io.Connector.file.read,javax.microedition.io.Connector.http,javax.microedition.io.Connector.file.write,javax.microedition.io.Connector.bluetooth.client,javax.microedition.location.Location,javax.microedition.media.control.RecordControl,javax.microedition.media.control.VideoControl.getSnapshot,javax.microedition.io.Connector.sms,javax.wireless.messaging.sms.receive,javax.wireless.messaging.sms.send,javax.microedition.io.Connector.comm,javax.microedition.io.Connector.cbs,javax.wireless.messaging.cbs.receive,javax.microedition.io.Connector.socket,javax.microedition.io.PushRegistry"
 		/>
 		
 		<!-- selection of supported devices -->
@@ -299,7 +300,7 @@
 			jarUrl="${deploy-url}${polish.jarName}"
 			copyright="Copyright 2007 - 2011 Harald Mueller and others"
 			deleteConfirm="Do you really want to kill me?"
-			optionalPermissions="javax.microedition.io.Connector.file.read,javax.microedition.io.Connector.file.write,javax.microedition.io.Connector.bluetooth.client,javax.microedition.location.Location,javax.microedition.media.control.RecordControl,javax.microedition.media.control.VideoControl.getSnapshot,javax.microedition.io.Connector.sms,javax.wireless.messaging.sms.receive,javax.wireless.messaging.sms.send,javax.microedition.io.Connector.comm,javax.microedition.io.Connector.cbs,javax.wireless.messaging.cbs.receive,javax.microedition.io.Connector.socket,javax.microedition.io.PushRegistry"
+			optionalPermissions="javax.microedition.io.Connector.file.read,javax.microedition.io.Connector.http,javax.microedition.io.Connector.file.write,javax.microedition.io.Connector.bluetooth.client,javax.microedition.location.Location,javax.microedition.media.control.RecordControl,javax.microedition.media.control.VideoControl.getSnapshot,javax.microedition.io.Connector.sms,javax.wireless.messaging.sms.receive,javax.wireless.messaging.sms.send,javax.microedition.io.Connector.comm,javax.microedition.io.Connector.cbs,javax.wireless.messaging.cbs.receive,javax.microedition.io.Connector.socket,javax.microedition.io.PushRegistry"
 		/>
 		
 		<!-- selection of supported devices -->
@@ -307,7 +308,7 @@
 		<!-- Generic/midp1 phone, but when the test-property is set to false, -->
 		<!-- the second deviceRequirements will be used instead. -->
 		<deviceRequirements if="test and !testmicroemu">
-			<requirement name="Identifier" value="Generic/android-hiresonline" />
+			<requirement name="Identifier" value="Generic/android2.1-hiresonline" />
 		</deviceRequirements>
 		<deviceRequirements if="testmicroemu">
 			<requirement name="Identifier" value="${gpsmid.microemu_device}" />
@@ -318,7 +319,7 @@
 		<deviceRequirements unless="test">
 			<or>
 				<requirement name="Identifier" value="Generic/android" />
-				<requirement name="Identifier" value="Generic/android-hiresonline" />
+				<requirement name="Identifier" value="Generic/android2.1-hiresonline" />
 				<requirement name="Identifier" value="Generic/android2.2-hiresonline" />
 				<requirement name="Identifier" value="Generic/android2.3-hiresonline" />
 			</or>

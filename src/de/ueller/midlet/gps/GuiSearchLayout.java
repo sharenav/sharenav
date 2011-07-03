@@ -19,7 +19,7 @@ import javax.microedition.lcdui.Graphics;
 
 
 public class GuiSearchLayout extends LayoutManager {
-	public static final int KEY_SORT = 0;
+	public static final int KEY_KEYPAD = 0;
 	public static final int KEY_CLOSE = 1;
 	public static final int KEY_BACKSPACE = 2;
 	public static final int KEY_1 = 3;
@@ -83,7 +83,7 @@ public class GuiSearchLayout extends LayoutManager {
 
 		//ydiff = 0;
 
-		e = ele[KEY_SORT];
+		e = ele[KEY_KEYPAD];
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_TOP |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
@@ -102,7 +102,7 @@ public class GuiSearchLayout extends LayoutManager {
 			LayoutElement.FLAG_FONT_MEDIUM
 		);
 		e.setAdditionalOffsY(ydiff);
-		e.setHRelative(ele[KEY_SORT]);
+		e.setHRelative(ele[KEY_KEYPAD]);
 		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
@@ -125,7 +125,7 @@ public class GuiSearchLayout extends LayoutManager {
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
 			LayoutElement.FLAG_FONT_MEDIUM
 		);
-		e.setVRelative(ele[KEY_SORT]);
+		e.setVRelative(ele[KEY_KEYPAD]);
 		e.setAdditionalOffsX(xdiff);
 		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 		e.setSpecialElementID(SE_KEY);

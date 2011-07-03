@@ -2560,10 +2560,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		compassDeviated = ((int) direction + compassDeviation + 360) % 360;
 		// TODO: allow for user to use compass for turning the map in panning mode
 		// (gpsRenter test below switchable by user setting)
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null && gpsRecenter) {
-			updateCourse(compassDeviated);
+		//if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null && gpsRecenter) {
+		//	if (!Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION)) {
+		//		updateCourse(compassDeviated);
+		//	}
 			//repaint();
-		}
+		//}
 		//	course = compassDeviated;
 		//}
 	}
@@ -2644,12 +2646,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			center.setLatLonDeg(pos.latitude, pos.longitude);
 			speed = (int) (pos.speed * 3.6f);
 			fspeed = pos.speed * 3.6f;
-			// FIXME add auto-fallback mode where course is from GPS at high speeds and from compass
+			// auto-fallback mode where course is from GPS at high speeds and from compass
 			// at low speeds
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null && !Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION)) {
 				updateCourse(compassDeviated);
-                       } else if (fspeed >= courseMinSpeed && pos.course != Float.NaN ) {
-
+			} else if (fspeed >= courseMinSpeed && pos.course != Float.NaN ) {
                                // Problem: resolve issue erratic course due to GPS fluctuation
                                // when GPS reception is poor (maybe 3..7S),
                                // causes unnecessary and disturbing map rotation when device is in one location
@@ -2663,7 +2664,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				       secondPrevCourse = prevCourse;
 
                                } else if (prevCourse == -1) {
-                                       // previous course was invalid,
+				       if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION)) {
+					       updateCourse(compassDeviated);
+				       }                                       // previous course was invalid,
                                        // don't set course yet, but set the first tentatively good course
                                        prevCourse = (int) pos.course;
                                } else if (secondPrevCourse == -1) {
@@ -2673,6 +2676,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
                                        if (Math.abs(prevCourse - (int)pos.course) < 30 || Math.abs(prevCourse - (int)pos.course) > 330) {
                                                secondPrevCourse = prevCourse;
                                        }
+				       if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION)) {
+					       updateCourse(compassDeviated);
+				       }
                                } else {
                                        // we have received two previous valid curses, check for this one
                                        if (Math.abs(prevCourse - (int)pos.course) < 30 || Math.abs(prevCourse - (int)pos.course) > 330) {
@@ -2681,11 +2687,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
                                                updateCourse((int) pos.course);
                                        } else {
                                                secondPrevCourse = -1;
+					       if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION)) {
+						       updateCourse(compassDeviated);
+					       }
                                        }
                                }
 			       prevCourse = (int) pos.course;
-                       } else {
-                               // speed under the minimum. If it went under the limit now, do a heuristic
+			} else {
+				// speed under the minimum. If it went under the limit now, do a heuristic
 				// to decide a proper course.
 				// invalidate all prev courses
 				if (thirdPrevCourse != -1) {
@@ -2705,6 +2714,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				prevCourse = -1;
 				secondPrevCourse = -1;
 				thirdPrevCourse = -1;
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION)) {
+					updateCourse(compassDeviated);
+				}
 			}
 		}
 		if (gpx.isRecordingTrk()) {
