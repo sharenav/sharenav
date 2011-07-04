@@ -258,7 +258,7 @@ public class TraceLayout extends LayoutManager {
 		e = ele[SHOW_DEST]; addElement(e,
 					       LayoutElement.FLAG_HALIGN_LEFT |
 					       LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
-					       LayoutElement.FLAG_VALIGN_CENTER_AT_TOP_OF_ELEMENT |
+					       LayoutElement.FLAG_VALIGN_CENTER |
 					       LayoutElement.FLAG_FONT_LARGE |
 					       LayoutElement.FLAG_BACKGROUND_BORDER |
 					       LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
