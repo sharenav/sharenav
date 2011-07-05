@@ -72,10 +72,10 @@ public class TraceLayout extends LayoutManager {
 		}
 		
 		if ( maxX - minX < (maxY - minY) * 3 / 2 ) {
-			// horizontal layout
+			// portrait layout
 			createLayout(true);
 		} else {
-			// vertical layout
+			// landscape layout
 			createLayout(false);
 		}
 		
@@ -85,7 +85,7 @@ public class TraceLayout extends LayoutManager {
 	/**
 	 * Layout
 	 */
-	private void createLayout(boolean isHorizontalLayout) {
+	private void createLayout(boolean isPortraitLayout) {
 		LayoutElement e;
 		e = ele[TITLEBAR]; addElement(e,
 			LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_TOP |
@@ -286,16 +286,16 @@ public class TraceLayout extends LayoutManager {
 		
 		e = ele[RECORDINGS]; 
 		addElement(e,
-				(isHorizontalLayout ? LayoutElement.FLAG_HALIGN_LEFT : LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE) |
+				(isPortraitLayout ? LayoutElement.FLAG_HALIGN_LEFT : LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE) |
 				LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
-				(isHorizontalLayout ? LayoutElement.FLAG_VALIGN_BELOW_RELATIVE : LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE) |				
+				(isPortraitLayout ? LayoutElement.FLAG_VALIGN_BELOW_RELATIVE : LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE) |				
 				LayoutElement.FLAG_FONT_LARGE |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 				);
 		e.setVRelative(ele[SHOW_DEST]);
-		if (!isHorizontalLayout) {
+		if (!isPortraitLayout) {
 			e.setHRelative(ele[RECENTER_GPS]);
 		}
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
@@ -304,16 +304,16 @@ public class TraceLayout extends LayoutManager {
 
 		e = ele[SEARCH]; 
 		addElement(e,
-				(isHorizontalLayout ? LayoutElement.FLAG_HALIGN_LEFT : LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE) |
+				(isPortraitLayout ? LayoutElement.FLAG_HALIGN_LEFT : LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE) |
 				LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
-				(isHorizontalLayout ? LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE : LayoutElement.FLAG_VALIGN_BELOW_RELATIVE) |				
+				(isPortraitLayout ? LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE : LayoutElement.FLAG_VALIGN_BELOW_RELATIVE) |				
 				LayoutElement.FLAG_FONT_LARGE |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 				);
 		e.setVRelative(ele[RECENTER_GPS]);
-		if (!isHorizontalLayout) {
+		if (!isPortraitLayout) {
 			e.setHRelative(ele[RECENTER_GPS]);
 		}
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
