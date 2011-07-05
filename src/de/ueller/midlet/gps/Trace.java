@@ -2032,7 +2032,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					e.setActionID(SHOW_DEST_CMD + (Trace.SET_DEST_CMD << 16) );					
 				}
 				tl.ele[TraceLayout.RECORDINGS].setText("*");
-				tl.ele[TraceLayout.SEARCH].setText("_");
 			}
 
 			e = tl.ele[TraceLayout.TITLEBAR];

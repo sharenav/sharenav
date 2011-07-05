@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry excluding="model/" kind="src" path="Osm2GpsMid/src/de/ueller/osmToGpsMid"/>
-	<classpathentry kind="src" path="Osm2GpsMid/src/de/ueller/osmToGpsMid/model"/>
-	<classpathentry excluding="de/ueller/osmToGpsMid/model/|de/ueller/osmToGpsMid/" kind="src" path="Osm2GpsMid/src"/>
 	<classpathentry kind="src" path="GpsMidGraph"/>
 	<classpathentry kind="con" path="J2MELIB"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
