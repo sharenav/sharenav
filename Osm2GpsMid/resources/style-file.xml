@@ -2130,29 +2130,6 @@ end -->
   			</Wvalue>
    		</keyW>
 		<keyW tag = "place">
-			<Wvalue name = "island" priority = "10">
-			  <!-- special case for islands with natural=coastline which implies water around the island is not drawn correctly. FIXME when natural=coastline is handled right. -->
-				<specialisation key="natural" value="coastline"/>
-				<description desc = "Island"/>
-				<namekey tag = "name"/>                 
-				<showName style = "area"/> 
-				<isArea area = "false"/>
-				<scale scale = "12"/>
-				<lineColor color = "00005555" colorAtNight="00CCFFFF"/>
-  				<wayWidth width="10" />
-				<force_to layer = "-2"/>
-			</Wvalue>
-			<Wvalue name = "island" priority = "10">
-			  <!-- special case for islands with natural=coastline which implies water around the island is not drawn correctly. FIXME when natural=coastline is handled right. -->
-				<specialisation key="natural" value="coastline" condition="exclude"/>
-				<description desc = "Island"/>
-				<namekey tag = "name"/>                 
-				<isArea area = "true"/>
-				<scale scale = "12"/>
-				<lineColor color = "009BFF9B" colorAtNight="00002200"/>  <!-- same as map background -->
-			</Wvalue>
-		</keyW>
-		<keyW tag = "place">
 			<Wvalue name = "islet" priority = "10">
 			  <!-- special case for islets with natural=coastline which implies water around the islet is not drawn correctly. FIXME when natural=coastline is handled right. -->
 				<specialisation key="natural" value="coastline"/>

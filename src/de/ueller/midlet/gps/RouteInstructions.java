@@ -968,6 +968,7 @@ public class RouteInstructions {
 				for (i2=i+1; i2<route.size()-1 && (ri < RI_6TH_EXIT); i2++) {
 					c2 = getRouteElement(i2);
 					if ( (c2.wayRouteFlags & Legend.ROUTE_FLAG_ROUNDABOUT) == 0 ) { 
+						c2.wayRouteFlags |= Legend.ROUTE_FLAG_INVISIBLE;
 						break;
 					}
 					// count only exits in roundabouts
@@ -1406,6 +1407,7 @@ public class RouteInstructions {
 				sb.append(" Cons:" + c.to.getConSize() + " numRoutableWays: " + c.numToRoutableWays + " startBearing: " + c.startBearing + "/" + c.wayConStartBearing + " endBearing: "+ c.endBearing + "/" + c.wayConEndBearing);
 				sb.append(" Duration: " + c.durationFSecsToNext / 5);
 				sb.append(" Route Speed in km/h: " + (int) (3.6f * 5 * c.wayDistanceToNext / c.durationFSecsToNext));
+				sb.append(" WayFrom/ToConAt" + c.wayFromConAt + "/" + c.wayToConAt);
 				System.out.println(sb.toString());
 			}
 		}		
