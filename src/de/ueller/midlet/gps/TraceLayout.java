@@ -37,20 +37,19 @@ public class TraceLayout extends LayoutManager {
 	public static final int ZOOM_OUT = 15;
 	public static final int RECENTER_GPS = 16;
 	public static final int SHOW_DEST = 17;
-	public static final int ALTITUDE = 18;
-	public static final int CURRENT_TIME = 19;
-	public static final int ETA = 20;
-	public static final int ROUTE_OFFROUTE = 21;
-	public static final int ELE_COUNT = 22;
+	public static final int RECORDINGS = 18;
+	public static final int SEARCH = 20;
+	public static final int ALTITUDE = 21;
+	public static final int CURRENT_TIME = 22;
+	public static final int ETA = 23;
+	public static final int ROUTE_OFFROUTE = 24;
+	public static final int ELE_COUNT = 25;
 
 	// special element ids
 	public static final byte SE_SCALEBAR = 1;
 	public static final byte SE_SPEEDING_SIGN = 2;
 	
-	public boolean usingVerticalLayout = false;
-	
 	public static boolean bigOnScreenButtons = false;
-	
 	
 	public LayoutElement ele[] = new LayoutElement[ELE_COUNT];
 	
@@ -64,28 +63,29 @@ public class TraceLayout extends LayoutManager {
 	private int speedingSignWidth = 0;
 	private String sOldSpeed = "";
 	
+	
 	public TraceLayout(int minX, int minY, int maxX, int maxY) {
 		super(minX, minY, maxX, maxY, Legend.COLORS[Legend.COLOR_MAP_TOUCHED_BUTTON_BACKGROUND]);
 		
-		for (int i=0; i<ELE_COUNT; i++){
+		for (int i = 0; i < ELE_COUNT; i++) {
 			ele[i] = new LayoutElement(this);
 		}
 		
-		if ( maxX - minX < (maxY - minY) * 2 ) {
-			createHorizontalLayout();
-			usingVerticalLayout = false;
+		if ( maxX - minX < (maxY - minY) * 3 / 2 ) {
+			// portrait layout
+			createLayout(true);
 		} else {
-			createVerticalLayout();
-			usingVerticalLayout = true;
+			// landscape layout
+			createLayout(false);
 		}
 		
 		validate();
 	}
 	
-	/*
-	 * layout for most mobiles
+	/**
+	 * Layout
 	 */
-	private void createHorizontalLayout() {
+	private void createLayout(boolean isPortraitLayout) {
 		LayoutElement e;
 		e = ele[TITLEBAR]; addElement(e,
 			LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_TOP |
@@ -256,7 +256,6 @@ public class TraceLayout extends LayoutManager {
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setActionID(Trace.ZOOM_IN_CMD);
 
-
 		e = ele[SHOW_DEST]; addElement(e,
 					       LayoutElement.FLAG_HALIGN_LEFT |
 					       LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
@@ -268,7 +267,7 @@ public class TraceLayout extends LayoutManager {
 					       );
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
-		// please note: this action id is also set in Trace
+		// Please note: this action ID is also set in Trace
 		e.setActionID(Trace.SHOW_DEST_CMD + (Trace.SET_DEST_CMD << 16) );
 		
 		e = ele[RECENTER_GPS]; addElement(e,
@@ -285,6 +284,44 @@ public class TraceLayout extends LayoutManager {
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setActionID(Trace.RECENTER_GPS_CMD + (Trace.MANUAL_LOCATION_CMD << 8));
 		
+		e = ele[RECORDINGS]; 
+		addElement(e,
+				(isPortraitLayout ? LayoutElement.FLAG_HALIGN_LEFT : LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE) |
+				LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+				(isPortraitLayout ? LayoutElement.FLAG_VALIGN_BELOW_RELATIVE : LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE) |				
+				LayoutElement.FLAG_FONT_LARGE |
+				LayoutElement.FLAG_BACKGROUND_BORDER |
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
+				);
+		e.setVRelative(ele[SHOW_DEST]);
+		if (!isPortraitLayout) {
+			e.setHRelative(ele[RECENTER_GPS]);
+		}
+		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
+		e.setActionID(Trace.SAVE_WAYP_CMD);
+
+		e = ele[SEARCH]; 
+		addElement(e,
+				(isPortraitLayout ? LayoutElement.FLAG_HALIGN_LEFT : LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE) |
+				LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+				(isPortraitLayout ? LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE : LayoutElement.FLAG_VALIGN_BELOW_RELATIVE) |				
+				LayoutElement.FLAG_FONT_LARGE |
+				LayoutElement.FLAG_BACKGROUND_BORDER |
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
+				);
+		e.setVRelative(ele[RECENTER_GPS]);
+		if (!isPortraitLayout) {
+			e.setHRelative(ele[RECENTER_GPS]);
+		}
+		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
+		e.setActionID(Trace.SEARCH_CMD);
+
+		
+		
 		e = ele[SPEEDING_SIGN]; addElement(e,
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 				LayoutElement.FLAG_FONT_LARGE
@@ -296,21 +333,10 @@ public class TraceLayout extends LayoutManager {
 		setOnScreenButtonSize();
 	}	
 	
-	
-	/*
-	 * layout for mobiles with very wide displays like Nokia E90
-	 */
-	private void createVerticalLayout() {
-		// TODO: create vertical layout - currently this layout is still the same as the horizontal layout
-		createHorizontalLayout();
-	}
-	
-
 	public void setOnScreenButtonSize(boolean big) {
 		TraceLayout.bigOnScreenButtons = big;
 		setOnScreenButtonSize();
 	}
-	
 	
 	private void setOnScreenButtonSize() {
 		float factor;
@@ -342,6 +368,14 @@ public class TraceLayout extends LayoutManager {
 		e.setWidthPercent((int) (170 * factor));
 		e.setHeightPercent((int) (170 * factor));
 		e.setFlag(fontFlag2);
+		e = ele[RECORDINGS];
+		e.setWidthPercent((int) (170 * factor));
+		e.setHeightPercent((int) (170 * factor));
+		e.setFlag(fontFlag2);
+		e = ele[SEARCH];
+		e.setWidthPercent((int) (170 * factor));
+		e.setHeightPercent((int) (170 * factor));
+		e.setFlag(fontFlag2);
 		e = ele[POINT_OF_COMPASS];
 		e.setFlag(fontFlag2);
 		e = ele[SOLUTION];
@@ -355,7 +389,6 @@ public class TraceLayout extends LayoutManager {
 		e = ele[SCALEBAR];
 		e.setFlag(fontFlag2);
 	}
-	
 	
 	protected void drawSpecialElement(Graphics g, byte id, String text, int left, int top) {
 		switch(id) {
@@ -387,7 +420,6 @@ public class TraceLayout extends LayoutManager {
 		}
 		return 0;
 	}
-	
 	
 	/**
 	 * Draws the map scale to the screen.
@@ -423,7 +455,6 @@ public class TraceLayout extends LayoutManager {
 						left + scalePx / 2, top + 4, Graphics.HCENTER | Graphics.TOP);
 			}
 		}
-		
 	}
 	
 	public void calcScaleBarWidth(PaintContext pc) {
@@ -444,34 +475,31 @@ public class TraceLayout extends LayoutManager {
 			float d = ProjMath.getDistance(n1, n2);
 			float conv = 1.0f;
 			if (!Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
-				
 				if (d > 1609.344) {
 					conv = 1609.344f;
-					
 				} else {
 					conv = 0.9144f;
 				}
 			}
 			//round this distance up to the nearest 5 or 10
-			int ordMag = (int)(MoreMath.log((d/conv))/MoreMath.log(10.0f));
-			if ((d/conv) < 2.5*MoreMath.pow(10,ordMag)) {
-				scale = 2.5f*MoreMath.pow(10,ordMag) * conv;
-			} else if ((d/conv) < 5*MoreMath.pow(10,ordMag)) {
-				scale = 5*MoreMath.pow(10,ordMag) * conv;
+			int ordMag = (int)(MoreMath.log((d / conv)) / MoreMath.log(10.0f));
+			if ((d / conv) < 2.5 * MoreMath.pow(10, ordMag)) {
+				scale = 2.5f * MoreMath.pow(10, ordMag) * conv;
+			} else if ((d / conv) < 5 * MoreMath.pow(10, ordMag)) {
+				scale = 5 * MoreMath.pow(10, ordMag) * conv;
 			} else {
-				scale = 10*MoreMath.pow(10,ordMag) * conv;
+				scale = 10 * MoreMath.pow(10, ordMag) * conv;
 			}
 
 			//Calculate how many pixels this distance is apart
 			//The scale/d factor should be between 1 and 2.5
 			//due to rounding
-			scalePx = (int)((basePx)*scale/d);
+			scalePx = (int)((basePx) * scale / d);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
 	
 	private int getSpeedingSignWidth(Font font, String sSpeed) {
 		if (sSpeed.length() != sOldSpeed.length()) {
