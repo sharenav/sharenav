@@ -601,7 +601,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 							// As above
 						}
 						//#if polish.android
-						// FIXME current (2010-06) android j2mepolish doesn't give this info
+						// FIXME current (2010-06, 2011-07 (2.2.1)) android j2mepolish doesn't give this info
 						//#else
 						if (jsr179Version != null && jsr179Version.length() > 0) {
 						//#endif
