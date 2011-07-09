@@ -107,7 +107,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	protected static final int MANAGE_TRACKS_CMD = 6;
 	protected static final int SAVE_WAYP_CMD = 7;
 	protected static final int ENTER_WAYP_CMD = 8;
-	protected static final int MAN_WAYP_CMD = 9;
+	protected static final int MANAGE_WAYP_CMD = 9;
 	protected static final int ROUTING_TOGGLE_CMD = 10;
 	protected static final int CAMERA_CMD = 11;
 	protected static final int CLEAR_DEST_CMD = 12;
@@ -281,7 +281,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private final int DOUBLETAP_MAXDELAY = 300;
 	private final int LONGTAP_DELAY = 1000;
 	
-	public volatile boolean routeCalc=false;
+	/** Flag if a route is currently being calculated */
+	public volatile boolean routeCalc = false;
 	public Tile tiles[] = new Tile[6];
 	public volatile boolean baseTilesRead = false;
 	
@@ -292,7 +293,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	private long oldRecalculationTime;
 
+	/** List representing the submenu "Recordings" */
 	private List recordingsMenu = null;
+	/** Array of command numbers corresponding to the items in recordingsMenu */
+	private int[] recordingsMenuCmds = null;
+	/** List representing the submenu "Routing" */
 	private List routingsMenu = null;
 	private GuiTacho guiTacho = null;
 	private GuiTrip guiTrip = null;
@@ -394,6 +399,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public Vector locationUpdateListeners;
 	private Projection panProjection;
 	
+	
 	private Trace() throws Exception {
 		//#debug
 		logger.info("init Trace");
@@ -413,7 +419,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		CMDS[MANAGE_TRACKS_CMD] = new Command(Locale.get("trace.ManageTracks")/*Manage tracks*/,Command.ITEM, 5);
 		CMDS[SAVE_WAYP_CMD] = new Command(Locale.get("trace.SaveWaypoint")/*Save waypoint*/,Command.ITEM, 7);
 		CMDS[ENTER_WAYP_CMD] = new Command(Locale.get("trace.EnterWaypoint")/*Enter waypoint*/,Command.ITEM, 7);
-		CMDS[MAN_WAYP_CMD] = new Command(Locale.get("trace.ManageWaypoints")/*Manage waypoints*/,Command.ITEM, 7);
+		CMDS[MANAGE_WAYP_CMD] = new Command(Locale.get("trace.ManageWaypoints")/*Manage waypoints*/,Command.ITEM, 7);
 		CMDS[ROUTING_TOGGLE_CMD] = new Command(Locale.get("trace.ToggleRouting")/*Toggle routing*/,Command.ITEM, 3);
 		CMDS[CAMERA_CMD] = new Command(Locale.get("trace.Camera")/*Camera*/,Command.ITEM, 9);
 		CMDS[CLEAR_DEST_CMD] = new Command(Locale.get("trace.ClearDestination")/*Clear destination*/,Command.ITEM, 10);
@@ -809,8 +815,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		} else {
 			addCommand(CMDS[CONNECT_GPS_CMD]);
 		}
-		addCommand(CMDS[MANAGE_TRACKS_CMD]);
-		addCommand(CMDS[MAN_WAYP_CMD]);
+		//TODO Cleanup addCommand(CMDS[MANAGE_TRACKS_CMD]);
+		//addCommand(CMDS[MAN_WAYP_CMD]);
 		addCommand(CMDS[ROUTINGS_CMD]);
 		addCommand(CMDS[RECORDINGS_CMD]);
 		addCommand(CMDS[MAPFEATURES_CMD]);
@@ -852,8 +858,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		} else {
 			removeCommand(CMDS[CONNECT_GPS_CMD]);
 		}
-		removeCommand(CMDS[MANAGE_TRACKS_CMD]);
-		removeCommand(CMDS[MAN_WAYP_CMD]);
+		//TODO Cleanup removeCommand(CMDS[MANAGE_TRACKS_CMD]);
+		//removeCommand(CMDS[MAN_WAYP_CMD]);
 		removeCommand(CMDS[MAPFEATURES_CMD]);
 		removeCommand(CMDS[RECORDINGS_CMD]);
 		removeCommand(CMDS[ROUTINGS_CMD]);
@@ -1104,7 +1110,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				}
 				return;
 			}
-			if (c == CMDS[MAN_WAYP_CMD]) {
+			if (c == CMDS[MANAGE_WAYP_CMD]) {
 				if (gpx.isLoadingWaypoints()) {
 					showAlertLoadingWpt();
 				} else {
@@ -1136,7 +1142,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			if (c == CMDS[RECORDINGS_CMD]) {
 				if (recordingsMenu == null) {
 					boolean hasJSR120 = Configuration.hasDeviceJSR120();
-					int noElements = 3;
+					int noElements = 5;
 					//#if polish.api.mmapi
 					noElements += 2;
 					//#endif
@@ -1147,31 +1153,56 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					//#endif
 					
 					int idx = 0;
-					String[] elements = new String[noElements];
+					String[] elements;
 					if (gpx.isRecordingTrk()) {
-						elements[idx++] = Locale.get("trace.StopGpxTracklog")/*Stop Gpx tracklog*/;
+						noElements++;
+						elements = new String[noElements];
+						recordingsMenuCmds = new int[noElements];
+						recordingsMenuCmds[idx] = STOP_RECORD_CMD;
+						elements[idx++] = Locale.get("trace.StopGpxTracklog")/*Stop GPX tracklog*/;
+						if (gpx.isRecordingTrkSuspended()) {
+							recordingsMenuCmds[idx] = TOGGLE_RECORDING_SUSP_CMD;
+							elements[idx++] = Locale.get("trace.ResumeRecording")/*Resume recording*/;							
+						} else {
+							recordingsMenuCmds[idx] = TOGGLE_RECORDING_SUSP_CMD;
+							elements[idx++] = Locale.get("trace.SuspendRecording")/*Suspend recording*/;
+						}
 					} else {
-						elements[idx++] = Locale.get("trace.StartGpxTracklog")/*Start Gpx tracklog*/;
+						elements = new String[noElements];
+						recordingsMenuCmds = new int[noElements];
+						recordingsMenuCmds[idx] = START_RECORD_CMD;
+						elements[idx++] = Locale.get("trace.StartGpxTracklog")/*Start GPX tracklog*/;
 					}
 					
+					recordingsMenuCmds[idx] = SAVE_WAYP_CMD;
 					elements[idx++] = Locale.get("trace.SaveWaypoint")/*Save waypoint*/;
+					recordingsMenuCmds[idx] = ENTER_WAYP_CMD;
 					elements[idx++] = Locale.get("trace.EnterWaypoint")/*Enter waypoint*/;
+					recordingsMenuCmds[idx] = MANAGE_TRACKS_CMD;
+					elements[idx++] = Locale.get("trace.ManageTracks")/*Manage tracks*/;
+					recordingsMenuCmds[idx] = MANAGE_WAYP_CMD;
+					elements[idx++] = Locale.get("trace.ManageWaypoints")/*Manage waypoints*/;
 					//#if polish.api.mmapi
+					recordingsMenuCmds[idx] = CAMERA_CMD;
 					elements[idx++] = Locale.get("trace.TakePictures")/*Take pictures*/;
 					if (audioRec.isRecording()) {
+						recordingsMenuCmds[idx] = TOGGLE_AUDIO_REC;
 						elements[idx++] = Locale.get("trace.StopAudioRecording")/*Stop audio recording*/;
 					} else {
+						recordingsMenuCmds[idx] = TOGGLE_AUDIO_REC;
 						elements[idx++] = Locale.get("trace.StartAudioRecording")/*Start audio recording*/;
 						
 					}
 					//#endif
 					//#if polish.api.wmapi
 					if (hasJSR120) {
+						recordingsMenuCmds[idx] = SEND_MESSAGE_CMD;
 						elements[idx++] = Locale.get("trace.SendSMSMapPos")/*Send SMS (map pos)*/;
 					}
 					//#endif
 					
-					recordingsMenu = new List(Locale.get("trace.Recordings")/*Recordings...*/,Choice.IMPLICIT,elements,null);
+					recordingsMenu = new List(Locale.get("trace.Recordings")/*Recordings...*/,
+							Choice.IMPLICIT, elements, null);
 					recordingsMenu.addCommand(CMDS[OK_CMD]);
 					recordingsMenu.addCommand(CMDS[BACK_CMD]);
 					recordingsMenu.setSelectCommand(CMDS[OK_CMD]);
@@ -1264,54 +1295,27 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			if (c == CMDS[OK_CMD]) {
 				if (d == recordingsMenu) {
-					 switch (recordingsMenu.getSelectedIndex()) {
-			            case 0: {
-		    				if ( gpx.isRecordingTrk() ) {
-		    					commandAction(STOP_RECORD_CMD);
-								if (! Configuration.getCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_STOP)) {
-							    	show();
-								}
-		    				} else {
-		    					commandAction(START_RECORD_CMD);
-								if (! Configuration.getCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_START)) {
-							    	show();
-								}
-		    				}
-			            	break;
-			            }
-			            case 1: {
-			            	commandAction(SAVE_WAYP_CMD);
-							break;
-			            }
-			            case 2: {
-			            	commandAction(ENTER_WAYP_CMD);
-							break;
-			            }
-			          //#if polish.api.mmapi
-			            case 3: {
-			            	commandAction(CAMERA_CMD);
-			            	break;
-			            }
-			            case 4: {
-			            	show();
-			            	commandAction(TOGGLE_AUDIO_REC);
-			            	break;
-			            }
-			          //#endif
-			          //#if polish.api.mmapi && polish.api.wmapi
-			            case 5: {
-			            	commandAction(SEND_MESSAGE_CMD);
-			            	break;
-			            }
-			          //#elif polish.api.wmapi
-			            case 3: {
-			            	commandAction(SEND_MESSAGE_CMD);
-			            	break;
-			            }
-			          //#endif
-					 }
-				}
-				if (d == routingsMenu) {
+					int recCmd = recordingsMenu.getSelectedIndex();
+					if (recCmd >= 0 && recCmd < recordingsMenuCmds.length) {
+						recCmd = recordingsMenuCmds[recCmd];
+						if (recCmd == STOP_RECORD_CMD) {
+	    					commandAction(STOP_RECORD_CMD);
+							if (! Configuration.getCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_STOP)) {
+						    	show();
+							}
+						} else if (recCmd == START_RECORD_CMD) {
+							commandAction(START_RECORD_CMD);
+							if (! Configuration.getCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_START)) {
+							   	show();
+							}
+						} else if (recCmd == TOGGLE_RECORDING_SUSP_CMD) {
+							commandAction(TOGGLE_RECORDING_SUSP_CMD);
+							show();
+			    		} else {
+			    			commandAction(recCmd);
+			    		}
+					}
+				} else if (d == routingsMenu) {
 					show();
 					switch (routingsMenu.getSelectedIndex()) {
 					case 0: {
@@ -1357,7 +1361,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				} else {
 					audioRec.startRecorder();
 				}
-				recordingsMenu = null; // refresh recordings menu
+				recordingsMenu = null; // Refresh recordings menu
 				return;
 			}
 			//#endif
@@ -1513,6 +1517,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						gpx.suspendTrk();
 					}
 				}
+				recordingsMenu = null; // Refresh recordings menu
 				return;
 			}
 			if (c == CMDS[RECENTER_GPS_CMD]) {

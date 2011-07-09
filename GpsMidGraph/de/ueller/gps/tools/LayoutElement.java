@@ -91,6 +91,7 @@ public class LayoutElement {
 	
 	private String text = "";
 	private String imageName;
+	private String toggleImageName;
 	private Image image = null;
 	private boolean imageToggleState = false;
 	
@@ -148,13 +149,11 @@ public class LayoutElement {
 		lm.recalcPositionsRequired = true;
 	}
 	
-
 	protected void calcSizeAndPosition() {
 		calcSize();
 		calcPosition();
 	}
 
-	
 	protected void calcSize() {
 		if ( textIsValid ) {
 			width = textWidth;
@@ -314,13 +313,30 @@ public class LayoutElement {
 		return newLeft;
 	}
 
-	public void setImageNameOnly(String imageName) {
-		this.imageName = imageName;
+	/** Sets the base icon name.
+	 * For elements which can be toggled, the following applies:
+	 * If setToggleImageName() is not used, '0' and '1' get appended to this name
+	 * to derive the actual file names. If it is used, the name set here is the name 
+	 * of the normal icon.  
+	 * @param name Base name of icon
+	 */
+	public void setImageNameOnly(String name) {
+		imageName = name;
 		unloadImage();
 	}
 
+	/** Explicitly sets the name of the alternative icon. If this is set, '0' won't be
+	 * needed at the end of the normal icon.
+	 * This is the only chance to reuse icons, as else versions of them with '0' and '1'
+	 * appended to the names would be needed.
+	 * @param name Name of the alternative icon
+	 */
+	public void setToggleImageName(String name) {
+		toggleImageName = name;
+	}
+
 	public void unloadImage() {
-		this.image = null;
+		image = null;
 	}
 
 	public void loadImage() {
@@ -330,12 +346,18 @@ public class LayoutElement {
 		}
 	}
 
-	public void setAndLoadImage(String imageName) {
-		this.imageName = imageName;
+	public void setAndLoadImage(String name) {
+		imageName = name;
 		try {
 			String imageName2 = imageName;
 			if (hasFlag(FLAG_IMAGE_TOGGLEABLE)) {
-				imageName2 += (imageToggleState?"1":"0");
+				if (toggleImageName == null) {
+					imageName2 += (imageToggleState ? "1" : "0");
+				} else {
+					if (imageToggleState) {
+						imageName2 = toggleImageName;
+					}
+				}
 				//#debug debug
 				logger.debug("Load toggle image: " + imageName2);
 			}
@@ -359,7 +381,6 @@ public class LayoutElement {
 		}
 	}
 	
-
 	private static int calcIconReservedHeight(IconMenuPage imp) {
 		//System.out.println("maxY " + imp.maxY + " minY: " + imp.minY);
 		return (imp.maxY - imp.minY) / imp.numRows;
@@ -399,6 +420,12 @@ public class LayoutElement {
 		return ImageTools.scaleImage(image, imgWidth + extraSize, imgHeight + extraSize);
 	}
 	
+	/** Sets the state for toggling between two icons.
+	 * True = use the alternative icon (with '1' appended to the base name)
+	 * False = use the normal icon (with '0' appended to the base name)
+	 * @see setToggleImageName to set the image names explicitly
+	 * @param state New state
+	 */
 	public void setImageToggleState(boolean state) {
 		boolean oldState = imageToggleState;
 		if (oldState != state) {
@@ -499,10 +526,9 @@ public class LayoutElement {
 		return (flags & flag) > 0;
 	}
 	
-	
 	/**
-	Set horizontal relative to this relative element's position and width
-	combine with FLAG_VALIGN_LEFTTO_RELATIVE or FLAG_RIGHTTO_RELATIVE for the relative direction
+	* Set horizontal relative to this relative element's position and width.
+	* Combine with FLAG_VALIGN_LEFTTO_RELATIVE or FLAG_RIGHTTO_RELATIVE for the relative direction.
 	*/
 	public void setHRelative(LayoutElement e) {
 		hRelativeTo = e;
@@ -523,7 +549,6 @@ public class LayoutElement {
 		lm.recalcPositionsRequired = true;
 	}
 
-	
 	public void setColor(int color) {
 		fgColor = color;
 	}
@@ -547,7 +572,7 @@ public class LayoutElement {
 	public void setActionID(int id) {
 		actionID = id;
 	}
-
+	
 	public int getFontHeight() {
 		return fontHeight;
 	}
@@ -573,7 +598,6 @@ public class LayoutElement {
 		}
 		return null;
 	}
-
 
 	public void paintHighlighted(Graphics g) {
 		//#debug trace
