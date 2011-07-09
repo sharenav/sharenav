@@ -590,7 +590,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 			fulltextForm.setCommandListener(this);
 			GpsMid.getInstance().show(fulltextForm);			
 		}
-
 	}
 
 	//#if polish.api.bigsearch
@@ -628,9 +627,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 	//#endif
 	//#endif
+
 	private void destroy() {
-		searchThread.shutdown();
-		searchThread=null;
+		if (searchThread != null) {
+			searchThread.shutdown();
+			searchThread = null;
+		}
 	}
 
 	public void show() {
