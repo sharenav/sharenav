@@ -607,7 +607,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 							// As above
 						}
 						//#if polish.android
-						// FIXME current (2010-06) android j2mepolish doesn't give this info
+						// FIXME current (2010-06, 2011-07 (2.2.1)) android j2mepolish doesn't give this info
 						//#else
 						if (jsr179Version != null && jsr179Version.length() > 0) {
 						//#endif
@@ -2037,6 +2037,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					e.setActionID(SHOW_DEST_CMD + (Trace.SET_DEST_CMD << 16) );					
 				}
 				tl.ele[TraceLayout.RECORDINGS].setText("*");
+				tl.ele[TraceLayout.SEARCH].setText("_");
 			}
 
 			e = tl.ele[TraceLayout.TITLEBAR];

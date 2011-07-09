@@ -100,7 +100,7 @@
 	    <!-- FIXME: javax.microedition.io.Connector.http should really be only active for the editing target -->
 		<info
 			name="GpsMid"
-			version="0.7.57"
+			version="0.7.61"
 			description="Shows moving map made from OpenStreetMap data"
 			vendorName="Harald Mueller"
 			infoUrl="http://gpsmid.sourceforge.net"
@@ -253,6 +253,7 @@
 			<jad>
 				<attribute name="Nokia-MIDlet-Category" value="Game" if="polish.group.Series40" />
 				<attribute name="Nokia-MIDlet-On-Screen-Keypad" value="no" />
+				<attribute name="MIDlet-Touch-Support" value="true" />
 			</jad>	
 			
 			
@@ -291,7 +292,7 @@
 	<j2mepolish>
 		<info
 			name="GpsMid"
-			version="0.7.57"
+			version="0.7.61"
 			description="Shows moving map made from OpenStreetMap data"
 			vendorName="Harald Mueller"
 			infoUrl="http://gpsmid.sourceforge.net"

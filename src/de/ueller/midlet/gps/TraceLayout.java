@@ -38,17 +38,16 @@ public class TraceLayout extends LayoutManager {
 	public static final int RECENTER_GPS = 16;
 	public static final int SHOW_DEST = 17;
 	public static final int RECORDINGS = 18;
-	public static final int ALTITUDE = 19;
-	public static final int CURRENT_TIME = 20;
-	public static final int ETA = 21;
-	public static final int ROUTE_OFFROUTE = 22;
-	public static final int ELE_COUNT = 23;
+	public static final int SEARCH = 20;
+	public static final int ALTITUDE = 21;
+	public static final int CURRENT_TIME = 22;
+	public static final int ETA = 23;
+	public static final int ROUTE_OFFROUTE = 24;
+	public static final int ELE_COUNT = 25;
 
 	// special element ids
 	public static final byte SE_SCALEBAR = 1;
 	public static final byte SE_SPEEDING_SIGN = 2;
-	
-	public boolean usingVerticalLayout = false;
 	
 	public static boolean bigOnScreenButtons = false;
 	
@@ -72,21 +71,21 @@ public class TraceLayout extends LayoutManager {
 			ele[i] = new LayoutElement(this);
 		}
 		
-		if ( maxX - minX < (maxY - minY) * 2 ) {
-			createHorizontalLayout();
-			usingVerticalLayout = false;
+		if ( maxX - minX < (maxY - minY) * 3 / 2 ) {
+			// portrait layout
+			createLayout(true);
 		} else {
-			createVerticalLayout();
-			usingVerticalLayout = true;
+			// landscape layout
+			createLayout(false);
 		}
 		
 		validate();
 	}
 	
 	/**
-	 * Layout for most mobiles
+	 * Layout
 	 */
-	private void createHorizontalLayout() {
+	private void createLayout(boolean isPortraitLayout) {
 		LayoutElement e;
 		e = ele[TITLEBAR]; addElement(e,
 			LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_TOP |
@@ -286,19 +285,43 @@ public class TraceLayout extends LayoutManager {
 		e.setActionID(Trace.RECENTER_GPS_CMD + (Trace.MANUAL_LOCATION_CMD << 8));
 		
 		e = ele[RECORDINGS]; 
-		addElement(e, LayoutElement.FLAG_HALIGN_LEFT |
+		addElement(e,
+				(isPortraitLayout ? LayoutElement.FLAG_HALIGN_LEFT : LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE) |
 				LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
-				LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
+				(isPortraitLayout ? LayoutElement.FLAG_VALIGN_BELOW_RELATIVE : LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE) |				
 				LayoutElement.FLAG_FONT_LARGE |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 				);
 		e.setVRelative(ele[SHOW_DEST]);
+		if (!isPortraitLayout) {
+			e.setHRelative(ele[RECENTER_GPS]);
+		}
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setActionID(Trace.SAVE_WAYP_CMD);
 
+		e = ele[SEARCH]; 
+		addElement(e,
+				(isPortraitLayout ? LayoutElement.FLAG_HALIGN_LEFT : LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE) |
+				LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+				(isPortraitLayout ? LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE : LayoutElement.FLAG_VALIGN_BELOW_RELATIVE) |				
+				LayoutElement.FLAG_FONT_LARGE |
+				LayoutElement.FLAG_BACKGROUND_BORDER |
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
+				);
+		e.setVRelative(ele[RECENTER_GPS]);
+		if (!isPortraitLayout) {
+			e.setHRelative(ele[RECENTER_GPS]);
+		}
+		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
+		e.setActionID(Trace.SEARCH_CMD);
+
+		
+		
 		e = ele[SPEEDING_SIGN]; addElement(e,
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 				LayoutElement.FLAG_FONT_LARGE
@@ -309,14 +332,6 @@ public class TraceLayout extends LayoutManager {
 		
 		setOnScreenButtonSize();
 	}	
-	
-	/**
-	 * Layout for mobiles with very wide displays like Nokia E90
-	 */
-	private void createVerticalLayout() {
-		// TODO: create vertical layout - currently this layout is still the same as the horizontal layout
-		createHorizontalLayout();
-	}
 	
 	public void setOnScreenButtonSize(boolean big) {
 		TraceLayout.bigOnScreenButtons = big;
@@ -354,6 +369,10 @@ public class TraceLayout extends LayoutManager {
 		e.setHeightPercent((int) (170 * factor));
 		e.setFlag(fontFlag2);
 		e = ele[RECORDINGS];
+		e.setWidthPercent((int) (170 * factor));
+		e.setHeightPercent((int) (170 * factor));
+		e.setFlag(fontFlag2);
+		e = ele[SEARCH];
 		e.setWidthPercent((int) (170 * factor));
 		e.setHeightPercent((int) (170 * factor));
 		e.setFlag(fontFlag2);
