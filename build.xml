@@ -255,10 +255,7 @@
 			<jad>
 				<attribute name="Nokia-MIDlet-Category" value="Game" if="polish.group.Series40" />
 				<attribute name="Nokia-MIDlet-On-Screen-Keypad" value="no" />
-				<!-- No virtual keypad on Samsung -->
 				<attribute name="MIDlet-Touch-Support" value="true" />
-				<!-- No virtual keypad on LG -->
-				<attribute name="LGE-MIDlet-Display-Nav-Keypad" value="no" />
 			</jad>	
 			
 			
