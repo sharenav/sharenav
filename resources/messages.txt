@@ -1231,3 +1231,5 @@ discovergps.ConstructedServices=Constructed {0} services
 trace.ResumeRecording=Resume recording
 traceiconmenu.SuspendRec=Pause Rec
 traceiconmenu.ResumeRec=Resume Rec
+guiwebinfo.TopoMap=Topographic Map
+guiwebinfo.TopoMapFi=Topographic Map (Finland)

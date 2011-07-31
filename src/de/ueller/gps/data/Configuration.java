@@ -57,7 +57,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 24;
+	public final static int VERSION = 25;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -267,7 +267,8 @@ public class Configuration {
 	public final static byte CFGBIT_ONLINE_WEATHER = 99;
 	/** bit 100: indicate whether to show online option */
 	public final static byte CFGBIT_ONLINE_PHONE = 100;
-	/** bit 101: unused */
+	/** bit 101: indicate whether to show topographic map entry */
+	public final static byte CFGBIT_ONLINE_TOPOMAP = 101;
 	/** bit 102: indicate whether to show online option */
 	public final static byte CFGBIT_ONLINE_WEBSITE = 102;
 	/** bit 103: unused */
@@ -778,6 +779,9 @@ public class Configuration {
 		}
 		if (configVersionStored < 24) {
 			cfgBits_64_to_127 |= 1L << CFGBIT_TICKER_ISEARCH;
+		}
+		if (configVersionStored < 25) {
+			cfgBits_64_to_127 |= 1L << CFGBIT_ONLINE_TOPOMAP;
 		}
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);
 	}

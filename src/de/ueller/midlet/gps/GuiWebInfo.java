@@ -49,6 +49,9 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_GEOHACK)) {
 			this.append(Locale.get("guiwebinfo.GeoHack")/*GeoHack*/, null);
 		}
+		if (Legend.enableUrlTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_TOPOMAP)) {
+			this.append(Locale.get("guiwebinfo.TopoMapFi")/*Topographic Map (Finland)*/, null);
+		}
 		//#endif
 		if (Legend.enableUrlTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITE)) {
 			this.append(Locale.get("guiwebinfo.Website")/*Website*/, null);
@@ -103,6 +106,14 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 						+ (mPos.latitude * MoreMath.FAC_RADTODEC)
 						+ "%2C"
 						+ (mPos.longitude * MoreMath.FAC_RADTODEC);
+			}
+			if (site.equalsIgnoreCase(Locale.get("guiwebinfo.TopoMapFi")/*Topographic Map*/)) {
+				// url working at 2011-07-29
+				url = "http://kansalaisen.karttapaikka.fi/kartanhaku/koordinaattihaku.html?feature=ktjraja&y="
+				    + (mPos.latitude * MoreMath.FAC_RADTODEC)
+				    + "&x="
+				    + (mPos.longitude * MoreMath.FAC_RADTODEC)
+				    + "&scale=10000&srsName=EPSG%3A4258&lang=fi";
 			}
 			if (site.equalsIgnoreCase(Locale.get("guiwebinfo.GeoHack")/*GeoHack*/)) {
 				int deglat, minlat;
