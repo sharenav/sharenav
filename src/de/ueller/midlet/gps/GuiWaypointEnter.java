@@ -25,12 +25,13 @@ import de.enough.polish.util.Locale;
  */
 public class GuiWaypointEnter extends Form implements CommandListener {
 	private TextField fldName;
-	private TextField fldLatDeg = new TextField(Locale.get("guiwaypointenter.LatDeg")/*Lat deg:*/, "", 10, TextField.DECIMAL);
-	private TextField fldLatMin = new TextField(Locale.get("guiwaypointenter.LatMin")/*Lat min:*/, "", 10, TextField.DECIMAL);
-	private TextField fldLatSec = new TextField(Locale.get("guiwaypointenter.LatSec")/*Lat sec:*/, "", 10, TextField.DECIMAL);
-	private TextField fldLonDeg = new TextField(Locale.get("guiwaypointenter.LonDeg")/*Lon deg:*/, "", 10, TextField.DECIMAL);
-	private TextField fldLonMin = new TextField(Locale.get("guiwaypointenter.LonMin")/*Lon min:*/, "", 10, TextField.DECIMAL);
-	private TextField fldLonSec = new TextField(Locale.get("guiwaypointenter.LonSec")/*Lon sec:*/, "", 10, TextField.DECIMAL);
+	// really should be TextField.DECIMAL, but as many platforms have bugs, work around them with TextField.ANY
+	private TextField fldLatDeg = new TextField(Locale.get("guiwaypointenter.LatDeg")/*Lat deg:*/, "", 10, TextField.ANY);
+	private TextField fldLatMin = new TextField(Locale.get("guiwaypointenter.LatMin")/*Lat min:*/, "", 10, TextField.ANY);
+	private TextField fldLatSec = new TextField(Locale.get("guiwaypointenter.LatSec")/*Lat sec:*/, "", 10, TextField.ANY);
+	private TextField fldLonDeg = new TextField(Locale.get("guiwaypointenter.LonDeg")/*Lon deg:*/, "", 10, TextField.ANY);
+	private TextField fldLonMin = new TextField(Locale.get("guiwaypointenter.LonMin")/*Lon min:*/, "", 10, TextField.ANY);
+	private TextField fldLonSec = new TextField(Locale.get("guiwaypointenter.LonSec")/*Lon sec:*/, "", 10, TextField.ANY);
 	private static final Command saveCmd = new Command(Locale.get("guiwaypointenter.Save")/*Save*/, Command.OK, 1);
 	private static final Command backCmd = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 2);
 	private Trace parent;
