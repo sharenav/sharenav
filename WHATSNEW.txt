@@ -6,6 +6,7 @@
       an alert is now shown but the track list is shown anyway so the user can hopefully
       recover most of the tracks
     - show lakes at outer zooms and at the same layer as woods
+    - added Finnish NLS topographic map to web connections
     *** User interface changes ***
     - on phones with a back hardkey, it is now possible again to leave
       menus with this key (cancelling any changes).
