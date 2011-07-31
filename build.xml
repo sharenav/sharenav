@@ -79,6 +79,8 @@
 	<property name="dir.dist" value="dist/${customization}" />
 	<property name="deploy-url" value="" />
 	<property name="mapversion" value="69" />
+	<!-- enable if changes have been made to j2mepolish -->
+	<!-- <property name="polish.client.source" value="${polish.home}/j2mepolish-src/j2me/src" /> -->
 </target>
 
 <!-- In this target the J2ME Polish task is used.             -->
