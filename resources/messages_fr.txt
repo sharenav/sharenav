@@ -499,7 +499,7 @@ guiosmentitydisplay.CloseChangeset=Close changeset
 guiosmentitydisplay.CreateChangeset=Create changeset
 guiosmentitydisplay.Edited=Edited 
 guiosmentitydisplay.EditTag=Modifier attribut
-guiosmentitydisplay.keyclé
+guiosmentitydisplay.key=clé
 guiosmentitydisplay.NoDataAvailable=No Data available
 guiosmentitydisplay.RemoveTag=Remove tag
 guiosmentitydisplay.UploadToOSM=Upload to OSM
