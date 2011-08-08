@@ -1,3 +1,4 @@
+GpsMid 0.7.7
     *** Map display ***
     - optionally simplify whan drawing when busy drawing the map (due to panning or
       not being able to keep up with map updates)
