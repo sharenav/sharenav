@@ -322,6 +322,19 @@
 			<or>
 				<requirement name="Identifier" value="Generic/android" />
 				<requirement name="Identifier" value="Generic/android-online" />
+<!--
+				<requirement name="Identifier" value="Generic/android1.5" />
+				<requirement name="Identifier" value="Generic/android1.6" />
+				<requirement name="Identifier" value="Generic/android2.1" />
+				<requirement name="Identifier" value="Generic/android2.2" />
+				<requirement name="Identifier" value="Generic/android2.3" />
+				<requirement name="Identifier" value="Generic/android3.0" />
+-->
+<!--
+    J2MEPolish (2.2.1) has 1.1 and 2.0 targets,
+    but the android SDK doesn't have them, so omitting these.
+    J2MEPolish 2.2.1 doesn't have a 3.1 target which the SDK has.
+-->
 			</or>
 		</deviceRequirements>
 		
