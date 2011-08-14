@@ -1,3 +1,4 @@
+GpsMid 0.7.7
     *** Map display ***
     - optionally simplify whan drawing when busy drawing the map (due to panning or
       not being able to keep up with map updates)
@@ -6,6 +7,7 @@
       an alert is now shown but the track list is shown anyway so the user can hopefully
       recover most of the tracks
     - show lakes at outer zooms and at the same layer as woods
+    - added Finnish NLS topographic map to web connections
     *** User interface changes ***
     - on phones with a back hardkey, it is now possible again to leave
       menus with this key (cancelling any changes).

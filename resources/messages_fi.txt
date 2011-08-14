@@ -760,3 +760,5 @@ routing.RouteContainsTollroads=maksuteitä
 guidiscover.simplify=Yksinkertaista karttaa tarvittaessa
 guidiscover.PerfTuneOptions=Suorituskyky:
 guidiscover.autocompass=automaattivalinta
+guiwebinfo.TopoMap=Maastokartta
+guiwebinfo.TopoMapFi=Maastokartta (Kans.karttapaikka)

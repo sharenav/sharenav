@@ -654,7 +654,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			Locale.get("guiwebinfo.Weather"),
 			Locale.get("guiwebinfo.Phone"),
 			Locale.get("guiwebinfo.Website"),
-			Locale.get("guiwebinfo.WikipediaRSS")
+			Locale.get("guiwebinfo.WikipediaRSS"),
+			Locale.get("guiwebinfo.TopoMap")
 		};
 		onlineOptionGroup = new ChoiceGroup(Locale.get("guidiscover.OnlineSetup")/*Online function setup*/, Choice.MULTIPLE, onlineSetup, null);
 		menuOnlineOptions.append(onlineOptionGroup);
@@ -668,6 +669,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		onlineOptionGroup.setSelectedIndex(3, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITE));
 
 		onlineOptionGroup.setSelectedIndex(4, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WIKIPEDIA_RSS));
+
+		onlineOptionGroup.setSelectedIndex(5, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_TOPOMAP));
 
 		menuOnlineOptions.addCommand(BACK_CMD);
 		menuOnlineOptions.addCommand(OK_CMD);
@@ -1182,6 +1185,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 						onlineOptionGroup.isSelected(3));
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_WIKIPEDIA_RSS,
 						onlineOptionGroup.isSelected(4));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_TOPOMAP,
+						onlineOptionGroup.isSelected(5));
 
 				state = STATE_ROOT;
 				this.show();
