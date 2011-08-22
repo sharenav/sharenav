@@ -4,7 +4,7 @@
 #
 
 user=SOURCEFORGE_USERNAME_HERE
-ver=0.7.57-map69
+ver=0.7.67-map69
 
 ant clean
 #
