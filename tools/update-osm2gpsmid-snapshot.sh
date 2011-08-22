@@ -3,8 +3,8 @@
 # update the Osm2GpsMid snapshots
 #
 
-user=jkpj
-ver=0.7.65-map69
+user=SOURCEFORGE_USERNAME_HERE
+ver=0.7.57-map69
 
 ant clean
 #
