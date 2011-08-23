@@ -1,3 +1,7 @@
+    *** Platforms ***
+    - Android: cut down on the number of targets to simplify builds & distribution; different
+      targets (2.1, 2.2, 2.3 etc.) can be uncommented in build.xml if needed
+
 GpsMid 0.7.7
     *** Map display ***
     - optionally simplify whan drawing when busy drawing the map (due to panning or
@@ -18,7 +22,7 @@ GpsMid 0.7.7
     - a virtual cursor keypad for easy selection of search results for touch screen users
     - show number of satellites also with NoFix on devices which support it
     - Show bluetooth options in GPS setup only when a BT receiver is chosen
-    - add some CSS for making things nicer-looking on Android phones (and other using the J2MEPolish GUI)
+    - add some CSS for making things nicer-looking on Android phones (and others using the J2MEPolish GUI)
     *** Platforms ***
     - Android: due to UI improvements with the help of CSS, using the menus is now a bit more bearable
     *** Tacho ***
