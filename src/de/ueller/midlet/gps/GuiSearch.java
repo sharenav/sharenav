@@ -2032,7 +2032,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 					// index 0 is all POI types
 					Vector res = parent.tiles[Legend.scaleToTile(maxScale)].getNearestPoi(
 						(((POItypeSelectMenuItem)item).getIdx() == 0) ? true : false, poiType, 
-						parent.center.radlat, parent.center.radlon, 10.0f*1000.0f, cmi);
+						parent.center.radlat, parent.center.radlon,
+						Configuration.getPoiSearchDistance()*1000.0f, cmi);
 					for (int i = 0; i < res.size(); i++) {
 						SearchResult sr=(SearchResult) res.elementAt(i);
 						boolean match = false;
