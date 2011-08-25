@@ -91,9 +91,15 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		//#debug debug
 		logger.debug("Center coordinate of tile: " + tt.centerLat + "/" + tt.centerLon);
 		int nodeCount = ds.readShort();
+		if (nodeCount < 0) {
+		    nodeCount += 65536;
+		}
 		short[] radlat = new short[nodeCount];
 		short[] radlon = new short[nodeCount];
 		int iNodeCount = ds.readShort();
+		if (iNodeCount < 0) {
+		    iNodeCount += 65536;
+		}
 		//#debug trace
 		logger.trace("nodes total: " + nodeCount + " interestNode: " + iNodeCount);
 		int[] nameIdx = new int[iNodeCount];
