@@ -2027,6 +2027,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 		isSearchCanceled = false;
 		Thread t = new Thread(new Runnable() {
 			public void run() {
+				int foundEntries = 0;
+				int SEARCH_MAX_COUNT = Configuration.getSearchMax();
+
 				try {
 					int maxScale = Legend.getNodeMaxScale(poiType);
 					// index 0 is all POI types
@@ -2050,7 +2053,17 @@ public class GuiSearch extends Canvas implements CommandListener,
 							match = true;
 						}
 						if (match) {
-							addResult(sr);
+							foundEntries++;
+							if (foundEntries <= SEARCH_MAX_COUNT) {
+								addResult(sr);
+							} else if (foundEntries == SEARCH_MAX_COUNT + 1) {
+									//#debug info
+									logger.info("Found SEARCH_MAX_COUNT entries. That's enough, stopping further search");
+									if (!Configuration.getCfgBitState(Configuration.CFGBIT_SUPPRESS_SEARCH_WARNING)) {
+										GpsMid.getInstance().alert(Locale.get("SearchNames.SearchWarningTitle")/*Search warning*/,
+													   Locale.get("SearchNames.SearchWarning")/*Maximum search count exceeded, search interrupted*/, 500);
+									}
+							} 
 						}
 					}
 					state = STATE_MAIN;
