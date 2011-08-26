@@ -376,14 +376,14 @@ public class SearchNames implements Runnable {
 							}
 							newSearch = false;
 						}
-						if (gui.addResult(sr)) {
+						if (foundEntries < SEARCH_MAX_COUNT && gui.addResult(sr)) {
 							foundEntries++;
-							if (foundEntries > SEARCH_MAX_COUNT) {
-								// FIXME should announce this to user to tell search is not working instead
-								// of silently not showing results
+							if (foundEntries >= SEARCH_MAX_COUNT) {
 								//#debug info
 								logger.info("Found SEARCH_MAX_COUNT entries. That's enough, stopping further search");
-								if (!Configuration.getCfgBitState(Configuration.CFGBIT_SUPPRESS_SEARCH_WARNING)) {
+								if (
+								    (foundEntries == SEARCH_MAX_COUNT)
+								    && !Configuration.getCfgBitState(Configuration.CFGBIT_SUPPRESS_SEARCH_WARNING)) {
 									GpsMid.getInstance().alert(Locale.get("SearchNames.SearchWarningTitle")/*Search warning*/,
 										     Locale.get("SearchNames.SearchWarning")/*Maximum search count exceeded, search interrupted*/, 500);
 								}
