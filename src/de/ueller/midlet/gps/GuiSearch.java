@@ -953,16 +953,15 @@ public class GuiSearch extends Canvas implements CommandListener,
 			    && i == cursor && needsTicker && tickerDiff > 0) {
 				tickerUse = tickerDiff;
 			}
-
-			if (i == cursor && needsTicker && tickerDiff > 0) {
-				if (!nameBiggerThanFits(gc, name.substring(tickerDiff)) && ticker > 0) {
-					tickerAtEnd();
-				}
-			}
 			if (tickerUse >= name.length()) {
 				tickerUse = name.length() - 1;
 			}
 			name = name.substring(tickerUse);
+			if (i == cursor && needsTicker && tickerDiff > 0) {
+				if (!nameBiggerThanFits(gc, name) && ticker > 0) {
+					tickerAtEnd();
+				}
+			}
 			if (name != null) {
 				// avoid index out of bounds 
 				// FIXME add code to handle word search code and housenumber search result highlighting
