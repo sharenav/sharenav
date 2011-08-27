@@ -118,7 +118,8 @@ public class SeaGenerator2 {
 		if (configuration.getUseSeaTiles()) {
 			// divide map area into parts; run sea multipolygon generation for each part
 			// FIXME would be better to calculate divider so map is divided into X km areas
-			final int divider = 40;
+			final int latDivider = 40;
+			final int lonDivider = 40;
 			//final int divider = 20;
 
 			Bounds allMapBounds = seaBounds.clone();
@@ -126,17 +127,17 @@ public class SeaGenerator2 {
 			for (int lat = 0; lat < divider ; lat++) {
 				for (int lon = 0; lon < divider ; lon++) {
 					// loop x & y
-					sw = new Node(allMapBounds.minLat + (allMapBounds.maxLat - allMapBounds.minLat) / divider * lat,
-							   allMapBounds.minLon + (allMapBounds.maxLon - allMapBounds.minLon) / divider * lon,
+					sw = new Node(allMapBounds.minLat + (allMapBounds.maxLat - allMapBounds.minLat) / latDivider * lat,
+							   allMapBounds.minLon + (allMapBounds.maxLon - allMapBounds.minLon) / lonDivider * lon,
 							   FakeIdGenerator.makeFakeId());
-					nw = new Node(allMapBounds.minLat + (allMapBounds.maxLat - allMapBounds.minLat) / divider * (lat + 1),
-							   allMapBounds.minLon + (allMapBounds.maxLon - allMapBounds.minLon) / divider * lon,
+					nw = new Node(allMapBounds.minLat + (allMapBounds.maxLat - allMapBounds.minLat) / latDivider * (lat + 1),
+							   allMapBounds.minLon + (allMapBounds.maxLon - allMapBounds.minLon) / lonDivider * lon,
 							   FakeIdGenerator.makeFakeId());
-					se = new Node(allMapBounds.minLat + (allMapBounds.maxLat - allMapBounds.minLat) / divider * lat,
-							   allMapBounds.minLon + (allMapBounds.maxLon - allMapBounds.minLon) / divider * (lon + 1),
+					se = new Node(allMapBounds.minLat + (allMapBounds.maxLat - allMapBounds.minLat) / latDivider * lat,
+							   allMapBounds.minLon + (allMapBounds.maxLon - allMapBounds.minLon) / lonDivider * (lon + 1),
 							   FakeIdGenerator.makeFakeId());
-					ne = new Node(allMapBounds.minLat + (allMapBounds.maxLat - allMapBounds.minLat) / divider * (lat + 1),
-							   allMapBounds.minLon + (allMapBounds.maxLon - allMapBounds.minLon) / divider * (lon + 1),
+					ne = new Node(allMapBounds.minLat + (allMapBounds.maxLat - allMapBounds.minLat) / latDivider * (lat + 1),
+							   allMapBounds.minLon + (allMapBounds.maxLon - allMapBounds.minLon) / lonDivider * (lon + 1),
 							   FakeIdGenerator.makeFakeId());
 
 					seaBounds.minLat = sw.lat;
@@ -164,6 +165,7 @@ public class SeaGenerator2 {
 					System.out.println("mapBounds: " + mapBounds);
 
 					landWays.clear();
+					foundCoast = false;
 					for (Way w: parser.getWays()) {
 						natural = w.getAttribute("natural");
 						if (natural != null) {
@@ -226,7 +228,6 @@ public class SeaGenerator2 {
 		}
 	}
 	public void generateSeaMultiPolygon(OsmParser parser, Node sw, Node se, Node nw, Node ne, ArrayList<Way> landWays, Bounds mapBounds) {
-		foundCoast = false;
 		long seaId = FakeIdGenerator.makeFakeId();
 		Way sea = new Way(seaId);
 		sea.addNode(sw);
