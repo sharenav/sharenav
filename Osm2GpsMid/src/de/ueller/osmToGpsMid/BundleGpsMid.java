@@ -504,7 +504,7 @@ public class BundleGpsMid implements Runnable {
 			SeaGenerator2.setOptions(config, true, true, true, true, 100);
 			if (config.getGenerateSea()) {
 				System.out.println("Starting SeaGenerator");
-				sg2.generateSeaMultiPolygon(parser);
+				sg2.generateSea(parser);
 				time = (System.currentTimeMillis() - startTime);
 				System.out.println("SeaGenerator run");
 				System.out.println("  Time taken: " + time / 1000 + " seconds");

@@ -84,8 +84,7 @@ public class SeaGenerator2 {
 		maxCoastlineGap = aMaxCoastlineGap;
 	}
 	
-	public void generateSeaMultiPolygon(OsmParser parser) {
-		
+	public void generateSea(OsmParser parser) {
 		seaBounds = new Bounds();
 
 		// remember coastlines and add them to landways
@@ -129,6 +128,9 @@ public class SeaGenerator2 {
 		Node sw = new Node(seaBounds.maxLat, seaBounds.minLon, FakeIdGenerator.makeFakeId());
 		Node se = new Node(seaBounds.maxLat, seaBounds.maxLon, FakeIdGenerator.makeFakeId());
 
+		generateSeaMultiPolygon(parser, nw, ne, sw, se, landWays);
+	}
+	public void generateSeaMultiPolygon(OsmParser parser, Node nw, Node ne, Node sw, Node se, ArrayList<Way> landWays) {
 		long seaId = FakeIdGenerator.makeFakeId();
 		Way sea = new Way(seaId);
 		sea.addNode(nw);
