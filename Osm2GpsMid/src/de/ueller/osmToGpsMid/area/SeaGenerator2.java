@@ -116,8 +116,8 @@ public class SeaGenerator2 {
 
 		// use sea tiles: divide map area into separate parts for more efficient processing (experimental)
 		if (configuration.getUseSeaTiles()) {
-			// divide map area into four parts; run sea multipolygon generation for each part
-			final int divider = 5;
+			// divide map area into parts; run sea multipolygon generation for each part
+			final int divider = 40;
 
 			Bounds allMapBounds = seaBounds.clone();
 
@@ -230,9 +230,9 @@ public class SeaGenerator2 {
 			// check if in map bounds; if not, skip this
 			// FIXME should cut ways on sea tile boundary
 
-			//if (!mapBounds.isMostlyIn(w.getBounds())) {
-			if (!mapBounds.isCompleteIn(w.getBounds())) {
-				System.out.println("Way " + w + " not in bounds");
+			if (!mapBounds.isMostlyIn(w.getBounds())) {
+				//if (!mapBounds.isCompleteIn(w.getBounds())) {
+				//System.out.println("Way " + w + " not in bounds");
 				it.remove();
 				continue;
 			} else {
