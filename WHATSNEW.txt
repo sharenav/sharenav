@@ -1,6 +1,9 @@
     *** Search ***
     - allow configuration of POI search distance; default is 10 km. A high limit
       does not work in all areas, depending on number of map objects (tile size?).
+    - bug fix to prevent POI search crashes which appeared more often on slow
+      devices and less often on faster devices
+    - heed max search count for POI search, bugfix for name search fencepost error
     *** Map display ***
     - some workarounds (mainly useful for sea rendering) for map data overflows which can
       appear due to shortcomings of Osm2GpsMid
