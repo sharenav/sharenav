@@ -119,6 +119,7 @@ public class SeaGenerator2 {
 			// divide map area into parts; run sea multipolygon generation for each part
 			// FIXME would be better to calculate divider so map is divided into X km areas
 			final int divider = 40;
+			//final int divider = 20;
 
 			Bounds allMapBounds = seaBounds.clone();
 
@@ -145,7 +146,7 @@ public class SeaGenerator2 {
 					// whole map area sea generation
 
 					float seaMargin = 0.000005f;
-					float seaTileMargin = 0.000005f;
+					float seaTileMargin = 0.000010f;
 
 					seaBounds.minLat -= seaMargin;
 					seaBounds.minLon -= seaMargin;
@@ -154,10 +155,10 @@ public class SeaGenerator2 {
 
 					mapBounds = seaBounds.clone();
 
-					mapBounds.minLat -= seaTileMargin;
-					mapBounds.minLon -= seaTileMargin;
-					mapBounds.maxLat += seaTileMargin;
-					mapBounds.maxLon += seaTileMargin;
+					mapBounds.minLat += seaTileMargin;
+					mapBounds.minLon += seaTileMargin;
+					mapBounds.maxLat -= seaTileMargin;
+					mapBounds.maxLon -= seaTileMargin;
 
 					System.out.println("seaBounds: " + seaBounds);
 					System.out.println("mapBounds: " + mapBounds);
