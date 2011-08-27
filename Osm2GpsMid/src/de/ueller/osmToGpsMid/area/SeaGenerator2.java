@@ -109,33 +109,74 @@ public class SeaGenerator2 {
 			}
 		}
 		
-		mapBounds = seaBounds.clone();
+		// use sea tiles: divide map area into separate parts for more efficient processing (experimental)
+		if (configuration.getUseSeaTiles()) {
+			// divide map area into four parts; run sea multipolygon generation for each part
+			// loop x & y
+			Node w = new Node((seaBounds.minLat + seaBounds.maxLat) / 2, seaBounds.minLon, FakeIdGenerator.makeFakeId());
+			Node s = new Node(seaBounds.minLat, (seaBounds.minLon + seaBounds.maxLon) / 2, FakeIdGenerator.makeFakeId());
+			Node e = new Node((seaBounds.minLat + seaBounds.maxLat) / 2, seaBounds.maxLon, FakeIdGenerator.makeFakeId());
+			Node n = new Node(seaBounds.maxLat, (seaBounds.minLon + seaBounds.maxLon) / 2, FakeIdGenerator.makeFakeId());
+			Node mid = new Node((seaBounds.minLat + seaBounds.maxLat) / 2, (seaBounds.minLon + seaBounds.maxLon) / 2, FakeIdGenerator.makeFakeId());
 
-		float seaMargin = 0.000005f;
+			// southwest
+			seaBounds.minLat = s.lat;
+			seaBounds.maxLat = mid.lat;
+			seaBounds.minLon = w.lon;
+			seaBounds.maxLon = mid.lon;
+			mapBounds = seaBounds.clone();
 
-		seaBounds.minLat -= seaMargin;
-		seaBounds.minLon -= seaMargin;
-		seaBounds.maxLat += seaMargin;
-		seaBounds.maxLon += seaMargin;
+			float seaMargin = 0.000005f;
+
+			seaBounds.minLat -= seaMargin;
+			seaBounds.minLon -= seaMargin;
+			seaBounds.maxLat += seaMargin;
+			seaBounds.maxLon += seaMargin;
 
 
-		System.out.println("seaBounds: " + seaBounds);
-		System.out.println("mapBounds: " + mapBounds);
+			System.out.println("seaBounds: " + seaBounds);
+			System.out.println("mapBounds: " + mapBounds);
 
-		// create a sea area covering the whole sea area of the midlet
-		Node sw = new Node(seaBounds.minLat, seaBounds.minLon, FakeIdGenerator.makeFakeId());
-		Node se = new Node(seaBounds.minLat, seaBounds.maxLon, FakeIdGenerator.makeFakeId());
-		Node nw = new Node(seaBounds.maxLat, seaBounds.minLon, FakeIdGenerator.makeFakeId());
-		Node ne = new Node(seaBounds.maxLat, seaBounds.maxLon, FakeIdGenerator.makeFakeId());
+			// create a sea area covering the whole sea area of the midlet
+			Node sw = new Node(seaBounds.minLat, seaBounds.minLon, FakeIdGenerator.makeFakeId());
+			Node se = new Node(seaBounds.minLat, seaBounds.maxLon, FakeIdGenerator.makeFakeId());
+			Node nw = new Node(seaBounds.maxLat, seaBounds.minLon, FakeIdGenerator.makeFakeId());
+			Node ne = new Node(seaBounds.maxLat, seaBounds.maxLon, FakeIdGenerator.makeFakeId());
 
-		generateSeaMultiPolygon(parser, sw, se, nw, ne, landWays);
+			// experiment: generate sea multipolygon for lower left corner
+			generateSeaMultiPolygon(parser, sw, s, w, mid, landWays, mapBounds);
+
+		} else {
+			// whole map area sea generation
+			mapBounds = seaBounds.clone();
+
+			float seaMargin = 0.000005f;
+
+			seaBounds.minLat -= seaMargin;
+			seaBounds.minLon -= seaMargin;
+			seaBounds.maxLat += seaMargin;
+			seaBounds.maxLon += seaMargin;
+
+
+			System.out.println("seaBounds: " + seaBounds);
+			System.out.println("mapBounds: " + mapBounds);
+
+			// create a sea area covering the whole sea area of the midlet
+			Node sw = new Node(seaBounds.minLat, seaBounds.minLon, FakeIdGenerator.makeFakeId());
+			Node se = new Node(seaBounds.minLat, seaBounds.maxLon, FakeIdGenerator.makeFakeId());
+			Node nw = new Node(seaBounds.maxLat, seaBounds.minLon, FakeIdGenerator.makeFakeId());
+			Node ne = new Node(seaBounds.maxLat, seaBounds.maxLon, FakeIdGenerator.makeFakeId());
+
+			generateSeaMultiPolygon(parser, sw, se, nw, ne, landWays, mapBounds);
+
+		}
 	}
-	public void generateSeaMultiPolygon(OsmParser parser, Node sw, Node se, Node nw, Node ne, ArrayList<Way> landWays) {
+	public void generateSeaMultiPolygon(OsmParser parser, Node sw, Node se, Node nw, Node ne, ArrayList<Way> landWays, Bounds mapBounds) {
 		long seaId = FakeIdGenerator.makeFakeId();
 		Way sea = new Way(seaId);
 		sea.addNode(sw);
 
-		if (onlyOutlines || interimNodes) {
+		if (onlyOutlines || interimNodes || configuration.getDrawSeaOutlines()) {
 			sea.addNodeIfNotEqualToLastNodeWithInterimNodes(nw);
 			sea.addNodeIfNotEqualToLastNodeWithInterimNodes(ne);
 			sea.addNodeIfNotEqualToLastNodeWithInterimNodes(se);
@@ -166,11 +207,20 @@ public class SeaGenerator2 {
 		Iterator<Way> it = landWays.iterator();
 		while (it.hasNext()) {
 			Way w = it.next();
+
+			// check if in map bounds; if not, skip this
+			//if (!mapBounds.isMostlyIn(w.getBounds())) {
+			if (!mapBounds.isCompleteIn(w.getBounds())) {
+				System.out.println("Way " + w + " not in bounds");
+				it.remove();
+				continue;
+			}
+
 			if (w.isClosed()) {
 				//System.out.println("adding island " + w);
 				parser.addWay(w);
 				it.remove();
-				if (onlyOutlines) {
+				if (onlyOutlines || configuration.getDrawSeaOutlines()) {
 					w.setAttribute("natural", "seaoutline");
 				}
 				mInner = new Member("way", w.id, "inner");
@@ -188,12 +238,20 @@ public class SeaGenerator2 {
 		it = landWays.iterator();
 		while (it.hasNext()) {
 			Way w = it.next();
+
+			// check if in map bounds; if not, skip this
+			if (!mapBounds.isMostlyIn(w.getBounds())) {
+				System.out.println("Way " + w + " not in bounds");
+				it.remove();
+				continue;
+			}
+
 			if (w.isClosed()) {
 				System.out.println("after concatenation: adding island " + w);
 				parser.addWay(w);
 				it.remove();
 				mInner = new Member("way", w.id, "inner");
-				if (onlyOutlines) {
+				if (onlyOutlines || configuration.getDrawSeaOutlines()) {
 					w.setAttribute("natural", "seaoutline");
 				}
 				seaRelation.add(mInner);			
@@ -246,7 +304,7 @@ public class SeaGenerator2 {
 					// close the way
 					points.add(pStart);
 					if (generateSeaUsingMP) {
-						if (onlyOutlines) {
+						if (onlyOutlines || configuration.getDrawSeaOutlines()) {
 							w.setAttribute("natural", "seaoutline");
 						}
 						mInner = new Member("way", w.id, "inner");
@@ -286,7 +344,7 @@ public class SeaGenerator2 {
 							//log.debug("way: ", corner, p);
 							System.out.println("way: corner: " + corner + " p: " + p);
 
-							if (onlyOutlines || interimNodes) {
+							if (onlyOutlines || interimNodes || configuration.getDrawSeaOutlines()) {
 								seaSector.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
 							} else {
 								seaSector.addNodeIfNotEqualToLastNode(p);
@@ -296,7 +354,7 @@ public class SeaGenerator2 {
 					if (generateSeaUsingMP) {
 						parser.addWay(seaSector);
 						mInner = new Member("way", seaSector.id, "inner");
-						if (onlyOutlines) {
+						if (onlyOutlines || configuration.getDrawSeaOutlines()) {
 							seaSector.setAttribute("natural", "seaoutline");
 						}
 						seaRelation.add(mInner);
@@ -318,7 +376,7 @@ public class SeaGenerator2 {
 						List<Node> oldpoints = w.getNodes();
 						helperWay.addNode(p);
 						System.out.println("building the helper way");
-						if (onlyOutlines || interimNodes) {
+						if (onlyOutlines || interimNodes || configuration.getDrawSeaOutlines()) {
 							helperWay.addNodeIfNotEqualToLastNodeWithInterimNodes(oldpoints.get(0));
 						} else {
 							helperWay.addNodeIfNotEqualToLastNode(oldpoints.get(0));
@@ -333,7 +391,7 @@ public class SeaGenerator2 {
 						hEnd = getNextEdgeHit(mapBounds, pEnd);
 						Node p = hEnd.getPoint(mapBounds);
 						//w.getNodes().add(hEnd.getPoint(mapBounds));
-						if (onlyOutlines || interimNodes) {
+						if (onlyOutlines || interimNodes || configuration.getDrawSeaOutlines()) {
 							w.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
 						} else {
 							w.addNodeIfNotEqualToLastNode(p);
@@ -342,7 +400,7 @@ public class SeaGenerator2 {
 					}
 					//log.debug("hits (second try): ", hStart, hEnd);
 					mInner = new Member("way", w.id, "inner");
-					if (onlyOutlines) {
+					if (onlyOutlines || configuration.getDrawSeaOutlines()) {
 						w.setAttribute("natural", "seaoutline");
 					}
 					seaRelation.add(mInner);
@@ -378,7 +436,7 @@ public class SeaGenerator2 {
 					// add the segment and get the "ending hit"
 					System.out.println("adding sgement: " + segment);
 					for(Node p : segment.getNodes()) {
-						if (onlyOutlines || interimNodes) {
+						if (onlyOutlines || interimNodes || configuration.getDrawSeaOutlines()) {
 							w.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
 						} else {
 							w.addNodeIfNotEqualToLastNode(p);
@@ -386,7 +444,7 @@ public class SeaGenerator2 {
 					}
 					hNext = getEdgeHit(mapBounds, segment.getNodes().get(segment.getNodes().size()-1));
 				} else { // segment == null
-					if (onlyOutlines || interimNodes) {
+					if (onlyOutlines || interimNodes || configuration.getDrawSeaOutlines()) {
 						w.addNodeIfNotEqualToLastNodeWithInterimNodes(hit.getPoint(mapBounds));
 					} else {
 						w.addNodeIfNotEqualToLastNode(hit.getPoint(mapBounds));
@@ -404,7 +462,7 @@ public class SeaGenerator2 {
 							EdgeHit corner = new EdgeHit(i, 1.0);
 							p = corner.getPoint(mapBounds);
 							//log.debug("way: ", corner, p);
-							if (onlyOutlines || interimNodes) {
+							if (onlyOutlines || interimNodes || configuration.getDrawSeaOutlines()) {
 								w.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
 							} else {
 								w.addNodeIfNotEqualToLastNode(p);
@@ -422,14 +480,14 @@ public class SeaGenerator2 {
 							EdgeHit corner = new EdgeHit(i % 4, 1.0);
 							p = corner.getPoint(mapBounds);
 							//log.debug("way: ", corner, p);
-							if (onlyOutlines || interimNodes) {
+							if (onlyOutlines || interimNodes || configuration.getDrawSeaOutlines()) {
 								w.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
 							} else {
 								w.addNodeIfNotEqualToLastNode(p);
 							}
 						}
 					}
-					if (onlyOutlines || interimNodes) {
+					if (onlyOutlines || interimNodes || configuration.getDrawSeaOutlines()) {
 						w.addNodeIfNotEqualToLastNodeWithInterimNodes(hNext.getPoint(mapBounds));
 					} else {
 						w.addNodeIfNotEqualToLastNode(hNext.getPoint(mapBounds));
@@ -443,7 +501,7 @@ public class SeaGenerator2 {
 				w.getNodes().add(w.getNodes().get(0));
 			}
 			parser.addWay(w);
-			if (onlyOutlines) {
+			if (onlyOutlines || configuration.getDrawSeaOutlines()) {
 				w.setAttribute("natural", "seaoutline");
 			}
 			mInner = new Member("way", w.id, "inner");
@@ -474,7 +532,7 @@ public class SeaGenerator2 {
 			if (generateSeaUsingMP) {
 				// create a multipolygon relation containing water as outer role
 				mInner = new Member("way", sea.id, "outer");
-				if (onlyOutlines) {
+				if (onlyOutlines || configuration.getDrawSeaOutlines()) {
 					sea.setAttribute("natural", "seaoutline");
 				}
 				seaRelation.add(mInner);
@@ -757,7 +815,7 @@ public class SeaGenerator2 {
 
 						//}
 						parser.addWay(w);
-						if (onlyOutlines) {
+						if (onlyOutlines || configuration.getDrawSeaOutlines()) {
 							w.setAttribute("natural", "seaoutline");
 						}
 						Member  mInner = new Member("way", w.id, "inner");

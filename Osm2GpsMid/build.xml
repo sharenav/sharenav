@@ -85,6 +85,8 @@
         <entry key="usePhoneTags" value="false"/>
         <entry key="useHouseNumbers" value="false"/>
         <entry key="useWordSearch" value="false"/>
+        <entry key="useSeaTiles" value="false"/>
+        <entry key="drawSeaOutlines" value="false"/>
         <entry key="dontCompress" value=""/>
    		<entry key="cellSource" value=""/>
    		<entry key="midlet.name" value="GpsMid"/>
