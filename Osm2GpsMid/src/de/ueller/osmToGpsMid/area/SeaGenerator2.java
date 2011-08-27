@@ -139,8 +139,8 @@ public class SeaGenerator2 {
 
 					seaBounds.minLat = sw.lat;
 					seaBounds.maxLat = nw.lat;
-					seaBounds.minLon = se.lon;
-					seaBounds.maxLon = sw.lon;
+					seaBounds.minLon = sw.lon;
+					seaBounds.maxLon = se.lon;
 					// whole map area sea generation
 
 					mapBounds = seaBounds.clone();
@@ -219,6 +219,10 @@ public class SeaGenerator2 {
 
 		Member mInner;
 
+		// handle islands (closed shoreline components) first (they're easy)
+		// add closed landways (islands, islets) to parser and to sea relation
+		// these are inner members in the sea relation,
+		// in other words holes in the sea 
 		Iterator<Way> it = landWays.iterator();
 		while (it.hasNext()) {
 			Way w = it.next();
@@ -230,20 +234,10 @@ public class SeaGenerator2 {
 			if (!mapBounds.isCompleteIn(w.getBounds())) {
 				System.out.println("Way " + w + " not in bounds");
 				it.remove();
+				continue;
+			} else {
+				foundCoast = true;
 			}
-		}
-
-		if (landWays.size() > 0 ) {
-			foundCoast = true;
-		}
-
-		// handle islands (closed shoreline components) first (they're easy)
-		// add closed landways (islands, islets) to parser and to sea relation
-		// these are inner members in the sea relation,
-		// in other words holes in the sea 
-		it = landWays.iterator();
-		while (it.hasNext()) {
-			Way w = it.next();
 
 			if (w.isClosed()) {
 				//System.out.println("adding island " + w);
