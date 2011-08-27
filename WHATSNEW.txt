@@ -1,6 +1,6 @@
     *** Sea generation ***
     - greatly faster sea generation algorithm with option useSeaTiles = true
-      in .properties file. It divides the area into roughly 4km * 4km areas
+      in .properties file. It divides the map into roughly 20km * 20km areas
       which are processed one at a time, total time taken is a small fraction
       of the time taken without useSeaTiles and map data is smaller.
       There are however more map artifacts when using the option.

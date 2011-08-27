@@ -118,8 +118,8 @@ public class SeaGenerator2 {
 		if (configuration.getUseSeaTiles()) {
 			// divide map area into parts; run sea multipolygon generation for each part
 			// try to have a sea tile be roughly 4km * 4km
-			final int latDivider = (int) MyMath.dist(sw, nw) / 4000;
-			final int lonDivider = (int) MyMath.dist(sw, se) / 4000;
+			final int latDivider = (int) MyMath.dist(sw, nw) / 20000 + 2;
+			final int lonDivider = (int) MyMath.dist(sw, se) / 20000 + 2;
 
 			Bounds allMapBounds = seaBounds.clone();
 
