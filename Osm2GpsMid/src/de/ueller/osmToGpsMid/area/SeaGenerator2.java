@@ -123,28 +123,28 @@ public class SeaGenerator2 {
 		System.out.println("mapBounds: " + mapBounds);
 
 		// create a sea area covering the whole sea area of the midlet
-		Node nw = new Node(seaBounds.minLat, seaBounds.minLon, FakeIdGenerator.makeFakeId());
-		Node ne = new Node(seaBounds.minLat, seaBounds.maxLon, FakeIdGenerator.makeFakeId());
-		Node sw = new Node(seaBounds.maxLat, seaBounds.minLon, FakeIdGenerator.makeFakeId());
-		Node se = new Node(seaBounds.maxLat, seaBounds.maxLon, FakeIdGenerator.makeFakeId());
+		Node sw = new Node(seaBounds.minLat, seaBounds.minLon, FakeIdGenerator.makeFakeId());
+		Node se = new Node(seaBounds.minLat, seaBounds.maxLon, FakeIdGenerator.makeFakeId());
+		Node nw = new Node(seaBounds.maxLat, seaBounds.minLon, FakeIdGenerator.makeFakeId());
+		Node ne = new Node(seaBounds.maxLat, seaBounds.maxLon, FakeIdGenerator.makeFakeId());
 
-		generateSeaMultiPolygon(parser, nw, ne, sw, se, landWays);
+		generateSeaMultiPolygon(parser, sw, se, nw, ne, landWays);
 	}
-	public void generateSeaMultiPolygon(OsmParser parser, Node nw, Node ne, Node sw, Node se, ArrayList<Way> landWays) {
+	public void generateSeaMultiPolygon(OsmParser parser, Node sw, Node se, Node nw, Node ne, ArrayList<Way> landWays) {
 		long seaId = FakeIdGenerator.makeFakeId();
 		Way sea = new Way(seaId);
-		sea.addNode(nw);
+		sea.addNode(sw);
 
 		if (onlyOutlines || interimNodes) {
-			sea.addNodeIfNotEqualToLastNodeWithInterimNodes(sw);
-			sea.addNodeIfNotEqualToLastNodeWithInterimNodes(se);
-			sea.addNodeIfNotEqualToLastNodeWithInterimNodes(ne);
 			sea.addNodeIfNotEqualToLastNodeWithInterimNodes(nw);
+			sea.addNodeIfNotEqualToLastNodeWithInterimNodes(ne);
+			sea.addNodeIfNotEqualToLastNodeWithInterimNodes(se);
+			sea.addNodeIfNotEqualToLastNodeWithInterimNodes(sw);
 		} else {
-			sea.addNodeIfNotEqualToLastNode(sw);
-			sea.addNodeIfNotEqualToLastNode(se);
-			sea.addNodeIfNotEqualToLastNode(ne);
 			sea.addNodeIfNotEqualToLastNode(nw);
+			sea.addNodeIfNotEqualToLastNode(ne);
+			sea.addNodeIfNotEqualToLastNode(se);
+			sea.addNodeIfNotEqualToLastNode(sw);
 		}
 		long multiId = FakeIdGenerator.makeFakeId();
 		Relation seaRelation = new Relation(multiId);
