@@ -566,6 +566,7 @@ public class SeaGenerator2 {
 				System.out.println("ERROR: SeaGenerator: can only create sea properly as relations");
 			}
 		} else {
+			// FIXME sometimes it's sea, deduce from contents and/or neighbouring tiles
 			System.out.println("SeaGenerator: didn't find any coastline ways, assuming map is land");
 		}
 	
