@@ -109,43 +109,73 @@ public class SeaGenerator2 {
 			}
 		}
 		
+		Node sw = new Node(seaBounds.minLat, seaBounds.minLon, FakeIdGenerator.makeFakeId());
+		Node se = new Node(seaBounds.minLat, seaBounds.maxLon, FakeIdGenerator.makeFakeId());
+		Node nw = new Node(seaBounds.maxLat, seaBounds.minLon, FakeIdGenerator.makeFakeId());
+		Node ne = new Node(seaBounds.maxLat, seaBounds.maxLon, FakeIdGenerator.makeFakeId());
+
 		// use sea tiles: divide map area into separate parts for more efficient processing (experimental)
 		if (configuration.getUseSeaTiles()) {
 			// divide map area into four parts; run sea multipolygon generation for each part
-			// loop x & y
-			Node w = new Node((seaBounds.minLat + seaBounds.maxLat) / 2, seaBounds.minLon, FakeIdGenerator.makeFakeId());
-			Node s = new Node(seaBounds.minLat, (seaBounds.minLon + seaBounds.maxLon) / 2, FakeIdGenerator.makeFakeId());
-			Node e = new Node((seaBounds.minLat + seaBounds.maxLat) / 2, seaBounds.maxLon, FakeIdGenerator.makeFakeId());
-			Node n = new Node(seaBounds.maxLat, (seaBounds.minLon + seaBounds.maxLon) / 2, FakeIdGenerator.makeFakeId());
-			Node mid = new Node((seaBounds.minLat + seaBounds.maxLat) / 2, (seaBounds.minLon + seaBounds.maxLon) / 2, FakeIdGenerator.makeFakeId());
+			final int divider = 5;
 
-			// southwest
-			seaBounds.minLat = s.lat;
-			seaBounds.maxLat = mid.lat;
-			seaBounds.minLon = w.lon;
-			seaBounds.maxLon = mid.lon;
-			mapBounds = seaBounds.clone();
+			Bounds allMapBounds = seaBounds.clone();
 
-			float seaMargin = 0.000005f;
+			for (int lat = 0; lat < divider ; lat++) {
+				for (int lon = 0; lon < divider ; lon++) {
+					// loop x & y
+					sw = new Node(allMapBounds.minLat + (allMapBounds.maxLat - allMapBounds.minLat) / divider * lat,
+							   allMapBounds.minLon + (allMapBounds.maxLon - allMapBounds.minLon) / divider * lon,
+							   FakeIdGenerator.makeFakeId());
+					nw = new Node(allMapBounds.minLat + (allMapBounds.maxLat - allMapBounds.minLat) / divider * (lat + 1),
+							   allMapBounds.minLon + (allMapBounds.maxLon - allMapBounds.minLon) / divider * lon,
+							   FakeIdGenerator.makeFakeId());
+					se = new Node(allMapBounds.minLat + (allMapBounds.maxLat - allMapBounds.minLat) / divider * lat,
+							   allMapBounds.minLon + (allMapBounds.maxLon - allMapBounds.minLon) / divider * (lon + 1),
+							   FakeIdGenerator.makeFakeId());
+					ne = new Node(allMapBounds.minLat + (allMapBounds.maxLat - allMapBounds.minLat) / divider * (lat + 1),
+							   allMapBounds.minLon + (allMapBounds.maxLon - allMapBounds.minLon) / divider * (lon + 1),
+							   FakeIdGenerator.makeFakeId());
 
-			seaBounds.minLat -= seaMargin;
-			seaBounds.minLon -= seaMargin;
-			seaBounds.maxLat += seaMargin;
-			seaBounds.maxLon += seaMargin;
+					seaBounds.minLat = sw.lat;
+					seaBounds.maxLat = nw.lat;
+					seaBounds.minLon = se.lon;
+					seaBounds.maxLon = sw.lon;
+					// whole map area sea generation
 
+					mapBounds = seaBounds.clone();
 
-			System.out.println("seaBounds: " + seaBounds);
-			System.out.println("mapBounds: " + mapBounds);
+					float seaMargin = 0.000005f;
 
-			// create a sea area covering the whole sea area of the midlet
-			Node sw = new Node(seaBounds.minLat, seaBounds.minLon, FakeIdGenerator.makeFakeId());
-			Node se = new Node(seaBounds.minLat, seaBounds.maxLon, FakeIdGenerator.makeFakeId());
-			Node nw = new Node(seaBounds.maxLat, seaBounds.minLon, FakeIdGenerator.makeFakeId());
-			Node ne = new Node(seaBounds.maxLat, seaBounds.maxLon, FakeIdGenerator.makeFakeId());
+					seaBounds.minLat -= seaMargin;
+					seaBounds.minLon -= seaMargin;
+					seaBounds.maxLat += seaMargin;
+					seaBounds.maxLon += seaMargin;
 
-			// experiment: generate sea multipolygon for lower left corner
-			generateSeaMultiPolygon(parser, sw, s, w, mid, landWays, mapBounds);
+					System.out.println("seaBounds: " + seaBounds);
+					System.out.println("mapBounds: " + mapBounds);
 
+					landWays.clear();
+					for (Way w: parser.getWays()) {
+						natural = w.getAttribute("natural");
+						if (natural != null) {
+							if ("coastline".equals(natural)) {
+								//System.out.println("Create land from coastline  " + w.toUrl());
+								// for closed ways, save memory and do not create new ways
+								if (w.isClosed()) {
+									landWays.add(w);
+								} else {
+									long landId = FakeIdGenerator.makeFakeId();
+									Way wLand = new Way(landId, w);
+									landWays.add(wLand);
+								}
+							}
+						}
+					}
+
+					generateSeaMultiPolygon(parser, sw, se, nw, ne, landWays, mapBounds);
+				}
+			}					
 		} else {
 			// whole map area sea generation
 			mapBounds = seaBounds.clone();
@@ -157,21 +187,14 @@ public class SeaGenerator2 {
 			seaBounds.maxLat += seaMargin;
 			seaBounds.maxLon += seaMargin;
 
-
 			System.out.println("seaBounds: " + seaBounds);
 			System.out.println("mapBounds: " + mapBounds);
 
-			// create a sea area covering the whole sea area of the midlet
-			Node sw = new Node(seaBounds.minLat, seaBounds.minLon, FakeIdGenerator.makeFakeId());
-			Node se = new Node(seaBounds.minLat, seaBounds.maxLon, FakeIdGenerator.makeFakeId());
-			Node nw = new Node(seaBounds.maxLat, seaBounds.minLon, FakeIdGenerator.makeFakeId());
-			Node ne = new Node(seaBounds.maxLat, seaBounds.maxLon, FakeIdGenerator.makeFakeId());
-
 			generateSeaMultiPolygon(parser, sw, se, nw, ne, landWays, mapBounds);
-
 		}
 	}
 	public void generateSeaMultiPolygon(OsmParser parser, Node sw, Node se, Node nw, Node ne, ArrayList<Way> landWays, Bounds mapBounds) {
+		foundCoast = false;
 		long seaId = FakeIdGenerator.makeFakeId();
 		Way sea = new Way(seaId);
 		sea.addNode(sw);
@@ -209,6 +232,8 @@ public class SeaGenerator2 {
 			Way w = it.next();
 
 			// check if in map bounds; if not, skip this
+			// FIXME should cut ways on sea tile boundary
+
 			//if (!mapBounds.isMostlyIn(w.getBounds())) {
 			if (!mapBounds.isCompleteIn(w.getBounds())) {
 				System.out.println("Way " + w + " not in bounds");
