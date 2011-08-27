@@ -144,14 +144,20 @@ public class SeaGenerator2 {
 					seaBounds.maxLon = se.lon;
 					// whole map area sea generation
 
-					mapBounds = seaBounds.clone();
-
 					float seaMargin = 0.000005f;
+					float seaTileMargin = 0.000005f;
 
 					seaBounds.minLat -= seaMargin;
 					seaBounds.minLon -= seaMargin;
 					seaBounds.maxLat += seaMargin;
 					seaBounds.maxLon += seaMargin;
+
+					mapBounds = seaBounds.clone();
+
+					mapBounds.minLat -= seaTileMargin;
+					mapBounds.minLon -= seaTileMargin;
+					mapBounds.maxLat += seaTileMargin;
+					mapBounds.maxLon += seaTileMargin;
 
 					System.out.println("seaBounds: " + seaBounds);
 					System.out.println("mapBounds: " + mapBounds);
@@ -163,12 +169,36 @@ public class SeaGenerator2 {
 							if ("coastline".equals(natural)) {
 								//System.out.println("Create land from coastline  " + w.toUrl());
 								// for closed ways, save memory and do not create new ways
-								if (w.isClosed()) {
-									landWays.add(w);
-								} else {
+
+								// check if in map bounds; if not, skip this
+								// FIXME should cut ways on sea tile boundary
+
+								Way boundedWay = new Way(w.id);
+
+								for (Node node : w.getNodes()) {
+									if (mapBounds.isIn(node.getLat(), node.getLon())) {
+										boundedWay.addNode(node);
+									} else {
+										// Nodes for this way are missing, problem in OSM or simply
+										// out of bounding box.
+										// Three different cases are possible:
+										// missing at the start, in the middle or at the end.
+										// We simply add the current way and start a new one
+										// with shared attributes.
+										// Degenerate ways are not added, so don't care about
+										// this here.
+										//if (boundedWay.getNodeCount() != 0) {
+										//	Way tmp_way = new Way(boundedWay);
+										//	parser.addWay(boundedWay);
+										//	way = tmp_way;
+										//}
+									}
+								}
+								if (boundedWay.isValid() && boundedWay.getNodeCount() != 0) {
 									long landId = FakeIdGenerator.makeFakeId();
-									Way wLand = new Way(landId, w);
+									Way wLand = new Way(landId, boundedWay);
 									landWays.add(wLand);
+									foundCoast = true;
 								}
 							}
 						}
@@ -231,23 +261,42 @@ public class SeaGenerator2 {
 			// check if in map bounds; if not, skip this
 			// FIXME should cut ways on sea tile boundary
 
-			if (!mapBounds.isMostlyIn(w.getBounds())) {
-				//if (!mapBounds.isCompleteIn(w.getBounds())) {
-				//System.out.println("Way " + w + " not in bounds");
+			Way boundedWay = new Way(w.id);
+
+			for (Node node : w.getNodes()) {
+				if (mapBounds.isIn(node.getLat(), node.getLon())) {
+					boundedWay.addNode(node);
+				} else {
+					// Nodes for this way are missing, problem in OSM or simply
+					// out of bounding box.
+					// Three different cases are possible:
+					// missing at the start, in the middle or at the end.
+					// We simply add the current way and start a new one
+					// with shared attributes.
+					// Degenerate ways are not added, so don't care about
+					// this here.
+					//if (boundedWay.getNodeCount() != 0) {
+					//	Way tmp_way = new Way(boundedWay);
+					//	parser.addWay(boundedWay);
+					//	way = tmp_way;
+					//}
+				}
+			}
+			if (boundedWay.isValid() && boundedWay.getNodeCount() != 0) {
+				foundCoast = true;
+			} else {
 				it.remove();
 				continue;
-			} else {
-				foundCoast = true;
 			}
 
-			if (w.isClosed()) {
+			if (boundedWay.isClosed()) {
 				//System.out.println("adding island " + w);
-				parser.addWay(w);
+				parser.addWay(boundedWay);
 				it.remove();
 				if (onlyOutlines || configuration.getDrawSeaOutlines()) {
-					w.setAttribute("natural", "seaoutline");
+					boundedWay.setAttribute("natural", "seaoutline");
 				}
-				mInner = new Member("way", w.id, "inner");
+				mInner = new Member("way", boundedWay.id, "inner");
 				seaRelation.add(mInner);			
 			}
 		}
@@ -262,13 +311,6 @@ public class SeaGenerator2 {
 		it = landWays.iterator();
 		while (it.hasNext()) {
 			Way w = it.next();
-
-			// check if in map bounds; if not, skip this
-			if (!mapBounds.isMostlyIn(w.getBounds())) {
-				System.out.println("Way " + w + " not in bounds");
-				it.remove();
-				continue;
-			}
 
 			if (w.isClosed()) {
 				System.out.println("after concatenation: adding island " + w);
@@ -568,7 +610,7 @@ public class SeaGenerator2 {
 			}
 		} else {
 			// FIXME sometimes it's sea, deduce from contents and/or neighbouring tiles
-			System.out.println("SeaGenerator: didn't find any coastline ways, assuming map is land");
+			System.out.println("SeaGenerator: didn't find any coastline ways, assuming this seatile is land");
 		}
 	
 		System.out.println(seaRelation.toString());
