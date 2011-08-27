@@ -1,7 +1,9 @@
     *** Sea generation ***
     - greatly faster sea generation algorithm with option useSeaTiles = true
-      in .properties file. At the moment the output is erroneous in
-      many places with land flooding with water or land and sea reversed.
+      in .properties file. It divides the area into roughly 4km * 4km areas
+      which are processed one at a time, total time taken is a small fraction
+      of the time taken without useSeaTiles and map data is smaller.
+      There are however more map artifacts when using the option.
     *** Search ***
     - allow configuration of POI search distance; default is 10 km. A high limit
       does not work in all areas, depending on number of map objects (tile size?).

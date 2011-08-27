@@ -117,15 +117,14 @@ public class SeaGenerator2 {
 		// use sea tiles: divide map area into separate parts for more efficient processing (experimental)
 		if (configuration.getUseSeaTiles()) {
 			// divide map area into parts; run sea multipolygon generation for each part
-			// FIXME would be better to calculate divider so map is divided into X km areas
-			final int latDivider = 40;
-			final int lonDivider = 40;
-			//final int divider = 20;
+			// try to have a sea tile be roughly 4km * 4km
+			final int latDivider = (int) MyMath.dist(sw, nw) / 4000;
+			final int lonDivider = (int) MyMath.dist(sw, se) / 4000;
 
 			Bounds allMapBounds = seaBounds.clone();
 
-			for (int lat = 0; lat < divider ; lat++) {
-				for (int lon = 0; lon < divider ; lon++) {
+			for (int lat = 0; lat < latDivider ; lat++) {
+				for (int lon = 0; lon < lonDivider ; lon++) {
 					// loop x & y
 					sw = new Node(allMapBounds.minLat + (allMapBounds.maxLat - allMapBounds.minLat) / latDivider * lat,
 							   allMapBounds.minLon + (allMapBounds.maxLon - allMapBounds.minLon) / lonDivider * lon,
