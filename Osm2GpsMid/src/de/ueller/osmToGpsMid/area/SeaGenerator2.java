@@ -117,6 +117,7 @@ public class SeaGenerator2 {
 		// use sea tiles: divide map area into separate parts for more efficient processing (experimental)
 		if (configuration.getUseSeaTiles()) {
 			// divide map area into parts; run sea multipolygon generation for each part
+			// FIXME would be better to calculate divider so map is divided into X km areas
 			final int divider = 40;
 
 			Bounds allMapBounds = seaBounds.clone();
