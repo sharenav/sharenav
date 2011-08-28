@@ -367,7 +367,8 @@ public class SeaGenerator2 {
 				System.out.println("dist from coastline start to end: " + MyMath.dist(pStart, pEnd));
 				boolean nearlyClosed = (MyMath.dist(pStart, pEnd) < 0.1 * length);
 
-				if (nearlyClosed) {
+				// FIXME enable again when coastlines are cut exactly at tile borders so this doesn't cause trouble
+				if (false && nearlyClosed) {
 					System.out.println("handling nearlyClosed coastline: " + w);
 					// close the way
 					points.add(pStart);
