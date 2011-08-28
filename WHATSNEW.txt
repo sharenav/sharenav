@@ -3,7 +3,9 @@
       in .properties file. It divides the map into roughly 20km * 20km areas
       which are processed one at a time, total time taken is a small fraction
       of the time taken without useSeaTiles and map data is smaller.
-      There are however more map artifacts when using the option.
+      There are however more map artifacts when using the option and shortcomings
+      which lead to incorrect choices of land / sea are triggered more often
+      when seatiles are used.
     *** Search ***
     - allow configuration of POI search distance; default is 10 km. A high limit
       does not work in all areas, depending on number of map objects (tile size?).
