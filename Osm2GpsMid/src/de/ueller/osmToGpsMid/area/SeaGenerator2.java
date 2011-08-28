@@ -854,7 +854,8 @@ public class SeaGenerator2 {
 							smallestGap = gap;
 						}
 					}
-					if(nearest != null && smallestGap < maxCoastlineGap) {
+					// FIXME this causes trouble with the non-border-ending cut coastlines, disable for now
+					if (false && nearest != null && smallestGap < maxCoastlineGap) {
 						Node w2s = nearest.getNodes().get(0);
 						System.out.println("SeaGenerator: Bridging " + (int)smallestGap + "m gap in coastline from " + 
 								w1e.toUrl() + " to " + w2s.toUrl());
