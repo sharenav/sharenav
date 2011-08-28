@@ -340,6 +340,9 @@ public class SeaGenerator2 {
 
 			EdgeHit hStart = getEdgeHit(mapBounds, pStart);
 			EdgeHit hEnd = getEdgeHit(mapBounds, pEnd);
+			// FIXME don't force this after coastlines are truly cut at map/seatile border
+			hStart = null;
+			hEnd = null;
 			if (hStart == null || hEnd == null) {
 				String msg = String.format(
 						"Non-closed coastline segment does not hit bounding box: start %s end %s\n" +
