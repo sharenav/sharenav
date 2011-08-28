@@ -181,22 +181,23 @@ public class SeaGenerator2 {
 									if (mapBounds.isIn(node.getLat(), node.getLon())) {
 										boundedWay.addNodeIfNotEqualToFirstNodeOfTwo(node);
 									} else {
-										// Nodes for this way are missing, problem in OSM or simply
-										// out of bounding box.
-										// Three different cases are possible:
-										// missing at the start, in the middle or at the end.
-										// We simply add the current way and start a new one
-										// with shared attributes.
-										// Degenerate ways are not added, so don't care about
-										// this here.
-										//if (boundedWay.getNodeCount() != 0) {
-										//	Way tmp_way = new Way(boundedWay);
-										//	parser.addWay(boundedWay);
-										//	way = tmp_way;
-										//}
+										// way is going out of sea tile, cut here, add the
+										// first part
+                                                                               if (boundedWay.getNodeCount() != 0) {
+                                                                                       long readyId = FakeIdGenerator.makeFakeId();
+                                                                                       Way wReady = new Way(readyId, boundedWay);
+                                                                                       landWays.add(wReady);
+                                                                                       foundCoast = true;
+
+                                                                                       System.out.println("Node out of bound, splitting way");
+                                                                                       System.out.println("w: " + w +
+                                                                                                          " wReady: " + wReady +
+                                                                                                          " boundedWay: " + boundedWay);
+                                                                               }
+									       boundedWay = new Way(w.id);
 									}
 								}
-								if (boundedWay.isValid() && boundedWay.getNodeCount() != 0) {
+								if (boundedWay.isValid()) {
 									long landId = FakeIdGenerator.makeFakeId();
 									Way wLand = new Way(landId, boundedWay);
 									landWays.add(wLand);
