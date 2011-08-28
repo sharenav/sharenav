@@ -539,7 +539,7 @@ public class SeaGenerator2 {
 					else if (hit.compareTo(hNext) > 0) {
 						System.out.println("joining compareTo > 0: " + hit + " hNext: " + hNext);
 						int hNextEdge = hNext.edge;
-						if (hit.edge > hNext.edge) {
+						if (hit.edge >= hNext.edge) {
 							hNextEdge += 4;
 						}
 
