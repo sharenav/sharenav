@@ -179,7 +179,7 @@ public class SeaGenerator2 {
 
 								for (Node node : w.getNodes()) {
 									if (mapBounds.isIn(node.getLat(), node.getLon())) {
-										boundedWay.addNode(node);
+										boundedWay.addNodeIfNotEqualToFirstNodeOfTwo(node);
 									} else {
 										// Nodes for this way are missing, problem in OSM or simply
 										// out of bounding box.
