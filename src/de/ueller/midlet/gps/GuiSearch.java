@@ -452,7 +452,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 							if (name.length() < 21) {						
 								searchThread.appendSearchBlocking(NumberCanon.canonial(name));
 							} else {
-								searchThread.appendSearchBlocking(NumberCanon.canonial(name.substring(0,20)));
+								searchThread.appendSearchBlocking(NumberCanon.canonial(name.substring(0, 20)));
 							}
 						}
 						setTitle(Locale.get("guisearch.SearchResults")/*Search results:*/);
@@ -1796,24 +1796,25 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	private void reSearch() {
-		//#debug info
-		logger.info("researching");
-		scrollOffset = 0;
-		//FIXME: in rare cases there occurs an NPE in the following line
-		searchThread.search(NumberCanon.canonial(searchCanon.toString()),
-				    Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ? 
-				    SearchNames.INDEX_WORD : SearchNames.INDEX_BIGNAME);
-		repaint(0, 0, getWidth(), getHeight());
-		// title will be set by SearchName.doSearch when we need to determine first if we have favorites
-		//#if polish.api.bigsearch
-		if (searchCanon.length() > 0 || matchMode()) { 
- 			setTitle();
- 		}
-		//#else
-		if (searchCanon.length() > 0) { 
-			setTitle();
+		if (searchThread != null) {
+			//#debug info
+			logger.info("researching");
+			scrollOffset = 0;
+			searchThread.search(NumberCanon.canonial(searchCanon.toString()),
+					    Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ? 
+					    SearchNames.INDEX_WORD : SearchNames.INDEX_BIGNAME);
+			repaint(0, 0, getWidth(), getHeight());
+			// title will be set by SearchName.doSearch when we need to determine first if we have favorites
+			//#if polish.api.bigsearch
+			if (searchCanon.length() > 0 || matchMode()) { 
+	 			setTitle();
+	 		}
+			//#else
+			if (searchCanon.length() > 0) { 
+				setTitle();
+			}
+			//#endif
 		}
-		//#endif
 	}
 
 	private void appendCompassDirection(StringBuffer sb, SearchResult sr) {
