@@ -31,6 +31,7 @@ public class GuiSetupGui extends Form implements CommandListener {
 
 	private TextField memField;
 	private TextField searchField;
+	private TextField poiSearchDistance;
 	
 	public GuiSetupGui(GpsMidDisplayable parent, boolean initialSetup) {
 		super(Locale.get("guisetupgui.GUIOptions")/*GUI Options*/);
@@ -116,6 +117,11 @@ public class GuiSetupGui extends Form implements CommandListener {
 			searchField = new TextField(Locale.get("guisetupgui.DefineMaxSearch")/*Max # of search results*/,
 					Integer.toString(searchMax), 8, TextField.DECIMAL);
 			append(searchField);
+
+			float dist = Configuration.getPoiSearchDistance();
+			poiSearchDistance = new TextField(Locale.get("guisetupgui.PoiDistance")/*POI Distance: */,
+							  Float.toString(dist), 8, TextField.ANY);
+			append(poiSearchDistance);
 			
 			addCommand(CMD_SAVE);
 			addCommand(CMD_CANCEL);
@@ -141,6 +147,12 @@ public class GuiSetupGui extends Form implements CommandListener {
 				int searchMax=Integer.parseInt(searchField.getString());
 				Configuration.setPhoneAllTimeMaxMemory(mem*1024);
 				Configuration.setSearchMax(searchMax);
+			} catch (NumberFormatException e) {
+				// nothing to do (igore content)
+			}
+			try {
+				float dist=Float.parseFloat(poiSearchDistance.getString());
+				Configuration.setPoiSearchDistance(dist);
 			} catch (NumberFormatException e) {
 				// nothing to do (igore content)
 			}

@@ -37,7 +37,11 @@ public class QueueDataReader extends QueueReader implements Runnable {
 	public void readData(Tile t, Object notifyReady) throws IOException {
 		logger.info("Reading tile: " + t);
 		SingleTile tt = (SingleTile) t;
-		InputStream is = Configuration.getMapResource("/t" + tt.zl + "/" + tt.fileId + ".d");
+		// work around overflows
+		InputStream is = Configuration.getMapResource("/t" + tt.zl + "/" +
+							      (tt.fileId < 0 ?
+							       tt.fileId + 65536 : tt.fileId)
+							      + ".d");
 		if (is == null) {
 		    //#debug error
 			logger.error(Locale.get("queuedatareader.FileInputStream")/*File inputStream/t*/ + tt.zl + "/" + tt.fileId + Locale.get("queuedatareader.dNotFound")/*.d not found*/);
@@ -87,9 +91,15 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		//#debug debug
 		logger.debug("Center coordinate of tile: " + tt.centerLat + "/" + tt.centerLon);
 		int nodeCount = ds.readShort();
+		if (nodeCount < 0) {
+		    nodeCount += 65536;
+		}
 		short[] radlat = new short[nodeCount];
 		short[] radlon = new short[nodeCount];
 		int iNodeCount = ds.readShort();
+		if (iNodeCount < 0) {
+		    iNodeCount += 65536;
+		}
 		//#debug trace
 		logger.trace("nodes total: " + nodeCount + " interestNode: " + iNodeCount);
 		int[] nameIdx = new int[iNodeCount];

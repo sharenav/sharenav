@@ -953,16 +953,15 @@ public class GuiSearch extends Canvas implements CommandListener,
 			    && i == cursor && needsTicker && tickerDiff > 0) {
 				tickerUse = tickerDiff;
 			}
-
-			if (i == cursor && needsTicker && tickerDiff > 0) {
-				if (!nameBiggerThanFits(gc, name.substring(tickerDiff)) && ticker > 0) {
-					tickerAtEnd();
-				}
-			}
 			if (tickerUse >= name.length()) {
 				tickerUse = name.length() - 1;
 			}
 			name = name.substring(tickerUse);
+			if (i == cursor && needsTicker && tickerDiff > 0) {
+				if (!nameBiggerThanFits(gc, name) && ticker > 0) {
+					tickerAtEnd();
+				}
+			}
 			if (name != null) {
 				// avoid index out of bounds 
 				// FIXME add code to handle word search code and housenumber search result highlighting
@@ -2028,12 +2027,16 @@ public class GuiSearch extends Canvas implements CommandListener,
 		isSearchCanceled = false;
 		Thread t = new Thread(new Runnable() {
 			public void run() {
+				int foundEntries = 0;
+				int SEARCH_MAX_COUNT = Configuration.getSearchMax();
+
 				try {
 					int maxScale = Legend.getNodeMaxScale(poiType);
 					// index 0 is all POI types
 					Vector res = parent.tiles[Legend.scaleToTile(maxScale)].getNearestPoi(
 						(((POItypeSelectMenuItem)item).getIdx() == 0) ? true : false, poiType, 
-						parent.center.radlat, parent.center.radlon, 10.0f*1000.0f, cmi);
+						parent.center.radlat, parent.center.radlon,
+						Configuration.getPoiSearchDistance()*1000.0f, cmi);
 					for (int i = 0; i < res.size(); i++) {
 						SearchResult sr=(SearchResult) res.elementAt(i);
 						boolean match = false;
@@ -2050,7 +2053,17 @@ public class GuiSearch extends Canvas implements CommandListener,
 							match = true;
 						}
 						if (match) {
-							addResult(sr);
+							foundEntries++;
+							if (foundEntries <= SEARCH_MAX_COUNT) {
+								addResult(sr);
+							} else if (foundEntries == SEARCH_MAX_COUNT + 1) {
+									//#debug info
+									logger.info("Found SEARCH_MAX_COUNT entries. That's enough, stopping further search");
+									if (!Configuration.getCfgBitState(Configuration.CFGBIT_SUPPRESS_SEARCH_WARNING)) {
+										GpsMid.getInstance().alert(Locale.get("SearchNames.SearchWarningTitle")/*Search warning*/,
+													   Locale.get("SearchNames.SearchWarning")/*Maximum search count exceeded, search interrupted*/, 500);
+									}
+							} 
 						}
 					}
 					state = STATE_MAIN;

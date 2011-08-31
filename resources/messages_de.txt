@@ -1236,3 +1236,6 @@ discovergps.ConstructedServices={0} Dienste erzeugt
 trace.ResumeRecording=Aufzeichnung fortsetzen
 traceiconmenu.SuspendRec=Aufz. pausieren
 traceiconmenu.ResumeRec=Aufz. fortsetzen
+guiwebinfo.TopoMap=Topografische Karte
+guiwebinfo.TopoMapFi=Topografische Karte (Finnland)
+guisetupgui.PoiDistance=POI Suchdistanz:

@@ -860,6 +860,12 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 	}
 
+	public void addNodeIfNotEqualToFirstNodeOfTwo(Node node) {
+		if (!(path.getNodeCount() == 2 && node.equals(path.getNode(0)))) {
+			path.add(node);
+		}
+	}
+
 	// add node with interim nodes to make splitting possible
 	public void addNodeIfNotEqualToLastNodeWithInterimNodes(Node node) {
 		//System.out.println("nodecount: " + path.getNodeCount());

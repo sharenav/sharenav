@@ -396,6 +396,12 @@ public class Configuration {
 		/** Max. map precision in meters */
 	    	public static double mapPrecisionInMeters = 1d;
 
+		/** Use sea tiles for more efficient sea generation */
+	    	public boolean useSeaTiles = false;
+
+		/** Draw debug outlines in sea generation */
+	    	public boolean drawSeaOutlines = false;
+
 		/** Maximum ways that are allowed to be stored into a tile of the zoom levels. */
 		public int maxTileWays[] = new int[4];
 
@@ -726,6 +732,8 @@ public class Configuration {
 			cellOperator = getString("useCellID");
 			cellIDnoLAC = getString("cellIDnoLAC").equalsIgnoreCase("true");
 			generateSea = getString("generateSea").equalsIgnoreCase("true");
+			useSeaTiles = getString("useSeaTiles").equalsIgnoreCase("true");
+			drawSeaOutlines = getString("drawSeaOutlines").equalsIgnoreCase("true");
 		}
 
 		public void setPlanetName(String p) {
@@ -887,6 +895,14 @@ public class Configuration {
 
 		public boolean getGenerateSea() {
 			return generateSea;
+		}
+
+		public boolean getUseSeaTiles() {
+			return useSeaTiles;
+		}
+
+		public boolean getDrawSeaOutlines() {
+			return drawSeaOutlines;
 		}
 
 		/** Returns the name of the Map (as it will be shown on the phone).

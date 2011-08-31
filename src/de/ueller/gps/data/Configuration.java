@@ -57,7 +57,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 25;
+	public final static int VERSION = 26;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -357,6 +357,7 @@ public class Configuration {
 	private static final int RECORD_ID_DEST_RADLON = 53;
 	// max number of search results to find before stopping search
 	private static final int RECORD_ID_SEARCH_MAX = 54;
+	private static final int RECORD_ID_POI_SEARCH_DIST = 55;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -441,6 +442,7 @@ public class Configuration {
 	private static long phoneAllTimeMaxMemory = 0;
 
 	private static int searchMax = 0;
+	private static int poiSearchDist = 0;
 	
 	private static int minRouteLineWidth = 0;
 	private static int mainStreetDistanceKm = 0;
@@ -548,6 +550,7 @@ public class Configuration {
 			wayptSortMode = readInt(database, RECORD_ID_WAYPT_SORT_MODE);
 			backLightLevel = readInt(database, RECORD_ID_BACKLIGHTLEVEL);
 			searchMax = readInt(database, RECORD_ID_SEARCH_MAX);
+			poiSearchDist = readInt(database, RECORD_ID_POI_SEARCH_DIST);
 			/* there's been duplicate use of the id for RECORD_ID_BACKLIGHTLEVEL / RECORD_ID_WAYPTSORTMODE
 			 * so we need to check if backlightlevel is 0 to not end up with a black display
 			 */
@@ -782,6 +785,10 @@ public class Configuration {
 		}
 		if (configVersionStored < 25) {
 			cfgBits_64_to_127 |= 1L << CFGBIT_ONLINE_TOPOMAP;
+		}
+		if (configVersionStored < 26) {
+			// 10 km
+			setPoiSearchDistance(10f);
 		}
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);
 	}
@@ -1211,6 +1218,11 @@ public class Configuration {
 	public static void setSearchMax(int max) {
 		searchMax = max;
 		write(max, RECORD_ID_SEARCH_MAX);
+	}
+
+	public static void setPoiSearchDistance(float dist) {
+		poiSearchDist = (int) (dist * 10f);
+		write(poiSearchDist, RECORD_ID_POI_SEARCH_DIST);
 	}
 
 	public static boolean getCfgBitState(byte bit, boolean getDefault) {
@@ -1996,6 +2008,10 @@ public class Configuration {
 
 	public static int getSearchMax() {
 		return searchMax;
+	}
+
+	public static float getPoiSearchDistance() {
+		return (float) poiSearchDist / 10;
 	}
 
 	public static String getUtf8Encoding() {
