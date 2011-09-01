@@ -28,10 +28,10 @@ public class SplitLongWays {
 		for (Way way : parser.getWays()) {
 			testAndSplit(way);
 			count++;
-			if (count % 500 == 0) {
-				System.err.println("Tested " + count 
-						   + " ways for splitting");
-			}
+			//if (count % 500 == 0) {
+			//	System.err.println("Tested " + count 
+			//			   + " ways for splitting");
+			//}
 		}
 		for (Way w : added) {			
 			parser.addWay(w);
@@ -44,10 +44,10 @@ public class SplitLongWays {
 				}
 				if (way.triangles != null && way.triangles.size() > 0) {
 					count++;
-					if (count % 500 == 0) {
-						System.err.println("Did " + count 
-								   + " recreatePath()s");
-					}
+					//if (count % 500 == 0) {
+					//	System.err.println("Did " + count 
+					//			   + " recreatePath()s");
+					//}
 					way.recreatePathAvoidDuplicates();
 				}
 			}
