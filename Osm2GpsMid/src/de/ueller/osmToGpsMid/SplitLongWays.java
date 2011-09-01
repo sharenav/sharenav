@@ -29,7 +29,7 @@ public class SplitLongWays {
 			testAndSplit(way);
 			count++;
 			//if (count % 500 == 0) {
-			//	System.err.println("Tested " + count 
+			//	System.out.println("Tested " + count 
 			//			   + " ways for splitting");
 			//}
 		}
@@ -45,7 +45,7 @@ public class SplitLongWays {
 				if (way.triangles != null && way.triangles.size() > 0) {
 					count++;
 					//if (count % 500 == 0) {
-					//	System.err.println("Did " + count 
+					//	System.out.println("Did " + count 
 					//			   + " recreatePath()s");
 					//}
 					way.recreatePathAvoidDuplicates();
