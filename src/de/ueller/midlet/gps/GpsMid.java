@@ -268,6 +268,8 @@ public class GpsMid extends MIDlet implements CommandListener {
 
 	public void commandAction(Command c, Displayable d) {
 		if (c == Alert.DISMISS_COMMAND) {
+			//#debug info
+			log.info("GpsMid.commandAction: Alert dismissed");
 			bAlertOpen = false;
 			show(shouldBeDisplaying);
 			return;
@@ -358,15 +360,33 @@ public class GpsMid extends MIDlet implements CommandListener {
 	}
 
 	public void show(Displayable d) {
+		//#ifndef polish.android
+		// As long as the J2MEPolish adapter layer doesn't send a DISMISS_COMMAND
+		// (see commandAction()) when a popup closes (which is clearly a bug in
+		// J2MEPolish), we can't do this on Android. 
+		// Else, after a popup with timeout, screen changes would stop working on Android!
 		if (bAlertOpen == false) {
+		//#else
+		{
+		//#endif
 			try {
 				prevDisplayable = shouldBeDisplaying;
+				//#debug info
+				log.info("GpsMid.show: Going to display " + d.toString());
 				Display.getDisplay(this).setCurrent(d);
 			} catch (IllegalArgumentException iae) {
+				//#debug info
 				log.info("Could not display the new displayable " + d + ", "
 						+ iae.getMessage());
 			}
+		//#ifndef polish.android
+		} else {
+			//#debug info
+			log.info("GpsMid.show Alert open, postponing " + d.toString());
 		}
+		//#else
+		}
+		//#endif
 		/**
 		 * Keep track of what the Midlet should be displaying. This is
 		 * necessary, as a call to getDisplay following a setDisplay does not
