@@ -199,11 +199,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 
 	private final static int		STATE_ROOT		= 0;
 	private final static int		STATE_BT_GPS	= 2;
-	private final static int		STATE_LP		= 3;
+	private final static int		STATE_LOC_PROV	= 3;
 	private final static int		STATE_RBT		= 4;
 	private final static int		STATE_GPX		= 5;
 	private final static int		STATE_MAP		= 6;
-	private final static int		STATE_DISPOPT	= 7;
+	private final static int		STATE_DISP_OPT	= 7;
 	private final static int 		STATE_BT_GPX	= 8;
 	private final static int		STATE_DEBUG		= 9;
 	//#if polish.api.osm-editing
@@ -216,7 +216,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private final static int		STATE_URL_ENTER_GPX = 15;
 	private final static int		STATE_ONLINE_OPT = 16;
 	private final static int		STATE_BT_OPT = 17;
-	private final static int		STATE_GPS_URL	= 2;
 	
 	private Vector urlList;
 	private Vector friendlyName;
@@ -620,6 +619,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		
 	}
 	//#endif
+
 	private void initOnlineOptions() {
 		menuOnlineOptions = new Form(Locale.get("guidiscover.OnlineOptions")/*Online options*/);
 
@@ -715,7 +715,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	}
 	
 	public void commandAction(Command c, Displayable d) {
-
 		if (c == EXIT_CMD) {
 			destroy();
        		Trace.getInstance().show();
@@ -727,9 +726,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			} else if (state == STATE_BT_GPS) {
 				state = STATE_BT_OPT;
 			} else if (state == STATE_URL_ENTER_GPS) {
-				state = STATE_LP;
+				state = STATE_LOC_PROV;
 			} else if (state == STATE_BT_OPT) {
-				state = STATE_LP;
+				state = STATE_LOC_PROV;
 			} else if (state == STATE_URL_ENTER_GPX) {
 				state = STATE_GPX;
 			} else {
@@ -739,40 +738,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			return;
 		}
 		if (c == FILE_MAP) {
-			//#if polish.api.fileconnection
-			String initialDir = "";
-			String title = Locale.get("guidiscover.SelectDirectory")/*Select Directory*/;
-			switch (state) {
-				case STATE_LP:
-					title = Locale.get("guidiscover.RawLogDir")/*Raw GPS/CellID Log Directory*/;
-					initialDir = (rawLogDir == null) ? "" : rawLogDir;
-					break;
-				case STATE_MAP:
-					title = Locale.get("guidiscover.MapZipFileOrDirectory")/*Map ZipFile or Directory*/;
-					// get initialDir from form
-					String url = mapSrc.getString(1);
-					// skip "Filesystem: "
-					url = url.substring(url.indexOf(":") + 2);
-					initialDir = url;
-					break;
-				case STATE_GPX:
-					title = Locale.get("guidiscover.GpxDirectory")/*Gpx Directory*/;
-					initialDir = gpxUrl.getText();
-					break;
-				case STATE_DEBUG:
-					title = Locale.get("guidiscover.LogDirectory")/*Log Directory*/;
-					initialDir = Configuration.getDebugRawLoggerUrl();
-					break;
-			}
-			// no valid url, i.e. "Please select to destination first" ?
-			if(initialDir != null && !initialDir.toLowerCase().startsWith("file:///")) {
-				initialDir = null;
-			}
-			FsDiscover fsd = new FsDiscover(this, this, initialDir, (state == STATE_MAP) ? FsDiscover.CHOOSE_FILE_OR_DIR : FsDiscover.CHOOSE_DIRONLY, (state == STATE_MAP) ? ".zip;.jar" : null, title);
-			fsd.show();
-			//#else
-			//logger.error("Files system support is not compiled into this version");
-			//#endif
+			handleFileMapCommand();
 		}
 		if (c == MANUAL_URL_CMD) {
 			menuURLEnter = new Form(Locale.get("guidiscover.EnterConnectionUrl")/*Enter connection url*/);
@@ -784,7 +750,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			GpsMid.getInstance().show(menuURLEnter);
 			if (state == STATE_BT_GPS) {
 				state = STATE_URL_ENTER_GPS;
-			} else if (state == STATE_LP) {
+			} else if (state == STATE_LOC_PROV) {
 				state = STATE_URL_ENTER_GPS;
 			} else {
 				state = STATE_BT_GPX;
@@ -841,7 +807,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					gpxUrl.setText(gpxUrlStr == null ? Locale.get("guidiscover.xyzaoio")/*<Please select in menu>*/ : gpxUrlStr);
 				}
 				state = STATE_GPX;
-
 				show();
 				break;
 			case STATE_GPX:
@@ -855,7 +820,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				state = STATE_ROOT;
 				show();
 				break;
-			case STATE_LP:
+			case STATE_LOC_PROV:
 				Configuration.setLocationProvider(locProv.getSelectedIndex());
 				boolean [] selraw = new boolean[2];
 				rawLogCG.getSelectedFlags(selraw);
@@ -885,277 +850,14 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				show();
 				break;
 			case STATE_MAP:
-				Configuration.setBuiltinMap((mapSrc.getSelectedIndex() == 0));
-				// extract map url from form and save it to Configuration
-				String url = mapSrc.getString(1);
-				// skip "Filesystem: "
-				url = url.substring(url.indexOf(":") + 2);
-				// no valid url, i.e. "Please select..."
-				if (url.indexOf(":") == -1) {
-					url = null;
-				}
-				Configuration.setMapUrl(url);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS, mapSrcOptions.isSelected(0));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS, mapSrcOptions.isSelected(1));
-				state = STATE_ROOT;
-				show();
-				logger.fatal(Locale.get("guidiscover.NeedRestart")/*Need to restart GpsMid, otherwise map is in an inconsistant state*/ + " " + Configuration.getMapUrl());
+				returnFromMapOptions();
 				break;
-			case STATE_DISPOPT:
-				String uiLang = null;
-				if (!addLang.getString().equalsIgnoreCase(Configuration.getUiLang())) {
-					langToAdd = addLang.getString().toLowerCase();
-					if (langToAdd.equals("")) {
-						langToAdd = "devdefault";
-					}
-					uiLang = langToAdd;
-				} else if (Legend.numUiLang + numLangDifference > 1) {
-					uiLang = Legend.uiLang[uiLangGroup.getSelectedIndex()-numLangDifference];
-				}
-				if (uiLang != null) {
-					if (!Configuration.setUiLang(uiLang)) {
-						logger.error(Locale.get("guidiscover.LangNotFound")/*Couldn't set language to */ + uiLang);
-						System.out.println("Couldn't open translations file");
-					}
-					Configuration.setWikipediaLang(uiLang);
-					Configuration.setNamesOnMapLang(uiLang);
-				}
-//#if 0
-				/* move these to another menu, advanced or i18n */
-				String naviLang = null;				
-				if (langToAdd != null) {
-					naviLang = langToAdd;
-				} else if (Legend.numNaviLang + numLangDifference > 1) {
-					naviLang = Legend.naviLang[naviLangGroup.getSelectedIndex()-numLangDifference];
-					if (naviLang.equals(Configuration.getNaviLang()) && ! naviLang.equalsIgnoreCase("devdefault")) {
-						naviLang = null;
-					}
-				}
-				if (naviLang != null) {
-					String locale = null;
-					String naviLangUse = naviLang;
-					boolean multipleDirsForLanguage = false;
-					if (naviLang.equalsIgnoreCase("devdefault")) {
-						// get phone's locale
-						locale = System.getProperty("microedition.locale");
-
-						if (locale != null) {
-							naviLangUse = locale.substring(0, 2);
-						} else {
-							if (Legend.numNaviLang > 1) {
-								naviLangUse = Legend.naviLang[1];
-							} else {
-								naviLangUse = "en";
-							}
-						}
-					}
-					// store language choice. Sound directory choice takes preference over it.
-					Configuration.setNaviLang(naviLang);
-
-					String soundDirBase[] = new String[Legend.soundDirectories.length];
-					int soundDirBaseCount = 0;
-					String soundDir = null;
-					for (int i = 0; i < Legend.soundDirectories.length; i++) {
-						// build a table of basenames by matching "-xx" at end of dirname
-						if (Legend.soundDirectories[i] != null && Legend.soundDirectories[i].length() > 3) {
-							if (Legend.soundDirectories[i].substring(Legend.soundDirectories[i].length() - 3, Legend.soundDirectories[i].length() - 2).equals("-")) {
-								String basename = new String(Legend.soundDirectories[i].substring(0, Legend.soundDirectories[i].length() - 3));
-								boolean duplicate = false;
-								for (int j = 0; j < soundDirBaseCount; j++) {
-									if (basename.equals(soundDirBase[j])) {
-										duplicate = true;
-									}
-								}
-								if (! duplicate) {
-									soundDirBase[soundDirBaseCount] = basename;
-									soundDirBaseCount++;
-								}
-							}
-						}
-						// set dir if a language match is found
-						if (Legend.soundDirectories[i].substring(Legend.soundDirectories[i].length() - 3).equals("-" + naviLangUse)) {
-							// first suitable-language sound dir is taken into use
-							if (soundDir == null) {
-								soundDir = Legend.soundDirectories[i];
-							} else {
-								multipleDirsForLanguage = true;
-							}
-						}
-					}
-
-					if (soundDir != null) {
-						Configuration.setSoundDirectory(soundDir);
-						RouteSyntax.getInstance().readSyntax();
-					} else {
-						// special case English as default language
-						// if -en was not found, use a matching basename 
-
-						for (int i = 0; i < Legend.soundDirectories.length; i++) {
-							for (int j = 0; j < soundDirBaseCount; j++) {
-								if (soundDirBase[j].equals(Legend.soundDirectories[i])) {
-									soundDir = soundDirBase[j];
-								}
-							}
-						}
-						if (soundDir != null) {
-							Configuration.setSoundDirectory(soundDir);
-							RouteSyntax.getInstance().readSyntax();
-						}
-					}
-
-					if (soundDir == null) {
-						logger.error(Locale.get("guidiscover.SoundDirectoryFor")/*Sound directory for */ + naviLangUse + Locale.get("guidiscover.NotFound")/* not found!*/);
-					}
-					//if (multipleDirsForLanguage) {
-					// FIXME: if more than one dir for lang available,
-					// tell the user it can be switched at "sounds&alerts" menu
-					// ("Changing language", "Selecting " + soundDir, 3000);
-					//}
-				}
-//#endif
-				boolean nightMode = (nightModeGroup.getSelectedIndex() == 1);
-				
-				if (nightMode != Configuration.getCfgBitState(Configuration.CFGBIT_NIGHT_MODE) ) {
-					Configuration.setCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE, nightMode);
-					Legend.reReadLegend();
-					Trace trace = Trace.getInstance();
-					trace.recreateTraceLayout();
-				}
-
-				Configuration.setProjTypeDefault( (byte) rotationGroup.getSelectedIndex() );
-
-				if ((!Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION)) && directionOpts.getSelectedIndex() == 1) {
-					Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION,
-									  (directionOpts.getSelectedIndex() == 1));
-					Trace.getInstance().startCompass();
-				}
-				if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION) && directionOpts.getSelectedIndex() != 1) {
-					Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION,
-									  (directionOpts.getSelectedIndex() == 1));
-					Trace.getInstance().stopCompass();
-				}
-
-				if ((!Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION)) && directionOpts.getSelectedIndex() == 2) {
-					Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION,
-									  true);
-					Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION,
-									  true);
-				}
-				if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION) && directionOpts.getSelectedIndex() != 2) {
-					Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION,
-									  false);
-				}
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE,
-						(renderOpts.getSelectedIndex() == 1)
-				);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_DISTANCE_VIEW,
-						(distanceViews.getSelectedIndex() == 1)
-				);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_POI_LABELS_LARGER, sizeOpts.isSelected(0));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_WPT_LABELS_LARGER, sizeOpts.isSelected(1));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_LARGE_FONT, sizeOpts.isSelected(2));
-				
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS, mapInfoOpts.isSelected(0));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_SCALE_BAR, mapInfoOpts.isSelected(1));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP, mapInfoOpts.isSelected(2));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_ALTITUDE_IN_MAP, mapInfoOpts.isSelected(3));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP, mapInfoOpts.isSelected(4));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_WHEN_ROUTING, mapInfoOpts.isSelected(5));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP, mapInfoOpts.isSelected(6));
-				
-				String secs = tfAutoRecenterToGpsSecs.getString();
-				Configuration.setAutoRecenterToGpsMilliSecs(
-						(int) (Float.parseFloat(secs)) * 1000
-				);
-				
-				// convert boolean array with selection states for backlight
-				// to one flag with corresponding bits set
-				boolean[] sellight = new boolean[9];
-				backlightOpts.getSelectedFlags( sellight );
-	            // save selected values to record store
-				int i = 0;
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ON, sellight[i++]);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED, sellight[i++]);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_KEEPALIVE, sellight[i++]);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_MIDP2, sellight[i++]);
-				//#if polish.api.nokia-ui
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_NOKIA, sellight[i++]);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH, sellight[i++]);
-				//#endif
-				//#if polish.api.min-siemapi
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_SIEMENS, sellight[i++]);
-				//#endif
-				//#if polish.api.min-samsapi
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_SAMSUNG, sellight[i++]);
-				//#endif
-				//#if polish.android
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK, sellight[i++]);
-				//#endif
-				
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_METRIC, (metricUnits.getSelectedIndex() == 0));
-				
-				sellight = new boolean[1];
-				perfTuneOpts.getSelectedFlags(sellight);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY, sellight[0]);
-
-				sellight = new boolean[2];
-				visualOpts.getSelectedFlags(sellight);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS, ! sellight[0]);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUND_WAY_ENDS, sellight[1]);
-
-				state = STATE_ROOT;
-				show();
-
-				parent.restartBackLightTimer();
+			case STATE_DISP_OPT:
+				returnFromDisplayOptions();
 				break;
 			case STATE_DEBUG:
-				boolean [] selDebug = new boolean[1];
-				debugLog.getSelectedFlags(selDebug);
-				Configuration.setDebugRawLoggerEnable((selDebug[0]));
-				Configuration.setDebugRawLoggerUrl(debugLog.getString(0));
-				GpsMid.getInstance().enableDebugFileLogging();
-				selDebug = new boolean[3];
-				debugSeverity.getSelectedFlags(selDebug);
-				
-				Configuration.setDebugSeverityInfo(selDebug[0]);
-				Configuration.setDebugSeverityDebug(selDebug[1]);
-				Configuration.setDebugSeverityTrace(selDebug[2]);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_CONNECTIONS, debugOther.isSelected(0));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS, debugOther.isSelected(1));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_BEARINGS, debugOther.isSelected(2));
-				Logger.setGlobalLevel();
-				state = STATE_ROOT;
-				this.show();
-				
-				/**
-				 * In order to minimise surprise of the user that despite enabling logging here
-				 * nothing shows up in the log file, we warn the user if logging at the specified level
-				 * is not compiled into the current Version of GpsMid
-				 * 
-				 * The check needs to be after this.show() so that the alert messages can be shown
-				 * and not disabled by the immediate call to this.show()
-				 */
-				boolean debugAvail = false;
-				//#debug trace
-				debugAvail = true;
-				if (selDebug[2] && !debugAvail) {
-					logger.error(Locale.get("guidiscover.LoggingAtTraceNotCompiledIn")/*Logging at Trace level is not compiled into this version of GpsMid so log will be empty*/);
-				}
-				debugAvail = false;
-				//#debug debug
-				debugAvail = true;
-				if (selDebug[1] && !debugAvail) {
-					logger.error(Locale.get("guidiscover.LoggingAtDebugNotCompiledIn")/*Logging at Debug level is not compiled into this version of GpsMid so log will be empty*/);
-				}
-				debugAvail = false;
-				//#debug info
-				debugAvail = true;
-				if (selDebug[0] && !debugAvail) {
-					logger.error(Locale.get("guidiscover.LoggingAtInfoNotCompiledIn")/*Logging at Info level is not compiled into this version of GpsMid so log will be empty*/);
-				}
-				
+				returnFromDebugOptions();				
 				break;
-
 			//#if polish.api.osm-editing
 			case STATE_OSM_OPT:
 				Configuration.setOsmUsername(tfOsmUserName.getString());
@@ -1166,66 +868,20 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				break;
 			//#endif
 			case STATE_ONLINE_OPT:
-				String onlineLang = null;
-				if (langToAdd != null) {
-					onlineLang = langToAdd;
-				} else if (Legend.numOnlineLang + numLangDifference > 1) {
-					onlineLang = Legend.onlineLang[onlineLangGroup.getSelectedIndex()-numLangDifference];
-				}
-				if (onlineLang != null) {
-					Configuration.setOnlineLang(onlineLang);
-				}
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_GEOHACK,
-						onlineOptionGroup.isSelected(0));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEATHER,
-						onlineOptionGroup.isSelected(1));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_PHONE,
-						onlineOptionGroup.isSelected(2));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITE,
-						onlineOptionGroup.isSelected(3));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_WIKIPEDIA_RSS,
-						onlineOptionGroup.isSelected(4));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_TOPOMAP,
-						onlineOptionGroup.isSelected(5));
-
-				state = STATE_ROOT;
-				this.show();
+				returnFromOnlineOptions();
 				break;
 			case STATE_OPENCELLID_OPT:
-				//Configuration.setOpencellidApikey(tfOpencellidApikey.getString());
-				boolean[] opencellidFlags = new boolean[2];
-				cellidOptsGroup.getSelectedFlags(opencellidFlags);
-
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_CELLID_OFFLINEONLY,
-							     opencellidFlags[0]);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_CELLID_ONLINEONLY,
-							     opencellidFlags[1]);
-				//Configuration.setCfgBitSavedState(Configuration.CFGBIT_CELLID_ALWAYS,
-				//			     opencellidFlags[2]);
-				//Configuration.setCfgBitSavedState(Configuration.CFGBIT_CELLID_CONFIRM,
-				//			     opencellidFlags[3]);
-				//Configuration.setCfgBitSavedState(Configuration.CFGBIT_CELLID_FALLBACK,
-				//			     opencellidFlags[4]);
-				state = STATE_ROOT;
-				this.show();
-				//#if polish.api.online
-				//#else
-				if (opencellidFlags[1]) {
-					logger.error(Locale.get("guidiscover.OnlineAccessNotCompiledIn")/*Online access is not compiled into this midlet*/);
-				}
-				//#endif
-
+				returnFromOpenCellIdOptions();
 				break;
 			case STATE_URL_ENTER_GPS:
 				gpsUrlStr = tfURL.getString();
 				Configuration.setBtUrl(gpsUrlStr);
 				//state = STATE_BT_OPT;
-				state = STATE_LP;
+				state = STATE_LOC_PROV;
 				// set method to NMEA
 				Configuration.setLocationProvider(2);
 				show();
 				break;
-			
 			case STATE_URL_ENTER_GPX:
 				gpsUrlStr = tfURL.getString();
 				state = STATE_GPX;
@@ -1233,6 +889,45 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				break;
 			}
 		}
+	}
+
+	private void handleFileMapCommand() {
+		//#if polish.api.fileconnection
+		String initialDir = "";
+		String title = Locale.get("guidiscover.SelectDirectory")/*Select Directory*/;
+		switch (state) {
+			case STATE_LOC_PROV:
+				title = Locale.get("guidiscover.RawLogDir")/*Raw GPS/CellID Log Directory*/;
+				initialDir = (rawLogDir == null) ? "" : rawLogDir;
+				break;
+			case STATE_MAP:
+				title = Locale.get("guidiscover.MapZipFileOrDirectory")/*Map ZipFile or Directory*/;
+				// get initialDir from form
+				String url = mapSrc.getString(1);
+				// skip "Filesystem: "
+				url = url.substring(url.indexOf(":") + 2);
+				initialDir = url;
+				break;
+			case STATE_GPX:
+				title = Locale.get("guidiscover.GpxDirectory")/*Gpx Directory*/;
+				initialDir = gpxUrl.getText();
+				break;
+			case STATE_DEBUG:
+				title = Locale.get("guidiscover.LogDirectory")/*Log Directory*/;
+				initialDir = Configuration.getDebugRawLoggerUrl();
+				break;
+		}
+		// no valid url, i.e. "Please select to destination first" ?
+		if(initialDir != null && !initialDir.toLowerCase().startsWith("file:///")) {
+			initialDir = null;
+		}
+		FsDiscover fsd = new FsDiscover(this, this, initialDir, 
+				(state == STATE_MAP) ? FsDiscover.CHOOSE_FILE_OR_DIR : FsDiscover.CHOOSE_DIRONLY, 
+				(state == STATE_MAP) ? ".zip;.jar" : null, title);
+		fsd.show();
+		//#else
+		//logger.error("Files system support is not compiled into this version");
+		//#endif
 	}
 
 	private void showSetupDialog(int menuNr) {
@@ -1259,7 +954,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				cellIDStartup.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_CELLID_STARTUP));
 				//Display.getDisplay(parent).setCurrent(menuSelectLocProv);
 				GpsMid.getInstance().show(menuSelectLocProv);
-				state = STATE_LP;
+				state = STATE_LOC_PROV;
 				break;
 			case MENU_ITEM_BLUETOOTH: // NMEA Location Receiver setup
 				initNMEASetupMenu();
@@ -1369,7 +1064,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				backlightOpts.setSelectedFlags(sellight);
 				
 				GpsMid.getInstance().show(menuDisplayOptions);
-				state = STATE_DISPOPT;
+				state = STATE_DISP_OPT;
 				break;
 			case MENU_ITEM_GPX_DEVICE: // GPX Receiver
 				//Prepare Gpx receiver selection menu
@@ -1496,6 +1191,331 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		}
 	}
 	
+	private void returnFromMapOptions() {
+		Configuration.setBuiltinMap((mapSrc.getSelectedIndex() == 0));
+		// extract map url from form and save it to Configuration
+		String url = mapSrc.getString(1);
+		// skip "Filesystem: "
+		url = url.substring(url.indexOf(":") + 2);
+		// no valid url, i.e. "Please select..."
+		if (url.indexOf(":") == -1) {
+			url = null;
+		}
+		Configuration.setMapUrl(url);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS, mapSrcOptions.isSelected(0));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS, mapSrcOptions.isSelected(1));
+		state = STATE_ROOT;
+		show();
+		logger.fatal(Locale.get("guidiscover.NeedRestart")/*Need to restart GpsMid, otherwise map is in an inconsistant state*/ + " " + Configuration.getMapUrl());
+	}
+
+	private void returnFromDisplayOptions() {
+		String uiLang = null;
+		if (!addLang.getString().equalsIgnoreCase(Configuration.getUiLang())) {
+			langToAdd = addLang.getString().toLowerCase();
+			if (langToAdd.equals("")) {
+				langToAdd = "devdefault";
+			}
+			uiLang = langToAdd;
+		} else if (Legend.numUiLang + numLangDifference > 1) {
+			uiLang = Legend.uiLang[uiLangGroup.getSelectedIndex()-numLangDifference];
+		}
+		if (uiLang != null) {
+			if (!Configuration.setUiLang(uiLang)) {
+				logger.error(Locale.get("guidiscover.LangNotFound")/*Couldn't set language to */ + uiLang);
+				System.out.println("Couldn't open translations file");
+			}
+			Configuration.setWikipediaLang(uiLang);
+			Configuration.setNamesOnMapLang(uiLang);
+		}
+//#if 0
+		/* move these to another menu, advanced or i18n */
+		String naviLang = null;				
+		if (langToAdd != null) {
+			naviLang = langToAdd;
+		} else if (Legend.numNaviLang + numLangDifference > 1) {
+			naviLang = Legend.naviLang[naviLangGroup.getSelectedIndex()-numLangDifference];
+			if (naviLang.equals(Configuration.getNaviLang()) && ! naviLang.equalsIgnoreCase("devdefault")) {
+				naviLang = null;
+			}
+		}
+		if (naviLang != null) {
+			String locale = null;
+			String naviLangUse = naviLang;
+			boolean multipleDirsForLanguage = false;
+			if (naviLang.equalsIgnoreCase("devdefault")) {
+				// get phone's locale
+				locale = System.getProperty("microedition.locale");
+
+				if (locale != null) {
+					naviLangUse = locale.substring(0, 2);
+				} else {
+					if (Legend.numNaviLang > 1) {
+						naviLangUse = Legend.naviLang[1];
+					} else {
+						naviLangUse = "en";
+					}
+				}
+			}
+			// store language choice. Sound directory choice takes preference over it.
+			Configuration.setNaviLang(naviLang);
+
+			String soundDirBase[] = new String[Legend.soundDirectories.length];
+			int soundDirBaseCount = 0;
+			String soundDir = null;
+			for (int i = 0; i < Legend.soundDirectories.length; i++) {
+				// build a table of basenames by matching "-xx" at end of dirname
+				if (Legend.soundDirectories[i] != null && Legend.soundDirectories[i].length() > 3) {
+					if (Legend.soundDirectories[i].substring(Legend.soundDirectories[i].length() - 3, Legend.soundDirectories[i].length() - 2).equals("-")) {
+						String basename = new String(Legend.soundDirectories[i].substring(0, Legend.soundDirectories[i].length() - 3));
+						boolean duplicate = false;
+						for (int j = 0; j < soundDirBaseCount; j++) {
+							if (basename.equals(soundDirBase[j])) {
+								duplicate = true;
+							}
+						}
+						if (! duplicate) {
+							soundDirBase[soundDirBaseCount] = basename;
+							soundDirBaseCount++;
+						}
+					}
+				}
+				// set dir if a language match is found
+				if (Legend.soundDirectories[i].substring(Legend.soundDirectories[i].length() - 3).equals("-" + naviLangUse)) {
+					// first suitable-language sound dir is taken into use
+					if (soundDir == null) {
+						soundDir = Legend.soundDirectories[i];
+					} else {
+						multipleDirsForLanguage = true;
+					}
+				}
+			}
+
+			if (soundDir != null) {
+				Configuration.setSoundDirectory(soundDir);
+				RouteSyntax.getInstance().readSyntax();
+			} else {
+				// special case English as default language
+				// if -en was not found, use a matching basename 
+
+				for (int i = 0; i < Legend.soundDirectories.length; i++) {
+					for (int j = 0; j < soundDirBaseCount; j++) {
+						if (soundDirBase[j].equals(Legend.soundDirectories[i])) {
+							soundDir = soundDirBase[j];
+						}
+					}
+				}
+				if (soundDir != null) {
+					Configuration.setSoundDirectory(soundDir);
+					RouteSyntax.getInstance().readSyntax();
+				}
+			}
+
+			if (soundDir == null) {
+				logger.error(Locale.get("guidiscover.SoundDirectoryFor")/*Sound directory for */ + naviLangUse + Locale.get("guidiscover.NotFound")/* not found!*/);
+			}
+			//if (multipleDirsForLanguage) {
+			// FIXME: if more than one dir for lang available,
+			// tell the user it can be switched at "sounds&alerts" menu
+			// ("Changing language", "Selecting " + soundDir, 3000);
+			//}
+		}
+//#endif
+		boolean nightMode = (nightModeGroup.getSelectedIndex() == 1);
+		
+		if (nightMode != Configuration.getCfgBitState(Configuration.CFGBIT_NIGHT_MODE) ) {
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE, nightMode);
+			Legend.reReadLegend();
+			Trace trace = Trace.getInstance();
+			trace.recreateTraceLayout();
+		}
+
+		Configuration.setProjTypeDefault( (byte) rotationGroup.getSelectedIndex() );
+
+		if ((!Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION)) && directionOpts.getSelectedIndex() == 1) {
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION,
+							  (directionOpts.getSelectedIndex() == 1));
+			Trace.getInstance().startCompass();
+		}
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION) && directionOpts.getSelectedIndex() != 1) {
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION,
+							  (directionOpts.getSelectedIndex() == 1));
+			Trace.getInstance().stopCompass();
+		}
+
+		if ((!Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION)) && directionOpts.getSelectedIndex() == 2) {
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION,
+							  true);
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION,
+							  true);
+		}
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION) && directionOpts.getSelectedIndex() != 2) {
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION,
+							  false);
+		}
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE,
+				(renderOpts.getSelectedIndex() == 1)
+		);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_DISTANCE_VIEW,
+				(distanceViews.getSelectedIndex() == 1)
+		);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_POI_LABELS_LARGER, sizeOpts.isSelected(0));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_WPT_LABELS_LARGER, sizeOpts.isSelected(1));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_LARGE_FONT, sizeOpts.isSelected(2));
+		
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS, mapInfoOpts.isSelected(0));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_SCALE_BAR, mapInfoOpts.isSelected(1));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP, mapInfoOpts.isSelected(2));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_ALTITUDE_IN_MAP, mapInfoOpts.isSelected(3));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP, mapInfoOpts.isSelected(4));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_WHEN_ROUTING, mapInfoOpts.isSelected(5));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP, mapInfoOpts.isSelected(6));
+		
+		String secs = tfAutoRecenterToGpsSecs.getString();
+		Configuration.setAutoRecenterToGpsMilliSecs(
+				(int) (Float.parseFloat(secs)) * 1000
+		);
+		
+		// convert boolean array with selection states for backlight
+		// to one flag with corresponding bits set
+		boolean[] sellight = new boolean[9];
+		backlightOpts.getSelectedFlags( sellight );
+		// save selected values to record store
+		int i = 0;
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ON, sellight[i++]);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED, sellight[i++]);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_KEEPALIVE, sellight[i++]);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_MIDP2, sellight[i++]);
+		//#if polish.api.nokia-ui
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_NOKIA, sellight[i++]);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH, sellight[i++]);
+		//#endif
+		//#if polish.api.min-siemapi
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_SIEMENS, sellight[i++]);
+		//#endif
+		//#if polish.api.min-samsapi
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_SAMSUNG, sellight[i++]);
+		//#endif
+		//#if polish.android
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK, sellight[i++]);
+		//#endif
+		
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_METRIC, (metricUnits.getSelectedIndex() == 0));
+		
+		sellight = new boolean[1];
+		perfTuneOpts.getSelectedFlags(sellight);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY, sellight[0]);
+
+		sellight = new boolean[2];
+		visualOpts.getSelectedFlags(sellight);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS, ! sellight[0]);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUND_WAY_ENDS, sellight[1]);
+
+		state = STATE_ROOT;
+		show();
+
+		parent.restartBackLightTimer();
+	}
+
+	private void returnFromDebugOptions() {
+		boolean [] selDebug = new boolean[1];
+		debugLog.getSelectedFlags(selDebug);
+		Configuration.setDebugRawLoggerEnable((selDebug[0]));
+		Configuration.setDebugRawLoggerUrl(debugLog.getString(0));
+		GpsMid.getInstance().enableDebugFileLogging();
+		selDebug = new boolean[3];
+		debugSeverity.getSelectedFlags(selDebug);
+		
+		Configuration.setDebugSeverityInfo(selDebug[0]);
+		Configuration.setDebugSeverityDebug(selDebug[1]);
+		Configuration.setDebugSeverityTrace(selDebug[2]);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_CONNECTIONS, debugOther.isSelected(0));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS, debugOther.isSelected(1));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_BEARINGS, debugOther.isSelected(2));
+		Logger.setGlobalLevel();
+		state = STATE_ROOT;
+		this.show();
+		
+		/**
+		 * In order to minimize surprise of the user that despite enabling logging here
+		 * nothing shows up in the log file, we warn the user if logging at the specified level
+		 * is not compiled into the current Version of GpsMid
+		 * 
+		 * The check needs to be after this.show() so that the alert messages can be shown
+		 * and not disabled by the immediate call to this.show()
+		 */
+		boolean debugAvail = false;
+		//#debug trace
+		debugAvail = true;
+		if (selDebug[2] && !debugAvail) {
+			logger.error(Locale.get("guidiscover.LoggingAtTraceNotCompiledIn")/*Logging at Trace level is not compiled into this version of GpsMid so log will be empty*/);
+		}
+		debugAvail = false;
+		//#debug debug
+		debugAvail = true;
+		if (selDebug[1] && !debugAvail) {
+			logger.error(Locale.get("guidiscover.LoggingAtDebugNotCompiledIn")/*Logging at Debug level is not compiled into this version of GpsMid so log will be empty*/);
+		}
+		debugAvail = false;
+		//#debug info
+		debugAvail = true;
+		if (selDebug[0] && !debugAvail) {
+			logger.error(Locale.get("guidiscover.LoggingAtInfoNotCompiledIn")/*Logging at Info level is not compiled into this version of GpsMid so log will be empty*/);
+		}
+	}
+
+	private void returnFromOnlineOptions() {
+		String onlineLang = null;
+		if (langToAdd != null) {
+			onlineLang = langToAdd;
+		} else if (Legend.numOnlineLang + numLangDifference > 1) {
+			onlineLang = Legend.onlineLang[onlineLangGroup.getSelectedIndex()-numLangDifference];
+		}
+		if (onlineLang != null) {
+			Configuration.setOnlineLang(onlineLang);
+		}
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_GEOHACK,
+				onlineOptionGroup.isSelected(0));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEATHER,
+				onlineOptionGroup.isSelected(1));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_PHONE,
+				onlineOptionGroup.isSelected(2));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITE,
+				onlineOptionGroup.isSelected(3));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_WIKIPEDIA_RSS,
+				onlineOptionGroup.isSelected(4));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_TOPOMAP,
+				onlineOptionGroup.isSelected(5));
+
+		state = STATE_ROOT;
+		this.show();
+	}
+
+	private void returnFromOpenCellIdOptions() {
+		//Configuration.setOpencellidApikey(tfOpencellidApikey.getString());
+		boolean[] opencellidFlags = new boolean[2];
+		cellidOptsGroup.getSelectedFlags(opencellidFlags);
+
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_CELLID_OFFLINEONLY,
+					     opencellidFlags[0]);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_CELLID_ONLINEONLY,
+					     opencellidFlags[1]);
+		//Configuration.setCfgBitSavedState(Configuration.CFGBIT_CELLID_ALWAYS,
+		//			     opencellidFlags[2]);
+		//Configuration.setCfgBitSavedState(Configuration.CFGBIT_CELLID_CONFIRM,
+		//			     opencellidFlags[3]);
+		//Configuration.setCfgBitSavedState(Configuration.CFGBIT_CELLID_FALLBACK,
+		//			     opencellidFlags[4]);
+		state = STATE_ROOT;
+		this.show();
+		//#if polish.api.online
+		//#else
+		if (opencellidFlags[1]) {
+			logger.error(Locale.get("guidiscover.OnlineAccessNotCompiledIn")/*Online access is not compiled into this midlet*/);
+		}
+		//#endif
+	}
+
 	private void destroy() {
 		//#if polish.api.btapi
 		if (gps != null) {
@@ -1523,7 +1543,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					GpsMid.getInstance().show(menu);
 				}
 				break;
-			case STATE_LP:
+			case STATE_LOC_PROV:
 				//showSetupDialog(MENU_ITEM_LOCATION);
 				GpsMid.getInstance().show(menuSelectLocProv);
 				break;
@@ -1581,11 +1601,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			try {
 				menuBT.append("" + i + " " + (String) friendlyName.elementAt(i), null);
 			} catch (RuntimeException e) {
-				// TODO Auto-generated catch block
 				menuBT.append(e.getMessage(), null);
 			}
 		}
-		
 	}
 	
 	public void selectionCanceled() {
@@ -1603,7 +1621,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		logger.info("Url selected: " + url);
 		String url_trunc = url.substring(0, url.lastIndexOf('/') + 1);
 		switch (state) {
-		case STATE_LP:
+		case STATE_LOC_PROV:
 			rawLogCG.setLabel(LOG_TO + url_trunc);
 			rawLogDir = url_trunc;
 			break;
@@ -1645,7 +1663,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		setupIconMenu.show();
 	}
 	
-	/** uncache the icon menu to reflect changes in the setup or save memory */
+	/** Uncache the icon menu to reflect changes in the setup or save memory */
 	public static void uncacheIconMenu() {
 		//#mdebug trace
 		if (setupIconMenu != null) {
@@ -1655,13 +1673,13 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		setupIconMenu = null;
 	}
 
-	/** interface for IconMenuWithPages: recreate the icon menu from scratch and show it (introduced for reflecting size change of the Canvas) */
+	/** Interface for IconMenuWithPages: recreate the icon menu from scratch and show it (introduced for reflecting size change of the Canvas) */
 	public void recreateAndShowIconMenu() {
 		uncacheIconMenu();
 		showIconMenu();
 	}
 
-	/** interface for received actions from the IconMenu GUI */
+	/** Interface for received actions from the IconMenu GUI */
 	public void performIconAction(int actionId) {
 		show();
 		if (actionId == IconActionPerformer.BACK_ACTIONID) {
