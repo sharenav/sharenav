@@ -67,10 +67,14 @@ public abstract class KeyCommandCanvas extends Canvas implements
 //#if polish.android
 		//GpsMid.getInstance().alert("keycode", "keycode = " + keyCode, 3000);
 		if (keyCode == 0) {
+			// #debug debug
+			logger.debug("  Turning key into SEARCH_CMD");
 			commandAction(Trace.getInstance().getCommand(Trace.SEARCH_CMD), (Displayable) null);
 			return;
 		}
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			// #debug debug
+			logger.debug("  Turning BACK key into ICON_MENU_CMD");
 			commandAction(Trace.getInstance().getCommand(Trace.ICON_MENU), (Displayable) null);
 			return;
 		}
