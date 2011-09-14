@@ -1,6 +1,6 @@
 /*
  * GpsMid - Copyright (c) 2009 sk750 at users dot sourceforge dot net
- * See COPYING
+ * See file COPYING
  */
 
 package de.ueller.gps.tools;
@@ -14,6 +14,7 @@ import de.ueller.gps.data.Legend;
 import de.ueller.midlet.gps.Logger;
 
 import de.enough.polish.util.Locale;
+
 
 public class LayoutElement {
 	private final static Logger logger = Logger.getInstance(LayoutElement.class,Logger.DEBUG);
@@ -222,7 +223,7 @@ public class LayoutElement {
 			int x = eleNr % imp.numCols;
 			int y = eleNr / imp.numCols;
 			if (imp.numCols == 4) {
-                                // imp.numCols == 4 - arrange elements similarly as they are arranged in the 3-column setup
+                // imp.numCols == 4 - arrange elements similarly as they are arranged in the 3-column setup
 				x = eleNr % 3;
 				y = eleNr / 3;
 				if (eleNr >= 9) {
@@ -468,6 +469,7 @@ public class LayoutElement {
 	public void setText(String text) {
 		if (!textIsValid || !text.equalsIgnoreCase(this.text) ) {
 			this.text = text;
+			//TODO: There are 6 NPEs at startup on Android in the following line.
 			textWidth = font.stringWidth(text);
 			numDrawChars = (short) text.length();
 			lm.recalcPositionsRequired = true;
@@ -492,10 +494,9 @@ public class LayoutElement {
 		return flags;
 	}
 	
-	/**
-		Set vertical relative to this relative element's position and height
-		combine with FLAG_VALIGN_ABOVE_RELATIVE or FLAG_VALIGN_BELOW_RELATIVE for the relative direction
-	*/
+	/** Set vertical relative to this relative element's position and height combine
+	 *	with FLAG_VALIGN_ABOVE_RELATIVE or FLAG_VALIGN_BELOW_RELATIVE for the relative direction.
+	 */
 	public void setVRelative(LayoutElement e) {
 		vRelativeTo = e;
 		vRelativeTo.usedAsRelative = true;
