@@ -35,7 +35,7 @@ import javax.microedition.lcdui.TextField;
 import de.enough.polish.util.base64.Base64;
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
-import de.ueller.gps.tools.HTTPhelper;
+import de.ueller.util.HttpHelper;
 
 public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 		Runnable, CommandListener, UploadListener {
@@ -51,7 +51,7 @@ public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 	private String comment;
 	private TextField commentField;
 	
-	private HTTPhelper http;
+	private HttpHelper http;
 
 	private int changesetID;
 
@@ -78,14 +78,14 @@ public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 		xml.append("<osm>\n<changeset>\n");
 		xml.append("<tag k=\"created_by\" v=\"GpsMid_"
 				+ Legend.getAppVersion() + "\"/>\n");
-		xml.append("<tag k=\"comment\" v=\"" + HTTPhelper.escapeXML(comment) + "\" />\n");
+		xml.append("<tag k=\"comment\" v=\"" + HttpHelper.escapeXML(comment) + "\" />\n");
 		xml.append("</changeset>\n</osm>\n");
 		return xml.toString();
 	}
 
 	private void uploadCreate() {
 		if (http == null) { 
-			http = new HTTPhelper();
+			http = new HttpHelper();
 		}
 		//#debug debug
 		logger.debug("Uploading XML for " + this);
@@ -120,7 +120,7 @@ public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 
 	public void closeChangeset() {
 		if (http == null) { 
-			http = new HTTPhelper();
+			http = new HttpHelper();
 		}
 		String url = Configuration.getOsmUrl() + "changeset/" + changesetID
 		+ "/close";

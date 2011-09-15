@@ -1,4 +1,4 @@
-package de.ueller.gps.tools;
+package de.ueller.util;
 /*
  * GpsMid - Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
  * See Copying
@@ -17,7 +17,7 @@ package de.ueller.gps.tools;
  * see Copying
  *
  */
-public class intTree  {
+public class IntTree  {
 	
 	/**
 	 * Initial capacity of the tree and the amount by which it is extended.
@@ -45,7 +45,7 @@ public class intTree  {
 	private int keyCache;
 	private Object valueCache;
 	
-	public intTree() {
+	public IntTree() {
 		removeAll();
 	}
 	
@@ -186,7 +186,7 @@ public class intTree  {
 		return keys.length;
 	}
 	
-	public synchronized void clone(intTree clone) {
+	public synchronized void clone(IntTree clone) {
 		synchronized (clone) {
 			int size = clone.keys.length;
 			keys = new int[size];

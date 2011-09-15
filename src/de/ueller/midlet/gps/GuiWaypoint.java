@@ -14,7 +14,6 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
 
 import de.ueller.gps.data.Configuration;
-import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.Node;
@@ -23,6 +22,7 @@ import de.ueller.midlet.gps.data.RoutePositionMark;
 import de.ueller.midlet.screens.GuiWaypointSorting;
 import de.ueller.midlet.screens.InputListener;
 import de.ueller.midlet.screens.ProgressDisplay;
+import de.ueller.util.HelperRoutines;
 
 import de.enough.polish.util.Locale;
 

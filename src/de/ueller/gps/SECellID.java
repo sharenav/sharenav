@@ -35,10 +35,8 @@ import javax.microedition.rms.RecordStore;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
 //#if polish.api.online
-import de.ueller.gps.tools.HTTPhelper;
+import de.ueller.util.HttpHelper;
 //#endif
-import de.ueller.gps.tools.StringTokenizer;
-import de.ueller.gps.tools.intTree;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.LocationMsgProducer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
@@ -47,6 +45,8 @@ import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.UploadListener;
 import de.ueller.midlet.gps.data.CellIdProvider;
 import de.ueller.midlet.gps.data.GSMCell;
+import de.ueller.util.IntTree;
+import de.ueller.util.StringTokenizer;
 import de.ueller.gps.data.Configuration;
 
 import de.enough.polish.util.Locale;
@@ -246,8 +246,8 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 	private String message;
 	private RetrievePosition rp = null;
 
-	private intTree cellPos;
-	private intTree lacidx;
+	private IntTree cellPos;
+	private IntTree lacidx;
 	
 	private int dblacidx;
 	
@@ -272,8 +272,8 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 	public boolean init(LocationMsgReceiver receiver) {
 		try {
 			this.receiverList.addReceiver(receiver);
-			cellPos = new intTree();
-			lacidx = new intTree();
+			cellPos = new IntTree();
+			lacidx = new IntTree();
 			
 			cellProvider = CellIdProvider.getInstance();
 			
@@ -403,7 +403,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 		String url = "http://www.opencellid.org/cell/get?mcc="
 			+ cellLoc.mcc + "&mnc=" + cellLoc.mnc + "&cellid=" + cellLoc.cellID
 			+ "&lac=" + cellLoc.lac + "&fmt=txt";
-		HTTPhelper http = new HTTPhelper();
+		HttpHelper http = new HttpHelper();
 		http.getURL(url, this);
 		
 		try {

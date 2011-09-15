@@ -25,10 +25,10 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.TextField;
 
 import de.ueller.gps.data.Configuration;
-import de.ueller.gps.tools.HTTPhelper;
 import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.data.OSMdataNode;
 import de.ueller.midlet.gps.data.PositionMark;
+import de.ueller.util.HttpHelper;
 
 import de.enough.polish.util.Locale;
 
@@ -60,7 +60,7 @@ public class GuiOSMAddrDisplay extends Form implements GpsMidDisplayable,
 
 	private OSMdataNode osmNode;
 
-	private HTTPhelper http;
+	private HttpHelper http;
 
 	public GuiOSMAddrDisplay(int nodeID, String streetName, SingleTile t,
 			float lat, float lon, GpsMidDisplayable parent) {
@@ -146,7 +146,7 @@ public class GuiOSMAddrDisplay extends Form implements GpsMidDisplayable,
 			url = Configuration.getOsmUrl() + "node/" + nodeID;
 		}
 		if (http == null) {
-			http = new HTTPhelper();
+			http = new HttpHelper();
 		}
 		loadState = GuiOSMEntityDisplay.LOAD_STATE_UPLOAD;
 		http.uploadData(url, fullXML, true, this, Configuration

@@ -16,7 +16,7 @@ net.fatehi
 net.sourceforge.jmicropolygon
 
 # from GpsMidGraph
-de.ueller.gps.tools.QDXMLParser
+de.ueller.util.qdxmlparser
 de.ueller.gpsMid
 de.ueller.gpsMid.mapData
 de.ueller.midlet.gps

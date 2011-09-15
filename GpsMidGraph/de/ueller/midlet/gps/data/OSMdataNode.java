@@ -17,10 +17,10 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import de.ueller.gps.data.Configuration;
-import de.ueller.gps.tools.HTTPhelper;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.importexport.QDGpxParser;
 import de.ueller.midlet.gps.importexport.XmlParserContentHandler;
+import de.ueller.util.HttpHelper;
 
 import de.enough.polish.util.Locale;
 
@@ -126,7 +126,7 @@ public class OSMdataNode extends OSMdataEntity implements XmlParserContentHandle
 			if (key.equalsIgnoreCase("created_by")) {
 				//Drop created_by tag, as it has moved into changesets
 			} else {
-				xml += "<tag k='" + HTTPhelper.escapeXML(key) + "' v='" + HTTPhelper.escapeXML((String)tags.get(key)) + "' />\r\n";
+				xml += "<tag k='" + HttpHelper.escapeXML(key) + "' v='" + HttpHelper.escapeXML((String)tags.get(key)) + "' />\r\n";
 			}
 		}
 		xml += "</node>\r\n";

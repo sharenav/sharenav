@@ -17,10 +17,10 @@ import javax.microedition.lcdui.Graphics;
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
-import de.ueller.gps.tools.HelperRoutines;
-import de.ueller.gps.tools.intTree;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.graphics.LcdNumericFont;
+import de.ueller.util.HelperRoutines;
+import de.ueller.util.IntTree;
 
 import de.enough.polish.util.Locale;
 
@@ -69,17 +69,17 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 		// as the map (Trace) screen.
 		// NOTE: I don't think repeatable, game or nonReleasable keys will
 		// ever be used for this, but if they are this needs to be extended!
-		intTree singleKeys = parent.getSingleKeyPressesForCommand(
+		IntTree singleKeys = parent.getSingleKeyPressesForCommand(
 				parent.getDataScreenCommand());
 		for (int i = 0; i < singleKeys.size(); i++) {
 			singleKeyPressCommand.put(singleKeys.getKeyIdx(i), NEXT_CMD);
 		}
-		intTree doubleKeys = parent.getDoubleKeyPressesForCommand(
+		IntTree doubleKeys = parent.getDoubleKeyPressesForCommand(
 				parent.getDataScreenCommand());
 		for (int i = 0; i < doubleKeys.size(); i++) {
 			doubleKeyPressCommand.put(doubleKeys.getKeyIdx(i), NEXT_CMD);
 		}
-		intTree longKeys = parent.getLongKeyPressesForCommand(
+		IntTree longKeys = parent.getLongKeyPressesForCommand(
 				parent.getDataScreenCommand());
 		for (int i = 0; i < longKeys.size(); i++) {
 			longKeyPressCommand.put(longKeys.getKeyIdx(i), NEXT_CMD);

@@ -14,12 +14,12 @@ import java.io.InputStream;
 import java.util.Vector;
 
 import de.ueller.gps.data.Configuration;
-import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.CancelMonitorInterface;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 
 import de.ueller.midlet.gps.tile.StringEntry;
+import de.ueller.util.IntTree;
 
 import de.enough.polish.util.Locale;
 
@@ -30,12 +30,12 @@ import de.enough.polish.util.Locale;
 public class Names implements Runnable {
 //	#debug
 	private final static Logger logger = Logger.getInstance(Names.class, Logger.TRACE);
-	private final intTree queue2 = new intTree();	
-	private final intTree addQueue2 = new intTree();
+	private final IntTree queue2 = new IntTree();	
+	private final IntTree addQueue2 = new IntTree();
 	private int[] startIndexes = null;
 	boolean shutdown = false;
 	boolean cleanup = false;
-	private final intTree stringCache = new intTree();
+	private final IntTree stringCache = new IntTree();
 	private final Thread processorThread;
 	boolean isReady = false;
 
@@ -151,7 +151,7 @@ public class Names implements Runnable {
 		return ("");
 	}
 
-	private void readData(intTree queue) throws IOException {
+	private void readData(IntTree queue) throws IOException {
 		int idx = queue.popFirstKey();
 		int fid = 0;
 		InputStream is = null;

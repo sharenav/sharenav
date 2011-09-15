@@ -13,9 +13,9 @@ import java.util.Vector;
 
 import de.ueller.gps.data.Position;
 import de.ueller.gps.data.Satellite;
-import de.ueller.gps.tools.StringTokenizer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.util.StringTokenizer;
 
 import de.enough.polish.util.Locale;
 

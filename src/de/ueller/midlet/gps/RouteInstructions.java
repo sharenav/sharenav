@@ -12,8 +12,6 @@ import javax.microedition.lcdui.Graphics;
 
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
-import de.ueller.gps.tools.DateTimeTools;
-import de.ueller.gps.tools.LayoutElement;
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
@@ -24,6 +22,8 @@ import de.ueller.midlet.gps.routing.RouteHelper;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.WayDescription;
 import de.ueller.midlet.gps.data.RoutePositionMark;
+import de.ueller.midlet.iconmenu.LayoutElement;
+import de.ueller.util.DateTimeTools;
 
 import de.enough.polish.util.Locale;
 

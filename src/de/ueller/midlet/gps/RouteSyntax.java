@@ -20,9 +20,9 @@ import android.content.Context;
 //#endif
 
 import de.ueller.midlet.gps.Trace;
+import de.ueller.util.HelperRoutines;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
-import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gpsMid.mapData.QueueReader;
 
 import net.sourceforge.util.zip.ZipFile;

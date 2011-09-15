@@ -14,7 +14,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import de.ueller.gps.data.Configuration;
 //#if polish.api.online
-import de.ueller.gps.tools.HTTPhelper;
+import de.ueller.util.HttpHelper;
 //#endif
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.Logger;
@@ -28,7 +28,7 @@ public class EditableWay extends Way implements UploadListener {
 	public int osmID;
 	private OSMdataWay OSMdata;
 	//#if polish.api.online
-	private HTTPhelper http = null;
+	private HttpHelper http = null;
 	//#endif
 	
 	public EditableWay(DataInputStream is, byte f, Tile t, byte[] layers, int idx) throws IOException {
@@ -44,7 +44,7 @@ public class EditableWay extends Way implements UploadListener {
 		this.ul = ul;
 		String url = Configuration.getOsmUrl() + "way/" + osmID;
 		if (http == null) { 
-			http = new HTTPhelper();
+			http = new HttpHelper();
 		}
 		http.getURL(url, this);
 		//#endif
@@ -57,7 +57,7 @@ public class EditableWay extends Way implements UploadListener {
 		String fullXML = OSMdata.toXML(commitChangesetID);
 		String url = Configuration.getOsmUrl() + "way/" + osmID;
 		if (http == null) { 
-			http = new HTTPhelper();
+			http = new HttpHelper();
 		}
 		http.uploadData(url, fullXML, true, ul, Configuration.getOsmUsername(), Configuration.getOsmPwd());
 	}

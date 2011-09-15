@@ -3,15 +3,13 @@
  * See COPYING
  */
 
-package de.ueller.gps.tools;
+package de.ueller.midlet.iconmenu;
 
 import de.ueller.gps.data.Legend;
-import de.ueller.gps.tools.LayoutElement;
-import de.ueller.gps.tools.LayoutManager;
-import de.ueller.gps.tools.IconActionPerformer;
 import de.ueller.midlet.gps.Logger;
 
 import de.ueller.midlet.gps.GpsMid;
+import de.ueller.midlet.iconmenu.IconActionPerformer;
 
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;

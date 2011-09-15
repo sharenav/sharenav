@@ -5,7 +5,7 @@
  * See COPYING
  */
 
-package de.ueller.gps.tools;
+package de.ueller.midlet.iconmenu;
 
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Command;
@@ -22,12 +22,12 @@ import java.util.Vector;
 
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
-import de.ueller.gps.tools.IconActionPerformer;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GpsMidDisplayable;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
-import de.ueller.gps.tools.IconMenuPage;
+import de.ueller.midlet.iconmenu.IconActionPerformer;
+import de.ueller.midlet.iconmenu.IconMenuPage;
 
 import de.enough.polish.util.Locale;
 

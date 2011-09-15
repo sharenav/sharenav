@@ -3,7 +3,7 @@
  * See COPYING
  */
 
-package de.ueller.gps.tools;
+package de.ueller.midlet.iconmenu;
 
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;

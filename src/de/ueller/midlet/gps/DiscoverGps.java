@@ -19,7 +19,7 @@ import javax.bluetooth.RemoteDevice;
 import javax.bluetooth.ServiceRecord;
 import javax.bluetooth.UUID;
 //#endif
-import de.ueller.gps.tools.StringTokenizer;
+import de.ueller.util.StringTokenizer;
 
 import de.enough.polish.util.Locale;
 

@@ -17,7 +17,6 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import de.ueller.gps.data.Configuration;
-import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
@@ -25,18 +24,19 @@ import de.ueller.midlet.gps.Trace;
 
 import de.ueller.midlet.gps.data.MapName;
 import de.ueller.midlet.gps.tile.StringEntry;
+import de.ueller.util.IntTree;
 
 import de.enough.polish.util.Locale;
 
 public class Urls implements Runnable {
 //	#debug
 	private final static Logger logger = Logger.getInstance(Urls.class, Logger.TRACE);
-	private final intTree queue2 = new intTree();	
-	private final intTree addQueue2 = new intTree();
+	private final IntTree queue2 = new IntTree();	
+	private final IntTree addQueue2 = new IntTree();
 	private int[] startIndexes = null;
 	boolean shutdown = false;
 	boolean cleanup = false;
-	private final intTree stringCache = new intTree();
+	private final IntTree stringCache = new IntTree();
 	private final Thread processorThread;
 	boolean isReady = false;
 

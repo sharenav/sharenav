@@ -4,9 +4,9 @@
  */
 
 package de.ueller.midlet.gps;
-import de.ueller.gps.tools.IconActionPerformer;
-import de.ueller.gps.tools.IconMenuWithPagesGUI;
-import de.ueller.gps.tools.IconMenuPage;
+import de.ueller.midlet.iconmenu.IconActionPerformer;
+import de.ueller.midlet.iconmenu.IconMenuPage;
+import de.ueller.midlet.iconmenu.IconMenuWithPagesGUI;
 
 import javax.microedition.lcdui.Graphics;
 

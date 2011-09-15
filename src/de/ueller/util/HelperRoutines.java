@@ -4,7 +4,7 @@
  * See COPYING
  */
 
-package de.ueller.gps.tools;
+package de.ueller.util;
 
 import java.util.Calendar;
 import java.util.Date;

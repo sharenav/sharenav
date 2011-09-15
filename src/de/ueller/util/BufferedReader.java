@@ -1,4 +1,4 @@
-package de.ueller.gps.tools;
+package de.ueller.util;
 /*
  * GpsMid - Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
  * See Copying

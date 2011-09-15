@@ -40,9 +40,9 @@ import de.ueller.midlet.gps.importexport.GpxImportHandler;
 import de.ueller.midlet.gps.importexport.GpxParser;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.screens.InputListener;
-import de.ueller.gps.tools.DateTimeTools;
-import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.TrackPlayer;
+import de.ueller.util.DateTimeTools;
+import de.ueller.util.HelperRoutines;
 
 import de.enough.polish.util.Locale;
 

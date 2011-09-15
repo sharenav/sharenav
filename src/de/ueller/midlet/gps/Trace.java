@@ -47,10 +47,6 @@ import de.ueller.gps.data.Satellite;
 
 import de.ueller.gps.nmea.NmeaInput;
 import de.ueller.gps.sirf.SirfInput;
-import de.ueller.gps.tools.DateTimeTools;
-import de.ueller.gps.tools.HelperRoutines;
-import de.ueller.gps.tools.IconActionPerformer;
-import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gps.urls.Urls;
 import de.ueller.gpsMid.mapData.DictReader;
 //#if polish.api.osm-editing
@@ -85,7 +81,11 @@ import de.ueller.midlet.gps.GuiMapFeatures;
 import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.GpsMidDisplayable;
+import de.ueller.midlet.iconmenu.IconActionPerformer;
+import de.ueller.midlet.iconmenu.LayoutElement;
 import de.ueller.midlet.screens.GuiWaypointPredefined;
+import de.ueller.util.DateTimeTools;
+import de.ueller.util.HelperRoutines;
 
 //#if polish.android
 import de.enough.polish.android.midlet.MidletBridge;

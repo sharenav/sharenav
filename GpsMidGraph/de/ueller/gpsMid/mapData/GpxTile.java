@@ -7,12 +7,12 @@ package de.ueller.gpsMid.mapData;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
-import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.tile.PaintContext;
+import de.ueller.util.HelperRoutines;
 
 
 public class GpxTile extends Tile {	

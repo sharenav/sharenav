@@ -1,4 +1,4 @@
-package de.ueller.gps.tools;
+package de.ueller.midlet.iconmenu;
 
 public interface IconActionPerformer {
 	public final static int BACK_ACTIONID = Byte.MAX_VALUE;

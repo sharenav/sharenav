@@ -3,7 +3,7 @@
  * See file COPYING
  */
 
-package de.ueller.gps.tools;
+package de.ueller.midlet.iconmenu;
 
 import java.io.IOException;
 import javax.microedition.lcdui.Font;
@@ -12,6 +12,7 @@ import javax.microedition.lcdui.Image;
 
 import de.ueller.gps.data.Legend;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.util.ImageTools;
 
 import de.enough.polish.util.Locale;
 

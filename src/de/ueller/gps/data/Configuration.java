@@ -31,9 +31,6 @@ import javax.microedition.rms.RecordStore;
 
 import net.sourceforge.util.zip.ZipFile;
 
-import de.ueller.gps.tools.BufferedReader;
-import de.ueller.gps.tools.StringTokenizer;
-import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.midlet.gps.GuiDiscover;
 import de.ueller.midlet.gps.Logger;
@@ -42,6 +39,9 @@ import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.ProjFactory;
 import de.ueller.midlet.gps.routing.TravelMode;
 import de.ueller.midlet.gps.data.RoutePositionMark;
+import de.ueller.util.BufferedReader;
+import de.ueller.util.IntTree;
+import de.ueller.util.StringTokenizer;
 
 import de.enough.polish.util.Locale;
 
@@ -2064,9 +2064,9 @@ public class Configuration {
 		write(i, RECORD_ID_TRAFFIC_SIGNAL_CALC_DELAY);
 	}
 
-	public static void loadKeyShortcuts(intTree gameKeys, intTree singleKeys,
-			intTree repeatableKeys, intTree doubleKeys, intTree longKeys,
-			intTree specialKeys, Command [] cmds) {
+	public static void loadKeyShortcuts(IntTree gameKeys, IntTree singleKeys,
+			IntTree repeatableKeys, IntTree doubleKeys, IntTree longKeys,
+			IntTree specialKeys, Command [] cmds) {
 		logger.info("Loading key shortcuts");
 		if (!loadKeyShortcutsDB(gameKeys, singleKeys, repeatableKeys, doubleKeys,
 				longKeys, specialKeys, cmds)) {
@@ -2075,9 +2075,9 @@ public class Configuration {
 		}
 	}
 	
-	private static void loadDefaultKeyShortcuts(intTree gameKeys, intTree singleKeys,
-			intTree repeatableKeys, intTree doubleKeys, intTree longKeys,
-			intTree specialKeys, Command [] cmds) {
+	private static void loadDefaultKeyShortcuts(IntTree gameKeys, IntTree singleKeys,
+			IntTree repeatableKeys, IntTree doubleKeys, IntTree longKeys,
+			IntTree specialKeys, Command [] cmds) {
 		int keyType = 0;
 		//#debug info
 		logger.info("Initialising default key shortcuts");
@@ -2172,9 +2172,9 @@ public class Configuration {
 		
 	}
 	
-	private static boolean loadKeyShortcutsDB(intTree gameKeys, intTree singleKeys,
-			intTree repeatableKeys, intTree doubleKeys, intTree longKeys,
-			intTree specialKeys, Command [] cmds) {
+	private static boolean loadKeyShortcutsDB(IntTree gameKeys, IntTree singleKeys,
+			IntTree repeatableKeys, IntTree doubleKeys, IntTree longKeys,
+			IntTree specialKeys, Command [] cmds) {
 		try {
 			//#debug info
 			logger.info("Attempting to load keyboard shortcuts from record store");
@@ -2193,7 +2193,7 @@ public class Configuration {
 			ByteArrayInputStream bais = new ByteArrayInputStream(data);
 			DataInputStream dis = new DataInputStream(bais);
 			
-			intTree keyTree;
+			IntTree keyTree;
 			for (int k = 0; k < 6; k++) {
 				keyTree = null;
 				switch (k) {
@@ -2233,9 +2233,9 @@ public class Configuration {
 		}
 	}
 	
-	public static void saveKeyShortcuts(intTree gameKeys, intTree singleKeys,
-			intTree repeatableKeys, intTree doubleKeys, intTree longKeys,
-			intTree specialKeys, Command [] cmds) {
+	public static void saveKeyShortcuts(IntTree gameKeys, IntTree singleKeys,
+			IntTree repeatableKeys, IntTree doubleKeys, IntTree longKeys,
+			IntTree specialKeys, Command [] cmds) {
 		//#debug info
 		logger.info("Saving key shortcuts");
 		
@@ -2243,7 +2243,7 @@ public class Configuration {
 		DataOutputStream dos = new DataOutputStream(baos);
 		
 		try {
-			intTree keyTree;
+			IntTree keyTree;
 			for (int k = 0; k < 6; k++) {
 				keyTree = null;
 				switch (k) {

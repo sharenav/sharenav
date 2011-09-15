@@ -20,7 +20,6 @@ import javax.microedition.lcdui.Image;
 
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
-import de.ueller.gps.tools.HTTPhelper;
 import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GpsMidDisplayable;
@@ -34,6 +33,7 @@ import de.ueller.midlet.gps.data.OSMdataNode;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.names.NumberCanon;
 import de.ueller.midlet.gps.tile.POIdescription;
+import de.ueller.util.HttpHelper;
 
 import de.enough.polish.util.Locale;
 
@@ -42,7 +42,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 	private final static Logger logger = Logger.getInstance(GuiOSMPOIDisplay.class,Logger.DEBUG);
 	
 	private int nodeID;
-	private HTTPhelper http;
+	private HttpHelper http;
 	
 	//private int loadPOIxmlState;
 	
@@ -85,7 +85,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 			logger.debug("Retrieving XML for Node " + nodeID);
 			String url = Configuration.getOsmUrl() + "node/" + nodeID;
 			if (http == null) { 
-				http = new HTTPhelper();
+				http = new HttpHelper();
 			}
 			loadState = LOAD_STATE_LOAD;
 			http.getURL(url, this);
@@ -104,7 +104,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 			url = Configuration.getOsmUrl() + "node/" + nodeID;
 		}
 		if (http == null) { 
-			http = new HTTPhelper();
+			http = new HttpHelper();
 		}
 		loadState = LOAD_STATE_UPLOAD;
 		http.uploadData(url, fullXML, true, this, Configuration.getOsmUsername(), Configuration.getOsmPwd());
@@ -121,7 +121,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 			url = Configuration.getOsmUrl() + "node/" + nodeID;
 		}
 		if (http == null) { 
-			http = new HTTPhelper();
+			http = new HttpHelper();
 		}
 		loadState = LOAD_STATE_DELETE;
 		http.deleteData(url, fullXML, this, Configuration.getOsmUsername(), Configuration.getOsmPwd());

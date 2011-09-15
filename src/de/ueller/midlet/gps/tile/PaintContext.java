@@ -7,7 +7,6 @@ package de.ueller.midlet.gps.tile;
 
 import javax.microedition.lcdui.Graphics;
 
-import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.RouteInstructions;
 import de.ueller.midlet.gps.ScreenContext;
@@ -17,6 +16,7 @@ import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Way;
+import de.ueller.util.IntTree;
 
 //TODO: explain - short overview what the PaintContext does - it seems like it has nothing to do with painting but routing - perhaps the name should be changed
 /*
@@ -116,7 +116,7 @@ public class PaintContext extends ScreenContext {
 	/** when painting draw highlighted path on top */
 	public volatile boolean highlightedPathOnTop;
 	/** used to find out if the connection leads to multiple same named ways*/
-	public volatile intTree conWayNameIdxs = new intTree();
+	public volatile IntTree conWayNameIdxs = new IntTree();
 
 	/** count of bearings used to find out if the connection leads straight-on to multiple named routable ways for giving a bearing instruction*/  
 	public volatile int conWayBearingsCount;

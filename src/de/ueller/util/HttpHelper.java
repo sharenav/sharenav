@@ -13,7 +13,7 @@
  * 
  * See COPYING
  */
-package de.ueller.gps.tools;
+package de.ueller.util;
 //#if polish.api.online
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -31,8 +31,8 @@ import de.ueller.midlet.gps.UploadListener;
 
 import de.enough.polish.util.Locale;
 
-public class HTTPhelper implements Runnable{
-	private final static Logger logger = Logger.getInstance(HTTPhelper.class,Logger.DEBUG);
+public class HttpHelper implements Runnable{
+	private final static Logger logger = Logger.getInstance(HttpHelper.class, Logger.DEBUG);
 	private boolean upload;
 	private UploadListener ul;
 	private volatile boolean  busy;

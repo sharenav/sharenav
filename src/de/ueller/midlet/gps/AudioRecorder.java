@@ -20,9 +20,9 @@ import javax.microedition.media.control.RecordControl;
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
-import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.PositionMark;
+import de.ueller.util.HelperRoutines;
 
 import de.enough.polish.util.Locale;
 

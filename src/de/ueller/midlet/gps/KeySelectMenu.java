@@ -21,10 +21,10 @@ import javax.microedition.lcdui.Image;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.SearchResult;
-import de.ueller.gps.tools.LayoutElement;
 import de.ueller.midlet.gps.data.KeySelectMenuItem;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.tile.SearchNames;
+import de.ueller.midlet.iconmenu.LayoutElement;
 
 import de.enough.polish.util.Locale;
 

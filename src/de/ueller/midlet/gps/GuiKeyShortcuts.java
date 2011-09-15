@@ -11,7 +11,7 @@ import javax.microedition.lcdui.List;
 
 import de.enough.polish.util.Locale;
 
-import de.ueller.gps.tools.intTree;
+import de.ueller.util.IntTree;
 
 public class GuiKeyShortcuts extends List implements CommandListener,
 		GpsMidDisplayable {
@@ -27,7 +27,7 @@ public class GuiKeyShortcuts extends List implements CommandListener,
 		setCommandListener(this);
 		this.parent = parent;
 
-		intTree keyMap = Trace.getInstance().singleKeyPressCommand;
+		IntTree keyMap = Trace.getInstance().singleKeyPressCommand;
 		this.append(Locale.get("guikeyshortcuts.SingleKeyPresses")/*Single key presses:*/, null);
 		for (int i = 0; i < keyMap.size(); i++) {
 			int key = keyMap.getKeyIdx(i);

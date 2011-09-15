@@ -19,7 +19,7 @@ import javax.microedition.lcdui.Displayable;
 import android.view.KeyEvent;
 //#endif
 
-import de.ueller.gps.tools.intTree;
+import de.ueller.util.IntTree;
 
 public abstract class KeyCommandCanvas extends Canvas implements
 		CommandListener {
@@ -33,12 +33,12 @@ public abstract class KeyCommandCanvas extends Canvas implements
 	
 	protected volatile boolean keyboardLocked = false;
 
-	protected intTree singleKeyPressCommand = new intTree();
-	protected intTree repeatableKeyPressCommand = new intTree();
-	protected intTree doubleKeyPressCommand = new intTree();
-	protected intTree longKeyPressCommand = new intTree();
-	protected intTree gameKeyCommand = new intTree();
-	protected intTree nonReleasableKeyPressCommand = new intTree();
+	protected IntTree singleKeyPressCommand = new IntTree();
+	protected IntTree repeatableKeyPressCommand = new IntTree();
+	protected IntTree doubleKeyPressCommand = new IntTree();
+	protected IntTree longKeyPressCommand = new IntTree();
+	protected IntTree gameKeyCommand = new IntTree();
+	protected IntTree nonReleasableKeyPressCommand = new IntTree();
 
 	/*
 	 * Explicitly make this function static, as otherwise some jvm implementations
@@ -242,8 +242,8 @@ public abstract class KeyCommandCanvas extends Canvas implements
 	 * @param comm The command for which the key codes are wanted.
 	 * @return IntTree containing the key codes and the command.
 	 */
-	public intTree getSingleKeyPressesForCommand(Command comm) {
-		intTree keys = new intTree();
+	public IntTree getSingleKeyPressesForCommand(Command comm) {
+		IntTree keys = new IntTree();
 		for (int i = 0; i < singleKeyPressCommand.size(); i++) {
 			if (singleKeyPressCommand.getValueIdx(i) == comm) {
 				keys.put(singleKeyPressCommand.getKeyIdx(i), comm);
@@ -257,8 +257,8 @@ public abstract class KeyCommandCanvas extends Canvas implements
 	 * @param comm The command for which the key codes are wanted.
 	 * @return IntTree containing the key codes and the command.
 	 */
-	public intTree getDoubleKeyPressesForCommand(Command comm) {
-		intTree keys = new intTree();
+	public IntTree getDoubleKeyPressesForCommand(Command comm) {
+		IntTree keys = new IntTree();
 		for (int i = 0; i < doubleKeyPressCommand.size(); i++) {
 			if (doubleKeyPressCommand.getValueIdx(i) == comm) {
 				keys.put(doubleKeyPressCommand.getKeyIdx(i), comm);
@@ -272,8 +272,8 @@ public abstract class KeyCommandCanvas extends Canvas implements
 	 * @param comm The command for which the key codes are wanted.
 	 * @return IntTree containing the key codes and the command.
 	 */
-	public intTree getLongKeyPressesForCommand(Command comm) {
-		intTree keys = new intTree();
+	public IntTree getLongKeyPressesForCommand(Command comm) {
+		IntTree keys = new IntTree();
 		for (int i = 0; i < longKeyPressCommand.size(); i++) {
 			if (longKeyPressCommand.getValueIdx(i) == comm) {
 				keys.put(longKeyPressCommand.getKeyIdx(i), comm);

@@ -11,7 +11,6 @@ import java.util.Vector;
 import de.enough.polish.util.Locale;
 
 import de.ueller.gps.data.Configuration;
-import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.RouteBaseTile;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.GpsMid;
@@ -23,6 +22,7 @@ import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.RoutePositionMark;
 import de.ueller.midlet.gps.data.Way;
+import de.ueller.util.IntTree;
 
 
 
@@ -30,8 +30,8 @@ public class Routing implements Runnable {
 	private Thread processorThread;
 	public boolean bestTime = true;
 	private final Vector nodes = new Vector();
-	private final intTree open = new intTree();
-	private final intTree closed = new intTree();
+	private final IntTree open = new IntTree();
+	private final IntTree closed = new IntTree();
 	private Runtime runtime = Runtime.getRuntime();
 
 	private final static Logger logger = Logger.getInstance(Routing.class, Logger.ERROR);

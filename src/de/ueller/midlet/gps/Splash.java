@@ -15,7 +15,7 @@ package de.ueller.midlet.gps;
 
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
-import de.ueller.gps.tools.ImageTools;
+import de.ueller.midlet.util.ImageTools;
 
 import java.io.IOException;
 

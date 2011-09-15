@@ -1,4 +1,4 @@
-package de.ueller.gps.tools.QDXMLParser;
+package de.ueller.util.qdxmlparser;
 
 import java.util.*;
 

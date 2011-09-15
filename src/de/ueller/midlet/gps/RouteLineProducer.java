@@ -9,7 +9,6 @@ import java.util.Vector;
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
-import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.Proj2D;
@@ -18,6 +17,7 @@ import de.ueller.midlet.gps.routing.Connection;
 import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.WayDescription;
+import de.ueller.util.IntTree;
 
 import de.enough.polish.util.Locale;
 
@@ -33,7 +33,7 @@ public class RouteLineProducer implements Runnable {
 	private static Trace trace;
 	public static Vector route;
 	
-	public static intTree routeLineTree;
+	public static IntTree routeLineTree;
 	public final static Boolean trueObject = new Boolean(true);
 	
 	private static int connsFound = 0;
@@ -45,7 +45,7 @@ public class RouteLineProducer implements Runnable {
 		// terminate any previous RouteLineProducers
 		abort();
 		RouteLineProducer.maxRouteElementDone = 0;
-		routeLineTree = new intTree();
+		routeLineTree = new IntTree();
 		RouteLineProducer.trace = trace;
 		RouteLineProducer.route = route;		
 		producerThread = new Thread(this, "RouteLineProducer");

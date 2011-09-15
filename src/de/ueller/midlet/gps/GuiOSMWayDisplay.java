@@ -34,10 +34,10 @@ import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.UploadListener;
 import de.ueller.midlet.gps.data.EditableWay;
 import de.ueller.midlet.gps.data.OSMdataWay;
+import de.ueller.util.HttpHelper;
 
 //#if polish.api.online
 import de.ueller.gps.data.Configuration;
-import de.ueller.gps.tools.HTTPhelper;
 //#endif
 
 import de.enough.polish.util.Locale;
@@ -51,7 +51,7 @@ public class GuiOSMWayDisplay extends GuiOSMEntityDisplay implements GpsMidDispl
 	
 	//#if polish.api.online
 	private UploadListener ul;
-	private HTTPhelper http = null;
+	private HttpHelper http = null;
 	//#endif
 	private EditableWay eway;
 	private int wayID;
@@ -179,7 +179,7 @@ public class GuiOSMWayDisplay extends GuiOSMEntityDisplay implements GpsMidDispl
 			loadState = LOAD_STATE_LOAD;
 			String url = Configuration.getOsmUrl() + "way/" + wayID;
 			if (http == null) { 
-				http = new HTTPhelper();
+				http = new HttpHelper();
 			}
 			http.getURL(url, this);
 			//#endif

@@ -35,8 +35,6 @@ import javax.microedition.lcdui.TextField;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.SearchResult;
-import de.ueller.gps.tools.HelperRoutines;
-import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gpsMid.CancelMonitorInterface;
 //#if polish.api.bigsearch
 //#if polish.api.osm-editing
@@ -52,7 +50,9 @@ import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.RoutePositionMark;
 import de.ueller.midlet.gps.names.NumberCanon;
 import de.ueller.midlet.gps.tile.SearchNames;
+import de.ueller.midlet.iconmenu.LayoutElement;
 import de.ueller.midlet.screens.InputListener;
+import de.ueller.util.HelperRoutines;
 
 import de.enough.polish.util.Locale;
 
