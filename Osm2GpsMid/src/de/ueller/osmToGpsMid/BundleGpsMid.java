@@ -40,6 +40,7 @@ import de.ueller.osmToGpsMid.area.SeaGenerator2;
 import de.ueller.osmToGpsMid.model.Damage;
 import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.RouteAccessRestriction;
+import de.ueller.osmToGpsMid.model.TollRule;
 import de.ueller.osmToGpsMid.model.TravelMode;
 import de.ueller.osmToGpsMid.model.TravelModes;
 
@@ -459,7 +460,7 @@ public class BundleGpsMid implements Runnable {
 			if (Configuration.attrToBoolean(config.useRouting) >= 0) {
 				for (int i = 0; i < TravelModes.travelModeCount; i++) {
 					tm = TravelModes.travelModes[i];
-					System.out.println("Route rules in " + config.getStyleFileName()
+					System.out.println("Route and toll rules in " + config.getStyleFileName()
 							+ " for " + tm.getName() + ":");
 					if ( (tm.travelModeFlags & TravelMode.AGAINST_ALL_ONEWAYS) > 0) {
 						System.out.println(" Going against all accessible oneways is allowed");
@@ -476,6 +477,17 @@ public class BundleGpsMid implements Runnable {
 		            }
 		            if (routeAccessRestrictionCount == 0) {
 		        		System.out.println("Warning: No access restrictions in "
+		        				+ config.getStyleFileName() + " for " + tm.getName());
+		            }
+		        	int tollRuleCount = 0;
+		            if (TravelModes.getTravelMode(i).getTollRules().size() > 0) {
+		            	for (TollRule r: tm.getTollRules()) {
+		            		tollRuleCount++;
+		            		System.out.println(" " + r.toString());
+		            	}
+		            }
+		            if (tollRuleCount == 0) {
+		        		System.out.println("Warning: No toll rules in "
 		        				+ config.getStyleFileName() + " for " + tm.getName());
 		            }
 				}

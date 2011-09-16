@@ -74,6 +74,10 @@ public class Way extends Entity implements Comparable<Way> {
 	 *  The upper 4 bits equal to Connection.CONNTYPE_* flags
 	 */
 	public byte					wayTravelModes						= 0;
+	/** Toll flag for up to 4 travel modes for which this way can be used (motorcar, bicycle, etc.)
+	 *  upper bytes are unused
+	 */
+	public byte					wayTravelModes2						= 0;
 
 	public static Configuration	config;
 	/**
@@ -161,9 +165,13 @@ public class Way extends Entity implements Comparable<Way> {
 					wayTravelModes &= ~(1 << i);
 					break;
 			}
+			// mark only connections of accessible ways as toll connections
+			if (isAccessForRouting(i) && isTollRoad(i)) {
+				wayTravelModes2 |= (1 << i);
+			}
 		}
 
-		if (containsKey("toll")) {
+		if (getAttribute("toll") != null && getAttribute("toll").equalsIgnoreCase("yes")) {
 			wayTravelModes |= Connection.CONNTYPE_TOLLROAD;			
 		}
 	}
@@ -197,6 +205,35 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 		return 0;
 	}
+	
+	/**
+	 * Check way tags for tollRules from style-file
+	 * 
+	 * @param travelModeNr
+	 *            : e.g. for motorcar or bicycle
+	 * @return true if toll road, false if no toll road
+	 */
+	public boolean isTollRoad(int travelModeNr) {
+		String value;
+		boolean isToll = false;
+		for (TollRule rToll : TravelModes.getTravelMode(travelModeNr).getTollRules()) {
+			value = getAttribute(rToll.key);
+			if (value != null && rToll.values.indexOf(value) != -1) {
+				if (rToll.enableToll) {
+					isToll = true;
+				} else {
+					isToll = false;
+				}
+				if (rToll.debugTollRule) {
+					System.out.println(this.toUrl() + " matches toll rule: " + rToll.toString());
+				}
+			}
+		}
+		return isToll;
+	}
+	
+	
+	
 
 	public boolean isRoundabout() {
 		String jType = getAttribute("junction");
@@ -763,6 +800,7 @@ public class Way extends Entity implements Comparable<Way> {
 		} else {
 			ds.writeByte(type);
 		}
+		
 		ds.writeByte(wayTravelModes);
 
 		if ((flags & WAY_FLAG_NAME) == WAY_FLAG_NAME) {

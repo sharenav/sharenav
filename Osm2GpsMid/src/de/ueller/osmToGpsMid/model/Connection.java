@@ -22,12 +22,17 @@ public class Connection {
 	public byte startBearing=0;
 	public byte endBearing=0;
 	public byte connTravelModes=0;
+	/** Toll flag for up to 4 travel modes for which this way can be used (motorcar, bicycle, etc.)
+	 *  upper bytes are unused
+	 */
+	public byte connTravelModes2=0;
 	
 	// the upper bits of connTravelModes are used to indicate special informations about the connection rather than which travelModes are allowed
 	public static final int CONNTYPE_MAINSTREET_NET = 128;
 	public static final int CONNTYPE_MOTORWAY = 64;
 	public static final int CONNTYPE_TRUNK_OR_PRIMARY = 32;
 	public static final int CONNTYPE_TOLLROAD = 16;
+	public static final int CONNTYPE_CONNTRAVELMODES_ADDITIONAL_BYTE = CONNTYPE_TOLLROAD;
 	
 	public Connection(RouteNode to, int dist, int times[], byte bs, byte be, Way w) {
 		super();
@@ -35,6 +40,7 @@ public class Connection {
 		length = dist;
 		this.times = times;
 		connTravelModes = w.wayTravelModes;
+		connTravelModes2 = w.wayTravelModes2;
 		startBearing=bs;
 		endBearing=be;
 		if ( (w.wayTravelModes & Connection.CONNTYPE_MOTORWAY) > 0 ) {
@@ -46,8 +52,10 @@ public class Connection {
 		if ( (w.wayTravelModes & Connection.CONNTYPE_MAINSTREET_NET) > 0 ) {
 			TravelModes.numMainStreetNetConnections++;
 		}
-		if ( (w.wayTravelModes & Connection.CONNTYPE_TOLLROAD) > 0 ) {
-			TravelModes.numTollRoadConnections++;
+		for (int i = 0; i < TravelModes.travelModeCount; i++) {
+			if ( w.isTollRoad(i) ) {
+				TravelModes.getTravelMode(i).numTollRoadConnections++;
+			}
 		}
 	}
 

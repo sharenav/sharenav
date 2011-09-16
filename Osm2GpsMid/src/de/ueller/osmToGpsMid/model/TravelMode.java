@@ -30,17 +30,20 @@ public class TravelMode {
 	public byte travelModeFlags = 0;
 	/** Flag if this travelMode is specified in the style-file */
 	public boolean routeModeDefined = false;
-	
+	public long numTollRoadConnections=0;
+
 	public final static byte AGAINST_ALL_ONEWAYS = 1;
 	public final static byte BICYLE_OPPOSITE_EXCEPTIONS = 2;	
 	public final static byte WITH_TURN_RESTRICTIONS = 4;
 	public final static byte MAINSTREET_NET_FOR_LARGE_ROUTES = 8;
 	
 	private Vector<RouteAccessRestriction> routeAccessRestrictions;
+	private Vector<TollRule> tollRules;
 
 	public TravelMode(String name) {
 		travelModeName = name;
 		routeAccessRestrictions = new Vector<RouteAccessRestriction>();
+		tollRules = new Vector<TollRule>();
 	}
 	
 	public String getName() {
@@ -49,6 +52,10 @@ public class TravelMode {
 
 	public Vector<RouteAccessRestriction> getRouteAccessRestrictions() {
 		return routeAccessRestrictions;
+	}	
+
+	public Vector<TollRule> getTollRules() {
+		return tollRules;
 	}	
 
 	public String toString() {

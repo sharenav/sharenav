@@ -20,7 +20,6 @@ public class TravelModes {
 	public static long numMotorwayConnections=0;
 	public static long numMainStreetNetConnections=0;
 	public static long numTrunkOrPrimaryConnections=0;
-	public static long numTollRoadConnections=0;
 
 	public static void stringToTravelModes(String modes) {
 		travelModes = new TravelMode[MAXTRAVELMODES];

@@ -534,6 +534,10 @@ public class RouteTile extends RouteBaseTile {
 //				}
 				c.toId=nodeId;
 				c.connTravelModes=cs.readByte();
+				if (c.hasConnTravelModes2()) {
+					c.connTravelModes2=cs.readByte();				
+				}
+				
 				/**
 				 * The connection time and connection length can either be encoded as a int or a short
 				 * We indicate if it is a int by using the top most bit (sign bit). So if the read

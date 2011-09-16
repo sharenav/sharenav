@@ -6,7 +6,7 @@
 <!ELEMENT ways (keyW*)>
 <!ELEMENT damages (damage*)>
 <!ELEMENT routeModes (routeMode*)>
-<!ELEMENT routeMode (routeAccessRestriction*)>
+<!ELEMENT routeMode (routeAccessRestriction*, tollRule*)>
 <!ELEMENT maxSpeedTemplates (maxSpeedTemplate*)>
 <!ELEMENT tileScaleLevels (tileScaleLevel*)>
 <!ELEMENT key (value+)>
@@ -17,6 +17,7 @@
 <!ELEMENT routeAccessRestriction EMPTY>
 <!ELEMENT restrictionKey EMPTY>
 <!ELEMENT restrictionValues EMPTY>
+<!ELEMENT tollRule EMPTY>
 <!ELEMENT description EMPTY>
 <!ELEMENT image EMPTY>
 <!ELEMENT asRelation EMPTY>
@@ -103,6 +104,10 @@
 <!ATTLIST routeAccessRestriction restrictionKey CDATA #REQUIRED>
 <!ATTLIST routeAccessRestriction restrictionValues CDATA #REQUIRED>
 <!ATTLIST routeAccessRestriction restrictionPermit CDATA #IMPLIED>
+<!ATTLIST tollRule tollKey CDATA #REQUIRED>
+<!ATTLIST tollRule tollValues CDATA #REQUIRED>
+<!ATTLIST tollRule enableToll CDATA #REQUIRED>
+<!ATTLIST tollRule debugTollRule CDATA #IMPLIED>
 <!ATTLIST damage damageKey CDATA #REQUIRED>
 <!ATTLIST damage damageValues CDATA #REQUIRED>
 <!ATTLIST maxSpeedTemplate name CDATA #REQUIRED>

@@ -565,8 +565,17 @@ public class Tile {
 							minConnectionId ++;
 							routeNodeWayFlags |= c.connTravelModes;
 							cds.writeInt(c.to.id);
+							// set or clear flag for additional byte (connTravelModes is transferred from wayTravelMode were this is Connection.CONNTYPE_TOLLROAD, so clear it if not required) 
+							c.connTravelModes |= Connection.CONNTYPE_CONNTRAVELMODES_ADDITIONAL_BYTE;
+							if (c.connTravelModes2 == 0) {
+								c.connTravelModes ^= Connection.CONNTYPE_CONNTRAVELMODES_ADDITIONAL_BYTE;
+							}
 							// write out wayTravelModes flag
 							cds.writeByte(c.connTravelModes);
+							if (c.connTravelModes2 != 0) {
+								cds.writeByte(c.connTravelModes2);				
+							}
+
 							for (int i = 0; i < TravelModes.travelModeCount; i++) {
 								// only store times for available travel modes of the connection
 								if ( (c.connTravelModes & (1 << i)) != 0 ) {

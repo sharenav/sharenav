@@ -1,5 +1,7 @@
 package de.ueller.midlet.gps.routing;
 
+import de.ueller.gps.data.Configuration;
+import de.ueller.gps.data.Legend;
 import de.ueller.midlet.gps.Logger;
 
 import de.enough.polish.util.Locale;
@@ -21,12 +23,17 @@ public class Connection {
 	public byte startBearing=0;
 	public byte endBearing=0;
 	public byte connTravelModes=0;
+	/** Toll flag for up to 4 travel modes for which this way can be used (motorcar, bicycle, etc.)
+	 *  upper bytes are unused
+	 */
+	public byte connTravelModes2=0;
 	
 	// the upper bits of connTravelModes are used to indicate special informations about the connection rather than which travelModes are allowed
 	public static final int CONNTYPE_MAINSTREET_NET = 128;
 	public static final int CONNTYPE_MOTORWAY = 64;
 	public static final int CONNTYPE_TRUNK_OR_PRIMARY = 32;
 	public static final int CONNTYPE_TOLLROAD = 16;
+	public static final int CONNTYPE_CONNTRAVELMODES_ADDITIONAL_BYTE = CONNTYPE_TOLLROAD;
 	
 	public Connection(){
 	}
@@ -90,8 +97,20 @@ public class Connection {
 	}
 
 	public boolean isTollRoadConnection() {
-		return (connTravelModes & CONNTYPE_TOLLROAD) > 0;
+		if (Legend.enableMap70ConnTravelModes_Additional_Byte) {
+			return (connTravelModes2 & Configuration.getTravelMask()) > 0;
+		} else {
+			return (connTravelModes & CONNTYPE_TOLLROAD) > 0;
+		}
 	}
+	
+	public boolean hasConnTravelModes2() {
+		if (Legend.enableMap70ConnTravelModes_Additional_Byte) {
+			return (connTravelModes & CONNTYPE_CONNTRAVELMODES_ADDITIONAL_BYTE) > 0;
+		}
+		return false;
+	}
+	
 	
 	public String toString(){
 		return Locale.get("connection.ConnectionTo")/*connection to*/ + " " + toId; 

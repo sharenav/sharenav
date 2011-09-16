@@ -41,6 +41,7 @@ import de.ueller.osmToGpsMid.model.Damage;
 import de.ueller.osmToGpsMid.model.EntityDescription;
 import de.ueller.osmToGpsMid.model.POIdescription;
 import de.ueller.osmToGpsMid.model.RouteAccessRestriction;
+import de.ueller.osmToGpsMid.model.TollRule;
 import de.ueller.osmToGpsMid.model.TravelMode;
 import de.ueller.osmToGpsMid.model.TravelModes;
 import de.ueller.osmToGpsMid.model.WayDescription;
@@ -257,6 +258,11 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 				if (tm.getRouteAccessRestrictions() != null) {
 					for (RouteAccessRestriction rar : tm.getRouteAccessRestrictions()) {
 						relevantKeys.add(rar.key);
+					}
+				}
+				if (tm.getTollRules() != null) {
+					for (TollRule tr : tm.getTollRules()) {
+						relevantKeys.add(tr.key);
 					}
 				}
 			}
@@ -844,6 +850,17 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 									atts.getValue("restrictionValues") + "|",
 									Configuration.attrToBoolean(atts
 											.getValue("restrictionPermit")) > 0));
+				}
+			}
+			if (qName.equals("tollRule")) {
+				if (currentTravelMode != null) {
+					currentTravelMode.getTollRules().addElement(
+							new TollRule(atts.getValue("tollKey"),
+									atts.getValue("tollValues") + "|",
+									Configuration.attrToBoolean(atts.getValue("enableToll")) > 0,
+									Configuration.attrToBoolean(atts.getValue("debugTollRule")) > 0
+							)
+					);
 				}
 			}
 			break;

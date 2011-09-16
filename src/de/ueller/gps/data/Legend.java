@@ -28,7 +28,7 @@ public class Legend {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 69;
+	public final static short MAP_FORMAT_VERSION = 70;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -222,6 +222,7 @@ public class Legend {
 	public static boolean enableMap67Sounds;
 	public static boolean enableMap68Filenames;
 	public static boolean enableMap69Precision;
+	public static boolean enableMap70ConnTravelModes_Additional_Byte;
 	public static short numUiLang;
 	public static short numNaviLang;
 	public static short numOnlineLang;
@@ -299,6 +300,9 @@ public class Legend {
 		}
 		if (mapFormatVersion >= 69) {
 			enableMap69Precision = true;
+		}
+		if (mapFormatVersion >= 70) {
+			enableMap70ConnTravelModes_Additional_Byte = true;
 		}
 		// we can read versions 67, 66 and 65
 		if (mapFormatVersion != MAP_FORMAT_VERSION && mapFormatVersion != 65
