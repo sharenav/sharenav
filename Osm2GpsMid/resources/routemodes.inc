@@ -16,7 +16,7 @@
 			<!-- http://wiki.openstreetmap.org/wiki/WikiProject_Haiti -->
 			<routeAccessRestriction restrictionKey = "bridge" restrictionValues = "collapsed"/>
 			<routeAccessRestriction restrictionKey = "impassable" restrictionValues = "yes"/>
-			<tollRule tollKey = "toll" tollValues = "yes" enableToll = "true" debugTollRule = "false"/>
+			<tollRule tollKey = "toll" tollValues = "yes|true" enableToll = "true" debugTollRule = "false"/>
 		</routeMode>
 		<routeMode modeName = "bicycle" maxPrepareMeters="75" maxInMeters="299" maxEstimationSpeed="20" bicycleOppositeExceptions = "true">
 				<routeAccessRestriction restrictionKey = "bicycle" restrictionValues = "yes|designated" restrictionPermit = "true"/>
@@ -27,7 +27,7 @@
 				<!-- http://wiki.openstreetmap.org/wiki/WikiProject_Haiti -->
 				<routeAccessRestriction restrictionKey = "bridge" restrictionValues = "collapsed"/>
 				<routeAccessRestriction restrictionKey = "impassable" restrictionValues = "yes"/>
-				<tollRule tollKey = "toll" tollValues = "yes" enableToll = "true" debugTollRule = "false"/>
+				<tollRule tollKey = "toll" tollValues = "yes|true" enableToll = "true" debugTollRule = "false"/>
 		</routeMode>
 		<routeMode modeName = "foot" maxPrepareMeters="50" maxInMeters="125" maxEstimationSpeed="4" againstAllOneWays = "true">
 			<routeAccessRestriction restrictionKey = "foot" restrictionValues = "yes|designated" restrictionPermit = "true"/>
@@ -36,6 +36,6 @@
 			<!-- http://wiki.openstreetmap.org/wiki/WikiProject_Haiti -->
 			<routeAccessRestriction restrictionKey = "bridge" restrictionValues = "collapsed"/>
 			<routeAccessRestriction restrictionKey = "impassable" restrictionValues = "yes"/>
-			<tollRule tollKey = "toll" tollValues = "yes" enableToll = "true" debugTollRule = "false"/>
+			<tollRule tollKey = "toll" tollValues = "yes|true" enableToll = "true" debugTollRule = "false"/>
 		</routeMode>
 	</routeModes>

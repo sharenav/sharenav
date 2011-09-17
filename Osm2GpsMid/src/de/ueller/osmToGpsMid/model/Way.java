@@ -171,7 +171,7 @@ public class Way extends Entity implements Comparable<Way> {
 			}
 		}
 
-		if (getAttribute("toll") != null && getAttribute("toll").equalsIgnoreCase("yes")) {
+		if (getAttribute("toll") != null && "|yes|true|".indexOf("|" + getAttribute("toll").toLowerCase() + "|") >= 0 ) {
 			wayTravelModes |= Connection.CONNTYPE_TOLLROAD;			
 		}
 	}
