@@ -12,6 +12,10 @@
     - bug fix to prevent POI search crashes which appeared more often on slow
       devices and less often on faster devices
     - heed max search count for POI search, bugfix for name search fencepost error
+    *** Routing ***
+    - add support for toll rules for each travel mode to routemodes.inc.
+      Ways will still be rendered with toll decoration only if toll=yes or toll=true is set
+      regardless of toll rules or current travel mode
     *** Map display ***
     - some workarounds (mainly useful for sea rendering) for map data overflows which can
       appear due to shortcomings of Osm2GpsMid
