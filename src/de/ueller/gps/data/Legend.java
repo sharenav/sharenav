@@ -308,7 +308,9 @@ public class Legend {
 		if (mapFormatVersion != MAP_FORMAT_VERSION && mapFormatVersion != 65
 		    && mapFormatVersion != 66
 		    && mapFormatVersion != 67
-		    && mapFormatVersion != 68) {
+		    && mapFormatVersion != 68
+		    && mapFormatVersion != 69
+		) {
 		        Trace.getInstance().alert(Locale.get("legend.wrongmapvertitle"),
 				     Locale.get("legend.wrongmapvermsg1") + " " + MAP_FORMAT_VERSION
 				     + " " + Locale.get("legend.wrongmapvermsg2") + " " + mapFormatVersion,
