@@ -1,7 +1,7 @@
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
  * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net
- * See COPYING
+ * See file COPYING
  */
 
 package de.ueller.gpsmid.tile;
@@ -29,6 +29,7 @@ import de.ueller.util.MoreMath;
 
 import de.enough.polish.util.Locale;
 
+
 /**
  * In general a SingleTile is a container that holds all graphical information for an rectangular array out of the world.
  * Single tiles are overlaping each other in the most cases, because the hold complete ways or arrays.
@@ -46,7 +47,6 @@ import de.enough.polish.util.Locale;
  * @author hmu
  *
  */
-
 public class SingleTile extends Tile implements QueueableTile {
 
 	public static final byte STATE_NOTLOAD = 0;
@@ -86,11 +86,12 @@ public class SingleTile extends Tile implements QueueableTile {
 
 	private static Font poiFont;
 	
-	 private final static Logger logger= Logger.getInstance(SingleTile.class,Logger.DEBUG);
+	private final static Logger logger = Logger.getInstance(SingleTile.class, Logger.DEBUG);
 
 	public final byte zl;
 	
-	SingleTile(DataInputStream dis, int deep, byte zl) throws IOException {
+
+	public SingleTile(DataInputStream dis, int deep, byte zl) throws IOException {
 //		 logger.debug("load " + deep + ":ST Nr=" + fileId);
 		this.zl = zl;
 		minLat = dis.readFloat();
@@ -119,10 +120,8 @@ public class SingleTile extends Tile implements QueueableTile {
 			return false;
 		}
 		return true;
-
 	}
 
-	
 	public void walk(PaintContext pc,int opt) {
 		walk(pc, opt, Tile.LAYER_ALL);
 	}
@@ -132,12 +131,10 @@ public class SingleTile extends Tile implements QueueableTile {
 	}
 	
 	private synchronized void walk(PaintContext pc,int opt, byte layer) {
-
 		boolean renderArea = ((layer & Tile.LAYER_AREA) != 0) || ((opt & Tile.OPT_CONNECTIONS2AREA) != 0);
 		boolean renderAll = ((layer & Tile.LAYER_ALL) != 0);
 		boolean renderHighlight = ((layer & Tile.LAYER_HIGHLIGHT) != 0);
 		byte relLayer = (byte)(((int)layer) & ~(Tile.LAYER_AREA | Tile.LAYER_HIGHLIGHT));
-		
 		
 		if (pc.getP() == null) {
 			logger.error(Locale.get("singletile.NoProj")/*We do not have a projection to walk Tile*/);
@@ -166,7 +163,6 @@ public class SingleTile extends Tile implements QueueableTile {
 					}
 				}
 			}
-			
 			
 			/**
 			 * Calculate paint context coordinates in terms of relative single tile coordinates
@@ -654,17 +650,21 @@ public class SingleTile extends Tile implements QueueableTile {
 	   poiFont = null;
    }
 
-/**
- * @param ways the ways to set
- */
-public void setWays(Way[][] ways) {
-	this.ways = ways;
-}
-
-/**
- * @return the ways
- */
-public Way[][] getWays() {
-	return ways;
-}   	
+	/**
+	 * @param ways the ways to set
+	 */
+	public void setWays(Way[][] ways) {
+		this.ways = ways;
+	}
+	
+	/**
+	 * @return the ways
+	 */
+	public Way[][] getWays() {
+		return ways;
+	}
+	
+	public void setState(byte newState) {
+		state = newState;
+	}
 }

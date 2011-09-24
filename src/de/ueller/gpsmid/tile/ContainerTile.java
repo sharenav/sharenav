@@ -1,8 +1,9 @@
-package de.ueller.gpsmid.tile;
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
- * See Copying
+ * See file COPYING
  */
+
+package de.ueller.gpsmid.tile;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -16,33 +17,34 @@ import de.ueller.util.CancelMonitorInterface;
 
 import de.enough.polish.util.Locale;
 
+
 public class ContainerTile extends Tile {
 	//#debug error
-	private final static Logger logger=Logger.getInstance(ContainerTile.class,Logger.INFO);
+	private final static Logger logger = Logger.getInstance(ContainerTile.class, Logger.INFO);
 
 	Tile t1;
 	Tile t2;
-//    ContainerTile parent=null;
+//    ContainerTile parent = null;
     
-    ContainerTile(DataInputStream dis,int deep,byte zl) throws IOException{
+    public ContainerTile(DataInputStream dis, int deep, byte zl) throws IOException {
     	//#debug
-       	logger.debug("start "+deep);
-    	minLat=dis.readFloat();
-    	minLon=dis.readFloat();
-    	maxLat=dis.readFloat();
-    	maxLon=dis.readFloat();
+       	logger.debug("start " + deep);
+    	minLat = dis.readFloat();
+    	minLon = dis.readFloat();
+    	maxLat = dis.readFloat();
+    	maxLon = dis.readFloat();
     	//#debug
-    	logger.debug("start left "+deep);
-    	t1=readTile(dis,deep+1,zl);
+    	logger.debug("start left " + deep);
+    	t1 = readTile(dis, deep + 1, zl);
     	//#debug
-       	logger.debug("start right "+deep);
-       	t2=readTile(dis,deep+1,zl);
+       	logger.debug("start right " + deep);
+       	t2 = readTile(dis, deep + 1, zl);
         //#debug
-    	logger.debug("ready "+deep+":readed ContainerTile");
+    	logger.debug("ready " + deep + ":readed ContainerTile");
     }
     
-    public Tile readTile(DataInputStream dis,int deep,byte zl) throws IOException{
-    	byte t=dis.readByte();
+    public Tile readTile(DataInputStream dis, int deep, byte zl) throws IOException {
+    	byte t = dis.readByte();
     	switch (t) {
     	case Tile.TYPE_MAP:
     		//#debug
@@ -71,8 +73,6 @@ public class ContainerTile extends Tile {
     	}
     }
 
-	
-
 	public boolean cleanup(int level) {
 		return true;
 //		lastUse++;
@@ -82,11 +82,10 @@ public class ContainerTile extends Tile {
 //		if (t2 != null) {
 //			t2.cleanup();
 //		}
-		
 	}
 	
 	public void paint(PaintContext pc, byte layer) {
-		if (contain(pc)){
+		if (contain(pc)) {
 			if (t1 != null) {
 				t1.paint(pc, layer);
 			}
@@ -97,21 +96,20 @@ public class ContainerTile extends Tile {
 			cleanup(4);
 		}
 	}
-	public void walk(PaintContext pc,int opt) {
 
-		if (contain(pc)){
+	public void walk(PaintContext pc,int opt) {
+		if (contain(pc)) {
 			if (t1 != null) {
-				t1.walk(pc,opt);
+				t1.walk(pc, opt);
 			}
 			if (t2 != null) {
-				t2.walk(pc,opt);
+				t2.walk(pc, opt);
 			}	
 		} else {	
 			cleanup(4);
 		}
 	}
-	
-	
+
 	/**
 	    * Returns a Vector of SearchResult containing POIs of
 	    * type searchType close to lat/lon. The list is ordered
@@ -121,7 +119,8 @@ public class ContainerTile extends Tile {
 	    * coordinate and traverses that one first to check for
 	    * close by POI.
 	    */
-	public Vector getNearestPoi(boolean matchAnyPoi, short searchType, float lat, float lon, float maxDist, CancelMonitorInterface cmi) {
+	public Vector getNearestPoi(boolean matchAnyPoi, short searchType, float lat, float lon, 
+			float maxDist, CancelMonitorInterface cmi) {
 		boolean t1closer;
 		Vector res;
 		Vector res2;
@@ -130,7 +129,7 @@ public class ContainerTile extends Tile {
 		float distClose;
 		float distFar;
 		
-		if(cmi != null) {
+		if (cmi != null) {
 			if (cmi.monitorIsCanceled()) {
 				//Return an empty vector
 				return new Vector();
@@ -142,7 +141,6 @@ public class ContainerTile extends Tile {
 		 * to which we are trying to find close by POIs 
 		 */
 		if (t1 != null) {
-			
 			if (t1.maxLat > lat && t1.minLat < lat && t1.maxLon > lon && t1.minLon < lon) {
 				/**
 				 * If the bounding box contains the point, then the distance is 0
@@ -230,13 +228,14 @@ public class ContainerTile extends Tile {
 		 * I.e. Although the tile it self might be closer, the POIs in the other
 		 * tile might end up being closer than some of the POIs in the closer tile
 		 */
-		if ((distFar < maxDistFound)) { // This might be inexact at tile boundries. We want to check if tile dist < largest res dist
+		// This might be inexact at tile boundaries. We want to check if tile dist < largest res dist
+		if ((distFar < maxDistFound)) {
 			//logger.info("traversing tile 2 of dist: " + distFar);
-			if (t1closer) 
+			if (t1closer) {
 				res2 = t2.getNearestPoi(matchAnyPoi, searchType, lat, lon, maxDistFound, cmi);
-			else
+			} else {
 				res2 = t1.getNearestPoi(matchAnyPoi, searchType, lat, lon, maxDistFound, cmi);
-				
+			}
 			/**
 			 * Perform a merge sort of the two result lists.
 			 * As they are both sorted them selves, this is easy
@@ -248,16 +247,16 @@ public class ContainerTile extends Tile {
 			for (int i = 0; i < res2.size() + res.size(); i++) {
 				SearchResult a;
 				SearchResult b;
-				if (it1 < res.size())
+				if (it1 < res.size()) {
 					a = (SearchResult) res.elementAt(it1);
-				else {
+				} else {
 					resMerge.addElement(res2.elementAt(it2));
 					it2++;
 					continue;
 				}
-				if (it2 < res2.size())
+				if (it2 < res2.size()) {
 					b = (SearchResult) res2.elementAt(it2);
-				else {
+				} else {
 					resMerge.addElement(a);
 					it1++;
 					continue;

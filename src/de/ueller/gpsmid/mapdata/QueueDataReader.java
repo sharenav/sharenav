@@ -45,15 +45,16 @@ public class QueueDataReader extends QueueReader implements Runnable {
 							      + ".d");
 		if (is == null) {
 		    //#debug error
-			logger.error(Locale.get("queuedatareader.FileInputStream")/*File inputStream/t*/ + tt.zl + "/" + tt.fileId + Locale.get("queuedatareader.dNotFound")/*.d not found*/);
-			tt.state = 0;
+			logger.error(Locale.get("queuedatareader.FileInputStream")/*File inputStream/t*/ 
+					+ tt.zl + "/" + tt.fileId + Locale.get("queuedatareader.dNotFound")/*.d not found*/);
+			tt.setState((byte)0);
 			return;
 		}
 //		logger.info("open DataInputStream");
 		DataInputStream ds = new DataInputStream(is);
 		if (ds == null) {
 //			logger.error("file DataImputStream "+url+" not found" );
-			tt.state = 0;
+			tt.setState((byte)0);
 			is.close();
 			return;
 		}
@@ -298,7 +299,8 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			throwError(msg, null);
 			
 		} catch (IOException e) {
-			logger.error(Locale.get("queuedatareader.ErrorWhileVerify")/* Error while verify */ + msg + " " + e.getMessage());
+			logger.error(Locale.get("queuedatareader.ErrorWhileVerify")/* Error while verify */ 
+					+ msg + " " + e.getMessage());
 		}
 	}
 

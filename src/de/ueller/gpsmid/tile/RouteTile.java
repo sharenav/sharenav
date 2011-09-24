@@ -1,6 +1,6 @@
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
- * See COPYING
+ * See file COPYING
  */
 
 package de.ueller.gpsmid.tile;
@@ -25,16 +25,18 @@ import de.ueller.util.MoreMath;
 
 import de.enough.polish.util.Locale;
 
+
 public class RouteTile extends RouteBaseTile {
 
-	RouteNode[] nodes=null;
-	TurnRestriction[] turns=null;
-	Connection[][] connections=null;
+	RouteNode[] nodes = null;
+	TurnRestriction[] turns = null;
+	Connection[][] connections = null;
 	boolean onlyMainStreetNetLoaded = true;
 
-	private final static Logger logger=Logger.getInstance(RouteTile.class,Logger.INFO);
+	private final static Logger logger = Logger.getInstance(RouteTile.class, Logger.INFO);
 
-	RouteTile(DataInputStream dis, int deep, byte zl) throws IOException {
+	
+	public RouteTile(DataInputStream dis, int deep, byte zl) throws IOException {
 		minLat = dis.readFloat();
 		minLon = dis.readFloat();
 		maxLat = dis.readFloat();
@@ -46,22 +48,16 @@ public class RouteTile extends RouteBaseTile {
 		logger.debug("created RouteTile deep:" + deep + ":RT Nr=" + fileId + "id("+minId+"/"+maxId+")");
 	}
 
-	
-	public RouteTile() {
-		// TODO Auto-generated constructor stub
-	}
-
-
 	public boolean cleanup(int level) {
-		if (nodes != null){
-			if (level > 0 && permanent){
+		if (nodes != null) {
+			if (level > 0 && permanent) {
 //				logger.debug("Protected content for " + this +" with level " + level);
 				return false;
 			}
-			if (lastUse >= level){
-				nodes=null;
-				connections=null;
-				turns=null;
+			if (lastUse >= level) {
+				nodes = null;
+				connections = null;
+				turns = null;
 				onlyMainStreetNetLoaded = true;
 //				logger.debug("discard content for " + this +" with level " + level);
 				return true;
@@ -77,23 +73,23 @@ public class RouteTile extends RouteBaseTile {
 		return (nodes == null || (onlyMainStreetNetLoaded && !Routing.onlyMainStreetNet));
 	}
 	
-	
 	/**
 	 * Only for debugging purposes to show the routeNode and their connections / turn restrictions
 	 * This debugging can be activated by setting the corresponding Setup / Debug Options
 	 */
 	public void paint(PaintContext pc, byte layer) {
-		if (pc == null){ // ignore layer as this is always called with layer 0
+		// ignore layer as this is always called with layer 0
+		if (pc == null) {
 			return;
 		}
-		if (contain(pc)){
+		if (contain(pc)) {
 			boolean showConnections = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS);
 			// show route cost only if Alternative Info/Type Information in Map Features is activated
 			boolean showCost = Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE);			
 			boolean showTurnRestrictions = Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS);
 			
 //			drawBounds(pc, 255, 255, 255);
-			if (nodes == null || onlyMainStreetNetLoaded){
+			if (nodes == null || onlyMainStreetNetLoaded) {
 				try {
 					loadNodes(false, -1);
 				} catch (IOException e) {
@@ -101,7 +97,7 @@ public class RouteTile extends RouteBaseTile {
 					return;
 				}
 			}
-			if (showConnections && connections == null){
+			if (showConnections && connections == null) {
 				try {
 					loadConnections(true);
 				} catch (IOException e) {
@@ -114,35 +110,37 @@ public class RouteTile extends RouteBaseTile {
 
 //			int turnPaint = 0;
 			
-			for (int i=0; i< nodes.length;i++){
-				if (pc.getP().isPlotable(nodes[i].lat, nodes[i].lon)){
+			for (int i = 0; i < nodes.length; i++) {
+				if (pc.getP().isPlotable(nodes[i].lat, nodes[i].lon)) {
 					pc.getP().forward(nodes[i].lat, nodes[i].lon, pc.swapLineP);
 					if (showConnections) {
-						g.drawRect(pc.swapLineP.x-2, pc.swapLineP.y-2, 5, 5); //Draw node
+						g.drawRect(pc.swapLineP.x - 2, pc.swapLineP.y - 2, 5, 5); //Draw node
 						if (nodes[i].isAtTrafficSignals()) {
 							g.setColor(0x00FF0000);
-							g.drawRect(pc.swapLineP.x-3, pc.swapLineP.y-3, 7, 7); // mark traffic lights
+							g.drawRect(pc.swapLineP.x - 3, pc.swapLineP.y - 3, 7, 7); // mark traffic lights
 							g.setColor(0x0000FF00);
-							g.drawRect(pc.swapLineP.x-1, pc.swapLineP.y-1, 3, 3); // mark traffic lights
+							g.drawRect(pc.swapLineP.x - 1, pc.swapLineP.y - 1, 3, 3); // mark traffic lights
 						}
-						for (int ii=0; ii< connections[i].length;ii++){
-							Connection c=connections[i][ii];
+						for (int ii = 0; ii < connections[i].length; ii++) {
+							Connection c = connections[i][ii];
 							Connection [] reverseCons = null;
-							RouteNode rnt=getRouteNode(c.toId);						
-							if (rnt == null){
+							RouteNode rnt = getRouteNode(c.toId);						
+							if (rnt == null) {
 								RouteBaseTile dict = (RouteBaseTile) Trace.getInstance().getDict((byte)4);
-								rnt=dict.getRouteNode(c.toId);
+								rnt = dict.getRouteNode(c.toId);
 								if (rnt != null) {
-									reverseCons = dict.getConnections(rnt.id,dict,true);
+									reverseCons = dict.getConnections(rnt.id, dict, true);
 								} else {
 									g.setColor(255, 70, 70);
 									final byte radius = 10;
-									g.fillArc(pc.swapLineP.x-radius/2,pc.swapLineP.y-radius/2,radius,radius,0,359);
+									g.fillArc(pc.swapLineP.x - radius / 2, 
+											pc.swapLineP.y - radius / 2, radius, radius, 
+											0, 359);
 								}
 							} else {
 								reverseCons = getConnections(rnt.id, this, true);
 							}
-							if (rnt == null){
+							if (rnt == null) {
 								//#debug info
 								logger.info("Routenode not found");
 							} else {
@@ -150,7 +148,7 @@ public class RouteTile extends RouteBaseTile {
 								 * Try and determine if the connection is a one way connection
 								 */
 								boolean oneway = true; 
-								for (int iii = 0;iii < reverseCons.length; iii ++) {
+								for (int iii = 0; iii < reverseCons.length; iii ++) {
 									Connection c2=reverseCons[iii];
 									if (c2.toId - minId == i) {
 										oneway = false;
@@ -176,7 +174,10 @@ public class RouteTile extends RouteBaseTile {
 								g.drawLine(pc.swapLineP.x, pc.swapLineP.y, pc.lineP2.x, pc.lineP2.y);
 								g.setColor(0, 0, 0);
 								if (showCost) {
-									g.drawString(Integer.toString(c.getCost()), (pc.swapLineP.x + pc.lineP2.x) / 2, (pc.swapLineP.y + pc.lineP2.y) / 2, Graphics.TOP | Graphics.RIGHT);
+									g.drawString(Integer.toString(c.getCost()), 
+											(pc.swapLineP.x + pc.lineP2.x) / 2, 
+											(pc.swapLineP.y + pc.lineP2.y) / 2, 
+											Graphics.TOP | Graphics.RIGHT);
 								}
 							}
 						}
@@ -185,7 +186,8 @@ public class RouteTile extends RouteBaseTile {
 						IntPoint viaNodeP = new IntPoint();
 						viaNodeP.set(pc.swapLineP);
 						g.setColor(0xD00000);
-						g.fillRect(viaNodeP.x-3, viaNodeP.y-2, 7, 7); //Draw viaTo node
+						//Draw viaTo node
+						g.fillRect(viaNodeP.x - 3, viaNodeP.y - 2, 7, 7);
 						TurnRestriction turnRestriction = getTurnRestrictions(nodes[i].id);
 						int drawOffs = 0;
 						RouteBaseTile dict = (RouteBaseTile) Trace.getInstance().getDict((byte)4);
@@ -197,7 +199,9 @@ public class RouteTile extends RouteBaseTile {
 //							}
 
 							g.setColor(0);
-							g.drawString(turnRestriction.getRestrictionType(), viaNodeP.x, viaNodeP.y + drawOffs * g.getFont().getHeight(), Graphics.TOP | Graphics.HCENTER);
+							g.drawString(turnRestriction.getRestrictionType(), 
+									viaNodeP.x, viaNodeP.y + drawOffs * g.getFont().getHeight(), 
+									Graphics.TOP | Graphics.HCENTER);
 							RouteNode to = dict.getRouteNode(turnRestriction.toRouteNodeId);
 							if (to != null) {
 								if (turnRestriction.isOnlyTypeRestriction()) {
@@ -207,7 +211,8 @@ public class RouteTile extends RouteBaseTile {
 								}
 								pc.getP().forward(to.lat, to.lon, pc.lineP2);
 								g.setStrokeStyle(Graphics.SOLID);
-								g.drawLine(viaNodeP.x, viaNodeP.y + drawOffs, pc.lineP2.x, pc.lineP2.y + drawOffs);									
+								g.drawLine(viaNodeP.x, viaNodeP.y + drawOffs, 
+										pc.lineP2.x, pc.lineP2.y + drawOffs);									
 							}
 							//#mdebug debug
 							else {								
@@ -246,7 +251,8 @@ public class RouteTile extends RouteBaseTile {
 								}
 								pc.getP().forward(from.lat, from.lon, pc.lineP2);
 								g.setStrokeStyle(Graphics.DOTTED);
-								g.drawLine(pc.swapLineP.x, pc.swapLineP.y + drawOffs, pc.lineP2.x, pc.lineP2.y + drawOffs);
+								g.drawLine(pc.swapLineP.x, pc.swapLineP.y + drawOffs, 
+										pc.lineP2.x, pc.lineP2.y + drawOffs);
 							}
 							//#mdebug debug
 							else {
@@ -259,7 +265,7 @@ public class RouteTile extends RouteBaseTile {
 					}
 				}
 			}
-			lastUse=0;
+			lastUse = 0;
 		}
 	}
 
