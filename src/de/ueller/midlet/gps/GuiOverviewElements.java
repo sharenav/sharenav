@@ -8,7 +8,7 @@ import javax.microedition.lcdui.*;
 
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
-import de.ueller.midlet.gps.tile.WayDescription;
+import de.ueller.gpsmid.mapdata.WayDescription;
 import de.enough.polish.util.Locale;
 import de.ueller.midlet.gps.GpsMidMenu;
 

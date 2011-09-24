@@ -25,9 +25,9 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.TextField;
 
 import de.ueller.gps.data.Configuration;
-import de.ueller.gpsMid.mapData.SingleTile;
-import de.ueller.midlet.gps.data.OSMdataNode;
-import de.ueller.midlet.gps.data.PositionMark;
+import de.ueller.gpsmid.data.OsmDataNode;
+import de.ueller.gpsmid.data.PositionMark;
+import de.ueller.gpsmid.tile.SingleTile;
 import de.ueller.util.HttpHelper;
 
 import de.enough.polish.util.Locale;
@@ -58,7 +58,7 @@ public class GuiOSMAddrDisplay extends Form implements GpsMidDisplayable,
 	private float lat;
 	private float lon;
 
-	private OSMdataNode osmNode;
+	private OsmDataNode osmNode;
 
 	private HttpHelper http;
 
@@ -97,7 +97,7 @@ public class GuiOSMAddrDisplay extends Form implements GpsMidDisplayable,
 			sPostcode = tfPostcode.getString().trim();
 			sStreet = tfStreet.getString().trim();
 
-			osmNode = new OSMdataNode(-1, lat, lon);
+			osmNode = new OsmDataNode(-1, lat, lon);
 			Hashtable tags = osmNode.getTags();
 			if (sHousenumber.length() > 0) {
 				tags.put("addr:housenumber", sHousenumber);

@@ -14,8 +14,8 @@ import java.util.Vector;
 import javax.microedition.lcdui.Image;
 
 import de.ueller.gps.data.Legend;
+import de.ueller.gpsmid.names.NumberCanon;
 import de.ueller.midlet.gps.data.KeySelectMenuItem;
-import de.ueller.midlet.gps.names.NumberCanon;
 
 import de.enough.polish.util.Locale;
 

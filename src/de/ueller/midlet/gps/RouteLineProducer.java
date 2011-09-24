@@ -9,14 +9,14 @@ import java.util.Vector;
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
-import de.ueller.gpsMid.mapData.Tile;
-import de.ueller.midlet.gps.data.Node;
+import de.ueller.gpsmid.data.Node;
+import de.ueller.gpsmid.mapdata.WayDescription;
+import de.ueller.gpsmid.routing.Connection;
+import de.ueller.gpsmid.routing.ConnectionWithNode;
+import de.ueller.gpsmid.tile.Tile;
 import de.ueller.midlet.gps.data.Proj2D;
 import de.ueller.midlet.gps.data.ProjMath;
-import de.ueller.midlet.gps.routing.Connection;
-import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.tile.PaintContext;
-import de.ueller.midlet.gps.tile.WayDescription;
 import de.ueller.util.IntTree;
 
 import de.enough.polish.util.Locale;

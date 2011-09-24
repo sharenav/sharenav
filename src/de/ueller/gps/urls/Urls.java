@@ -17,13 +17,12 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import de.ueller.gps.data.Configuration;
-import de.ueller.gpsMid.mapData.QueueReader;
+import de.ueller.gpsmid.mapdata.QueueReader;
+import de.ueller.gpsmid.util.StringEntry;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 
-import de.ueller.midlet.gps.data.MapName;
-import de.ueller.midlet.gps.tile.StringEntry;
 import de.ueller.util.IntTree;
 
 import de.enough.polish.util.Locale;

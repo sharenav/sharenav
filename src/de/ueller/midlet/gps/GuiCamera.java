@@ -39,9 +39,9 @@ import javax.microedition.amms.control.camera.SnapshotControl;
 //#endif
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
-import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.GpsMidMenu;
 import de.ueller.util.HelperRoutines;
+import de.ueller.util.MoreMath;
 import de.ueller.util.StringTokenizer;
 
 import de.enough.polish.util.Locale;

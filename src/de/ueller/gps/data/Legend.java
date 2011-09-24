@@ -14,11 +14,11 @@ import java.io.InputStream;
 import javax.microedition.lcdui.Image;
 import javax.microedition.media.Manager;
 
+import de.ueller.gpsmid.mapdata.PoiDescription;
+import de.ueller.gpsmid.mapdata.WayDescription;
+import de.ueller.gpsmid.routing.TravelMode;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.GpsMid;
-import de.ueller.midlet.gps.routing.TravelMode;
-import de.ueller.midlet.gps.tile.POIdescription;
-import de.ueller.midlet.gps.tile.WayDescription;
 import de.ueller.midlet.gps.Trace;
 
 import de.enough.polish.util.Locale;
@@ -239,7 +239,7 @@ public class Legend {
 	public static String[] namesOnMapLang;
 	public static String[] namesOnMapLangName;
 	
-	private static POIdescription[] pois;
+	private static PoiDescription[] pois;
 	private static WayDescription[] ways;
 	
 	/** name parts for Overview/Filter mode (index 0 for poi name part, index 1 for area name part, index 2 for way name part) */
@@ -499,9 +499,9 @@ public class Legend {
 		}
 		//#debug info
 		logger.info("Reading " + (numPoiDesc - 1) + " POI descriptions (+ 1 bogus) from legend.dat");
-		pois = new POIdescription[numPoiDesc];
+		pois = new PoiDescription[numPoiDesc];
 		for (int i = 0; i < pois.length; i++) {
-			pois[i] = new POIdescription();
+			pois[i] = new PoiDescription();
 			if (enableBigStyles) {
 				if ((ds.readShort() & 0xffff) != i) {
 					logger.error(Locale.get("legend.ReadLegendPOIErr")/*Read legend had trouble reading POI descriptions*/);

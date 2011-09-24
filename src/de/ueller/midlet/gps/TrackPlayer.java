@@ -1,7 +1,7 @@
 package de.ueller.midlet.gps;
 
 import de.ueller.gps.data.Position;
-import de.ueller.midlet.gps.data.MoreMath;
+import de.ueller.util.MoreMath;
 
 import de.enough.polish.util.Locale;
 

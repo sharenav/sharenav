@@ -13,10 +13,10 @@ import javax.microedition.lcdui.List;
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
-import de.ueller.midlet.gps.data.MoreMath;
-import de.ueller.midlet.gps.data.Way;
+import de.ueller.gpsmid.mapdata.Way;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.tile.PaintContext;
+import de.ueller.util.MoreMath;
 
 import de.enough.polish.util.Locale;
 

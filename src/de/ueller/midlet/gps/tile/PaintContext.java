@@ -7,16 +7,17 @@ package de.ueller.midlet.gps.tile;
 
 import javax.microedition.lcdui.Graphics;
 
-import de.ueller.gpsMid.mapData.SingleTile;
+import de.ueller.gpsmid.data.Node;
+import de.ueller.gpsmid.data.ScreenContext;
+import de.ueller.gpsmid.graphics.Images;
+import de.ueller.gpsmid.mapdata.Way;
+import de.ueller.gpsmid.tile.SingleTile;
 import de.ueller.midlet.gps.RouteInstructions;
-import de.ueller.midlet.gps.ScreenContext;
 import de.ueller.midlet.gps.Trace;
-import de.ueller.midlet.gps.data.IntPoint;
-import de.ueller.midlet.gps.data.MoreMath;
-import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.ProjMath;
-import de.ueller.midlet.gps.data.Way;
+import de.ueller.util.IntPoint;
 import de.ueller.util.IntTree;
+import de.ueller.util.MoreMath;
 
 //TODO: explain - short overview what the PaintContext does - it seems like it has nothing to do with painting but routing - perhaps the name should be changed
 /*

@@ -23,7 +23,7 @@ import de.ueller.midlet.gps.Trace;
 import de.ueller.util.HelperRoutines;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
-import de.ueller.gpsMid.mapData.QueueReader;
+import de.ueller.gpsmid.mapdata.QueueReader;
 
 import net.sourceforge.util.zip.ZipFile;
 

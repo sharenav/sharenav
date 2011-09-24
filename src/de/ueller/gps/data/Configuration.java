@@ -31,14 +31,14 @@ import javax.microedition.rms.RecordStore;
 
 import net.sourceforge.util.zip.ZipFile;
 
-import de.ueller.gpsMid.mapData.QueueReader;
+import de.ueller.gpsmid.data.Node;
+import de.ueller.gpsmid.data.RoutePositionMark;
+import de.ueller.gpsmid.mapdata.QueueReader;
+import de.ueller.gpsmid.routing.TravelMode;
 import de.ueller.midlet.gps.GuiDiscover;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
-import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.ProjFactory;
-import de.ueller.midlet.gps.routing.TravelMode;
-import de.ueller.midlet.gps.data.RoutePositionMark;
 import de.ueller.util.BufferedReader;
 import de.ueller.util.IntTree;
 import de.ueller.util.StringTokenizer;

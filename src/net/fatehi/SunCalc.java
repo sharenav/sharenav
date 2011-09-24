@@ -28,7 +28,7 @@ package net.fatehi;
 //
 
 // Needed for atan2
-import de.ueller.midlet.gps.data.MoreMath;
+import de.ueller.util.MoreMath;
 
 import de.enough.polish.util.Locale;
 

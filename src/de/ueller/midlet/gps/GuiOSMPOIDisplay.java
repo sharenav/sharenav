@@ -20,20 +20,20 @@ import javax.microedition.lcdui.Image;
 
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
-import de.ueller.gpsMid.mapData.SingleTile;
+import de.ueller.gpsmid.data.OsmDataEntity;
+import de.ueller.gpsmid.data.OsmDataNode;
+import de.ueller.gpsmid.data.PositionMark;
+import de.ueller.gpsmid.mapdata.PoiDescription;
+import de.ueller.gpsmid.names.NumberCanon;
+import de.ueller.gpsmid.tile.SingleTile;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GpsMidDisplayable;
 import de.ueller.midlet.gps.GuiOSMChangeset;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.GuiPOItypeSelectMenu.POItypeSelectMenuItem;
 import de.ueller.midlet.gps.data.KeySelectMenuItem;
-import de.ueller.midlet.gps.data.MoreMath;
-import de.ueller.midlet.gps.data.OSMdataEntity;
-import de.ueller.midlet.gps.data.OSMdataNode;
-import de.ueller.midlet.gps.data.PositionMark;
-import de.ueller.midlet.gps.names.NumberCanon;
-import de.ueller.midlet.gps.tile.POIdescription;
 import de.ueller.util.HttpHelper;
+import de.ueller.util.MoreMath;
 
 import de.enough.polish.util.Locale;
 
@@ -58,7 +58,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 		showParent = false;
 		loadState = LOAD_STATE_NONE;
 		if (nodeID < 0) {
-			osmentity = new OSMdataNode(nodeID, lat*MoreMath.FAC_RADTODEC, lon*MoreMath.FAC_RADTODEC);
+			osmentity = new OsmDataNode(nodeID, lat*MoreMath.FAC_RADTODEC, lon*MoreMath.FAC_RADTODEC);
 			showPoiTypeForm = true;
 			setupPoiTypeForm();
 		} else {
@@ -189,7 +189,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 		if (success) {
 			switch (loadState) {
 			case LOAD_STATE_LOAD: {
-				osmentity = new OSMdataNode(http.getData(), nodeID);
+				osmentity = new OsmDataNode(http.getData(), nodeID);
 				setupScreen();
 				loadState = LOAD_STATE_NONE;
 				break;
@@ -199,9 +199,9 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 				if (loadState == LOAD_STATE_UPLOAD) {
 					GpsMid.getInstance().alert(Locale.get("guiosmpoidisplay.SavingPOI")/*Saving POI*/, Locale.get("guiosmpoidisplay.PoiSuccessfullySaved")/*Poi was successfully saved to OpenStreetMap*/, 1000);
 					;
-					if (osmentity instanceof OSMdataEntity) {
+					if (osmentity instanceof OsmDataEntity) {
 						logger.info("Adding Waypoint to mark where POI was uploaded to OSM");
-						OSMdataNode poi = (OSMdataNode)osmentity;
+						OsmDataNode poi = (OsmDataNode)osmentity;
 						PositionMark waypt = new PositionMark(poi.getLat()*MoreMath.FAC_DECTORAD, poi.getLon()*MoreMath.FAC_DECTORAD);
 						waypt.displayName = Locale.get("guiosmpoidisplay.POI")/*POI: */ + Legend.getNodeTypeDesc(poiType);
 						Trace.getInstance().gpx.addWayPt(waypt);

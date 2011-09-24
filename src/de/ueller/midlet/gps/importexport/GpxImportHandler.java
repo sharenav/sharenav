@@ -18,13 +18,13 @@ package de.ueller.midlet.gps.importexport;
 import java.util.Hashtable;
 
 import de.ueller.gps.data.Position;
+import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.midlet.gps.ImageCollector;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.UploadListener;
 import de.ueller.midlet.gps.data.Gpx;
-import de.ueller.midlet.gps.data.MoreMath;
-import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.ProjMath;
+import de.ueller.util.MoreMath;
 
 import de.enough.polish.util.Locale;
 

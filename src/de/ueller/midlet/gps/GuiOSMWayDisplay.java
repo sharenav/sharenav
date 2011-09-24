@@ -25,15 +25,15 @@ import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
 
-import de.ueller.gpsMid.mapData.SingleTile;
+import de.ueller.gpsmid.data.EditableWay;
+import de.ueller.gpsmid.data.OsmDataWay;
+import de.ueller.gpsmid.tile.SingleTile;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GpsMidDisplayable;
 import de.ueller.midlet.gps.GuiOSMChangeset;
 import de.ueller.midlet.gps.GuiOSMEntityDisplay;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.UploadListener;
-import de.ueller.midlet.gps.data.EditableWay;
-import de.ueller.midlet.gps.data.OSMdataWay;
 import de.ueller.util.HttpHelper;
 
 //#if polish.api.online
@@ -70,7 +70,7 @@ public class GuiOSMWayDisplay extends GuiOSMEntityDisplay implements GpsMidDispl
 	public GuiOSMWayDisplay(long wayID, GpsMidDisplayable parent) {
 	        super(Locale.get("guiosmwaydisplay.Way")/*Way */ + wayID, parent);
 		this.wayID = (int) wayID;
-		osmentity = new OSMdataWay(this.wayID);
+		osmentity = new OsmDataWay(this.wayID);
 		//addCommand(REVERSE_CMD);
 		//addCommand(PRESET_CMD);
 		//typeImage = bearingArrow();
@@ -129,8 +129,8 @@ public class GuiOSMWayDisplay extends GuiOSMEntityDisplay implements GpsMidDispl
 		}
 		
 		if (c == REVERSE_CMD) {
-			if (osmentity instanceof OSMdataWay) {
-				((OSMdataWay)osmentity).reverseWay();
+			if (osmentity instanceof OsmDataWay) {
+				((OsmDataWay)osmentity).reverseWay();
 			}
 		}
 		
@@ -192,7 +192,7 @@ public class GuiOSMWayDisplay extends GuiOSMEntityDisplay implements GpsMidDispl
 				loadState = LOAD_STATE_UPLOAD;
 				eway.uploadXML(changesetGui.getChangesetID(),this);
 			} else if (loadState == LOAD_STATE_LOAD) {
-				osmentity = new OSMdataWay(http.getData(), wayID);
+				osmentity = new OsmDataWay(http.getData(), wayID);
 				setupScreen();
 				loadState = LOAD_STATE_NONE;
 			} else {

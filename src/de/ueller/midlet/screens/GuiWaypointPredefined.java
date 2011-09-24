@@ -11,10 +11,10 @@ import javax.microedition.lcdui.TextField;
 
 import de.enough.polish.util.Locale;
 
+import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.midlet.gps.GpsMidDisplayable;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
-import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.iconmenu.IconActionPerformer;
 import de.ueller.midlet.iconmenu.IconMenuPage;
 import de.ueller.midlet.iconmenu.IconMenuWithPagesGUI;

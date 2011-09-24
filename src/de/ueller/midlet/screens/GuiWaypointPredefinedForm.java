@@ -14,11 +14,11 @@ import javax.microedition.lcdui.TextField;
 import de.enough.polish.util.Locale;
 
 import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GpsMidDisplayable;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
-import de.ueller.midlet.gps.data.PositionMark;
 
 
 public class GuiWaypointPredefinedForm extends Form implements CommandListener {

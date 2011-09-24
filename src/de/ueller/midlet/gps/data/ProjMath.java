@@ -22,6 +22,10 @@
 
 package de.ueller.midlet.gps.data;
 
+import de.ueller.gpsmid.data.Node;
+import de.ueller.util.IntPoint;
+import de.ueller.util.MoreMath;
+
 
 
 

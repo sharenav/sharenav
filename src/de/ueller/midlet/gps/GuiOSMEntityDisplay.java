@@ -24,12 +24,12 @@ import javax.microedition.lcdui.ItemCommandListener;
 import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
 
+import de.ueller.gpsmid.data.OsmDataEntity;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GpsMidDisplayable;
 import de.ueller.midlet.gps.GuiOSMChangeset;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.UploadListener;
-import de.ueller.midlet.gps.data.OSMdataEntity;
 
 import de.enough.polish.util.Locale;
 
@@ -59,7 +59,7 @@ public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplaya
 	protected static GuiOSMChangeset changesetGui;
 	protected int loadState;
 	
-	protected OSMdataEntity osmentity;
+	protected OsmDataEntity osmentity;
 	protected Image typeImage;
 	
 	protected boolean addTag;

@@ -1,6 +1,6 @@
 import java.util.Random;
 
-import de.ueller.midlet.gps.data.MoreMath;
+import de.ueller.util.MoreMath;
 import junit.framework.TestCase;
 
 

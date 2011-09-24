@@ -21,10 +21,10 @@ import javax.microedition.content.Invocation;
 import javax.microedition.content.Registry;
 import javax.microedition.content.RequestListener;
 
+import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
-import de.ueller.midlet.gps.data.PositionMark;
 
 public class Jsr211Impl implements Jsr211ContentHandlerInterface,
 		RequestListener

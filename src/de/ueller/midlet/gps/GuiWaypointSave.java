@@ -14,7 +14,8 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.TextField;
 
 import de.ueller.gps.data.Configuration;
-import de.ueller.midlet.gps.data.PositionMark;
+import de.ueller.gpsmid.data.PositionMark;
+
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.ChoiceGroup;
 

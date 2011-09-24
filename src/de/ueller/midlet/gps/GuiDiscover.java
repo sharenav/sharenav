@@ -36,7 +36,6 @@ import javax.microedition.lcdui.TextField;
 
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
-import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.GuiCamera;
 import de.ueller.midlet.gps.GpsMidMenu;
 import de.ueller.midlet.gps.data.Gpx;
@@ -44,7 +43,8 @@ import de.ueller.midlet.gps.data.ProjFactory;
 import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.iconmenu.IconActionPerformer;
 import de.ueller.midlet.screens.GuiSetupRecordings;
-import de.ueller.gpsMid.mapData.WaypointsTile;
+import de.ueller.gpsmid.tile.SingleTile;
+import de.ueller.gpsmid.tile.WaypointsTile;
 
 import de.ueller.gps.SECellID;
 import de.ueller.gps.GetCompass;

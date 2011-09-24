@@ -13,18 +13,19 @@ import de.enough.polish.util.Locale;
 
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
-import de.ueller.gpsMid.mapData.Tile;
-import de.ueller.midlet.gps.data.IntPoint;
-import de.ueller.midlet.gps.data.MoreMath;
-import de.ueller.midlet.gps.data.Node;
+import de.ueller.gpsmid.data.Node;
+import de.ueller.gpsmid.data.ScreenContext;
+import de.ueller.gpsmid.graphics.Images;
+import de.ueller.gpsmid.mapdata.Way;
+import de.ueller.gpsmid.mapdata.WayDescription;
+import de.ueller.gpsmid.tile.Tile;
 import de.ueller.midlet.gps.data.Proj3D;
 import de.ueller.midlet.gps.data.ProjFactory;
 import de.ueller.midlet.gps.data.Projection;
-import de.ueller.midlet.gps.data.Way;
-import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
-import de.ueller.midlet.gps.tile.WayDescription;
 import de.ueller.midlet.iconmenu.LayoutElement;
+import de.ueller.util.IntPoint;
+import de.ueller.util.MoreMath;
 
 /* This class collects all visible objects to an offline image for later painting.
  * It is run in a low priority to avoid interrupting the GUI.

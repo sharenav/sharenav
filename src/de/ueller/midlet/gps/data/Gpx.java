@@ -28,9 +28,12 @@ import javax.microedition.rms.RecordStoreNotOpenException;
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
-import de.ueller.gpsMid.mapData.GpxTile;
-import de.ueller.gpsMid.mapData.Tile;
-import de.ueller.gpsMid.mapData.WaypointsTile;
+import de.ueller.gpsmid.data.Node;
+import de.ueller.gpsmid.data.PersistEntity;
+import de.ueller.gpsmid.data.PositionMark;
+import de.ueller.gpsmid.tile.GpxTile;
+import de.ueller.gpsmid.tile.Tile;
+import de.ueller.gpsmid.tile.WaypointsTile;
 import de.ueller.midlet.gps.GuiNameEnter;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
@@ -43,6 +46,7 @@ import de.ueller.midlet.screens.InputListener;
 import de.ueller.midlet.gps.TrackPlayer;
 import de.ueller.util.DateTimeTools;
 import de.ueller.util.HelperRoutines;
+import de.ueller.util.MoreMath;
 
 import de.enough.polish.util.Locale;
 

@@ -12,7 +12,7 @@ import javax.wireless.messaging.*;
 import javax.microedition.io.*;
 
 import de.ueller.gps.data.Configuration;
-import de.ueller.midlet.gps.data.MoreMath;
+import de.ueller.util.MoreMath;
 
 import de.enough.polish.util.Locale;
 

@@ -12,7 +12,7 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
 import java.util.Vector;
 import de.ueller.gps.data.Configuration;
-import de.ueller.midlet.gps.data.PersistEntity;
+import de.ueller.gpsmid.data.PersistEntity;
 import de.ueller.midlet.screens.InputListener;
 import de.ueller.midlet.screens.ProgressDisplay;
 

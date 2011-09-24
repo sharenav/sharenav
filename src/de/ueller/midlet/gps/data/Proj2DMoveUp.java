@@ -1,7 +1,10 @@
 package de.ueller.midlet.gps.data;
 
-import de.ueller.gpsMid.mapData.SingleTile;
+import de.ueller.gpsmid.data.Node;
+import de.ueller.gpsmid.tile.SingleTile;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.util.IntPoint;
+import de.ueller.util.MoreMath;
 
 public class Proj2DMoveUp implements Projection {
 	private float upDir;

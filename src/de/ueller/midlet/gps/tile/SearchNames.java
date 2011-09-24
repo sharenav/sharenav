@@ -18,10 +18,10 @@ import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GuiSearch;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
-import de.ueller.midlet.gps.data.PositionMark;
-import de.ueller.midlet.gps.names.Names;
-import de.ueller.midlet.gps.names.NumberCanon;
 import de.ueller.gps.urls.Urls;
+import de.ueller.gpsmid.data.PositionMark;
+import de.ueller.gpsmid.names.Names;
+import de.ueller.gpsmid.names.NumberCanon;
 
 import de.enough.polish.util.Locale;
 

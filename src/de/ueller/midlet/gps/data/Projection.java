@@ -5,8 +5,10 @@
 
 package de.ueller.midlet.gps.data;
 
-import de.ueller.gpsMid.mapData.SingleTile;
-import de.ueller.gpsMid.mapData.Tile;
+import de.ueller.gpsmid.data.Node;
+import de.ueller.gpsmid.tile.SingleTile;
+import de.ueller.gpsmid.tile.Tile;
+import de.ueller.util.IntPoint;
 
 
 public interface Projection {

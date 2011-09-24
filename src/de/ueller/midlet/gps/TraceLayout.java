@@ -7,12 +7,12 @@ package de.ueller.midlet.gps;
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
-import de.ueller.midlet.gps.data.MoreMath;
-import de.ueller.midlet.gps.data.Node;
+import de.ueller.gpsmid.data.Node;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.iconmenu.LayoutElement;
 import de.ueller.midlet.iconmenu.LayoutManager;
+import de.ueller.util.MoreMath;
 
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;

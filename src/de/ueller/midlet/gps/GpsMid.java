@@ -51,7 +51,7 @@ import de.ueller.midlet.gps.importexport.SamsLCDLight;
 
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
-import de.ueller.midlet.gps.data.Node;
+import de.ueller.gpsmid.data.Node;
 import de.ueller.util.HelperRoutines;
 
 import de.enough.polish.util.Locale;

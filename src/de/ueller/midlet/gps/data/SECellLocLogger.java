@@ -35,6 +35,7 @@ import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.LocationMsgReceiverList;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.util.HelperRoutines;
+import de.ueller.util.MoreMath;
 
 import de.enough.polish.util.Locale;
 
