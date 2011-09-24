@@ -46,15 +46,17 @@ public class ImageTools  {
 			newHeight = 2;
 		}
 		try {
-			int[] rawInput = new int[original.getHeight() * original.getWidth()];
-	        original.getRGB(rawInput, 0, original.getWidth(), 0, 0, original.getWidth(), original.getHeight());	        	        
+	        int originalWidth = original.getWidth();
+	        int originalHeight = original.getHeight();
+			int[] rawInput = new int[originalHeight * originalWidth];
+	        original.getRGB(rawInput, 0, originalWidth, 0, 0, originalWidth, originalHeight);	        	        
 	        int[] rawOutput = new int[newWidth*newHeight];        
 	
 	        // YD compensates for the x loop by subtracting the width back out
-	        int YD = (original.getHeight() / newHeight) * original.getWidth() - original.getWidth(); 
-	        int YR = original.getHeight() % newHeight;
-	        int XD = original.getWidth() / newWidth;
-	        int XR = original.getWidth() % newWidth;        
+	        int YD = (originalHeight / newHeight) * originalWidth - originalWidth; 
+	        int YR = originalHeight % newHeight;
+	        int XD = originalWidth / newWidth;
+	        int XR = originalWidth % newWidth;        
 	        int outOffset= 0;
 	        int inOffset=  0;
 	        
@@ -72,7 +74,7 @@ public class ImageTools  {
 	            YE+= YR;
 	            if (YE >= newHeight) {
 	                YE -= newHeight;     
-	                inOffset+=original.getWidth();
+	                inOffset+=originalWidth;
 	            }
 	        }               
 	        return Image.createRGBImage(rawOutput, newWidth, newHeight, true);
