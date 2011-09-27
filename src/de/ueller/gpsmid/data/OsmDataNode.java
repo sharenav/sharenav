@@ -16,10 +16,9 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.importexport.QDGpxParser;
+import de.ueller.gpsmid.importexport.XmlParserContentHandler;
 import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.importexport.QDGpxParser;
-import de.ueller.midlet.gps.importexport.XmlParserContentHandler;
 import de.ueller.util.HttpHelper;
 
 import de.enough.polish.util.Locale;

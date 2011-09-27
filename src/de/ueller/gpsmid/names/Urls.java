@@ -1,4 +1,4 @@
-package de.ueller.gps.urls;
+package de.ueller.gpsmid.names;
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
  * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
@@ -16,7 +16,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.mapdata.QueueReader;
 import de.ueller.gpsmid.util.StringEntry;
 import de.ueller.midlet.gps.GpsMid;

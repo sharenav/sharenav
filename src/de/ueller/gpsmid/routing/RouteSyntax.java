@@ -3,7 +3,7 @@
  * See COPYING
  */
 
-package de.ueller.midlet.gps;
+package de.ueller.gpsmid.routing;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -19,10 +19,11 @@ import android.content.res.AssetManager;
 import android.content.Context;
 //#endif
 
+import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.util.HelperRoutines;
-import de.ueller.gps.data.Configuration;
-import de.ueller.gps.data.Legend;
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.mapdata.QueueReader;
 
 import net.sourceforge.util.zip.ZipFile;

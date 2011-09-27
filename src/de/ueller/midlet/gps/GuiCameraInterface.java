@@ -1,6 +1,6 @@
 package de.ueller.midlet.gps;
 
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
 
 public interface GuiCameraInterface {
 	

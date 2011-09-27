@@ -32,8 +32,6 @@ import javax.microedition.io.HttpConnection;
 import javax.microedition.rms.RecordEnumeration;
 import javax.microedition.rms.RecordStore;
 
-import de.ueller.gps.data.Configuration;
-import de.ueller.gps.data.Position;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.CompassProducer;
 import de.ueller.midlet.gps.CompassReceiver;
@@ -44,7 +42,8 @@ import de.ueller.midlet.gps.data.CompassProvider;
 import de.ueller.midlet.gps.data.Compass;
 import de.ueller.util.IntTree;
 import de.ueller.util.StringTokenizer;
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Position;
 
 import de.enough.polish.util.Locale;
 

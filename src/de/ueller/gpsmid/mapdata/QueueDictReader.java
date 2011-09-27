@@ -11,7 +11,7 @@ import java.io.InputStream;
 
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Trace;
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.tile.ContainerTile;
 import de.ueller.gpsmid.tile.FileTile;
 import de.ueller.gpsmid.tile.SingleTile;

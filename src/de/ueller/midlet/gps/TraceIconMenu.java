@@ -5,7 +5,7 @@
 
 package de.ueller.midlet.gps;
 
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
 import de.ueller.midlet.iconmenu.IconActionPerformer;
 import de.ueller.midlet.iconmenu.IconMenuPage;
 import de.ueller.midlet.iconmenu.IconMenuWithPagesGUI;

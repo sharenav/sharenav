@@ -42,15 +42,15 @@ import de.ueller.midlet.gps.importexport.Jsr211ContentHandlerInterface;
 //#endif
 
 //#if polish.api.min-siemapi
-import de.ueller.midlet.gps.importexport.SiemGameLight;
 //#endif
 
 //#if polish.api.min-samsapi
-import de.ueller.midlet.gps.importexport.SamsLCDLight;
+import de.ueller.midlet.graphics.SamsLCDLight;
+import de.ueller.midlet.graphics.SiemGameLight;
 //#endif
 
-import de.ueller.gps.data.Legend;
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.Node;
 import de.ueller.util.HelperRoutines;
 
@@ -230,7 +230,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 			try {
 				log.info("Trying to register JSR211 Content Handler");
 				Class handlerClass =
-					Class.forName("de.ueller.midlet.gps.importexport.Jsr211Impl");
+					Class.forName("de.ueller.gpsmid.importexport.Jsr211Impl");
 				Object handlerObject = handlerClass.newInstance();
 				Jsr211ContentHandlerInterface handler =
 					(Jsr211ContentHandlerInterface) handlerObject;

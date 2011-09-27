@@ -34,15 +34,16 @@ import javax.microedition.lcdui.ItemCommandListener;
 import javax.microedition.lcdui.TextField;
 
 
-import de.ueller.gps.data.Legend;
-import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.GuiCamera;
 import de.ueller.midlet.gps.GpsMidMenu;
-import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.ProjFactory;
 import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.iconmenu.IconActionPerformer;
 import de.ueller.midlet.screens.GuiSetupRecordings;
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Gpx;
+import de.ueller.gpsmid.data.Legend;
+import de.ueller.gpsmid.routing.RouteSyntax;
 import de.ueller.gpsmid.tile.SingleTile;
 import de.ueller.gpsmid.tile.WaypointsTile;
 

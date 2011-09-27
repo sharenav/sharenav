@@ -8,7 +8,8 @@ package de.ueller.util;
 
 import java.util.Calendar;
 import java.util.Date;
-import de.ueller.gps.data.Configuration;
+
+import de.ueller.gpsmid.data.Configuration;
 
 public class HelperRoutines {
 	

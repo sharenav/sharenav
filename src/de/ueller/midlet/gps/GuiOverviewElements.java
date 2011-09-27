@@ -6,8 +6,8 @@ package de.ueller.midlet.gps;
 
 import javax.microedition.lcdui.*;
 
-import de.ueller.gps.data.Legend;
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.mapdata.WayDescription;
 import de.enough.polish.util.Locale;
 import de.ueller.midlet.gps.GpsMidMenu;

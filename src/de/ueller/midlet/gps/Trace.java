@@ -40,28 +40,32 @@ import de.enough.polish.util.Locale;
 
 import de.ueller.gps.SECellID;
 import de.ueller.gps.GetCompass;
-import de.ueller.gps.data.Legend;
-import de.ueller.gps.data.Configuration;
-import de.ueller.gps.data.Position;
-import de.ueller.gps.data.Satellite;
 
 import de.ueller.gps.nmea.NmeaInput;
 import de.ueller.gps.sirf.SirfInput;
-import de.ueller.gps.urls.Urls;
 //#if polish.api.osm-editing
 import de.ueller.gpsmid.data.EditableWay;
 import de.ueller.midlet.gps.GuiOSMWayDisplay;
 //#endif
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Gpx;
+import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.Node;
+import de.ueller.gpsmid.data.Position;
 import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.gpsmid.data.RoutePositionMark;
+import de.ueller.gpsmid.data.Satellite;
 import de.ueller.gpsmid.graphics.Images;
 import de.ueller.gpsmid.mapdata.DictReader;
 import de.ueller.gpsmid.mapdata.QueueDataReader;
 import de.ueller.gpsmid.mapdata.QueueDictReader;
 import de.ueller.gpsmid.mapdata.Way;
 import de.ueller.gpsmid.names.Names;
+import de.ueller.gpsmid.names.Urls;
+import de.ueller.gpsmid.routing.RouteInstructions;
+import de.ueller.gpsmid.routing.RouteLineProducer;
 import de.ueller.gpsmid.routing.RouteNode;
+import de.ueller.gpsmid.routing.RouteSyntax;
 import de.ueller.gpsmid.routing.Routing;
 import de.ueller.gpsmid.tile.Tile;
 import de.ueller.midlet.gps.data.CellIdProvider;
@@ -71,7 +75,6 @@ import de.ueller.midlet.gps.data.GSMCell;
 import de.ueller.midlet.gps.data.Proj2D;
 import de.ueller.midlet.gps.data.ProjFactory;
 import de.ueller.midlet.gps.data.ProjMath;
-import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.data.Proj3D;
 import de.ueller.midlet.gps.data.SECellLocLogger;

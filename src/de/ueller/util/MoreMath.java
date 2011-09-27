@@ -24,7 +24,7 @@ package de.ueller.util;
 
 
 //import de.ueller.m.midlet.gps.Logger;
-import de.ueller.gps.data.Legend;
+import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.Node;
 
 /**

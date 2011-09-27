@@ -3,7 +3,7 @@
  * See COPYING
  */
 
-package de.ueller.gps.data;
+package de.ueller.gpsmid.data;
 
 import javax.microedition.lcdui.*;
 

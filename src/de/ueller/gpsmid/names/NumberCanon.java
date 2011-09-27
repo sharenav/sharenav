@@ -11,7 +11,7 @@ package de.ueller.gpsmid.names;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
 
 
 public class NumberCanon {

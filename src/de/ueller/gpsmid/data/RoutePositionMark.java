@@ -1,6 +1,5 @@
 package de.ueller.gpsmid.data;
 
-import de.ueller.gps.data.Configuration;
 import de.ueller.gpsmid.mapdata.Entity;
 import de.ueller.gpsmid.mapdata.Way;
 

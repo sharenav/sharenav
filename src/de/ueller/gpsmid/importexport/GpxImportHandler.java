@@ -13,16 +13,16 @@
  * GNU General Public License for more details.
  */
 
-package de.ueller.midlet.gps.importexport;
+package de.ueller.gpsmid.importexport;
 
 import java.util.Hashtable;
 
-import de.ueller.gps.data.Position;
+import de.ueller.gpsmid.data.Gpx;
+import de.ueller.gpsmid.data.Position;
 import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.midlet.gps.ImageCollector;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.UploadListener;
-import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.util.MoreMath;
 

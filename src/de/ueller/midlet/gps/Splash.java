@@ -13,8 +13,8 @@
  */
 package de.ueller.midlet.gps;
 
-import de.ueller.gps.data.Legend;
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Legend;
 import de.ueller.midlet.util.ImageTools;
 
 import java.io.IOException;

@@ -9,7 +9,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.tile.ContainerTile;
 import de.ueller.gpsmid.tile.FileTile;
 import de.ueller.gpsmid.tile.RouteContainerTile;

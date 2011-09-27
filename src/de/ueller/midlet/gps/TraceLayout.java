@@ -5,8 +5,8 @@
 
 package de.ueller.midlet.gps;
 
-import de.ueller.gps.data.Configuration;
-import de.ueller.gps.data.Legend;
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.Node;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.tile.PaintContext;

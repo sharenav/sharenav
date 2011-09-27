@@ -24,7 +24,7 @@ import javax.microedition.lcdui.List;
 //#endif
 
 import de.enough.polish.util.Locale;
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
 import de.ueller.util.StringTokenizer;
 
 public class FsDiscover

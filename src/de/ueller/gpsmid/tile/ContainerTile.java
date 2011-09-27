@@ -9,7 +9,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Vector;
 
-import de.ueller.gps.data.SearchResult;
+import de.ueller.gpsmid.data.SearchResult;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.tile.PaintContext;

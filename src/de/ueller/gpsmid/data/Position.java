@@ -13,7 +13,7 @@
  * 
  * See COPYING
  */
-package de.ueller.gps.data;
+package de.ueller.gpsmid.data;
 
 
 /** TODO: Explain difference between Position and PositionMark */

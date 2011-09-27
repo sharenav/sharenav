@@ -4,7 +4,7 @@
  * See COPYING
  */
 
-package de.ueller.midlet.gps.data;
+package de.ueller.gpsmid.data;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -26,11 +26,9 @@ import javax.microedition.rms.RecordStoreFullException;
 import javax.microedition.rms.RecordStoreNotFoundException;
 import javax.microedition.rms.RecordStoreNotOpenException;
 
-import de.ueller.gps.data.Configuration;
-import de.ueller.gps.data.Position;
-import de.ueller.gpsmid.data.Node;
-import de.ueller.gpsmid.data.PersistEntity;
-import de.ueller.gpsmid.data.PositionMark;
+import de.ueller.gpsmid.importexport.ExportSession;
+import de.ueller.gpsmid.importexport.GpxImportHandler;
+import de.ueller.gpsmid.importexport.GpxParser;
 import de.ueller.gpsmid.tile.GpxTile;
 import de.ueller.gpsmid.tile.Tile;
 import de.ueller.gpsmid.tile.WaypointsTile;
@@ -38,9 +36,7 @@ import de.ueller.midlet.gps.GuiNameEnter;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.UploadListener;
-import de.ueller.midlet.gps.importexport.ExportSession;
-import de.ueller.midlet.gps.importexport.GpxImportHandler;
-import de.ueller.midlet.gps.importexport.GpxParser;
+import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.screens.InputListener;
 import de.ueller.midlet.gps.TrackPlayer;
@@ -1540,11 +1536,11 @@ public class Gpx extends Tile implements Runnable, InputListener {
 				 */
 				Class tmp = null;
 				if (url.startsWith("file:")) {
-					tmp = Class.forName("de.ueller.midlet.gps.importexport.FileExportSession");
+					tmp = Class.forName("de.ueller.gpsmid.importexport.FileExportSession");
 				} else if (url.startsWith("comm:")) {
-					tmp = Class.forName("de.ueller.midlet.gps.importexport.CommExportSession");
+					tmp = Class.forName("de.ueller.gpsmid.importexport.CommExportSession");
 				} else if (url.startsWith("btgoep:")) {
-					tmp = Class.forName("de.ueller.midlet.gps.importexport.ObexExportSession");
+					tmp = Class.forName("de.ueller.gpsmid.importexport.ObexExportSession");
 				} else if (url.startsWith("http:")) {
 					tmp = Class.forName("de.ueller.midlet.gps.GuiGPXOSMUpload");
 				}
@@ -1627,10 +1623,10 @@ public class Gpx extends Tile implements Runnable, InputListener {
 			}
 			if ((jsr172Version != null) &&  (jsr172Version.length() > 0)) {
 				logger.info("Using builtin jsr 172 XML parser");
-				parserClass = Class.forName("de.ueller.midlet.gps.importexport.Jsr172GpxParser");
+				parserClass = Class.forName("de.ueller.gpsmid.importexport.Jsr172GpxParser");
 			} else {
 				logger.info("Using QDXMLParser");
-				parserClass = Class.forName("de.ueller.midlet.gps.importexport.QDGpxParser");
+				parserClass = Class.forName("de.ueller.gpsmid.importexport.QDGpxParser");
 			}
 			parserObject = parserClass.newInstance();
 			parser = (GpxParser) parserObject;

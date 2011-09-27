@@ -7,8 +7,11 @@
 package de.ueller.midlet.gps;
 
 import java.io.IOException;
-import de.ueller.gps.data.Configuration;
-import de.ueller.gps.data.Legend;
+
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Legend;
+import de.ueller.gpsmid.routing.RouteInstructions;
+import de.ueller.gpsmid.routing.RouteSyntax;
 
 import net.sourceforge.util.zip.ZipFile;
 import net.sourceforge.util.zip.ZipEntry;

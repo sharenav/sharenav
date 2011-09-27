@@ -21,8 +21,8 @@ import java.util.Vector;
 
 import de.enough.polish.util.Locale;
 
-import de.ueller.gps.data.Position;
-import de.ueller.gps.data.Satellite;
+import de.ueller.gpsmid.data.Position;
+import de.ueller.gpsmid.data.Satellite;
 
 /**
  * Wrapper that wraps a List of LocationMsgReceivers in a way that Classes can

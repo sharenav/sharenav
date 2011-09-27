@@ -3,7 +3,7 @@
 import java.io.IOException;
 import java.io.InputStream;
 
-import de.ueller.gps.data.Position;
+import de.ueller.gpsmid.data.Position;
 import de.ueller.gps.data.Satelit;
 import de.ueller.gps.nmea.NmeaInput;
 import de.ueller.gps.nmea.NmeaMessage;

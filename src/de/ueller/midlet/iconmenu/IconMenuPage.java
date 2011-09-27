@@ -5,7 +5,7 @@
 
 package de.ueller.midlet.iconmenu;
 
-import de.ueller.gps.data.Legend;
+import de.ueller.gpsmid.data.Legend;
 import de.ueller.midlet.gps.Logger;
 
 import de.ueller.midlet.gps.GpsMid;

@@ -18,8 +18,8 @@ import javax.microedition.media.control.RecordControl;
 //#endif
 
 
-import de.ueller.gps.data.Configuration;
-import de.ueller.gps.data.Position;
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Position;
 import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.util.HelperRoutines;
 import de.ueller.util.MoreMath;

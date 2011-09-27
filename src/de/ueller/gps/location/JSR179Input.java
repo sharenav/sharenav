@@ -29,8 +29,8 @@ import javax.microedition.location.LocationException;
 import javax.microedition.location.LocationListener;
 import javax.microedition.location.LocationProvider;
 //#endif
-import de.ueller.gps.data.Position;
 import de.ueller.gps.nmea.NmeaMessage;
+import de.ueller.gpsmid.data.Position;
 import de.ueller.midlet.gps.LocationMsgProducer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.LocationMsgReceiverList;

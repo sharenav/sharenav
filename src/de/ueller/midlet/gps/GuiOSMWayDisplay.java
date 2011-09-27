@@ -25,6 +25,7 @@ import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
 
+import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.EditableWay;
 import de.ueller.gpsmid.data.OsmDataWay;
 import de.ueller.gpsmid.tile.SingleTile;
@@ -37,7 +38,6 @@ import de.ueller.midlet.gps.UploadListener;
 import de.ueller.util.HttpHelper;
 
 //#if polish.api.online
-import de.ueller.gps.data.Configuration;
 //#endif
 
 import de.enough.polish.util.Locale;

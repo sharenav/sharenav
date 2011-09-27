@@ -11,13 +11,14 @@ import javax.microedition.lcdui.Image;
 
 import de.enough.polish.util.Locale;
 
-import de.ueller.gps.data.Legend;
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.Node;
 import de.ueller.gpsmid.data.ScreenContext;
 import de.ueller.gpsmid.graphics.Images;
 import de.ueller.gpsmid.mapdata.Way;
 import de.ueller.gpsmid.mapdata.WayDescription;
+import de.ueller.gpsmid.routing.RouteInstructions;
 import de.ueller.gpsmid.tile.Tile;
 import de.ueller.midlet.gps.data.Proj3D;
 import de.ueller.midlet.gps.data.ProjFactory;

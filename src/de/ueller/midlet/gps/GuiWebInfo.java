@@ -10,9 +10,9 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
 
-import de.ueller.gps.data.Legend;
-import de.ueller.gps.data.Configuration;
-import de.ueller.gps.data.Position;
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Legend;
+import de.ueller.gpsmid.data.Position;
 import de.ueller.gpsmid.mapdata.Way;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.tile.PaintContext;

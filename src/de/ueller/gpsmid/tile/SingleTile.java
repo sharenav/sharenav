@@ -14,9 +14,9 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
-import de.ueller.gps.data.Legend;
-import de.ueller.gps.data.Configuration;
-import de.ueller.gps.data.SearchResult;
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Legend;
+import de.ueller.gpsmid.data.SearchResult;
 import de.ueller.gpsmid.mapdata.Way;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;

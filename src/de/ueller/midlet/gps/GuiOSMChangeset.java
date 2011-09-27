@@ -33,8 +33,8 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.TextField;
 
 import de.enough.polish.util.base64.Base64;
-import de.ueller.gps.data.Legend;
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Legend;
 import de.ueller.util.HttpHelper;
 
 public class GuiOSMChangeset extends Form implements GpsMidDisplayable,

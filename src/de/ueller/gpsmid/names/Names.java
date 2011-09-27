@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Vector;
 
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.util.StringEntry;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;

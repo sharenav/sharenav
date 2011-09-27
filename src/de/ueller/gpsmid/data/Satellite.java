@@ -3,7 +3,7 @@
  * See file COPYING.
  */
 
-package de.ueller.gps.data;
+package de.ueller.gpsmid.data;
 
 import java.util.Date;
 

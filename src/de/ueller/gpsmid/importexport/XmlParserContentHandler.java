@@ -1,4 +1,4 @@
-package de.ueller.midlet.gps.importexport;
+package de.ueller.gpsmid.importexport;
 
 import java.util.Hashtable;
 

@@ -37,8 +37,8 @@ import javax.microedition.amms.control.camera.FocusControl;
 import javax.microedition.amms.control.camera.SnapshotControl;
 //#endif
 //#endif
-import de.ueller.gps.data.Configuration;
-import de.ueller.gps.data.Position;
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Position;
 import de.ueller.midlet.gps.GpsMidMenu;
 import de.ueller.util.HelperRoutines;
 import de.ueller.util.MoreMath;

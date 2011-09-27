@@ -6,8 +6,8 @@
 package de.ueller.midlet.gps;
 
 import de.enough.polish.util.Locale;
-import de.ueller.gps.data.Position;
-import de.ueller.gps.data.Satellite;
+import de.ueller.gpsmid.data.Position;
+import de.ueller.gpsmid.data.Satellite;
 
 
 public interface LocationMsgReceiver {

@@ -18,8 +18,8 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Image;
 
-import de.ueller.gps.data.Legend;
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.OsmDataEntity;
 import de.ueller.gpsmid.data.OsmDataNode;
 import de.ueller.gpsmid.data.PositionMark;

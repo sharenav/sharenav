@@ -16,10 +16,10 @@ import javax.microedition.lcdui.Image;
 
 import de.enough.polish.util.Locale;
 
-import de.ueller.gps.data.Legend;
-import de.ueller.gps.data.Configuration;
-import de.ueller.gps.data.Position;
-import de.ueller.gps.data.Satellite;
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Legend;
+import de.ueller.gpsmid.data.Position;
+import de.ueller.gpsmid.data.Satellite;
 import de.ueller.midlet.gps.GpsMid;
 
 public class GuiSatellites extends KeyCommandCanvas implements CommandListener,

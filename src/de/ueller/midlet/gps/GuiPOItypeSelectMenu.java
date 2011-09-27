@@ -13,7 +13,7 @@ import java.util.Vector;
 
 import javax.microedition.lcdui.Image;
 
-import de.ueller.gps.data.Legend;
+import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.names.NumberCanon;
 import de.ueller.midlet.gps.data.KeySelectMenuItem;
 

@@ -11,7 +11,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import de.ueller.gps.data.Legend;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.util.MoreMath;
 

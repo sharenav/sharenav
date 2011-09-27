@@ -1,4 +1,4 @@
-package de.ueller.midlet.gps.importexport;
+package de.ueller.gpsmid.importexport;
 
 public interface Jsr211ContentHandlerInterface {
 	

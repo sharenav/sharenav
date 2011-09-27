@@ -165,9 +165,6 @@
 			<sources>
 				<!-- always include the base folder: -->
 				<source dir="src"/>
-				<!-- this are the render and data classes without reference
-				     to any J2Me Classes ( for usage in J2Se enviroment ) -->
-				<source dir="GpsMidGraph"/>
 			</sources>
 		    
 			<!-- midlets definition -->
@@ -227,17 +224,17 @@
 				<parameter name="optimize" value="false" />
 				-->
 				<keep class="de.ueller.midlet.gps.GpsMid" />				
-				<keep class="de.ueller.midlet.gps.importexport.ExportSession" />
+				<keep class="de.ueller.gpsmid.importexport.ExportSession" />
 				<keep class="de.ueller.gps.location.JSR179Input" />
-				<keep class="de.ueller.midlet.gps.importexport.FileExportSession" />
-				<keep class="de.ueller.midlet.gps.importexport.CommExportSession" />
-				<keep class="de.ueller.midlet.gps.importexport.ObexExportSession" />
-				<keep class="de.ueller.midlet.gps.importexport.BtObexServer" />
-				<keep class="de.ueller.midlet.gps.importexport.CommGpxImportSession" />
-				<keep class="de.ueller.midlet.gps.importexport.FileGpxImportSession" />
-				<keep class="de.ueller.midlet.gps.importexport.Jsr172GpxParser" />
-				<keep class="de.ueller.midlet.gps.importexport.QDGpxParser" />
-				<keep class="de.ueller.midlet.gps.importexport.GpxParser" />
+				<keep class="de.ueller.gpsmid.importexport.FileExportSession" />
+				<keep class="de.ueller.gpsmid.importexport.CommExportSession" />
+				<keep class="de.ueller.gpsmid.importexport.ObexExportSession" />
+				<keep class="de.ueller.gpsmid.importexport.BtObexServer" />
+				<keep class="de.ueller.gpsmid.importexport.CommGpxImportSession" />
+				<keep class="de.ueller.gpsmid.importexport.FileGpxImportSession" />
+				<keep class="de.ueller.gpsmid.importexport.Jsr172GpxParser" />
+				<keep class="de.ueller.gpsmid.importexport.QDGpxParser" />
+				<keep class="de.ueller.gpsmid.importexport.GpxParser" />
 				<keep class="de.ueller.midlet.gps.GuiCameraInterface" />
 				<keep class="de.ueller.midlet.gps.GuiCamera" />
 				<keep class="org.xml.sax.Attributes" />
@@ -248,7 +245,7 @@
 				<filter pattern="de.enough.*" level="error" />
 				<!--filter pattern="de.ueller.gps.sirf.*" level="debug" / -->
 				<!--filter pattern="de.ueller.midlet.gps.Trace" level="debug" / -->
-				<!--<filter pattern="de.ueller.midlet.gps.tile.SearchNames" level="debug" />-->
+				<!--<filter pattern="de.ueller.gpsmid.names.SearchNames" level="debug" />-->
 			</debug>
 			
 			<!-- user defined JAD attributes can also be used: -->
@@ -353,9 +350,6 @@
 			<sources>
 				<!-- always include the base folder: -->
 				<source dir="src"/>
-				<!-- this are the render and data classes without reference
-				     to any J2Me Classes ( for usage in J2Se enviroment ) -->
-				<source dir="GpsMidGraph"/>
 			</sources>
 		    
 			<!-- midlets definition -->
@@ -415,17 +409,17 @@
 				<parameter name="optimize" value="false" />
 				-->
 				<keep class="de.ueller.midlet.gps.GpsMid" />				
-				<keep class="de.ueller.midlet.gps.importexport.ExportSession" />
+				<keep class="de.ueller.gpsmid.importexport.ExportSession" />
 				<keep class="de.ueller.gps.location.JSR179Input" />
-				<keep class="de.ueller.midlet.gps.importexport.FileExportSession" />
-				<keep class="de.ueller.midlet.gps.importexport.CommExportSession" />
-				<keep class="de.ueller.midlet.gps.importexport.ObexExportSession" />
-				<keep class="de.ueller.midlet.gps.importexport.BtObexServer" />
-				<keep class="de.ueller.midlet.gps.importexport.CommGpxImportSession" />
-				<keep class="de.ueller.midlet.gps.importexport.FileGpxImportSession" />
-				<keep class="de.ueller.midlet.gps.importexport.Jsr172GpxParser" />
-				<keep class="de.ueller.midlet.gps.importexport.QDGpxParser" />
-				<keep class="de.ueller.midlet.gps.importexport.GpxParser" />
+				<keep class="de.ueller.gpsmid.importexport.FileExportSession" />
+				<keep class="de.ueller.gpsmid.importexport.CommExportSession" />
+				<keep class="de.ueller.gpsmid.importexport.ObexExportSession" />
+				<keep class="de.ueller.gpsmid.importexport.BtObexServer" />
+				<keep class="de.ueller.gpsmid.importexport.CommGpxImportSession" />
+				<keep class="de.ueller.gpsmid.importexport.FileGpxImportSession" />
+				<keep class="de.ueller.gpsmid.importexport.Jsr172GpxParser" />
+				<keep class="de.ueller.gpsmid.importexport.QDGpxParser" />
+				<keep class="de.ueller.gpsmid.importexport.GpxParser" />
 				<keep class="de.ueller.midlet.gps.GuiCameraInterface" />
 				<keep class="de.ueller.midlet.gps.GuiCamera" />
 				<keep class="org.xml.sax.Attributes" />
@@ -438,7 +432,7 @@
 				<filter pattern="de.enough.*" level="error" />
 				<!--filter pattern="de.ueller.gps.sirf.*" level="debug" / -->
 				<!--filter pattern="de.ueller.midlet.gps.Trace" level="debug" / -->
-				<!--<filter pattern="de.ueller.midlet.gps.tile.SearchNames" level="debug" />-->
+				<!--<filter pattern="de.ueller.gpsmid.names.SearchNames" level="debug" />-->
 			</debug>
 			
 			<!-- user defined JAD attributes can also be used: -->
@@ -561,10 +555,9 @@
 	</target>
 
 	<target name="compile-test" depends="prepare">
-		<javac srcdir="${basedir}/test/unit-tests;${basedir}/src/de/ueller/gps/tools;${basedir}/src/de/ueller/gps/nmea;
-			${basedir}/src/de/ueller/gps/data; ${basedir}/GpsMidGraph/de/ueller/midlet/gps;
-			${basedir}/GpsMidGraph/de/ueller/midlet/gps/data/;${basedir}/GpsMidGraph/de/ueller/gps/tools/" destdir="bin-tests" debug="on" 
-			includes="StringTokenizer.java, MoreMath.java, intTree.java,
+		<javac srcdir="${basedir}/test/unit-tests;${basedir}/src/de/ueller/util;${basedir}/src/de/ueller/gps/nmea;
+			${basedir}/src/de/ueller/gps/data;${basedir}/src/de/ueller/gpsmid/data" destdir="bin-tests" debug="on" 
+			includes="StringTokenizer.java, MoreMath.java, IntTree.java,
 			MoreMathTests.java,
 			IntTreeTests.java, StringTokenizerTests.java, AllTests.java">
 			<classpath>

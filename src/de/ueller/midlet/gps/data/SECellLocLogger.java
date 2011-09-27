@@ -27,9 +27,10 @@ import javax.microedition.io.file.FileConnection;
 //#endif
 
 import javax.microedition.lcdui.Alert;
-import de.ueller.gps.data.Configuration;
-import de.ueller.gps.data.Position;
-import de.ueller.gps.data.Satellite;
+
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Position;
+import de.ueller.gpsmid.data.Satellite;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.LocationMsgReceiverList;

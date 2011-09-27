@@ -12,7 +12,7 @@ import javax.microedition.io.file.FileConnection;
 //#endif
 
 import de.enough.polish.util.Locale;
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
 
 
 public class ConfigExportImport {

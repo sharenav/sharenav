@@ -12,7 +12,6 @@ package de.ueller.gpsmid.data;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import de.ueller.gps.data.Configuration;
 //#if polish.api.online
 import de.ueller.util.HttpHelper;
 //#endif

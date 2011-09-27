@@ -10,7 +10,7 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
-import de.ueller.gps.data.Legend;
+import de.ueller.gpsmid.data.Legend;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.util.ImageTools;
 

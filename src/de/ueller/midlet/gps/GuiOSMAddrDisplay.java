@@ -24,7 +24,7 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.TextField;
 
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.OsmDataNode;
 import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.gpsmid.tile.SingleTile;

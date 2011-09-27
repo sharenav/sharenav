@@ -9,8 +9,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import de.ueller.gps.data.Legend;
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.tile.SingleTile;
 import de.ueller.gpsmid.tile.Tile;
 import de.ueller.midlet.gps.Logger;

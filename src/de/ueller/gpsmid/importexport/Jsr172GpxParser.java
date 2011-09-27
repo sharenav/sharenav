@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  */
 //#if polish.api.webservice
-package de.ueller.midlet.gps.importexport;
+package de.ueller.gpsmid.importexport;
 
 import java.io.IOException;
 import java.io.InputStream;

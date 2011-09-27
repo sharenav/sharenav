@@ -1,4 +1,4 @@
-package de.ueller.gps.data;
+package de.ueller.gpsmid.data;
 
 public class SearchResult {
 	// use negative types for nodes in this structure, though not in index data since map format 66

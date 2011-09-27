@@ -1,6 +1,6 @@
 package de.ueller.gpsmid.mapdata;
 
-import de.ueller.gps.data.Legend;
+import de.ueller.gpsmid.data.Legend;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.util.IntPoint;
 

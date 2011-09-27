@@ -1,4 +1,4 @@
-package de.ueller.midlet.gps.importexport;
+package de.ueller.gpsmid.importexport;
 /*
  * GpsMid - Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
  * See Copying

@@ -8,7 +8,7 @@ package de.ueller.midlet.gps;
 
 import javax.microedition.lcdui.*;
 
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.midlet.gps.data.Proj2DMoveUp;
 import de.ueller.util.MoreMath;

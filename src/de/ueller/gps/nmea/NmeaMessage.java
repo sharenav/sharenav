@@ -11,8 +11,8 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.Vector;
 
-import de.ueller.gps.data.Position;
-import de.ueller.gps.data.Satellite;
+import de.ueller.gpsmid.data.Position;
+import de.ueller.gpsmid.data.Satellite;
 import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.util.StringTokenizer;

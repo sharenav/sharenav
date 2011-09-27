@@ -1,5 +1,5 @@
 //#if polish.api.min-samsapi
-package de.ueller.midlet.gps.importexport;
+package de.ueller.midlet.graphics;
 import com.samsung.util.LCDLight;
 
 public class SamsLCDLight { 

@@ -6,7 +6,7 @@
 package de.ueller.midlet.gps.data;
 
 import de.enough.polish.util.Locale;
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Node;
 
 public final class ProjFactory {

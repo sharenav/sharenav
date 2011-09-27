@@ -1,7 +1,7 @@
 package de.ueller.gpsmid.routing;
 
-import de.ueller.gps.data.Configuration;
-import de.ueller.gps.data.Legend;
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Legend;
 import de.ueller.midlet.gps.Logger;
 
 import de.enough.polish.util.Locale;

@@ -1,4 +1,4 @@
-package de.ueller.midlet.gps.tile;
+package de.ueller.gpsmid.names;
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
  * 			Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net 
@@ -11,17 +11,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Vector;
 
-import de.ueller.gps.data.Configuration;
-import de.ueller.gps.data.SearchResult;
-import de.ueller.gps.data.Legend;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GuiSearch;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
-import de.ueller.gps.urls.Urls;
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.PositionMark;
-import de.ueller.gpsmid.names.Names;
-import de.ueller.gpsmid.names.NumberCanon;
+import de.ueller.gpsmid.data.SearchResult;
 
 import de.enough.polish.util.Locale;
 

@@ -12,7 +12,8 @@ import javax.microedition.lcdui.ChoiceGroup;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.TextField;
-import de.ueller.midlet.gps.importexport.GpxImportSession;
+
+import de.ueller.gpsmid.importexport.GpxImportSession;
 
 import de.enough.polish.util.Locale;
 
@@ -107,11 +108,11 @@ public class GuiGpxLoad extends Form implements CommandListener,
 				 */
 				Class tmp = null;
 				if (choice.equalsIgnoreCase(LOADFROMBT)) {
-					tmp = Class.forName("de.ueller.midlet.gps.importexport.BtObexServer");
+					tmp = Class.forName("de.ueller.gpsmid.importexport.BtObexServer");
 				} else if (choice.equalsIgnoreCase(LOADFROMCOMM)) {
-					tmp = Class.forName("de.ueller.midlet.gps.importexport.CommGpxImportSession");									
+					tmp = Class.forName("de.ueller.gpsmid.importexport.CommGpxImportSession");									
 				} else if(choice.equalsIgnoreCase(LOADFROMFILE)) {
-					tmp = Class.forName("de.ueller.midlet.gps.importexport.FileGpxImportSession");					
+					tmp = Class.forName("de.ueller.gpsmid.importexport.FileGpxImportSession");					
 				}
 				if (tmp != null) {
 					importSession = (GpxImportSession)(tmp.newInstance());

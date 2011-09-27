@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package de.ueller.midlet.gps.importexport;
+package de.ueller.gpsmid.importexport;
 
 //#if polish.api.contenthandler
 import javax.microedition.content.ContentHandler;

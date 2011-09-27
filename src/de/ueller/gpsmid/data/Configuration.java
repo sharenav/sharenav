@@ -3,7 +3,7 @@
  * See COPYING
  */
 
-package de.ueller.gps.data;
+package de.ueller.gpsmid.data;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,8 +31,6 @@ import javax.microedition.rms.RecordStore;
 
 import net.sourceforge.util.zip.ZipFile;
 
-import de.ueller.gpsmid.data.Node;
-import de.ueller.gpsmid.data.RoutePositionMark;
 import de.ueller.gpsmid.mapdata.QueueReader;
 import de.ueller.gpsmid.routing.TravelMode;
 import de.ueller.midlet.gps.GuiDiscover;

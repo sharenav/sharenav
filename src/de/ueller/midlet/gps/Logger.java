@@ -7,7 +7,8 @@ package de.ueller.midlet.gps;
 
 import de.enough.polish.util.Locale;
 
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
+
 import javax.microedition.lcdui.Alert;
 
 /** Provides an interface for the logging of messages.

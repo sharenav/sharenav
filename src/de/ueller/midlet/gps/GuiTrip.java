@@ -15,9 +15,9 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
-import de.ueller.gps.data.Legend;
-import de.ueller.gps.data.Configuration;
-import de.ueller.gps.data.Position;
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Legend;
+import de.ueller.gpsmid.data.Position;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.graphics.LcdNumericFont;

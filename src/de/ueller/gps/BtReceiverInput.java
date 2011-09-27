@@ -19,8 +19,8 @@ import java.util.TimerTask;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 
-import de.ueller.gps.data.Configuration;
 import de.ueller.gps.nmea.NmeaInput;
+import de.ueller.gpsmid.data.Configuration;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.LocationMsgProducer;
 import de.ueller.midlet.gps.LocationMsgReceiver;

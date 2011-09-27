@@ -9,7 +9,7 @@ import javax.microedition.lcdui.*;
 
 import de.enough.polish.util.Locale;
 
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
 import de.ueller.midlet.gps.GpsMidMenu;
 
 

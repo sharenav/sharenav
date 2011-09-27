@@ -32,8 +32,6 @@ import javax.microedition.io.HttpConnection;
 import javax.microedition.rms.RecordEnumeration;
 import javax.microedition.rms.RecordStore;
 
-import de.ueller.gps.data.Configuration;
-import de.ueller.gps.data.Position;
 //#if polish.api.online
 import de.ueller.util.HttpHelper;
 //#endif
@@ -47,7 +45,8 @@ import de.ueller.midlet.gps.data.CellIdProvider;
 import de.ueller.midlet.gps.data.GSMCell;
 import de.ueller.util.IntTree;
 import de.ueller.util.StringTokenizer;
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Position;
 
 import de.enough.polish.util.Locale;
 

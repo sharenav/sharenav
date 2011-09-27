@@ -11,7 +11,7 @@ import javax.microedition.lcdui.*;
 import javax.wireless.messaging.*;
 import javax.microedition.io.*;
 
-import de.ueller.gps.data.Configuration;
+import de.ueller.gpsmid.data.Configuration;
 import de.ueller.util.MoreMath;
 
 import de.enough.polish.util.Locale;
