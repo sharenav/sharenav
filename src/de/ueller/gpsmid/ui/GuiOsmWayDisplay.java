@@ -29,8 +29,8 @@ import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.EditableWay;
 import de.ueller.gpsmid.data.OsmDataWay;
 import de.ueller.gpsmid.tile.SingleTile;
-import de.ueller.gpsmid.ui.GuiOSMChangeset;
-import de.ueller.gpsmid.ui.GuiOSMEntityDisplay;
+import de.ueller.gpsmid.ui.GuiOsmChangeset;
+import de.ueller.gpsmid.ui.GuiOsmEntityDisplay;
 import de.ueller.midlet.ui.UploadListener;
 import de.ueller.util.HttpHelper;
 import de.ueller.util.Logger;
@@ -40,9 +40,9 @@ import de.ueller.util.Logger;
 
 import de.enough.polish.util.Locale;
 
-public class GuiOSMWayDisplay extends GuiOSMEntityDisplay implements GpsMidDisplayable, CommandListener, UploadListener, ItemCommandListener {
+public class GuiOsmWayDisplay extends GuiOsmEntityDisplay implements GpsMidDisplayable, CommandListener, UploadListener, ItemCommandListener {
 	
-	private final static Logger logger = Logger.getInstance(GuiOSMWayDisplay.class,Logger.DEBUG);
+	private final static Logger logger = Logger.getInstance(GuiOsmWayDisplay.class,Logger.DEBUG);
 
 	private final Command REVERSE_CMD = new Command(Locale.get("guiosmwaydisplay.ReverseDirection")/*Reverse direction*/, Command.ITEM, 4);
 	private final Command PRESET_CMD = new Command(Locale.get("guiosmwaydisplay.AddPreset")/*Add preset*/, Command.ITEM, 5);
@@ -56,7 +56,7 @@ public class GuiOSMWayDisplay extends GuiOSMEntityDisplay implements GpsMidDispl
 	private SingleTile t;
 	private List presets;
 	
-	public GuiOSMWayDisplay(EditableWay way, SingleTile t, GpsMidDisplayable parent) {
+	public GuiOsmWayDisplay(EditableWay way, SingleTile t, GpsMidDisplayable parent) {
 	        super(Locale.get("guiosmwaydisplay.Way")/*Way */ + way.osmID, parent);
 		this.eway = way;
 		addCommand(REVERSE_CMD);
@@ -65,7 +65,7 @@ public class GuiOSMWayDisplay extends GuiOSMEntityDisplay implements GpsMidDispl
 		typeImage = bearingArrow();
 	}
 	
-	public GuiOSMWayDisplay(long wayID, GpsMidDisplayable parent) {
+	public GuiOsmWayDisplay(long wayID, GpsMidDisplayable parent) {
 	        super(Locale.get("guiosmwaydisplay.Way")/*Way */ + wayID, parent);
 		this.wayID = (int) wayID;
 		osmentity = new OsmDataWay(this.wayID);
@@ -118,7 +118,7 @@ public class GuiOSMWayDisplay extends GuiOSMEntityDisplay implements GpsMidDispl
 			parent.show();
 			if ((changesetGui == null) || changesetGui.getChangesetID() < 0) {
 				loadState = LOAD_STATE_CHANGESET;
-				changesetGui = new GuiOSMChangeset(parent,this);
+				changesetGui = new GuiOsmChangeset(parent,this);
 				changesetGui.show();
 			} else {
 				loadState = LOAD_STATE_UPLOAD;

@@ -34,10 +34,10 @@ import de.ueller.util.Logger;
 
 import de.enough.polish.util.Locale;
 
-public class GuiOSMAddrDisplay extends Form implements GpsMidDisplayable,
+public class GuiOsmAddrDisplay extends Form implements GpsMidDisplayable,
 		CommandListener, UploadListener {
 	private final static Logger logger = Logger.getInstance(
-			GuiOSMAddrDisplay.class, Logger.DEBUG);
+			GuiOsmAddrDisplay.class, Logger.DEBUG);
 
 	private final Command UPLOAD_CMD = new Command(Locale.get("guiosmaddrdisplay.UploadToOSM")/*Upload to OSM*/, Command.OK,
 			6);
@@ -64,7 +64,7 @@ public class GuiOSMAddrDisplay extends Form implements GpsMidDisplayable,
 
 	private HttpHelper http;
 
-	public GuiOSMAddrDisplay(int nodeID, String streetName, SingleTile t,
+	public GuiOsmAddrDisplay(int nodeID, String streetName, SingleTile t,
 			float lat, float lon, GpsMidDisplayable parent) {
 		super(Locale.get("guiosmaddrdisplay.AddrTitle")/*Addressing*/);
 
@@ -116,14 +116,14 @@ public class GuiOSMAddrDisplay extends Form implements GpsMidDisplayable,
 			}
 
 			parent.show();
-			if ((GuiOSMEntityDisplay.changesetGui == null)
-					|| (GuiOSMEntityDisplay.changesetGui.getChangesetID() < 0)) {
-				loadState = GuiOSMEntityDisplay.LOAD_STATE_CHANGESET;
-				GuiOSMEntityDisplay.changesetGui = new GuiOSMChangeset(parent,
+			if ((GuiOsmEntityDisplay.changesetGui == null)
+					|| (GuiOsmEntityDisplay.changesetGui.getChangesetID() < 0)) {
+				loadState = GuiOsmEntityDisplay.LOAD_STATE_CHANGESET;
+				GuiOsmEntityDisplay.changesetGui = new GuiOsmChangeset(parent,
 						this);
-				GuiOSMEntityDisplay.changesetGui.show();
+				GuiOsmEntityDisplay.changesetGui.show();
 			} else {
-				loadState = GuiOSMEntityDisplay.LOAD_STATE_UPLOAD;
+				loadState = GuiOsmEntityDisplay.LOAD_STATE_UPLOAD;
 				uploadXML();
 			}
 		}
@@ -137,7 +137,7 @@ public class GuiOSMAddrDisplay extends Form implements GpsMidDisplayable,
 	public void uploadXML() {
 		// #debug debug
 		logger.debug("Uploading XML for " + this);
-		String fullXML = osmNode.toXML(GuiOSMEntityDisplay.changesetGui
+		String fullXML = osmNode.toXML(GuiOsmEntityDisplay.changesetGui
 				.getChangesetID());
 		// #debug info
 		logger.info("Uploading: " + fullXML);
@@ -150,7 +150,7 @@ public class GuiOSMAddrDisplay extends Form implements GpsMidDisplayable,
 		if (http == null) {
 			http = new HttpHelper();
 		}
-		loadState = GuiOSMEntityDisplay.LOAD_STATE_UPLOAD;
+		loadState = GuiOsmEntityDisplay.LOAD_STATE_UPLOAD;
 		http.uploadData(url, fullXML, true, this, Configuration
 				.getOsmUsername(), Configuration.getOsmPwd());
 	}
@@ -182,7 +182,7 @@ public class GuiOSMAddrDisplay extends Form implements GpsMidDisplayable,
 	public void completedUpload(boolean success, String message) {
 		if (success) {
 			switch (loadState) {
-			case GuiOSMEntityDisplay.LOAD_STATE_UPLOAD: {
+			case GuiOsmEntityDisplay.LOAD_STATE_UPLOAD: {
 				GpsMid.getInstance().alert(Locale.get("guiosmaddrdisplay.AddingAddr")/*Adding Addr*/,
 						Locale.get("guiosmaddrdisplay.AddrUploadSuccess")/*Addr was successfully added to OpenStreetMap*/, 1000);
 				logger.info("Adding Waypoint to mark where Addr was uploaded to OSM");
@@ -190,11 +190,11 @@ public class GuiOSMAddrDisplay extends Form implements GpsMidDisplayable,
 				waypt.displayName = Locale.get("guiosmaddrdisplay.adr")/*adr: */ + sHousenumber;
 				Trace.getInstance().gpx.addWayPt(waypt);
 
-				loadState = GuiOSMEntityDisplay.LOAD_STATE_NONE;
+				loadState = GuiOsmEntityDisplay.LOAD_STATE_NONE;
 				break;
 			}
-			case GuiOSMEntityDisplay.LOAD_STATE_CHANGESET: {
-				loadState = GuiOSMEntityDisplay.LOAD_STATE_UPLOAD;
+			case GuiOsmEntityDisplay.LOAD_STATE_CHANGESET: {
+				loadState = GuiOsmEntityDisplay.LOAD_STATE_UPLOAD;
 				uploadXML();
 				break;
 			}

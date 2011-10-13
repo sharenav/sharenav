@@ -45,7 +45,7 @@ import de.ueller.midlet.gps.importexport.Jsr211ContentHandlerInterface;
 //#endif
 
 //#if polish.api.min-samsapi
-import de.ueller.midlet.graphics.SamsLCDLight;
+import de.ueller.midlet.graphics.SamsLcdLight;
 import de.ueller.midlet.graphics.SiemGameLight;
 //#endif
 
@@ -569,7 +569,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 										try {
 											// TODO: Do we really need the following code line?
 											Class.forName("com.samsung.util.LCDLight");
-											SamsLCDLight.on(5000);
+											SamsLcdLight.on(5000);
 										} catch (Exception e) {
 											log.exception("Samsung API error: ", e);
 										}
@@ -657,7 +657,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 			try {
 				// TODO: Do we really need the following code line?
 				Class.forName("com.samsung.util.LCDLight");
-				SamsLCDLight.off();
+				SamsLcdLight.off();
 			} catch (Exception e) {
 				log.exception("Samsung API error: ", e);
 			}

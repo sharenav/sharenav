@@ -24,7 +24,7 @@ import java.io.IOException;
  * This object contains the location and information of a single cell
  * 
  */
-public class GSMCell {
+public class GsmCell {
 	public int cellID;
 	public short mcc;
 	public short mnc;
@@ -32,20 +32,20 @@ public class GSMCell {
 	public float lat;
 	public float lon;
 
-	public GSMCell() {
+	public GsmCell() {
 		/**
 		 * Default constructor;
 		 */
 	}
 
-	public GSMCell(int cellID, short mcc, short mnc, int lac) {
+	public GsmCell(int cellID, short mcc, short mnc, int lac) {
 		this.cellID = cellID;
 		this.mcc = mcc;
 		this.mnc = mnc;
 		this.lac = lac;
 	}
 
-	public GSMCell(DataInputStream dis) throws IOException {
+	public GsmCell(DataInputStream dis) throws IOException {
 		mcc = (short) dis.readShort();
 		mnc = (short) dis.readShort();
 		lac = dis.readInt();

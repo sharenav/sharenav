@@ -53,7 +53,7 @@ public class CellIdProvider {
 	
 	private int cellRetrievelMethod = -1;
 	
-	GSMCell cachedCell = null;
+	GsmCell cachedCell = null;
 	
 	private CellIdProvider() {
 		//#debug info
@@ -62,7 +62,7 @@ public class CellIdProvider {
 		try {
 			//#debug info
 			logger.info("Trying to see if android method is available");
-			GSMCell cell = obtainAndroidCell();
+			GsmCell cell = obtainAndroidCell();
 			if (cell != null) {
 				cellRetrievelMethod = CELLMETHOD_ANDROID;
 				//#debug info
@@ -80,7 +80,7 @@ public class CellIdProvider {
 		try {
 			//#debug info
 			logger.info("Trying to see if Sony-Ericcson method is available");
-			GSMCell cell = obtainSECell();
+			GsmCell cell = obtainSECell();
 			if (cell != null) {
 				cellRetrievelMethod = CELLMETHOD_SE;
 				//#debug info
@@ -97,7 +97,7 @@ public class CellIdProvider {
 		try {
 			//#debug info
 			logger.info("Trying to see if Motorola method is available");
-			GSMCell cell = obtainMotoOrSamsungCell(false);
+			GsmCell cell = obtainMotoOrSamsungCell(false);
 			if (cell != null) {
 				logger.error(Locale.get("cellidprovider.MotorolaCellIDPleseCheck")/*Motorola CellID is experimental and may be wrong. Please check data before uploading*/);
 				cellRetrievelMethod = CELLMETHOD_MOTO;
@@ -115,7 +115,7 @@ public class CellIdProvider {
 		try {
 			//#debug info
 			logger.info("Trying to see if Samsung method is available");
-			GSMCell cell = obtainMotoOrSamsungCell(true);
+			GsmCell cell = obtainMotoOrSamsungCell(true);
 			if (cell != null) {
 				cellRetrievelMethod = CELLMETHOD_SAMSUNG;
 				//#debug info
@@ -132,7 +132,7 @@ public class CellIdProvider {
 		try {
 			//#debug info
 			logger.info("Trying to see if LG method is available");
-			GSMCell cell = obtainLGCell();
+			GsmCell cell = obtainLGCell();
 			if (cell != null) {
 				cellRetrievelMethod = CELLMETHOD_LG;
 				//#debug info
@@ -149,7 +149,7 @@ public class CellIdProvider {
 		try {
 			//#debug info
 			logger.info("Trying to see if there is a cellid server running on this device");
-			GSMCell cell = obtainSocketCell();
+			GsmCell cell = obtainSocketCell();
 			// FIXME 
 			// cellRetrievelMethod = CELLMETHOD_SOCKET;
 			if (cell != null) {
@@ -167,7 +167,7 @@ public class CellIdProvider {
 		try {
 			//#debug info
 			logger.info("Trying to see if S60 3rd FP2 method is available");
-			GSMCell cell = obtainS60FP2Cell();
+			GsmCell cell = obtainS60FP2Cell();
 			if (cell != null) {
 				cellRetrievelMethod = CELLMETHOD_S60FP2;
 				logger.info("   Yes, the S60 3rd FP2 method works");
@@ -192,8 +192,8 @@ public class CellIdProvider {
 	}
 	
 	//#if polish.android
-	private GSMCell obtainAndroidCell() {
-		GSMCell cell = new GSMCell();
+	private GsmCell obtainAndroidCell() {
+		GsmCell cell = new GsmCell();
 		
 		TelephonyManager tm  = 
 			(TelephonyManager) MidletBridge.instance.getSystemService(Context.TELEPHONY_SERVICE); 
@@ -220,12 +220,12 @@ public class CellIdProvider {
 	}
 	//#endif
 	
-	private GSMCell obtainSECell() {
+	private GsmCell obtainSECell() {
 		String cellidS = null;
 		String mccS = null;
 		String mncS = null;
 		String lacS = null;
-		GSMCell cell = new GSMCell();
+		GsmCell cell = new GsmCell();
 		
 		cellidS = System.getProperty("com.sonyericsson.net.cellid");
 		mccS = System.getProperty("com.sonyericsson.net.cmcc");
@@ -252,12 +252,12 @@ public class CellIdProvider {
 		return cell;
 	}
 	
-	private GSMCell obtainS60FP2Cell() {
+	private GsmCell obtainS60FP2Cell() {
 		String cellidS = null;
 		String mccS = null;
 		String mncS = null;
 		String lacS = null;
-		GSMCell cell = new GSMCell();
+		GsmCell cell = new GsmCell();
 		cellidS = System.getProperty("com.nokia.mid.cellid");
 		/**
 		 * The documentation claims that the country code is returned as
@@ -308,13 +308,13 @@ public class CellIdProvider {
 		return cell;
 	}
 	
-	private GSMCell obtainMotoOrSamsungCell(boolean samsung) {
+	private GsmCell obtainMotoOrSamsungCell(boolean samsung) {
 		String cellidS = null;
 		String mccS = null;
 		String mncS = null;
 		String lacS = null;
 		String imsi = null;
-		GSMCell cell = new GSMCell();
+		GsmCell cell = new GsmCell();
 		if (samsung) {
 			cellidS = System.getProperty("CELLID");
 			lacS = System.getProperty("LAC");
@@ -360,11 +360,11 @@ public class CellIdProvider {
 		return cell;
 	}
 	
-	private GSMCell obtainLGCell() {
+	private GsmCell obtainLGCell() {
 		String cellidS = null;
 		String mccS = null;
 		String mncS = null;
-		GSMCell cell = new GSMCell();
+		GsmCell cell = new GsmCell();
 		
 		if (System.getProperty("com.lge.lgjp") == null) {
 			// should be "LGJP1", "LGJP2" or "LGJP3 according to https://sourceforge.net/tracker/index.php?func=detail&aid=3310226&group_id=192084&atid=939977
@@ -394,7 +394,7 @@ public class CellIdProvider {
 		return cell;
 	}
 	
-	private GSMCell obtainSocketCell() {
+	private GsmCell obtainSocketCell() {
 		int retval;
 		retval = SocketGateway.getSocketData(SocketGateway.TYPE_CELLID);
 		if (retval == SocketGateway.RETURN_OK) {
@@ -412,29 +412,29 @@ public class CellIdProvider {
 		return null;
 	}
 	
-	private GSMCell obtainDebugCell() {
+	private GsmCell obtainDebugCell() {
 		/*
 		 * This code is used for debugging cell-id data on the emulator
 		 * by generating one of 16 random cell-ids 
 		 */
 		Random r = new Random();
 		switch (r.nextInt(16)) {
-		case  0: return new GSMCell(0x2627,    (short) 234, (short)  33, 0x0133);
-		case  1: return new GSMCell(0x2628,    (short) 234, (short)  33, 0x0133);
-		case  2: return new GSMCell(0x2629,    (short) 234, (short)  33, 0x0133);
-		case  3: return new GSMCell(0x2620,    (short) 234, (short)  33, 0x0134);
-		case  4: return new GSMCell(0x2619,    (short) 234, (short)  33, 0x0134);
-		case  5: return new GSMCell(0x2629,    (short) 234, (short)  33, 0x0135);
-		case  6: return new GSMCell(0x2649,    (short) 234, (short)  33, 0x0136);
-		case  7: return new GSMCell(0x2659,    (short) 234, (short)  33, 0x0137);
-		case  8: return new GSMCell(0xB1D1,    (short) 310, (short) 260, 0xB455);
-		case  9: return new GSMCell(0x79D9,    (short) 310, (short) 260, 0x004D);
-		case 10: return new GSMCell(0x3E92FFF, (short) 284, (short)   3, 0x03E9);
-		case 11: return new GSMCell(0x1B0,     (short) 250, (short)  20, 0x666D);
-		case 12: return new GSMCell(0x23EC45A, (short) 234, (short)  10, 0x958C);
-		case 13: return new GSMCell(0x8589A,   (short) 234, (short)  10, 0x8139);
-		case 14: return new GSMCell(0x85A67,   (short) 234, (short)  10, 0x8139);
-		case 15: return new GSMCell(0x151E,    (short) 724, (short)   5, 0x0552);
+		case  0: return new GsmCell(0x2627,    (short) 234, (short)  33, 0x0133);
+		case  1: return new GsmCell(0x2628,    (short) 234, (short)  33, 0x0133);
+		case  2: return new GsmCell(0x2629,    (short) 234, (short)  33, 0x0133);
+		case  3: return new GsmCell(0x2620,    (short) 234, (short)  33, 0x0134);
+		case  4: return new GsmCell(0x2619,    (short) 234, (short)  33, 0x0134);
+		case  5: return new GsmCell(0x2629,    (short) 234, (short)  33, 0x0135);
+		case  6: return new GsmCell(0x2649,    (short) 234, (short)  33, 0x0136);
+		case  7: return new GsmCell(0x2659,    (short) 234, (short)  33, 0x0137);
+		case  8: return new GsmCell(0xB1D1,    (short) 310, (short) 260, 0xB455);
+		case  9: return new GsmCell(0x79D9,    (short) 310, (short) 260, 0x004D);
+		case 10: return new GsmCell(0x3E92FFF, (short) 284, (short)   3, 0x03E9);
+		case 11: return new GsmCell(0x1B0,     (short) 250, (short)  20, 0x666D);
+		case 12: return new GsmCell(0x23EC45A, (short) 234, (short)  10, 0x958C);
+		case 13: return new GsmCell(0x8589A,   (short) 234, (short)  10, 0x8139);
+		case 14: return new GsmCell(0x85A67,   (short) 234, (short)  10, 0x8139);
+		case 15: return new GsmCell(0x151E,    (short) 724, (short)   5, 0x0552);
 		default:
 			//#debug debug
 			logger.debug("No valid cell-id");
@@ -443,11 +443,11 @@ public class CellIdProvider {
 		
 	}
 	
-	public GSMCell obtainCachedCellID() {
+	public GsmCell obtainCachedCellID() {
 		return cachedCell;
 	}
 	
-	public GSMCell obtainCurrentCellId() throws Exception {
+	public GsmCell obtainCurrentCellId() throws Exception {
 		
 		//#debug info
 		logger.info("Tring to retrieve cell-id");

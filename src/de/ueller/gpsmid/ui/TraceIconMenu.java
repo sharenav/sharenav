@@ -8,7 +8,7 @@ package de.ueller.gpsmid.ui;
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.midlet.iconmenu.IconActionPerformer;
 import de.ueller.midlet.iconmenu.IconMenuPage;
-import de.ueller.midlet.iconmenu.IconMenuWithPagesGUI;
+import de.ueller.midlet.iconmenu.IconMenuWithPagesGui;
 import de.ueller.midlet.iconmenu.LayoutElement;
 
 import javax.microedition.lcdui.Graphics;
@@ -16,7 +16,7 @@ import javax.microedition.lcdui.Graphics;
 import de.enough.polish.util.Locale;
 
 
-public class TraceIconMenu extends IconMenuWithPagesGUI {
+public class TraceIconMenu extends IconMenuWithPagesGui {
 
 	LayoutElement iconToggleGps;
 	LayoutElement iconToggleTrackRec;

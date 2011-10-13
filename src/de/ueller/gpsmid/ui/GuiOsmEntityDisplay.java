@@ -25,15 +25,15 @@ import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
 
 import de.ueller.gpsmid.data.OsmDataEntity;
-import de.ueller.gpsmid.ui.GuiOSMChangeset;
+import de.ueller.gpsmid.ui.GuiOsmChangeset;
 import de.ueller.midlet.ui.UploadListener;
 import de.ueller.util.Logger;
 
 import de.enough.polish.util.Locale;
 
-public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplayable, CommandListener, UploadListener, ItemCommandListener {
+public abstract class GuiOsmEntityDisplay extends Form implements GpsMidDisplayable, CommandListener, UploadListener, ItemCommandListener {
 	
-	private final static Logger logger = Logger.getInstance(GuiOSMEntityDisplay.class,Logger.DEBUG);
+	private final static Logger logger = Logger.getInstance(GuiOsmEntityDisplay.class,Logger.DEBUG);
 
 	protected final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 1);
 	protected final Command OK_CMD = new Command(Locale.get("generic.OK")/*OK*/, Command.OK, 1);
@@ -54,7 +54,7 @@ public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplaya
 	
 	
 	protected GpsMidDisplayable parent;
-	protected static GuiOSMChangeset changesetGui;
+	protected static GuiOsmChangeset changesetGui;
 	protected int loadState;
 	
 	protected OsmDataEntity osmentity;
@@ -62,7 +62,7 @@ public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplaya
 	
 	protected boolean addTag;
 	
-	public GuiOSMEntityDisplay(String title, GpsMidDisplayable parent) {
+	public GuiOsmEntityDisplay(String title, GpsMidDisplayable parent) {
 		super(title);
 		this.parent = parent;
 		addCommand(BACK_CMD);
@@ -130,7 +130,7 @@ public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplaya
 		}
 		
 		if (c == CREATE_CHANGE_CMD) {
-			changesetGui = new GuiOSMChangeset(this,this);
+			changesetGui = new GuiOsmChangeset(this,this);
 			changesetGui.show();
 		}
 		

@@ -40,12 +40,12 @@ import de.enough.polish.util.Locale;
  * to get the device's current position.
  * This API is supported by most phones with an internal GPS receiver.
  */
-public class JSR179Input 
+public class Jsr179Input 
 		//#if polish.api.locationapi
 		implements LocationListener, LocationMsgProducer
 		//#endif
 {
-	private final static Logger logger = Logger.getInstance(JSR179Input.class,
+	private final static Logger logger = Logger.getInstance(Jsr179Input.class,
 			Logger.TRACE);
 
 	//#if polish.api.locationapi
@@ -59,13 +59,13 @@ public class JSR179Input
 	private OutputStream rawDataLogger;
 
 	
-	public JSR179Input() {
+	public Jsr179Input() {
 		this.receiverList = new LocationMsgReceiverList();
 	}
 
 
 	public boolean init(LocationMsgReceiver receiver) {
-		logger.info("start JSR179 LocationProvider");
+		logger.info("Start Jsr179 LocationProvider");
 		this.receiverList.addReceiver(receiver);
 		// We may be able to get some additional information such as the number
 		// of satellites form the NMEA string

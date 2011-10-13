@@ -39,11 +39,11 @@ import de.ueller.gpsmid.data.RoutePositionMark;
 import de.ueller.gpsmid.data.SearchResult;
 import de.ueller.gpsmid.names.NumberCanon;
 import de.ueller.gpsmid.names.SearchNames;
-import de.ueller.gpsmid.ui.GuiPOItypeSelectMenu.POItypeSelectMenuItem;
+import de.ueller.gpsmid.ui.GuiPoiTypeSelectMenu.PoiTypeSelectMenuItem;
 //#if polish.api.bigsearch
 //#if polish.api.osm-editing
-import de.ueller.gpsmid.ui.GuiOSMPOIDisplay;
-import de.ueller.gpsmid.ui.GuiOSMWayDisplay;
+import de.ueller.gpsmid.ui.GuiOsmPoiDisplay;
+import de.ueller.gpsmid.ui.GuiOsmWayDisplay;
 //#endif
 //#endif
 import de.ueller.midlet.iconmenu.LayoutElement;
@@ -523,7 +523,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			state = STATE_POI;
 			filter = 0;
 			try{
-				poiTypeForm = new GuiPOItypeSelectMenu(this, this);
+				poiTypeForm = new GuiPoiTypeSelectMenu(this, this);
 				poiTypeForm.show();
 			} catch (Exception e) {
 				logger.exception(Locale.get("guisearch.FailedToSelectPOIType")/*Failed to select POI type*/, e);
@@ -536,7 +536,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			filter = 1 << FILTER_BIT_URLS;
 			state = STATE_POI_URLS;
 			try{
-				poiTypeForm = new GuiPOItypeSelectMenu(this, this);
+				poiTypeForm = new GuiPoiTypeSelectMenu(this, this);
 				poiTypeForm.show();
 			} catch (Exception e) {
 				logger.exception(Locale.get("guisearch.FailedToSelectPOIType")/*Failed to select POI type*/, e);
@@ -548,7 +548,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			filter = 1 << FILTER_BIT_PHONES;
 			state = STATE_POI_URLS;
 			try{
-				poiTypeForm = new GuiPOItypeSelectMenu(this, this);
+				poiTypeForm = new GuiPoiTypeSelectMenu(this, this);
 				poiTypeForm.show();
 			} catch (Exception e) {
 				logger.exception(Locale.get("guisearch.FailedToSelectPOIType")/*Failed to select POI type*/, e);
@@ -599,7 +599,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (Legend.enableEdits) {
 			//System.out.println("Trying to retrieve node " + sr.osmID + " lat: " + sr.lat + " lon " + sr.lon);
 			if (sr.type < 0) {
-				GuiOSMPOIDisplay guiNode = new GuiOSMPOIDisplay((int) sr.osmID, null,
+				GuiOsmPoiDisplay guiNode = new GuiOsmPoiDisplay((int) sr.osmID, null,
 										sr.lat, sr.lon, parent);
 				guiNode.show();
 				guiNode.refresh();
@@ -616,7 +616,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				//parent.show();				
 				//parent.commandAction(Trace.RETRIEVE_XML);
 				//EditableWay eway = (EditableWay)pc.actualWay;
-				GuiOSMWayDisplay guiWay = new GuiOSMWayDisplay(sr.osmID, parent);
+				GuiOsmWayDisplay guiWay = new GuiOsmWayDisplay(sr.osmID, parent);
 				guiWay.show();
 				guiWay.refresh();
 
@@ -649,7 +649,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			state = STATE_POI;
 			filter = 0;
 			try{
-				poiTypeForm = new GuiPOItypeSelectMenu(this, this);
+				poiTypeForm = new GuiPoiTypeSelectMenu(this, this);
 				poiTypeForm.show();
 			} catch (Exception e) {
 				logger.exception(Locale.get("guisearch.FailedToSelectPOIType")/*Failed to select POI type*/, e);
@@ -2023,7 +2023,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		clearList();
 		searchCanon.setLength(0);
 		searchAlpha = false;
-		final short poiType = ((POItypeSelectMenuItem)item).getIdx();
+		final short poiType = ((PoiTypeSelectMenuItem)item).getIdx();
 		final CancelMonitorInterface cmi = this;
 		isSearchCanceled = false;
 		Thread t = new Thread(new Runnable() {
@@ -2035,7 +2035,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					int maxScale = Legend.getNodeMaxScale(poiType);
 					// index 0 is all POI types
 					Vector res = parent.tiles[Legend.scaleToTile(maxScale)].getNearestPoi(
-						(((POItypeSelectMenuItem)item).getIdx() == 0) ? true : false, poiType, 
+						(((PoiTypeSelectMenuItem)item).getIdx() == 0) ? true : false, poiType, 
 						parent.center.radlat, parent.center.radlon,
 						Configuration.getPoiSearchDistance()*1000.0f, cmi);
 					for (int i = 0; i < res.size(); i++) {

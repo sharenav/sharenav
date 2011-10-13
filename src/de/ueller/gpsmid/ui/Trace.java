@@ -46,14 +46,14 @@ import de.ueller.gps.location.Compass;
 import de.ueller.gps.location.CompassProducer;
 import de.ueller.gps.location.CompassProvider;
 import de.ueller.gps.location.CompassReceiver;
-import de.ueller.gps.location.GSMCell;
+import de.ueller.gps.location.GsmCell;
 import de.ueller.gps.location.GetCompass;
 import de.ueller.gps.location.LocationMsgProducer;
 import de.ueller.gps.location.LocationMsgReceiver;
 import de.ueller.gps.location.LocationMsgReceiverList;
 import de.ueller.gps.location.LocationUpdateListener;
 import de.ueller.gps.location.NmeaInput;
-import de.ueller.gps.location.SECellID;
+import de.ueller.gps.location.SECellId;
 import de.ueller.gps.location.SirfInput;
 //#if polish.api.osm-editing
 import de.ueller.gpsmid.data.EditableWay;
@@ -601,7 +601,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					if (cellIDLocationProducer != null) {
 						cellIDLocationProducer.close();
 					}
-					locationProducer = new SECellID();
+					locationProducer = new SECellId();
 					break;
 				case Configuration.LOCATIONPROVIDER_JSR179:
 					//#if polish.api.locationapi
@@ -1592,7 +1592,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				} else {
 					if (cellIDLocationProducer == null) {
 						// init sleeping cellid location provider if cellid is not primary
-						cellIDLocationProducer = new SECellID();
+						cellIDLocationProducer = new SECellId();
 						if (cellIDLocationProducer != null && !cellIDLocationProducer.init(this)) {
 							logger.info("Failed to initialise CellID location producer");
 						}
@@ -1631,7 +1631,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 						if ((pc.actualWay != null) && (pc.actualWay instanceof EditableWay)) {
 							EditableWay eway = (EditableWay)pc.actualWay;
-							GuiOSMWayDisplay guiWay = new GuiOSMWayDisplay(eway, pc.actualSingleTile, this);
+							GuiOsmWayDisplay guiWay = new GuiOsmWayDisplay(eway, pc.actualSingleTile, this);
 							guiWay.show();
 							guiWay.refresh();
 						}
@@ -1657,7 +1657,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					// FIXME add support for accessing a node
 					// under cursor
 					if (Legend.enableEdits) {
-						GuiOSMPOIDisplay guiNode = new GuiOSMPOIDisplay(-1, null,
+						GuiOsmPoiDisplay guiNode = new GuiOsmPoiDisplay(-1, null,
 								center.radlat, center.radlon, this);
 						guiNode.show();
 						guiNode.refresh();
@@ -1671,7 +1671,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						if ((pc != null) && (pc.actualWay != null)) {
 							streetName = getName(pc.actualWay.nameIdx);
 						}
-						GuiOSMAddrDisplay guiAddr = new GuiOSMAddrDisplay(-1, streetName, null,
+						GuiOsmAddrDisplay guiAddr = new GuiOsmAddrDisplay(-1, streetName, null,
 								center.radlat, center.radlon, this);
 						guiAddr.show();
 					} else {
@@ -2312,7 +2312,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private int showConnectStatistics(Graphics g, int yc, int la) {
 		g.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 		// only try to show compass id and cell id if user has somehow switched them on
-		GSMCell cell = null;
+		GsmCell cell = null;
 		if (cellIDLocationProducer != null || Configuration.getLocationProvider() == Configuration.LOCATIONPROVIDER_SECELL || Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_LOGGING)) {
 			cell = CellIdProvider.getInstance().obtainCachedCellID();
 		}

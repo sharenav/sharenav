@@ -2,8 +2,8 @@
 package de.ueller.midlet.graphics;
 import com.samsung.util.LCDLight;
 
-public class SamsLCDLight { 
-	public SamsLCDLight() { 
+public class SamsLcdLight { 
+	public SamsLcdLight() { 
 	} 
 
 	public static void on(int duration) { 

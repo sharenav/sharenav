@@ -31,10 +31,10 @@ import de.ueller.util.Logger;
 
 import de.enough.polish.util.Locale;
 
-public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
+public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		GpsMidDisplayable {
 
-	private final static Logger logger = Logger.getInstance(IconMenuWithPagesGUI.class,Logger.DEBUG);
+	private final static Logger logger = Logger.getInstance(IconMenuWithPagesGui.class,Logger.DEBUG);
 
 	private final Command OK_CMD = new Command("Ok", Command.OK, 1);
 	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
@@ -75,13 +75,13 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	/** indicates if the pointer is currently pressed */	
 	private static boolean pointerPressedDown = false;
 
-	public IconMenuWithPagesGUI(GpsMidDisplayable parent, IconActionPerformer actionPerformer) {
+	public IconMenuWithPagesGui(GpsMidDisplayable parent, IconActionPerformer actionPerformer) {
 		// create Canvas
 		super();
 		initIconMenuWithPagesGUI(parent, actionPerformer);
 	}
 
-	public IconMenuWithPagesGUI(GpsMidDisplayable parent) {
+	public IconMenuWithPagesGui(GpsMidDisplayable parent) {
 		// create Canvas
 		super();
 		initIconMenuWithPagesGUI(parent, null);

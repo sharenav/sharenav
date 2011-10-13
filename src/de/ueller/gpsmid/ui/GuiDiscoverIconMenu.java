@@ -6,13 +6,13 @@
 package de.ueller.gpsmid.ui;
 import de.ueller.midlet.iconmenu.IconActionPerformer;
 import de.ueller.midlet.iconmenu.IconMenuPage;
-import de.ueller.midlet.iconmenu.IconMenuWithPagesGUI;
+import de.ueller.midlet.iconmenu.IconMenuWithPagesGui;
 
 import javax.microedition.lcdui.Graphics;
 
 import de.enough.polish.util.Locale;
 
-public class GuiDiscoverIconMenu extends IconMenuWithPagesGUI {
+public class GuiDiscoverIconMenu extends IconMenuWithPagesGui {
 	private static int rememberedEleId = 0;
 	private static int rememberedTabNr = 0;
 

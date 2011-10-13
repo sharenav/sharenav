@@ -62,7 +62,7 @@ public class SocketGateway {
 	final static int RETURN_IOE = 2;
 	final static int RETURN_FAIL = 3;
 
-	static GSMCell cell = new GSMCell();
+	static GsmCell cell = new GsmCell();
 	static Compass compass = new Compass();
 	
 	public static Compass getCompass() {
@@ -70,8 +70,8 @@ public class SocketGateway {
 		newcompass.direction = compass.direction;
 		return newcompass;
 	}
-	public static GSMCell getCell() {
-		GSMCell newcell = new GSMCell();
+	public static GsmCell getCell() {
+		GsmCell newcell = new GsmCell();
 		newcell.mcc = cell.mcc;
 		newcell.mnc = cell.mnc;
 		newcell.lac = cell.lac;

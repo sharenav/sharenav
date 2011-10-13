@@ -20,15 +20,15 @@ import de.ueller.util.Logger;
 
 import de.enough.polish.util.Locale;
 
-class GuiPOItypeSelectMenu extends KeySelectMenu implements KeySelectMenuListener {
+class GuiPoiTypeSelectMenu extends KeySelectMenu implements KeySelectMenuListener {
 	
-	class POItypeSelectMenuItem implements KeySelectMenuItem {
+	class PoiTypeSelectMenuItem implements KeySelectMenuItem {
 		private Image img;
 		private String  name;
 		private short idx;
 		private String canon;
 		
-		public POItypeSelectMenuItem(Image img, String name, short idx) {
+		public PoiTypeSelectMenuItem(Image img, String name, short idx) {
 			this.img = img;
 			this.name = name;
 			this.idx = idx;
@@ -57,13 +57,13 @@ class GuiPOItypeSelectMenu extends KeySelectMenu implements KeySelectMenuListene
 		
 	}
 
-	private final static Logger logger = Logger.getInstance(GuiPOItypeSelectMenu.class,Logger.DEBUG);
+	private final static Logger logger = Logger.getInstance(GuiPoiTypeSelectMenu.class, Logger.DEBUG);
 	
 	private Vector  poiTypes;
 	
 	private KeySelectMenuReducedListener callbackReduced;
 	
-	public GuiPOItypeSelectMenu(GpsMidDisplayable parent,
+	public GuiPoiTypeSelectMenu(GpsMidDisplayable parent,
 			KeySelectMenuReducedListener callback) throws Exception {
 		super(parent);
 		super.callback = this;
@@ -78,10 +78,12 @@ class GuiPOItypeSelectMenu extends KeySelectMenu implements KeySelectMenuListene
 		if (poiTypes == null) {
 			poiTypes = new Vector();
 			// FIXME select proper image for
-			KeySelectMenuItem menuItem = new POItypeSelectMenuItem(Legend.getNodeSearchImage((short)0), Locale.get("guipoitypeselectmenu.Everything")/*Everything*/, (short)0);
+			KeySelectMenuItem menuItem = new PoiTypeSelectMenuItem(Legend.getNodeSearchImage((short)0), 
+					Locale.get("guipoitypeselectmenu.Everything")/*Everything*/, (short)0);
 			poiTypes.addElement(menuItem);
 			for (short i = 1; i < Legend.getMaxType(); i++) {
-				menuItem = new POItypeSelectMenuItem(Legend.getNodeSearchImage(i),Legend.getNodeTypeDesc(i),i);
+				menuItem = new PoiTypeSelectMenuItem(Legend.getNodeSearchImage(i), 
+						Legend.getNodeTypeDesc(i), i);
 				poiTypes.addElement(menuItem);
 			}
 		}
@@ -92,7 +94,7 @@ class GuiPOItypeSelectMenu extends KeySelectMenu implements KeySelectMenuListene
 		this.removeAll();
 		Vector vec = new Vector();
 		for (short i = 0; i < poiTypes.size(); i++) {
-			POItypeSelectMenuItem poiType = (POItypeSelectMenuItem)poiTypes.elementAt(i); 
+			PoiTypeSelectMenuItem poiType = (PoiTypeSelectMenuItem)poiTypes.elementAt(i); 
 			if (poiType.getCanon().startsWith(searchString) || poiType.getName().toLowerCase().startsWith(searchString.toLowerCase())) {
 				logger.info(poiType + " matches searchString " + searchString);
 				vec.addElement(poiType);

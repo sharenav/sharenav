@@ -39,11 +39,11 @@ import de.ueller.midlet.ui.UploadListener;
 import de.ueller.util.HttpHelper;
 import de.ueller.util.Logger;
 
-public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
+public class GuiOsmChangeset extends Form implements GpsMidDisplayable,
 		Runnable, CommandListener, UploadListener {
 
 	private final static Logger logger = Logger.getInstance(
-			GuiOSMChangeset.class, Logger.DEBUG);
+			GuiOsmChangeset.class, Logger.DEBUG);
 
 	private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 1);
 	private final Command SAVE_CMD = new Command(Locale.get("guiosmchangeset.Save")/*Save*/, Command.OK, 1);
@@ -59,7 +59,7 @@ public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 
 	private boolean closing;
 
-	public GuiOSMChangeset(GpsMidDisplayable parent, UploadListener ul) {
+	public GuiOsmChangeset(GpsMidDisplayable parent, UploadListener ul) {
 		super("Changeset");
 		changesetID = -1;
 		this.ul = ul;

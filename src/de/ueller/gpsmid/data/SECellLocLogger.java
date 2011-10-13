@@ -30,7 +30,7 @@ import javax.microedition.lcdui.Alert;
 
 import de.ueller.gps.Satellite;
 import de.ueller.gps.location.CellIdProvider;
-import de.ueller.gps.location.GSMCell;
+import de.ueller.gps.location.GsmCell;
 import de.ueller.gps.location.LocationMsgReceiver;
 import de.ueller.gps.location.LocationMsgReceiverList;
 import de.ueller.gpsmid.ui.GpsMid;
@@ -217,7 +217,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 
 		try {
 
-			GSMCell cell = cellProvider.obtainCurrentCellId();
+			GsmCell cell = cellProvider.obtainCurrentCellId();
 
 			if ((cell != null) && (cell.mcc > 0) && (cell.mnc > 0) && (cell.lac > 0) && (cell.cellID > 0)){
 				//#debug debug

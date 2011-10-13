@@ -57,7 +57,7 @@ import de.enough.polish.util.Locale;
  * This LocationProvider can only retrieve cell-ids for Sony Ericsson phones
  *
  */
-public class SECellID implements LocationMsgProducer, UploadListener {
+public class SECellId implements LocationMsgProducer, UploadListener {
 	
 	private static final byte CELLDB_LACIDX = 1;
 	private static final byte CELLDB_LACLIST = 2;
@@ -133,8 +133,8 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 		
 
 		public void run() {
-			GSMCell loc;
-			GSMCell cellLoc = null;
+			GsmCell loc;
+			GsmCell cellLoc = null;
 			try {
 				if (closed) {
 					this.cancel();
@@ -230,7 +230,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 		}
 	}
 
-	private static final Logger logger = Logger.getInstance(SECellID.class,
+	private static final Logger logger = Logger.getInstance(SECellId.class,
 			Logger.TRACE);
 
 	protected OutputStream rawDataLogger;
@@ -250,7 +250,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 	
 	
 	
-	public SECellID() {
+	public SECellId() {
 	}
 
 	public static void deleteCellIDRecordStore() {
@@ -367,8 +367,8 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 	}
 	
 	
-	private GSMCell retrieveFromCache(GSMCell cell) {
-		GSMCell loc = (GSMCell) cellPos.get(cell.cellID);
+	private GsmCell retrieveFromCache(GsmCell cell) {
+		GsmCell loc = (GsmCell) cellPos.get(cell.cellID);
 		if ((loc != null) && (loc.lac == cell.lac) && (loc.mcc == cell.mcc)
 				&& (loc.mnc == cell.mnc)) {
 			//#debug debug
@@ -380,9 +380,9 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 	}
 
 	//#if polish.api.online
-	private synchronized GSMCell retrieveFromOpenCellId(GSMCell cellLoc) {
+	private synchronized GsmCell retrieveFromOpenCellId(GsmCell cellLoc) {
 		
-		GSMCell loc = null;
+		GsmCell loc = null;
 		if (retrieving) {
 			logger.info("Still retrieving previous ID");
 			return null;
@@ -423,7 +423,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 		float lat = Float.parseFloat(pos[0]);
 		float lon = Float.parseFloat(pos[1]);
 		int accuracy = Integer.parseInt(pos[2]);
-		loc = new GSMCell();
+		loc = new GsmCell();
 		loc.cellID = cellLoc.cellID;
 		loc.mcc = cellLoc.mcc;	loc.mnc = cellLoc.mnc;	loc.lac = cellLoc.lac;
 		loc.lat = lat;	loc.lon = lon;
@@ -438,8 +438,8 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 	}
 	//#endif
 
-	private GSMCell retrieveFromFS(GSMCell cellLoc) {
-		GSMCell ret;
+	private GsmCell retrieveFromFS(GsmCell cellLoc) {
+		GsmCell ret;
 		String filename = "/c" + cellLoc.mcc + cellLoc.mnc + cellLoc.lac + ".id";
 		InputStream is ;
 		try {
@@ -475,7 +475,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 					float lat = dis.readFloat();
 					float lon = dis.readFloat();
 					if ((cellLoc.lac == 0 || cellLAC == cellLoc.lac) && (cellID == cellLoc.cellID)) {
-						ret = new GSMCell();
+						ret = new GsmCell();
 						ret.mcc = cellLoc.mcc;
 						ret.mnc = cellLoc.mnc;
 						ret.lac = cellLoc.lac;
@@ -497,7 +497,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 		return null;
 	}
 	
-	private GSMCell retrieveFromPersistentCache(GSMCell cell) {
+	private GsmCell retrieveFromPersistentCache(GsmCell cell) {
 		//#debug info
 		logger.info("Looking for " + cell + " in persistent cache");
 		try {
@@ -517,7 +517,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 					
 					int size = dis.readInt();
 					for (int i = 0; i < size; i++) {
-						GSMCell tmpCell = new GSMCell(dis);
+						GsmCell tmpCell = new GsmCell(dis);
 						//#debug debug
 						logger.debug("Adding " + tmpCell + " to cache from persistent store " + idx);
 						cellPos.put(tmpCell.cellID, tmpCell);
@@ -541,7 +541,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 		return null;
 	}
 	
-	private void storeCellIDtoRecordStore(GSMCell cell) {
+	private void storeCellIDtoRecordStore(GsmCell cell) {
 		try {
 			//#debug info
 			logger.info("Storing " + cell + " in persistent cell cache");
@@ -622,7 +622,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 					int size = dis.readInt();
 					dos.writeInt(size + 1);
 					for (int i = 0; i < size; i++) {
-						GSMCell tmpCell = new GSMCell(dis);
+						GsmCell tmpCell = new GsmCell(dis);
 						tmpCell.serialise(dos);
 					}
 					if (dis.readInt() != 0xdeadbeaf) {

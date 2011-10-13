@@ -26,8 +26,8 @@ import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.gpsmid.mapdata.PoiDescription;
 import de.ueller.gpsmid.names.NumberCanon;
 import de.ueller.gpsmid.tile.SingleTile;
-import de.ueller.gpsmid.ui.GuiOSMChangeset;
-import de.ueller.gpsmid.ui.GuiPOItypeSelectMenu.POItypeSelectMenuItem;
+import de.ueller.gpsmid.ui.GuiOsmChangeset;
+import de.ueller.gpsmid.ui.GuiPoiTypeSelectMenu.PoiTypeSelectMenuItem;
 import de.ueller.midlet.ui.KeySelectMenuItem;
 import de.ueller.util.HttpHelper;
 import de.ueller.util.Logger;
@@ -35,22 +35,22 @@ import de.ueller.util.MoreMath;
 
 import de.enough.polish.util.Locale;
 
-public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMenuReducedListener{
+public class GuiOsmPoiDisplay extends GuiOsmEntityDisplay implements KeySelectMenuReducedListener{
 	
-	private final static Logger logger = Logger.getInstance(GuiOSMPOIDisplay.class,Logger.DEBUG);
+	private final static Logger logger = Logger.getInstance(GuiOsmPoiDisplay.class,Logger.DEBUG);
 	
 	private int nodeID;
 	private HttpHelper http;
 	
 	//private int loadPOIxmlState;
 	
-	private GuiPOItypeSelectMenu poiTypeForm;
+	private GuiPoiTypeSelectMenu poiTypeForm;
 	private ChoiceGroup poiSelectionCG;
 	private boolean showPoiTypeForm;
 	private boolean showParent;
 	private short poiType;
 	
-	public GuiOSMPOIDisplay(int nodeID, SingleTile t, float lat, float lon, GpsMidDisplayable parent) {
+	public GuiOsmPoiDisplay(int nodeID, SingleTile t, float lat, float lon, GpsMidDisplayable parent) {
 		super(Locale.get("guiosmpoidisplay.Node")/*Node*/, parent);
 		this.nodeID = nodeID;
 		showParent = false;
@@ -68,7 +68,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 	
 	private void setupPoiTypeForm() {
 		try { 
-			poiTypeForm = new GuiPOItypeSelectMenu(this, this);
+			poiTypeForm = new GuiPoiTypeSelectMenu(this, this);
 			poiTypeForm.show();
 		} catch (Exception e) {
 			logger.exception(Locale.get("guiosmpoidisplay.POItypeFormInvalid")/*POI type form invalid*/, e);
@@ -132,7 +132,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 			parent.show();
 			if ((changesetGui == null) || (changesetGui.getChangesetID() < 0)) {
 				loadState = LOAD_STATE_CHANGESET;
-				changesetGui = new GuiOSMChangeset(parent,this);
+				changesetGui = new GuiOsmChangeset(parent,this);
 				changesetGui.show();
 			} else {
 				loadState = LOAD_STATE_UPLOAD;
@@ -159,7 +159,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 			parent.show();
 			if ((changesetGui == null) || (changesetGui.getChangesetID() < 0)) {
 				loadState = LOAD_STATE_DELETE_CHANGESET;
-				changesetGui = new GuiOSMChangeset(parent,this);
+				changesetGui = new GuiOsmChangeset(parent,this);
 				changesetGui.show();
 			} else {
 				loadState = LOAD_STATE_DELETE;
@@ -232,7 +232,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 	}
 
 	public void keySelectMenuItemSelected(KeySelectMenuItem item) {
-		POItypeSelectMenuItem poiTypeIt = (POItypeSelectMenuItem)item;
+		PoiTypeSelectMenuItem poiTypeIt = (PoiTypeSelectMenuItem)item;
 		poiType = poiTypeIt.getIdx();
 		String [] tags = Legend.getNodeOsmTags(poiType);
 		System.out.println("poiType: " + poiTypeIt + "  tags " + tags + " ed: " + osmentity);

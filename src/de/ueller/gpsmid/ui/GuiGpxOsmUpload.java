@@ -35,9 +35,9 @@ import de.ueller.util.Logger;
 
 import de.enough.polish.util.Locale;
 
-public class GuiGPXOSMUpload extends Form implements GpsMidDisplayable, CommandListener, ExportSession{
+public class GuiGpxOsmUpload extends Form implements GpsMidDisplayable, CommandListener, ExportSession{
 	
-	private final static Logger logger = Logger.getInstance(GuiGPXOSMUpload.class,Logger.DEBUG);
+	private final static Logger logger = Logger.getInstance(GuiGpxOsmUpload.class,Logger.DEBUG);
 	
 	private final static Command BACK_CMD = new Command(Locale.get("generic.Cancel")/*Cancel*/, Command.BACK, 2);
 	private final static Command OK_CMD = new Command(Locale.get("guigpxosmupload.Upload")/*Upload*/, Command.OK, 1);
@@ -57,7 +57,7 @@ public class GuiGPXOSMUpload extends Form implements GpsMidDisplayable, CommandL
 	private String name;
 	private boolean publicFlag;
 
-	public GuiGPXOSMUpload() {
+	public GuiGpxOsmUpload() {
 		super(Locale.get("guigpxosmupload.GPXToOSM")/*GPX upload to OSM*/);
 		
 		descriptionTF = new TextField(Locale.get("guigpxosmupload.Description")/*Description:*/,"", 255, TextField.ANY);

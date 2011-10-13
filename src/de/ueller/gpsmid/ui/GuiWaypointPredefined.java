@@ -14,13 +14,13 @@ import de.enough.polish.util.Locale;
 import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.midlet.iconmenu.IconActionPerformer;
 import de.ueller.midlet.iconmenu.IconMenuPage;
-import de.ueller.midlet.iconmenu.IconMenuWithPagesGUI;
+import de.ueller.midlet.iconmenu.IconMenuWithPagesGui;
 import de.ueller.util.Logger;
 
 /**
  * 
  */
-public class GuiWaypointPredefined extends IconMenuWithPagesGUI {
+public class GuiWaypointPredefined extends IconMenuWithPagesGui {
 
 	private final static Logger mLogger = Logger.getInstance(GuiWaypointPredefined.class, Logger.DEBUG);
 	
@@ -96,7 +96,7 @@ public class GuiWaypointPredefined extends IconMenuWithPagesGUI {
 		 */
 		public void recreateAndShowIconMenu() {
 			// TODO Can't do this here. There should be an internal solution inside
-			// IconMenuWithPagesGUI for the resize (which seems to be what makes this necessary).
+			// IconMenuWithPagesGui for the resize (which seems to be what makes this necessary).
 		}
 	}
 	

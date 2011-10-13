@@ -50,7 +50,7 @@ import de.ueller.gpsmid.ui.GpsMidMenu;
 import de.ueller.gpsmid.ui.GuiCamera;
 
 import de.ueller.gps.location.GetCompass;
-import de.ueller.gps.location.SECellID;
+import de.ueller.gps.location.SECellId;
 
 public class GuiDiscover implements CommandListener, ItemCommandListener, 
 		GpsMidDisplayable, SelectionListener, IconActionPerformer {
@@ -785,7 +785,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			gpxUrl.setText(Configuration.getOsmUrl() + "gpx/create");
 		}
 		if (c == CELLID_CACHE_RESET_CMD) {
-			SECellID.deleteCellIDRecordStore();
+			SECellId.deleteCellIDRecordStore();
 		}
 		//#endif
 		if (c == OK_CMD) {
