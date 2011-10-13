@@ -1,5 +1,5 @@
 //#if polish.api.min-siemapi
-package de.ueller.midlet.graphics;
+package de.ueller.midlet.util;
 import com.siemens.mp.game.Light;
 
 public class SiemGameLight { 

@@ -45,8 +45,8 @@ import de.ueller.midlet.gps.importexport.Jsr211ContentHandlerInterface;
 //#endif
 
 //#if polish.api.min-samsapi
-import de.ueller.midlet.graphics.SamsLcdLight;
-import de.ueller.midlet.graphics.SiemGameLight;
+import de.ueller.midlet.util.SamsLcdLight;
+import de.ueller.midlet.util.SiemGameLight;
 //#endif
 
 import de.ueller.gps.Node;
