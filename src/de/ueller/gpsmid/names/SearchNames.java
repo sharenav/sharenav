@@ -11,14 +11,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Vector;
 
-import de.ueller.midlet.gps.GpsMid;
-import de.ueller.midlet.gps.GuiSearch;
-import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.Trace;
+import de.ueller.util.Logger;
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.gpsmid.data.SearchResult;
+import de.ueller.gpsmid.ui.GpsMid;
+import de.ueller.gpsmid.ui.GuiSearch;
+import de.ueller.gpsmid.ui.Trace;
 
 import de.enough.polish.util.Locale;
 

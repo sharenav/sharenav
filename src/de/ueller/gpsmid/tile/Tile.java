@@ -7,12 +7,12 @@ package de.ueller.gpsmid.tile;
 
 import java.util.Vector;
 
-import de.ueller.gpsmid.data.Node;
+import de.ueller.gps.Node;
+import de.ueller.gpsmid.data.PaintContext;
 import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.gpsmid.data.ScreenContext;
+import de.ueller.gpsmid.graphics.Projection;
 
-import de.ueller.midlet.gps.data.Projection;
-import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.util.CancelMonitorInterface;
 import de.ueller.util.IntPoint;
 

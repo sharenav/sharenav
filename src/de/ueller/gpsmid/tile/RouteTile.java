@@ -12,15 +12,15 @@ import javax.microedition.lcdui.Graphics;
 
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
+import de.ueller.gpsmid.data.PaintContext;
 import de.ueller.gpsmid.routing.Connection;
 import de.ueller.gpsmid.routing.RouteNode;
 import de.ueller.gpsmid.routing.RouteTileRet;
 import de.ueller.gpsmid.routing.Routing;
 import de.ueller.gpsmid.routing.TurnRestriction;
-import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.Trace;
-import de.ueller.midlet.gps.tile.PaintContext;
+import de.ueller.gpsmid.ui.Trace;
 import de.ueller.util.IntPoint;
+import de.ueller.util.Logger;
 import de.ueller.util.MoreMath;
 
 import de.enough.polish.util.Locale;

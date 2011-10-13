@@ -26,8 +26,7 @@ import javax.microedition.io.HttpConnection;
 
 import de.enough.polish.util.base64.Base64;
 import de.ueller.gpsmid.data.Configuration;
-import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.UploadListener;
+import de.ueller.midlet.ui.UploadListener;
 
 import de.enough.polish.util.Locale;
 

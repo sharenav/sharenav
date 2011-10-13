@@ -6,7 +6,7 @@ import java.io.IOException;
 import de.ueller.gpsmid.mapdata.QueueReader;
 import de.ueller.gpsmid.tile.RouteBaseTile;
 import de.ueller.gpsmid.tile.RouteTile;
-import de.ueller.midlet.gps.Logger;
+import de.ueller.util.Logger;
 import de.ueller.util.MoreMath;
 
 

@@ -10,8 +10,8 @@ import java.io.IOException;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
-import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.util.ImageTools;
+import de.ueller.util.Logger;
 
 import de.enough.polish.util.Locale;
 

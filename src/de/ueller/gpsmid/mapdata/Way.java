@@ -16,10 +16,12 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
 import net.sourceforge.jmicropolygon.PolygonGraphics;
+import de.ueller.gps.Node;
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
-import de.ueller.gpsmid.data.Node;
+import de.ueller.gpsmid.data.PaintContext;
 import de.ueller.gpsmid.data.RoutePositionMark;
+import de.ueller.gpsmid.graphics.Projection;
 import de.ueller.gpsmid.routing.Connection;
 import de.ueller.gpsmid.routing.ConnectionWithNode;
 import de.ueller.gpsmid.routing.RouteInstructions;
@@ -27,13 +29,11 @@ import de.ueller.gpsmid.routing.RouteLineProducer;
 import de.ueller.gpsmid.routing.TravelMode;
 import de.ueller.gpsmid.tile.SingleTile;
 import de.ueller.gpsmid.tile.Tile;
-import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.Trace;
-import de.ueller.midlet.gps.data.ProjMath;
-import de.ueller.midlet.gps.data.Projection;
-import de.ueller.midlet.gps.tile.PaintContext;
+import de.ueller.gpsmid.ui.Trace;
 import de.ueller.util.IntPoint;
+import de.ueller.util.Logger;
 import de.ueller.util.MoreMath;
+import de.ueller.util.ProjMath;
 
 /**
  * handle Ways and arrays. Be careful, all paint parts useing static vars so painting

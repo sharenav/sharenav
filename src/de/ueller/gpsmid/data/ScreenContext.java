@@ -6,8 +6,9 @@
 
 package de.ueller.gpsmid.data;
 
-import de.ueller.midlet.gps.Trace;
-import de.ueller.midlet.gps.data.Projection;
+import de.ueller.gps.Node;
+import de.ueller.gpsmid.graphics.Projection;
+import de.ueller.gpsmid.ui.Trace;
 
 public class ScreenContext {
 	/** width of the screen map area (without overscan) */

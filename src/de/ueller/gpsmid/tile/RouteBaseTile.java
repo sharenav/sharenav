@@ -1,10 +1,10 @@
 package de.ueller.gpsmid.tile;
 
+import de.ueller.gpsmid.data.PaintContext;
 import de.ueller.gpsmid.routing.Connection;
 import de.ueller.gpsmid.routing.RouteNode;
 import de.ueller.gpsmid.routing.RouteTileRet;
 import de.ueller.gpsmid.routing.TurnRestriction;
-import de.ueller.midlet.gps.tile.PaintContext;
 
 public abstract class RouteBaseTile extends Tile {
 	

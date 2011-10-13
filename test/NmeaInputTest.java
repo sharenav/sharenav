@@ -5,9 +5,9 @@ import java.io.InputStream;
 
 import de.ueller.gpsmid.data.Position;
 import de.ueller.gps.data.Satelit;
-import de.ueller.gps.nmea.NmeaInput;
-import de.ueller.gps.nmea.NmeaMessage;
-import de.ueller.midlet.gps.LocationMsgReceiver;
+import de.ueller.gps.location.NmeaInput;
+import de.ueller.gps.location.NmeaMessage;
+import de.ueller.gps.location.LocationMsgReceiver;
 import junit.framework.TestCase;
 
 public class NmeaInputTest extends TestCase implements LocationMsgReceiver {

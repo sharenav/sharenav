@@ -24,8 +24,8 @@ package de.ueller.util;
 
 
 //import de.ueller.m.midlet.gps.Logger;
+import de.ueller.gps.Node;
 import de.ueller.gpsmid.data.Legend;
-import de.ueller.gpsmid.data.Node;
 
 /**
  * MoreMath provides functions that are not part of the standard Math class.

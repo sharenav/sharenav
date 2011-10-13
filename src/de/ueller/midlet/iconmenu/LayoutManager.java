@@ -8,7 +8,7 @@ package de.ueller.midlet.iconmenu;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
-import de.ueller.midlet.gps.Logger;
+import de.ueller.util.Logger;
 
 import java.util.Vector;
 

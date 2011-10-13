@@ -1,6 +1,6 @@
 package de.ueller.gpsmid.routing;
 
-import de.ueller.gpsmid.data.Node;
+import de.ueller.gps.Node;
 
 public class RouteHelper {
 	public Node node;

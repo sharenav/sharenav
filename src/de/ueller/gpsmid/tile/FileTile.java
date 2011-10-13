@@ -9,10 +9,10 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Vector;
 
-import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.Trace;
-import de.ueller.midlet.gps.tile.PaintContext;
+import de.ueller.gpsmid.data.PaintContext;
+import de.ueller.gpsmid.ui.Trace;
 import de.ueller.util.CancelMonitorInterface;
+import de.ueller.util.Logger;
 
 
 public class FileTile extends Tile implements QueueableTile {

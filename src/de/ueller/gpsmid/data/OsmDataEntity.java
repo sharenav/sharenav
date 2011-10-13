@@ -13,7 +13,7 @@ package de.ueller.gpsmid.data;
 
 import java.util.Hashtable;
 
-import de.ueller.midlet.gps.Logger;
+import de.ueller.util.Logger;
 
 public abstract class OsmDataEntity {
 	private final static Logger logger = Logger.getInstance(

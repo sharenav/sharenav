@@ -14,11 +14,11 @@ import java.io.DataInputStream;
 import java.io.IOException;
 //#if polish.api.online
 import de.ueller.util.HttpHelper;
+import de.ueller.util.Logger;
 //#endif
 import de.ueller.gpsmid.mapdata.Way;
 import de.ueller.gpsmid.tile.Tile;
-import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.UploadListener;
+import de.ueller.midlet.ui.UploadListener;
 
 import de.enough.polish.util.Locale;
 

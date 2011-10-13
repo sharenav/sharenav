@@ -161,7 +161,7 @@
 		   <!-- postcompiler name="floater">
 			<parameter name="verbose" value="false" />
 	      </postcompiler -->
-			<midlet class="de.ueller.midlet.gps.GpsMid" name="GpsMid"/>
+			<midlet class="de.ueller.gpsmid.ui.GpsMid" name="GpsMid"/>
 			<sources>
 				<!-- always include the base folder: -->
 				<source dir="src"/>
@@ -223,7 +223,7 @@
 				You can set additional parameters here, e.g.:
 				<parameter name="optimize" value="false" />
 				-->
-				<keep class="de.ueller.midlet.gps.GpsMid" />				
+				<keep class="de.ueller.gpsmid.ui.GpsMid" />				
 				<keep class="de.ueller.gpsmid.importexport.ExportSession" />
 				<keep class="de.ueller.gps.location.JSR179Input" />
 				<keep class="de.ueller.gpsmid.importexport.FileExportSession" />
@@ -235,8 +235,8 @@
 				<keep class="de.ueller.gpsmid.importexport.Jsr172GpxParser" />
 				<keep class="de.ueller.gpsmid.importexport.QDGpxParser" />
 				<keep class="de.ueller.gpsmid.importexport.GpxParser" />
-				<keep class="de.ueller.midlet.gps.GuiCameraInterface" />
-				<keep class="de.ueller.midlet.gps.GuiCamera" />
+				<keep class="de.ueller.gpsmid.ui.GuiCameraInterface" />
+				<keep class="de.ueller.gpsmid.ui.GuiCamera" />
 				<keep class="org.xml.sax.Attributes" />
 			</obfuscator>
 			
@@ -244,7 +244,7 @@
 			<debug if="logging" showLogOnError="true" verbose="true" level="debug">
 				<filter pattern="de.enough.*" level="error" />
 				<!--filter pattern="de.ueller.gps.sirf.*" level="debug" / -->
-				<!--filter pattern="de.ueller.midlet.gps.Trace" level="debug" / -->
+				<!--filter pattern="de.ueller.gpsmid.ui.Trace" level="debug" / -->
 				<!--<filter pattern="de.ueller.gpsmid.names.SearchNames" level="debug" />-->
 			</debug>
 			
@@ -346,7 +346,7 @@
 			fullscreen="no"
 			workDir="${dir.work}"
 		>     
-			<midlet class="de.ueller.midlet.gps.GpsMid" name="GpsMid"/>
+			<midlet class="de.ueller.gpsmid.ui.GpsMid" name="GpsMid"/>
 			<sources>
 				<!-- always include the base folder: -->
 				<source dir="src"/>
@@ -408,7 +408,7 @@
 				You can set additional parameters here, e.g.:
 				<parameter name="optimize" value="false" />
 				-->
-				<keep class="de.ueller.midlet.gps.GpsMid" />				
+				<keep class="de.ueller.gpsmid.ui.GpsMid" />				
 				<keep class="de.ueller.gpsmid.importexport.ExportSession" />
 				<keep class="de.ueller.gps.location.JSR179Input" />
 				<keep class="de.ueller.gpsmid.importexport.FileExportSession" />
@@ -420,8 +420,8 @@
 				<keep class="de.ueller.gpsmid.importexport.Jsr172GpxParser" />
 				<keep class="de.ueller.gpsmid.importexport.QDGpxParser" />
 				<keep class="de.ueller.gpsmid.importexport.GpxParser" />
-				<keep class="de.ueller.midlet.gps.GuiCameraInterface" />
-				<keep class="de.ueller.midlet.gps.GuiCamera" />
+				<keep class="de.ueller.gpsmid.ui.GuiCameraInterface" />
+				<keep class="de.ueller.gpsmid.ui.GuiCamera" />
 				<keep class="org.xml.sax.Attributes" />
 			</obfuscator>
 			
@@ -431,7 +431,7 @@
 			<debug if="logging" showLogOnError="true" verbose="true" level="debug">
 				<filter pattern="de.enough.*" level="error" />
 				<!--filter pattern="de.ueller.gps.sirf.*" level="debug" / -->
-				<!--filter pattern="de.ueller.midlet.gps.Trace" level="debug" / -->
+				<!--filter pattern="de.ueller.gpsmid.ui.Trace" level="debug" / -->
 				<!--<filter pattern="de.ueller.gpsmid.names.SearchNames" level="debug" />-->
 			</debug>
 			

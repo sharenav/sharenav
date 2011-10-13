@@ -10,17 +10,17 @@ import java.lang.Math;
 import java.util.Vector;
 import de.enough.polish.util.Locale;
 
+import de.ueller.gps.Node;
 import de.ueller.gpsmid.data.Configuration;
-import de.ueller.gpsmid.data.Node;
 import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.gpsmid.data.RoutePositionMark;
 import de.ueller.gpsmid.mapdata.Way;
 import de.ueller.gpsmid.tile.RouteBaseTile;
 import de.ueller.gpsmid.tile.Tile;
-import de.ueller.midlet.gps.GpsMid;
-import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.Trace;
+import de.ueller.gpsmid.ui.GpsMid;
+import de.ueller.gpsmid.ui.Trace;
 import de.ueller.util.IntTree;
+import de.ueller.util.Logger;
 import de.ueller.util.MoreMath;
 
 

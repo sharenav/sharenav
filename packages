@@ -7,7 +7,7 @@ de.ueller.gps.sirf
 de.ueller.gps.tools
 de.ueller.midlet.gps
 de.ueller.midlet.gps.data
-de.ueller.midlet.gps.importexport
+de.ueller.gpsmid.importexport
 de.ueller.midlet.gps.options
 de.ueller.midlet.gps.routing
 de.ueller.midlet.gps.tile

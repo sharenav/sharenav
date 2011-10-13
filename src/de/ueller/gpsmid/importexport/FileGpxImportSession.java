@@ -13,13 +13,13 @@ import javax.microedition.io.InputConnection;
 import javax.microedition.lcdui.Displayable;
 
 import de.ueller.gpsmid.data.Configuration;
-import de.ueller.midlet.gps.FsDiscover;
-import de.ueller.midlet.gps.GpsMid;
-import de.ueller.midlet.gps.GpsMidDisplayable;
-import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.SelectionListener;
-import de.ueller.midlet.gps.Trace;
-import de.ueller.midlet.gps.UploadListener;
+import de.ueller.gpsmid.ui.FsDiscover;
+import de.ueller.gpsmid.ui.GpsMid;
+import de.ueller.gpsmid.ui.GpsMidDisplayable;
+import de.ueller.gpsmid.ui.Trace;
+import de.ueller.midlet.ui.SelectionListener;
+import de.ueller.midlet.ui.UploadListener;
+import de.ueller.util.Logger;
 
 import de.enough.polish.util.Locale;
 

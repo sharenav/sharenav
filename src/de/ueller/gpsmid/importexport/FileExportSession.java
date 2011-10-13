@@ -9,7 +9,7 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.file.FileConnection;
 //#endif
 
-import de.ueller.midlet.gps.Logger;
+import de.ueller.util.Logger;
 
 import de.enough.polish.util.Locale;
 

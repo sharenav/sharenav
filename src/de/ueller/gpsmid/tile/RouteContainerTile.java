@@ -8,12 +8,12 @@ package de.ueller.gpsmid.tile;
 import java.io.DataInputStream;
 import java.io.IOException;
 
+import de.ueller.gpsmid.data.PaintContext;
 import de.ueller.gpsmid.routing.Connection;
 import de.ueller.gpsmid.routing.RouteNode;
 import de.ueller.gpsmid.routing.RouteTileRet;
 import de.ueller.gpsmid.routing.TurnRestriction;
-import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.tile.PaintContext;
+import de.ueller.util.Logger;
 
 import de.enough.polish.util.Locale;
 

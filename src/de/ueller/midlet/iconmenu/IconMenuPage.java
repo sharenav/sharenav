@@ -6,10 +6,10 @@
 package de.ueller.midlet.iconmenu;
 
 import de.ueller.gpsmid.data.Legend;
-import de.ueller.midlet.gps.Logger;
+import de.ueller.gpsmid.ui.GpsMid;
 
-import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.iconmenu.IconActionPerformer;
+import de.ueller.util.Logger;
 
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;

@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.PaintContext;
 import de.ueller.gpsmid.routing.Connection;
 import de.ueller.gpsmid.routing.RouteNode;
 import de.ueller.gpsmid.routing.RouteTileRet;
 import de.ueller.gpsmid.routing.TurnRestriction;
-import de.ueller.midlet.gps.GpsMid;
-import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.tile.PaintContext;
+import de.ueller.gpsmid.ui.GpsMid;
+import de.ueller.util.Logger;
 
 import de.enough.polish.util.Locale;
 

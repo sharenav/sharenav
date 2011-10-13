@@ -13,8 +13,8 @@ import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.tile.SingleTile;
 import de.ueller.gpsmid.tile.Tile;
-import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.Trace;
+import de.ueller.gpsmid.ui.Trace;
+import de.ueller.util.Logger;
 //#if polish.api.osm-editing
 import de.ueller.gpsmid.data.EditableWay;
 //#endif

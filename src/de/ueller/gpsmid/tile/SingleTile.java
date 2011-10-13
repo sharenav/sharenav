@@ -16,16 +16,16 @@ import javax.microedition.lcdui.Image;
 
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
+import de.ueller.gpsmid.data.PaintContext;
 import de.ueller.gpsmid.data.SearchResult;
+import de.ueller.gpsmid.graphics.Proj3D;
+import de.ueller.gpsmid.graphics.Projection;
 import de.ueller.gpsmid.mapdata.Way;
-import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.Trace;
-import de.ueller.midlet.gps.data.Proj3D;
-import de.ueller.midlet.gps.data.ProjMath;
-import de.ueller.midlet.gps.data.Projection;
-import de.ueller.midlet.gps.tile.PaintContext;
+import de.ueller.gpsmid.ui.Trace;
 import de.ueller.util.CancelMonitorInterface;
+import de.ueller.util.Logger;
 import de.ueller.util.MoreMath;
+import de.ueller.util.ProjMath;
 
 import de.enough.polish.util.Locale;
 

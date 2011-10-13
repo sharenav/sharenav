@@ -26,23 +26,22 @@ import javax.microedition.rms.RecordStoreFullException;
 import javax.microedition.rms.RecordStoreNotFoundException;
 import javax.microedition.rms.RecordStoreNotOpenException;
 
+import de.ueller.gps.Node;
 import de.ueller.gpsmid.importexport.ExportSession;
 import de.ueller.gpsmid.importexport.GpxImportHandler;
 import de.ueller.gpsmid.importexport.GpxParser;
 import de.ueller.gpsmid.tile.GpxTile;
 import de.ueller.gpsmid.tile.Tile;
 import de.ueller.gpsmid.tile.WaypointsTile;
-import de.ueller.midlet.gps.GuiNameEnter;
-import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.Trace;
-import de.ueller.midlet.gps.UploadListener;
-import de.ueller.midlet.gps.data.ProjMath;
-import de.ueller.midlet.gps.tile.PaintContext;
-import de.ueller.midlet.screens.InputListener;
-import de.ueller.midlet.gps.TrackPlayer;
+import de.ueller.gpsmid.ui.GuiNameEnter;
+import de.ueller.gpsmid.ui.Trace;
+import de.ueller.midlet.ui.InputListener;
+import de.ueller.midlet.ui.UploadListener;
 import de.ueller.util.DateTimeTools;
 import de.ueller.util.HelperRoutines;
+import de.ueller.util.Logger;
 import de.ueller.util.MoreMath;
+import de.ueller.util.ProjMath;
 
 import de.enough.polish.util.Locale;
 

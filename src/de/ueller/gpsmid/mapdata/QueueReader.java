@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.util.Vector;
 
 import de.ueller.gpsmid.tile.Tile;
-import de.ueller.midlet.gps.GpsMid;
-import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.Trace;
+import de.ueller.gpsmid.ui.GpsMid;
+import de.ueller.gpsmid.ui.Trace;
+import de.ueller.util.Logger;
 
 import de.enough.polish.util.Locale;
 

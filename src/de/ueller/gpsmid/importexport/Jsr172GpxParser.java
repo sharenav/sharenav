@@ -26,7 +26,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import de.ueller.midlet.gps.Logger;
+import de.ueller.util.Logger;
 
 public class Jsr172GpxParser extends DefaultHandler implements GpxParser {
 

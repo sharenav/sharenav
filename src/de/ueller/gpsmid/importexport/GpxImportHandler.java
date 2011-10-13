@@ -20,11 +20,11 @@ import java.util.Hashtable;
 import de.ueller.gpsmid.data.Gpx;
 import de.ueller.gpsmid.data.Position;
 import de.ueller.gpsmid.data.PositionMark;
-import de.ueller.midlet.gps.ImageCollector;
-import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.UploadListener;
-import de.ueller.midlet.gps.data.ProjMath;
+import de.ueller.gpsmid.graphics.ImageCollector;
+import de.ueller.midlet.ui.UploadListener;
+import de.ueller.util.Logger;
 import de.ueller.util.MoreMath;
+import de.ueller.util.ProjMath;
 
 import de.enough.polish.util.Locale;
 

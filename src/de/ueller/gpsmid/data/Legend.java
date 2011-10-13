@@ -17,9 +17,9 @@ import javax.microedition.media.Manager;
 import de.ueller.gpsmid.mapdata.PoiDescription;
 import de.ueller.gpsmid.mapdata.WayDescription;
 import de.ueller.gpsmid.routing.TravelMode;
-import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.GpsMid;
-import de.ueller.midlet.gps.Trace;
+import de.ueller.gpsmid.ui.GpsMid;
+import de.ueller.gpsmid.ui.Trace;
+import de.ueller.util.Logger;
 
 import de.enough.polish.util.Locale;
 

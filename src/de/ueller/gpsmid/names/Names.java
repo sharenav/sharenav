@@ -14,12 +14,12 @@ import java.io.InputStream;
 import java.util.Vector;
 
 import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.ui.GpsMid;
 import de.ueller.gpsmid.util.StringEntry;
-import de.ueller.midlet.gps.GpsMid;
-import de.ueller.midlet.gps.Logger;
 
 import de.ueller.util.CancelMonitorInterface;
 import de.ueller.util.IntTree;
+import de.ueller.util.Logger;
 
 import de.enough.polish.util.Locale;
 

@@ -7,11 +7,11 @@ package de.ueller.gpsmid.tile;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
-import de.ueller.midlet.gps.data.Projection;
-import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.tile.PaintContext;
+import de.ueller.gpsmid.data.PaintContext;
+import de.ueller.gpsmid.graphics.Projection;
 import de.ueller.util.HelperRoutines;
 import de.ueller.util.IntPoint;
+import de.ueller.util.Logger;
 import de.ueller.util.MoreMath;
 
 

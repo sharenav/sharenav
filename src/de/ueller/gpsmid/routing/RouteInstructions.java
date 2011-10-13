@@ -10,23 +10,23 @@ import java.util.Vector;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Graphics;
 
+import de.ueller.gps.Node;
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
-import de.ueller.gpsmid.data.Node;
+import de.ueller.gpsmid.data.PaintContext;
 import de.ueller.gpsmid.data.RoutePositionMark;
+import de.ueller.gpsmid.graphics.ImageCollector;
 import de.ueller.gpsmid.mapdata.Way;
 import de.ueller.gpsmid.mapdata.WayDescription;
-import de.ueller.midlet.gps.GpsMid;
-import de.ueller.midlet.gps.ImageCollector;
-import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.Trace;
-import de.ueller.midlet.gps.TraceLayout;
-import de.ueller.midlet.gps.data.ProjMath;
-import de.ueller.midlet.gps.tile.PaintContext;
+import de.ueller.gpsmid.ui.GpsMid;
+import de.ueller.gpsmid.ui.Trace;
+import de.ueller.gpsmid.ui.TraceLayout;
 import de.ueller.midlet.iconmenu.LayoutElement;
 import de.ueller.util.DateTimeTools;
 import de.ueller.util.IntPoint;
+import de.ueller.util.Logger;
 import de.ueller.util.MoreMath;
+import de.ueller.util.ProjMath;
 
 import de.enough.polish.util.Locale;
 

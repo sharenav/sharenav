@@ -19,12 +19,12 @@ import android.content.res.AssetManager;
 import android.content.Context;
 //#endif
 
-import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.Trace;
 import de.ueller.util.HelperRoutines;
+import de.ueller.util.Logger;
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.mapdata.QueueReader;
+import de.ueller.gpsmid.ui.Trace;
 
 import net.sourceforge.util.zip.ZipFile;
 

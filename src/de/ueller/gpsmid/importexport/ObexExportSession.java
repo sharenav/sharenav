@@ -12,7 +12,7 @@ import javax.obex.HeaderSet;
 import javax.obex.Operation;
 import javax.obex.ResponseCodes;
 //#endif
-import de.ueller.midlet.gps.Logger;
+import de.ueller.util.Logger;
 
 import de.enough.polish.util.Locale;
 

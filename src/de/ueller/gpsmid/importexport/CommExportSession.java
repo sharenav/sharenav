@@ -7,7 +7,7 @@ import javax.microedition.io.CommConnection;
 import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
 
-import de.ueller.midlet.gps.Logger;
+import de.ueller.util.Logger;
 
 import de.enough.polish.util.Locale;
 

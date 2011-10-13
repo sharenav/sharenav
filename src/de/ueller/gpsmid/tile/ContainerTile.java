@@ -9,11 +9,11 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Vector;
 
+import de.ueller.gpsmid.data.PaintContext;
 import de.ueller.gpsmid.data.SearchResult;
-import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.data.ProjMath;
-import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.util.CancelMonitorInterface;
+import de.ueller.util.Logger;
+import de.ueller.util.ProjMath;
 
 import de.enough.polish.util.Locale;
 
