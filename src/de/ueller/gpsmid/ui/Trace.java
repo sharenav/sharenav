@@ -620,7 +620,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						//#else
 						if (jsr179Version != null && jsr179Version.length() > 0) {
 						//#endif
-							Class jsr179Class = Class.forName("de.ueller.gps.location.JSR179Input");
+							Class jsr179Class = Class.forName("de.ueller.gps.location.Jsr179Input");
 							locationProducer = (LocationMsgProducer) jsr179Class.newInstance();
 						//#if polish.android
 						//#else
