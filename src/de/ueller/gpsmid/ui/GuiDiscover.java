@@ -1159,7 +1159,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				 */
 				//GuiCamera.getInstance().init(this);
 				try {
-					Class GuiCameraClass = Class.forName("de.ueller.midlet.gps.GuiCamera");
+					Class GuiCameraClass = Class.forName("de.ueller.gpsmid.ui.GuiCamera");
 					Object GuiCameraObject = GuiCameraClass.newInstance();
 					GuiCameraInterface cam = (GuiCameraInterface)GuiCameraObject;
 					//cam.commandAction(GuiCamera.getInstance().SETUP_CMD, (Displayable) null);
