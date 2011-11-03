@@ -1354,7 +1354,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			//#if polish.api.mmapi
 			if (c == CMDS[CAMERA_CMD]) {
 				try {
-					Class GuiCameraClass = Class.forName("de.ueller.midlet.gps.GuiCamera");
+					Class GuiCameraClass = Class.forName("de.ueller.gpsmid.ui.GuiCamera");
 					Object GuiCameraObject = GuiCameraClass.newInstance();
 					GuiCameraInterface cam = (GuiCameraInterface)GuiCameraObject;
 					cam.init(this);
