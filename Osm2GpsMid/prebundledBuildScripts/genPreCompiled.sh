@@ -4,7 +4,10 @@ ulimit -Sv 14000000
 renice 15 $$
 
 function genPBF {
-    java -mx8000M -XX:NewRatio=32 -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /home/apmon/planet_dumps/$1.osm.pbf $2 >> build.log
+    echo "========================" >> build.log
+    echo -e "Processing $2, midlet name GpsMid$3-0.7.7-map69\n\n" >> build.log
+    echo "Processing $2, midlet name GpsMid$3-0.7.7-map69"
+    java -mx8000M -XX:NewRatio=32 -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /home/apmon/planet_dumps/$1.osm.pbf $2 >> build.log 2>&1
     if [ -n "$PASS" ]; then
 	java -jar JadTool.jar -addjarsig -keypass $PASS -alias fossgis-key -keystore java-keystore.jks -inputjad GpsMid$3-0.7.7-map69.jad -outputjad GpsMid$3-0.7.7-map69.jad -jarfile GpsMid$3-0.7.7-map69.jar
 	java -jar JadTool.jar -addcert -alias fossgis-key -keystore java-keystore.jks -inputjad GpsMid$3-0.7.7-map69.jad -outputjad GpsMid$3-0.7.7-map69.jad
@@ -12,10 +15,13 @@ function genPBF {
 }
 
 function genBZ2 {
+    echo "========================" >> build.log
+    echo -e "Processing $2, midlet name GpsMid$3-0.7.7-map69\n\n" >> build.log
+    echo "Processing $2, midlet name GpsMid$3-0.7.7-map69"
     c=$1
     rm /tmp/$c.osm
     mkfifo /tmp/$c.osm
-    bzcat /home/apmon/planet_dumps/$c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm $2 >> build.log
+    bzcat /home/apmon/planet_dumps/$c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm $2 >> build.log 2>&1
     if [ -n "$PASS" ]; then
 	java -jar JadTool.jar -addjarsig -keypass $PASS -alias fossgis-key -keystore java-keystore.jks -inputjad GpsMid$3-0.7.7-map69.jad -outputjad GpsMid$3-0.7.7-map69.jad -jarfile GpsMid$3-0.7.7-map69.jar
 	java -jar JadTool.jar -addcert -alias fossgis-key -keystore java-keystore.jks -inputjad GpsMid$3-0.7.7-map69.jad -outputjad GpsMid$3-0.7.7-map69.jad
@@ -156,10 +162,10 @@ genPBF germany nuernberg N
 genPBF germany Cologne KB
 genPBF germany Berlin B
 genPBF germany Munich Mun
-genPBF germany Munich-demo Mun-demo
 genPBF germany hamburg HH
 genPBF germany Bayern Bay
 genPBF germany Karlsruhe Ka
+genPBF germany Leipzig Leip
 genPBF germany RuhrGebiet Ruhr
 genPBF austria Wien W
 genPBF austria Austria At
@@ -173,5 +179,7 @@ genPBF georgia Georgia Ge
 genPBF armenia Armenia Am
 genBZ2 myanmar Myanmar Mm
 
-cp *.ja* /home/apmon/public_html/GpsMid/
+rm /home/apmon/public_html/GpsMid/GpsMid*.ja*
+
+cp -p *.ja* /home/apmon/public_html/GpsMid/
 
