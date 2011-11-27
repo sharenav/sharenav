@@ -79,7 +79,7 @@ wget http://downloads.cloudmade.com/africa/middle_africa/democratic_republic_of_
 wget http://downloads.cloudmade.com/africa/eastern_africa/kenya/kenya.osm.bz2 -O /home/apmon/planet_dumps/kenya.osm.bz2
 wget http://downloads.cloudmade.com/africa/eastern_africa/seychelles/seychelles.osm.bz2 -O /home/apmon/planet_dumps/seychelles.osm.bz2
 wget http://downloads.cloudmade.com/africa/southern_africa/namibia/namibia.osm.bz2 -O /home/apmon/planet_dumps/namibia.osm.bz2
-wget http://download.geofabrik.de/osm/europe/portugal.osm.bz2 -O /home/apmon/planet_dumps/portugal.osm.bz2
+wget http://download.geofabrik.de/osm/europe/portugal.osm.pbf -O /home/apmon/planet_dumps/portugal.osm.pbf
 wget http://downloads.cloudmade.com/africa/northern_africa/tunisia/tunisia.osm.bz2 -O /home/apmon/planet_dumps/tunesia.osm.bz2
 wget http://download.geofabrik.de/osm/australia-oceania.osm.pbf -O /home/apmon/planet_dumps/australia-oceania.osm.pbf
 wget http://downloads.cloudmade.com/asia/northern_asia/russia/russia.osm.bz2 -O /home/apmon/planet_dumps/russia.osm.bz2

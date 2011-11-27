@@ -87,8 +87,8 @@ genPBF california BayArea BayArea
 genPBF california LosAngeles LA
 genPBF new_york NYC NYC
 genBZ2 puerto_rico PuertoRico Pr
-genBZ2 britishcolumbia BritishColumbia BC
-genPBF Ontario Ontario ON
+genPBF britishcolumbia BritishColumbia BC
+genPBF ontario Ontario ON
 genPBF poland Poland Pl
 genPBF poland Warsaw Warsaw
 genPBF poland Krakow Krakow
@@ -111,6 +111,10 @@ genBZ2 slovenia Slovenia Si
 genPBF finland Finland Fi
 genPBF finland Helsinki Hel
 genPBF libya Libya Ly
+genBZ2 egypt Egypt Eg
+genBZ2 ethiopia Ethiopia Et
+genBZ2 morocco Morocco Ma
+genBZ2 nigeria Nigeria Ne
 genPBF netherlands Netherlands Nl
 genPBF netherlands Amsterdam Amst
 genPBF netherlands AmsterdamRotterdam AR
@@ -175,8 +179,8 @@ genPBF norway SouthNorway SNor
 genPBF switzerland Switzerland Ch
 genPBF belgium Belgium Be
 genPBF philippines Philippines Ph
-genPBF georgia Georgia Ge
-genPBF armenia Armenia Am
+genBZ2 georgia Georgia Ge
+genBZ2 armenia Armenia Am
 genBZ2 myanmar Myanmar Mm
 
 rm /home/apmon/public_html/GpsMid/GpsMid*.ja*
