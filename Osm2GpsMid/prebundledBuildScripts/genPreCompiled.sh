@@ -66,7 +66,7 @@ genPBF iraq Iraq Iq
 genPBF kazakhstan Kazakhstan Kz
 genPBF canary Canary Canary
 genPBF czech_republic Czech Cz
-genPBF czech_republic Praha
+genPBF czech_republic Praha Praha
 genPBF spain Spain Es
 genPBF spain Madrid Mad
 genPBF haiti Haiti Ht
