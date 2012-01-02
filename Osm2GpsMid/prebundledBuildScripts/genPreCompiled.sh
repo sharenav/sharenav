@@ -48,7 +48,7 @@ rm build.log
 
 # Africa
 genPBF canary Canary Canary
-genBZ2 congo Congo Cg
+genBZ2 congo Congo Cd
 genBZ2 egypt Egypt Eg
 genBZ2 ethiopia Ethiopia Et
 genBZ2 kenya Kenya Ke

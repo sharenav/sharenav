@@ -8,7 +8,7 @@
 </head>
 
 <body>
-  
+
 <table border="0" width="100%">
 	<tr>
 		<td><img src="http://gpsmid.sourceforge.net/images/gpsmid.png" alt="splash"/></td>
@@ -548,11 +548,11 @@
 	</tr>
 	  	<tr>
 		<td>Belgium</td>
-	  <td><a href="/cgi-bin/countdown.cgi?GpsMidBelg-0.7.7-map69.jad">jad</a> - 
-	  <a href="/cgi-bin/countdown.cgi?GpsMidBelg-0.7.7-map69.jar">jar</a> - 
-	  <a href="/cgi-bin/countdown.cgi?GpsMidBelg-0.7.7-map69.zip">zip</a></td>
-	  <td><!--#flastmod file="GpsMidBelg-0.7.7-map69.jar" --></td>
-	  <td><!--#fsize file="GpsMidBelg-0.7.7-map69.jar" --></td>
+	  <td><a href="/cgi-bin/countdown.cgi?GpsMidBe-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?GpsMidBe-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?GpsMidBe-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="GpsMidBe-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="GpsMidBe-0.7.7-map69.jar" --></td>
 	</tr>
 	<tr>
 	<td>Bosnia-Herzegovina</td>
@@ -603,12 +603,21 @@
 	  <td><!--#fsize file="GpsMidCn-0.7.7-map69.jar" --></td>
 	</tr>
 	<tr>
+	<tr>
+	<td>Congo</td>
+	  <td><a href="/cgi-bin/countdown.cgi?GpsMidCd-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?GpsMidCd-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?GpsMidCd-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="GpsMidCd-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="GpsMidCd-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
 	<td>Croatia</td>
-	  <td><a href="/cgi-bin/countdown.cgi?GpsMidHR-0.7.7-map69.jad">jad</a> - 
-	  <a href="/cgi-bin/countdown.cgi?GpsMidHR-0.7.7-map69.jar">jar</a> - 
-	  <a href="/cgi-bin/countdown.cgi?GpsMidHR-0.7.7-map69.zip">zip</a></td>
-	  <td><!--#flastmod file="GpsMidHR-0.7.7-map69.jar" --></td>
-	  <td><!--#fsize file="GpsMidHR-0.7.7-map69.jar" --></td>
+	  <td><a href="/cgi-bin/countdown.cgi?GpsMidHr-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?GpsMidHr-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?GpsMidHr-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="GpsMidHr-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="GpsMidHr-0.7.7-map69.jar" --></td>
 	</tr>
 		<tr>
 		<td>Cyprus</td>
@@ -644,11 +653,11 @@
 	</tr>
 	<tr>
 	<td>Estonia</td>
-	  <td><a href="/cgi-bin/countdown.cgi?GpsMidEE-0.7.7-map69.jad">jad</a> - 
-	  <a href="/cgi-bin/countdown.cgi?GpsMidEE-0.7.7-map69.jar">jar</a> - 
-	  <a href="/cgi-bin/countdown.cgi?GpsMidEE-0.7.7-map69.zip">zip</a></td>
-	  <td><!--#flastmod file="GpsMidEE-0.7.7-map69.jar" --></td>
-	  <td><!--#fsize file="GpsMidEE-0.7.7-map69.jar" --></td>
+	  <td><a href="/cgi-bin/countdown.cgi?GpsMidEe-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?GpsMidEe-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?GpsMidEe-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="GpsMidEe-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="GpsMidEe-0.7.7-map69.jar" --></td>
 	</tr>
 	<tr>
 	<td>Ethiopia</td>
@@ -912,11 +921,11 @@
 	</tr>
 	<tr>
 	<td>New Zealand</td>
-	  <td><a href="/cgi-bin/countdown.cgi?GpsMidNZ-0.7.7-map69.jad">jad</a> - 
-	  <a href="/cgi-bin/countdown.cgi?GpsMidNZ-0.7.7-map69.jar">jar</a> - 
-	  <a href="/cgi-bin/countdown.cgi?GpsMidNZ-0.7.7-map69.zip">zip</a></td>
-	  <td><!--#flastmod file="GpsMidNZ-0.7.7-map69.jar" --></td>
-	  <td><!--#fsize file="GpsMidNZ-0.7.7-map69.jar" --></td>
+	  <td><a href="/cgi-bin/countdown.cgi?GpsMidNz-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?GpsMidNz-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?GpsMidNz-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="GpsMidNz-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="GpsMidNz-0.7.7-map69.jar" --></td>
 	</tr>
 	<tr>
 	<td>Nigeria</td>
@@ -944,11 +953,11 @@
 	</tr>
 	<tr>
 	<td>Slovenia</td>
-	  <td><a href="/cgi-bin/countdown.cgi?GpsMidSl-0.7.7-map69.jad">jad</a> - 
-	  <a href="/cgi-bin/countdown.cgi?GpsMidSl-0.7.7-map69.jar">jar</a> - 
-	  <a href="/cgi-bin/countdown.cgi?GpsMidSl-0.7.7-map69.zip">zip</a></td>
-	  <td><!--#flastmod file="GpsMidSl-0.7.7-map69.jar" --></td>
-	  <td><!--#fsize file="GpsMidSl-0.7.7-map69.jar" --></td>
+	  <td><a href="/cgi-bin/countdown.cgi?GpsMidSi-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?GpsMidSi-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?GpsMidSi-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="GpsMidSi-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="GpsMidSi-0.7.7-map69.jar" --></td>
 	</tr>
 	<tr>
 	<td>South Korea</td>
@@ -1008,11 +1017,11 @@
 	</tr>
 	<tr>
 	<td>Portugal</td>
-	  <td><a href="/cgi-bin/countdown.cgi?GpsMidPort-0.7.7-map69.jad">jad</a> - 
-	  <a href="/cgi-bin/countdown.cgi?GpsMidPort-0.7.7-map69.jar">jar</a> - 
-	  <a href="/cgi-bin/countdown.cgi?GpsMidPort-0.7.7-map69.zip">zip</a></td>
-	  <td><!--#flastmod file="GpsMidPort-0.7.7-map69.jar" --></td>
-	  <td><!--#fsize file="GpsMidPort-0.7.7-map69.jar" --></td>
+	  <td><a href="/cgi-bin/countdown.cgi?GpsMidPt-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?GpsMidPt-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?GpsMidPt-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="GpsMidPt-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="GpsMidPt-0.7.7-map69.jar" --></td>
 	</tr>
 	<tr>
 	<td>Romania</td>
@@ -1054,14 +1063,13 @@
 	  <td><!--#flastmod file="GpsMidLk-0.7.7-map69.jar" --></td>
 	  <td><!--#fsize file="GpsMidLk-0.7.7-map69.jar" --></td>
 	</tr>
-
 	<tr>
 	<td>Switzerland</td>
-	  <td><a href="/cgi-bin/countdown.cgi?GpsMidSwiss-0.7.7-map69.jad">jad</a> - 
-	  <a href="/cgi-bin/countdown.cgi?GpsMidSwiss-0.7.7-map69.jar">jar</a> - 
-	  <a href="/cgi-bin/countdown.cgi?GpsMidSwiss-0.7.7-map69.zip">zip</a></td>
-	  <td><!--#flastmod file="GpsMidSwiss-0.7.7-map69.jar" --></td>
-	  <td><!--#fsize file="GpsMidSwiss-0.7.7-map69.jar" --></td>
+	  <td><a href="/cgi-bin/countdown.cgi?GpsMidCh-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?GpsMidCh-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?GpsMidCh-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="GpsMidCh-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="GpsMidCh-0.7.7-map69.jar" --></td>
 	</tr>
 	<tr>
 	<td>Spain</td>
@@ -1147,7 +1155,7 @@
     <!-- PrimaWebtoolsCounter TrackingCode Ende //-->
    
     <hr>
-    <div id="date"> Last updated: 01/09/11	--- 	<a href="http://gpsmid.sourceforge.net/index.html">GpsMid</a> is licensed under <a href="http://www.gnu.org/licenses/gpl-2.0.html">GPLv2</a> --- <a href="http://www.openstreetmap.org">OpenStreetMap</a> is <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a></div>
+    <div id="date"> Last updated: 2012-01-03	--- 	<a href="http://gpsmid.sourceforge.net/index.html">GpsMid</a> is licensed under <a href="http://www.gnu.org/licenses/gpl-2.0.html">GPLv2</a> --- <a href="http://www.openstreetmap.org">OpenStreetMap</a> is <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a></div>
 <p>&nbsp;</p>
   </body>
 </html>
