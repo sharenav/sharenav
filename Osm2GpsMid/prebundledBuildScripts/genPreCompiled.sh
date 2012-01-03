@@ -136,7 +136,6 @@ genPBF denmark Denmark Dk
 genPBF estonia Estonia Ee
 genPBF finland Finland Fi
 genPBF finland Helsinki Hel
-genPBF france Paris P
 genBZ2 georgia Georgia Ge
 genPBF germany Stuttgart St
 genPBF germany Schleswig SW
@@ -157,6 +156,7 @@ genPBF great_britain NorthEngland NEng
 genPBF greece Greece Gr
 genPBF hungary Hungary Hu
 genBZ2 iceland Iceland Is
+genPBF ile-de-france Paris P
 genPBF ireland Ireland Ie
 genPBF italy Rome Rome
 genPBF italy Milano Milano

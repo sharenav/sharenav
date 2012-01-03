@@ -66,7 +66,6 @@ wget http://download.cloudmade.com/asia/western_asia/united_arab_emirates/united
 wget http://downloads.cloudmade.com/asia/western_asia/georgia/georgia.osm.bz2 -O /home/apmon/planet_dumps/georgia.osm.bz2
 wget http://downloads.cloudmade.com/asia/western_asia/armenia/armenia.osm.bz2 -O /home/apmon/planet_dumps/armenia.osm.bz2
 wget http://downloads.cloudmade.com/asia/south-eastern_asia/myanmar/myanmar.osm.bz2 -O /home/apmon/planet_dumps/myanmar.osm.bz2
-wget http://downloads.cloudmade.com/asia/northern_asia/russia/russia.osm.bz2 -O /home/apmon/planet_dumps/russia.osm.bz2
 
 # Australia
 wget http://download.geofabrik.de/osm/australia-oceania.osm.pbf -O /home/apmon/planet_dumps/australia-oceania.osm.pbf
@@ -91,7 +90,7 @@ wget http://download.geofabrik.de/osm/europe/slovenia.osm.bz2 -O /home/apmon/pla
 wget http://download.geofabrik.de/osm/europe/belgium.osm.pbf -O /home/apmon/planet_dumps/belgium.osm.pbf
 wget http://download.geofabrik.de/osm/europe/belarus.osm.pbf -O /home/apmon/planet_dumps/belarus.osm.pbf
 wget http://download.geofabrik.de/osm/europe/czech_republic.osm.pbf -O /home/apmon/planet_dumps/czech_republic.osm.pbf
-wget http://download.geofabrik.de/osm/europe/france.osm.pbf -O /home/apmon/planet_dumps/france.osm.pbf
+wget http://download.geofabrik.de/osm/europe/france/ile-de-france.osm.pbf -O /home/apmon/planet_dumps/france.osm.pbf
 wget http://download.geofabrik.de/osm/europe/germany.osm.pbf -O /home/apmon/planet_dumps/germany.osm.pbf
 wget http://download.geofabrik.de/osm/europe/great_britain.osm.pbf -O /home/apmon/planet_dumps/great_britain.osm.pbf
 wget http://download.geofabrik.de/osm/europe/netherlands.osm.pbf -O /home/apmon/planet_dumps/netherlands.osm.pbf
