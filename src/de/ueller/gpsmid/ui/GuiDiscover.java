@@ -164,35 +164,37 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 															Command.OK, 2);
 
 	/** A menu list instance */
-	private final List menu = new List(Locale.get("guidiscover.Setup")/*Setup*/, Choice.IMPLICIT, elements, null);
+	private final List menu = new List(Locale.get("guidiscover.Setup")/*Setup*/, 
+			Choice.IMPLICIT, elements, null);
 
 	private List menuBT;
 	private List menuNMEAOptsList;
 
-	private final List menuFS = new List(Locale.get("guidiscover.Devices")/*Devices*/, Choice.IMPLICIT, empty, null);
+	private final List menuFileSel = new List(Locale.get("guidiscover.Devices")/*Devices*/, 
+			Choice.IMPLICIT, empty, null);
 
-	private Form					menuSelectLocProv;
+	private Form menuSelectLocProv;
 	
-	private Form					menuSelectMapSource;
+	private Form menuSelectMapSource;
 	
-	private Form					menuDisplayOptions;
+	private Form menuDisplayOptions;
 	
-	private Form					menuGpx;
+	private Form menuGpx;
 	
-	private Form					menuDebug;
+	private Form menuDebug;
 
-	private Form					menuRoutingOptions;
+	private Form menuRoutingOptions;
 	
-	private Form					menuURLEnter;
+	private Form menuURLEnter;
 	
 	//#if polish.api.osm-editing
-	private Form					menuOsmAccountOptions;
+	private Form menuOsmAccountOptions;
 	//#endif
-	private Form					menuOnlineOptions;
+	private Form menuOnlineOptions;
 
-	private Form					menuNMEAOptions;
+	private Form menuNMEAOptions;
 	
-	private Form					menuOpencellidOptions;
+	private Form menuOpencellidOptions;
 
 	private final GpsMid			parent;
 
@@ -283,9 +285,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		menu.setCommandListener(this);
 		menu.setSelectCommand(OK_CMD);
 
-		//Prepare ??? menu
-		menuFS.addCommand(BACK_CMD);
-		menuFS.setCommandListener(this);
+		//Prepare file select menu
+		menuFileSel.addCommand(BACK_CMD);
+		menuFileSel.setCommandListener(this);
 
 		show();
 	}
@@ -1589,12 +1591,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	}
 
 	public void fsDiscoverReady() {
-		menuFS.addCommand(STORE_ROOTFS);
-		menuFS.setTitle(Locale.get("guidiscover.SelectRoot")/*Select Root*/);
+		menuFileSel.addCommand(STORE_ROOTFS);
+		menuFileSel.setTitle(Locale.get("guidiscover.SelectRoot")/*Select Root*/);
 	}
 
 	public void addRootFs(String root) {
-		menuFS.append(root, null);
+		menuFileSel.append(root, null);
 	}
 
 	public void btDiscoverReady() {
