@@ -92,7 +92,6 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	private final String appVersion; 
 	private boolean initDone = false;
 
-	//#style mainScreen
 	List menuSplash = new List("GpsMid", List.IMPLICIT);
 
 	public Splash(GpsMid main, boolean initDone) {
@@ -179,15 +178,15 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	}
 
 	public void menu() {
-		//#style mainCommand
+		//#style listItem
 		menuSplash.append(Locale.get("splash.Accept"), null);
-		//#style mainCommand
+		//#style listItem
 		menuSplash.append(Locale.get("splash.Deny"), null);
-		//#style mainCommand
+		//#style listItem
 		menuSplash.append(Locale.get("splash.enable"), null);
-		//#style mainCommand
+		//#style listItem
 		menuSplash.append(Locale.get("splash.disable"), null);
-		//#style mainCommand
+		//#style listItem
 		menuSplash.append("Switch to English", null);
 		menuSplash.setCommandListener(this);
 		menuSplash.addCommand(BACK_CMD);

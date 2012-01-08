@@ -1,48 +1,34 @@
-.mainScreen {
-	padding: 2;
-	padding-left: 10;
-	padding-right: 10;
-	layout: horizontal-center | vertical-center;
-	view-type: verticalfixed;
-}
-.mainCommand {
-	padding: 0;
-	padding-vertical: 0;
-	layout: center;
-	font-color: white;
-	font-style: normal;
-	font-size: small;
-	font-face: proportional;
-	background-color: black;
-}
-.mainCommand:hover {
-	font-style: bold;
-	font-size: small;
-	font-color: white;
-	font-face: proportional;
-	text-effect: shadow;
-}
-.trackScreen {
-	padding: 0;
-	padding-left: 0;
-	padding-right: 10;
-	margin: 10;
-	view-type: verticalfixed;
-}
-.trackCommand {
-	padding: 8;
-	padding-vertical: 28;
+listItem {
 	font-color: black;
 	font-style: normal;
-	font-size: medium;
+	font-size: normal;
 	font-face: proportional;
-	padding: 2;
 	background-color: white;
-	border-color: black;
-	min-height: 15; 
-	min-width: 80;
-	textfield-caret-color: red;
-	textfield-show-length: true;
+	border-type: bottom;
+	border-color: gray;
+	layout: expand;
+	padding: 4%;
+	focused-style: listItemFocused;
+}
+listItemFocused extends listItem {
+	font-color: white;
+	background-color: black;
+}
+formItem {
+	font-color: black;
+	font-style: normal;
+	font-size: normal;
+	font-face: proportional;
+	background-color: white;
+	border-type: bottom;
+	border-color: gray;
+	layout: expand;
+	padding: 4%;
+	focused-style: formItemFocused;
+}
+formItemFocused extends formItem {
+	font-color: white;
+	background-color: black;
 }
 title {
 	padding: 2;
@@ -51,12 +37,10 @@ title {
 	margin-left: 0;
 	margin-right: 0;
 	font-face: proportional;
-	font-size: large;
+	font-size: normal;
 	font-style: bold;
 	font-color: white;
-	background {
-		color: gray;
-	}
+	background-color: black;
 	border: none;
 	layout: horizontal-center | horizontal-expand;
 }
@@ -83,7 +67,7 @@ info {
 	border-color: black;
 	font-style: plain; 
 	font-face: proportional; 
-	font-size: small; 
+	font-size: large; 
 	font-color: black;
 	margin-top: 28;
 	layout: right;

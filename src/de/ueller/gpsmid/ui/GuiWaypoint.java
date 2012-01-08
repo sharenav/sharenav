@@ -115,8 +115,10 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		}
 		for (int i = 0; i < count_waypoints; i++) {
 			if ((getWaypoint(i).displayName == null) || (getWaypoint(i).displayName.equals(""))) {
+				//#style listItem
 				this.append("(" + Locale.get("guiwaypoint.unnamed")/*unnamed*/ + ")", null);
 			} else {
+				//#style listItem
 				this.append(getWaypoint(i).displayName, null);
 			}
 		}
