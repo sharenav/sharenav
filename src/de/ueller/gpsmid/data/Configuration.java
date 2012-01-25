@@ -56,7 +56,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 26;
+	public final static int VERSION = 27;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -357,6 +357,7 @@ public class Configuration {
 	// max number of search results to find before stopping search
 	private static final int RECORD_ID_SEARCH_MAX = 54;
 	private static final int RECORD_ID_POI_SEARCH_DIST = 55;
+	private static final int RECORD_ID_DEST_LINE_WIDTH = 56;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -477,7 +478,9 @@ public class Configuration {
 	
 	private static boolean hasPointerEvents;
 	private static boolean isSamsungS8000 = false;
-	
+
+	private static int destLineWidth = 2;
+
 	
 	public static void read() {
 		logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
@@ -789,6 +792,11 @@ public class Configuration {
 			// 10 km
 			setPoiSearchDistance(10f);
 		}
+		if (configVersionStored < 27) {
+			// 10 km
+			setDestLineWidth(2);
+		}
+
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);
 	}
 
@@ -1659,6 +1667,17 @@ public class Configuration {
 		Configuration.routeEstimationFac = routeEstimationFac;
 	}
 
+	
+	public static int getDestLineWidth() {
+		return destLineWidth;
+	}
+
+	public static void setDestLineWidth(int destLineWidth) {
+		write(destLineWidth, RECORD_ID_DEST_LINE_WIDTH);
+		Configuration.destLineWidth = destLineWidth;
+	}
+	
+	
 	public static int getBaseScale() {
 		return baseScale;
 	}

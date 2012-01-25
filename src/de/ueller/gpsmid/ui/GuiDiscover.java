@@ -248,6 +248,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup directionOpts;
 	private ChoiceGroup renderOpts;
 	private ChoiceGroup visualOpts;
+	private TextField	tfDestLineWidth;
 	private ChoiceGroup perfTuneOpts;
 	private ChoiceGroup metricUnits;
 	private ChoiceGroup distanceViews;
@@ -521,6 +522,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		visuals[1] = Locale.get("guidiscover.roundroadends")/*round road ends*/;
 		visualOpts = new ChoiceGroup(Locale.get("guidiscover.VisualOptions")/*Visual Options:*/, Choice.MULTIPLE, visuals, null);
 		menuDisplayOptions.append(visualOpts);
+		
+		tfDestLineWidth = new TextField(Locale.get("guidiscover.DestLineWidth")/*width of dest line*/, Integer.toString(Configuration.getDestLineWidth()), 1, TextField.DECIMAL);
+		menuDisplayOptions.append(tfDestLineWidth);
 		
 		String [] perfTune = new String[1];
 		perfTune[0] = Locale.get("guidiscover.simplify")/*Simplify map when busy*/;
@@ -1416,6 +1420,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS, ! sellight[0]);
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUND_WAY_ENDS, sellight[1]);
 
+		String w=tfDestLineWidth.getString(); 
+		Configuration.setDestLineWidth( 
+				(int) (Float.parseFloat(w)) 
+		);
+		
 		state = STATE_ROOT;
 		show();
 

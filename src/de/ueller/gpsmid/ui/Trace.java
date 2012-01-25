@@ -77,6 +77,7 @@ import de.ueller.gpsmid.mapdata.DictReader;
 import de.ueller.gpsmid.mapdata.QueueDataReader;
 import de.ueller.gpsmid.mapdata.QueueDictReader;
 import de.ueller.gpsmid.mapdata.Way;
+import de.ueller.gpsmid.mapdata.WaySegment;
 import de.ueller.gpsmid.names.Names;
 import de.ueller.gpsmid.names.Urls;
 import de.ueller.gpsmid.routing.RouteInstructions;
@@ -385,6 +386,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private final Runtime runtime = Runtime.getRuntime();
 
 	private RoutePositionMark dest = null;
+	
+	WaySegment waySegment = new WaySegment();
+	
 	public Vector route = null;
 	private RouteInstructions ri = null;
 	
@@ -2382,10 +2386,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				pc.g.drawString(dest.displayName, x, y+8,
 					Graphics.TOP | Graphics.HCENTER);
 			}
-			pc.g.setColor(Legend.COLORS[Legend.COLOR_DEST_LINE]);
 			pc.g.setStrokeStyle(Graphics.SOLID);
-			pc.g.drawLine( pc.getP().getImageCenter().x - imageCollector.xScreenOverscan,
-					pc.getP().getImageCenter().y - imageCollector.yScreenOverscan,x, y);
+			waySegment.drawWideLine(
+				Legend.COLORS[Legend.COLOR_DEST_LINE],
+				new IntPoint(pc.getP().getImageCenter().x - imageCollector.xScreenOverscan, pc.getP().getImageCenter().y - imageCollector.yScreenOverscan),
+				new IntPoint(x, y),
+				Configuration.getDestLineWidth(), 0, pc
+			);
+			
 		}
 		} catch (Exception e) {
 			if (imageCollector == null) {
