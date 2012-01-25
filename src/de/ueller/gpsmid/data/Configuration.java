@@ -920,149 +920,7 @@ public class Configuration {
 		}
 	}
 	
-	public static void serialise(OutputStream os) throws IOException {
-		DataOutputStream dos = new DataOutputStream(os);
-		dos.writeInt(VERSION);
-		dos.writeLong(cfgBitsDefault_0_to_63);
-		dos.writeLong(cfgBitsDefault_64_to_127);
-		dos.writeUTF(sanitizeString(btUrl));
-		dos.writeInt(locationProvider);
-		dos.writeUTF(sanitizeString(gpxUrl));
-		dos.writeUTF(sanitizeString(photoUrl));
-		dos.writeUTF(sanitizeString(photoEncoding));
-		dos.writeBoolean(mapFromJar);
-		dos.writeUTF(sanitizeString(mapFileUrl));
-		dos.writeUTF(sanitizeString(rawGpsLogUrl));
-		dos.writeBoolean(rawGpsLogEnable);
-		dos.writeInt(detailBoostDefault);
-		dos.writeInt(detailBoostDefaultPOI);
-		dos.writeInt(gpxRecordRuleMode);
-		dos.writeInt(gpxRecordMinMilliseconds);
-		dos.writeInt(gpxRecordMinDistanceCentimeters);
-		dos.writeInt(gpxRecordAlwaysDistanceCentimeters);
-		dos.writeUTF(sanitizeString(rawDebugLogUrl));
-		dos.writeBoolean(rawDebugLogEnable);
-		dos.writeInt(debugSeverity);
-		dos.writeInt(routeEstimationFac);
-		dos.writeInt(continueMapWhileRouteing);
-		dos.writeBoolean(btKeepAlive);
-		dos.writeBoolean(btAutoRecon);
-		dos.writeUTF(sanitizeString(smsRecipient));
-		dos.writeInt(speedTolerance);
-		dos.writeUTF(sanitizeString(osm_username));
-		dos.writeUTF(sanitizeString(osm_pwd));
-		dos.writeUTF(sanitizeString(osm_url));
-		dos.writeUTF(sanitizeString(opencellid_apikey));
-		dos.writeInt(getMinRouteLineWidth());
-		dos.writeInt(getAutoRecenterToGpsMilliSecs());
-		dos.writeInt(getTravelModeNr());
-		dos.writeLong(getPhoneAllTimeMaxMemory());
-		dos.writeInt(getMainStreetDistanceKm());
-		dos.writeInt(getDetailBoostPOI());
-		dos.writeInt(getTrafficSignalCalcDelay());
-		dos.writeInt(getWaypointSortMode());
-		dos.writeInt(getBackLightLevel());
-		dos.writeInt(getBaseScale());
-		dos.writeUTF(sanitizeString(getUiLang()));
-		dos.writeUTF(sanitizeString(getNaviLang()));
-		dos.writeUTF(sanitizeString(getOnlineLang()));
-		dos.writeUTF(sanitizeString(getWikipediaLang()));
-		dos.writeUTF(sanitizeString(getNamesOnMapLang()));
-		dos.writeUTF(sanitizeString(getSoundDirectory()));
-		dos.writeInt(getProjDefault());
-		dos.writeInt(getSearchMax());
-		dos.writeInt(getDestLineWidth());
-		/*
-		 * Don't store destpos in export - perhaps later add a function for "move the app" which would store also destpos
-		dos.writeUTF(Float.toString(destPos.radlat));
-		dos.writeUTF(Float.toString(destPos.radlon));
-		*/
-		dos.flush();
-	}
-	
-	public static void deserialise(InputStream is) throws IOException {
-		DataInputStream dis = new DataInputStream(is);
-		int version = dis.readInt();
-		// compatibility with versions 21 and 23
-		if (version != VERSION && !(version >= 21 && version <= 24)) {
-			throw new IOException(Locale.get("configuration.ConfigVersionMismatch")/*Version of the stored config does not match with current GpsMid*/);
-		}
-		boolean destPosValid = getCfgBitSavedState(CFGBIT_SAVED_DESTPOS_VALID);
-		setCfgBits(dis.readLong(), dis.readLong());
-		setCfgBitSavedState(CFGBIT_SAVED_DESTPOS_VALID, destPosValid);
-		setBtUrl(desanitizeString(dis.readUTF()));
-		setLocationProvider(dis.readInt());
-		setGpxUrl(desanitizeString(dis.readUTF()));
-		setPhotoUrl(desanitizeString(dis.readUTF()));
-		setPhotoEncoding(desanitizeString(dis.readUTF()));
-		setBuiltinMap(dis.readBoolean());
-		setMapUrl(desanitizeString(dis.readUTF()));
-		setGpsRawLoggerUrl(desanitizeString(dis.readUTF()));
-		setGpsRawLoggerEnable(dis.readBoolean());
-		setDetailBoost(dis.readInt(), true);
-		setDetailBoostPOI(dis.readInt(), true);
-		setGpxRecordRuleMode(dis.readInt());
-		setGpxRecordMinMilliseconds(dis.readInt());
-		setGpxRecordMinDistanceCentimeters(dis.readInt());
-		setGpxRecordAlwaysDistanceCentimeters(dis.readInt());
-		setDebugRawLoggerUrl(desanitizeString(dis.readUTF()));
-		setDebugRawLoggerEnable(dis.readBoolean());
-		debugSeverity = dis.readInt();
-		write(debugSeverity, RECORD_ID_LOG_DEBUG_SEVERITY);
-		setRouteEstimationFac(dis.readInt());
-		setContinueMapWhileRouteing(dis.readInt());
-		setBtKeepAlive(dis.readBoolean());
-		setBtAutoRecon(dis.readBoolean());
-		setSmsRecipient(desanitizeString(dis.readUTF()));
-		setSpeedTolerance(dis.readInt());
-		setOsmUsername(desanitizeString(dis.readUTF()));
-		setOsmPwd(desanitizeString(dis.readUTF()));
-		setOsmUrl(desanitizeString(dis.readUTF()));
-		setOpencellidApikey(desanitizeString(dis.readUTF()));
-		// compatibility with format 21
-		if (version >= 22) {
-			setMinRouteLineWidth(dis.readInt());
-			setAutoRecenterToGpsMilliSecs(dis.readInt());			
-			setTravelMode(dis.readInt());
-			setPhoneAllTimeMaxMemory(dis.readLong());
-			setMainStreetDistanceKm(dis.readInt());
-			setDetailBoostPOI(dis.readInt(), true);
-			setTrafficSignalCalcDelay(dis.readInt());
-			setWaypointSortMode(dis.readInt());
-			setBackLightLevel(dis.readInt());
-			setBaseScale(dis.readInt());
-			setUiLang(desanitizeString(dis.readUTF()));
-			setNaviLang(desanitizeString(dis.readUTF()));
-			setOnlineLang(desanitizeString(dis.readUTF()));
-			setWikipediaLang(desanitizeString(dis.readUTF()));
-			setNamesOnMapLang(desanitizeString(dis.readUTF()));
-			setSoundDirectory(desanitizeString(dis.readUTF()));
-			projTypeDefault = (byte) dis.readInt();
-			ProjFactory.setProj(projTypeDefault);
-			calculateRealBaseScale();
-			/*
-			Node pos = new Node(0.0f, 0.0f);
-			try {
-				pos.radlat = Float.parseFloat(desanitizeString(dis.readUTF()));
-				pos.radlon = Float.parseFloat(desanitizeString(dis.readUTF()));
-			} catch (NumberFormatException nfe) {
-				logger.exception(Locale.get("configuration.ErrorParsingPos")Error parsing pos: , nfe);
-			}
-			setDestPos(pos);
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_SAVED_DESTPOS_VALID)) {
-				Node destNode = new Node();
-				Configuration.getDestPos(destNode);
-				Trace.getInstance().setDestination(new RoutePositionMark(destNode.radlat, destNode.radlon));
-			}
-			*/
-		}
-		if (version >= 23) {
-			searchMax = dis.readInt();
-		}
-		if (version >= 27) {
-			destLineWidth = dis.readInt();
-		}
-	}
+
 	
 	public static String getGpsRawLoggerUrl() {
 		return rawGpsLogUrl;
@@ -2315,6 +2173,151 @@ public class Configuration {
 		
 		} catch (IOException ioe) {
 			logger.exception(Locale.get("configuration.Err2SaveKeyshortcuts")/*Failed to save keyshortcuts*/, ioe);
+		}
+	}
+
+	
+	public static void serialise(OutputStream os) throws IOException {
+		DataOutputStream dos = new DataOutputStream(os);
+		dos.writeInt(VERSION);
+		dos.writeLong(cfgBitsDefault_0_to_63);
+		dos.writeLong(cfgBitsDefault_64_to_127);
+		dos.writeUTF(sanitizeString(btUrl));
+		dos.writeInt(locationProvider);
+		dos.writeUTF(sanitizeString(gpxUrl));
+		dos.writeUTF(sanitizeString(photoUrl));
+		dos.writeUTF(sanitizeString(photoEncoding));
+		dos.writeBoolean(mapFromJar);
+		dos.writeUTF(sanitizeString(mapFileUrl));
+		dos.writeUTF(sanitizeString(rawGpsLogUrl));
+		dos.writeBoolean(rawGpsLogEnable);
+		dos.writeInt(detailBoostDefault);
+		dos.writeInt(detailBoostDefaultPOI);
+		dos.writeInt(gpxRecordRuleMode);
+		dos.writeInt(gpxRecordMinMilliseconds);
+		dos.writeInt(gpxRecordMinDistanceCentimeters);
+		dos.writeInt(gpxRecordAlwaysDistanceCentimeters);
+		dos.writeUTF(sanitizeString(rawDebugLogUrl));
+		dos.writeBoolean(rawDebugLogEnable);
+		dos.writeInt(debugSeverity);
+		dos.writeInt(routeEstimationFac);
+		dos.writeInt(continueMapWhileRouteing);
+		dos.writeBoolean(btKeepAlive);
+		dos.writeBoolean(btAutoRecon);
+		dos.writeUTF(sanitizeString(smsRecipient));
+		dos.writeInt(speedTolerance);
+		dos.writeUTF(sanitizeString(osm_username));
+		dos.writeUTF(sanitizeString(osm_pwd));
+		dos.writeUTF(sanitizeString(osm_url));
+		dos.writeUTF(sanitizeString(opencellid_apikey));
+		dos.writeInt(getMinRouteLineWidth());
+		dos.writeInt(getAutoRecenterToGpsMilliSecs());
+		dos.writeInt(getTravelModeNr());
+		dos.writeLong(getPhoneAllTimeMaxMemory());
+		dos.writeInt(getMainStreetDistanceKm());
+		dos.writeInt(getDetailBoostPOI());
+		dos.writeInt(getTrafficSignalCalcDelay());
+		dos.writeInt(getWaypointSortMode());
+		dos.writeInt(getBackLightLevel());
+		dos.writeInt(getBaseScale());
+		dos.writeUTF(sanitizeString(getUiLang()));
+		dos.writeUTF(sanitizeString(getNaviLang()));
+		dos.writeUTF(sanitizeString(getOnlineLang()));
+		dos.writeUTF(sanitizeString(getWikipediaLang()));
+		dos.writeUTF(sanitizeString(getNamesOnMapLang()));
+		dos.writeUTF(sanitizeString(getSoundDirectory()));
+		dos.writeInt(getProjDefault());
+		dos.writeInt(getSearchMax());
+		dos.writeInt(getDestLineWidth());
+		/*
+		 * Don't store destpos in export - perhaps later add a function for "move the app" which would store also destpos
+		dos.writeUTF(Float.toString(destPos.radlat));
+		dos.writeUTF(Float.toString(destPos.radlon));
+		*/
+		dos.flush();
+	}
+	
+	public static void deserialise(InputStream is) throws IOException {
+		DataInputStream dis = new DataInputStream(is);
+		int version = dis.readInt();
+		// compatibility with versions 21 and 23
+		if (version != VERSION && !(version >= 21 && version <= 24)) {
+			throw new IOException(Locale.get("configuration.ConfigVersionMismatch")/*Version of the stored config does not match with current GpsMid*/);
+		}
+		boolean destPosValid = getCfgBitSavedState(CFGBIT_SAVED_DESTPOS_VALID);
+		setCfgBits(dis.readLong(), dis.readLong());
+		setCfgBitSavedState(CFGBIT_SAVED_DESTPOS_VALID, destPosValid);
+		setBtUrl(desanitizeString(dis.readUTF()));
+		setLocationProvider(dis.readInt());
+		setGpxUrl(desanitizeString(dis.readUTF()));
+		setPhotoUrl(desanitizeString(dis.readUTF()));
+		setPhotoEncoding(desanitizeString(dis.readUTF()));
+		setBuiltinMap(dis.readBoolean());
+		setMapUrl(desanitizeString(dis.readUTF()));
+		setGpsRawLoggerUrl(desanitizeString(dis.readUTF()));
+		setGpsRawLoggerEnable(dis.readBoolean());
+		setDetailBoost(dis.readInt(), true);
+		setDetailBoostPOI(dis.readInt(), true);
+		setGpxRecordRuleMode(dis.readInt());
+		setGpxRecordMinMilliseconds(dis.readInt());
+		setGpxRecordMinDistanceCentimeters(dis.readInt());
+		setGpxRecordAlwaysDistanceCentimeters(dis.readInt());
+		setDebugRawLoggerUrl(desanitizeString(dis.readUTF()));
+		setDebugRawLoggerEnable(dis.readBoolean());
+		debugSeverity = dis.readInt();
+		write(debugSeverity, RECORD_ID_LOG_DEBUG_SEVERITY);
+		setRouteEstimationFac(dis.readInt());
+		setContinueMapWhileRouteing(dis.readInt());
+		setBtKeepAlive(dis.readBoolean());
+		setBtAutoRecon(dis.readBoolean());
+		setSmsRecipient(desanitizeString(dis.readUTF()));
+		setSpeedTolerance(dis.readInt());
+		setOsmUsername(desanitizeString(dis.readUTF()));
+		setOsmPwd(desanitizeString(dis.readUTF()));
+		setOsmUrl(desanitizeString(dis.readUTF()));
+		setOpencellidApikey(desanitizeString(dis.readUTF()));
+		// compatibility with format 21
+		if (version >= 22) {
+			setMinRouteLineWidth(dis.readInt());
+			setAutoRecenterToGpsMilliSecs(dis.readInt());			
+			setTravelMode(dis.readInt());
+			setPhoneAllTimeMaxMemory(dis.readLong());
+			setMainStreetDistanceKm(dis.readInt());
+			setDetailBoostPOI(dis.readInt(), true);
+			setTrafficSignalCalcDelay(dis.readInt());
+			setWaypointSortMode(dis.readInt());
+			setBackLightLevel(dis.readInt());
+			setBaseScale(dis.readInt());
+			setUiLang(desanitizeString(dis.readUTF()));
+			setNaviLang(desanitizeString(dis.readUTF()));
+			setOnlineLang(desanitizeString(dis.readUTF()));
+			setWikipediaLang(desanitizeString(dis.readUTF()));
+			setNamesOnMapLang(desanitizeString(dis.readUTF()));
+			setSoundDirectory(desanitizeString(dis.readUTF()));
+			projTypeDefault = (byte) dis.readInt();
+			ProjFactory.setProj(projTypeDefault);
+			calculateRealBaseScale();
+			/*
+			Node pos = new Node(0.0f, 0.0f);
+			try {
+				pos.radlat = Float.parseFloat(desanitizeString(dis.readUTF()));
+				pos.radlon = Float.parseFloat(desanitizeString(dis.readUTF()));
+			} catch (NumberFormatException nfe) {
+				logger.exception(Locale.get("configuration.ErrorParsingPos")Error parsing pos: , nfe);
+			}
+			setDestPos(pos);
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_SAVED_DESTPOS_VALID)) {
+				Node destNode = new Node();
+				Configuration.getDestPos(destNode);
+				Trace.getInstance().setDestination(new RoutePositionMark(destNode.radlat, destNode.radlon));
+			}
+			*/
+		}
+		if (version >= 23) {
+			searchMax = dis.readInt();
+		}
+		if (version >= 27) {
+			destLineWidth = dis.readInt();
 		}
 	}
 	
