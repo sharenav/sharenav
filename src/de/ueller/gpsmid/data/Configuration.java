@@ -971,6 +971,7 @@ public class Configuration {
 		dos.writeUTF(sanitizeString(getSoundDirectory()));
 		dos.writeInt(getProjDefault());
 		dos.writeInt(getSearchMax());
+		dos.writeInt(getDestLineWidth());
 		/*
 		 * Don't store destpos in export - perhaps later add a function for "move the app" which would store also destpos
 		dos.writeUTF(Float.toString(destPos.radlat));
@@ -1057,6 +1058,9 @@ public class Configuration {
 		}
 		if (version >= 23) {
 			searchMax = dis.readInt();
+		}
+		if (version >= 27) {
+			destLineWidth = dis.readInt();
 		}
 	}
 	
