@@ -793,7 +793,6 @@ public class Configuration {
 			setPoiSearchDistance(10f);
 		}
 		if (configVersionStored < 27) {
-			// 10 km
 			setDestLineWidth(2);
 		}
 
