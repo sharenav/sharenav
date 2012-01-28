@@ -30,6 +30,7 @@ import de.ueller.gpsmid.routing.TravelMode;
 import de.ueller.gpsmid.tile.SingleTile;
 import de.ueller.gpsmid.tile.Tile;
 import de.ueller.gpsmid.ui.Trace;
+import de.ueller.midlet.graphics.FilledTriangle;
 import de.ueller.util.IntPoint;
 import de.ueller.util.Logger;
 import de.ueller.util.MoreMath;
@@ -2175,6 +2176,8 @@ public class Way extends Entity {
 		IntPoint p2 = pc.swapLineP;
 		IntPoint p3 = pc.tempPoint;
 		pc.g.setColor(wayDesc.lineColor);
+		boolean dashed = (wayDesc.getGraphicsLineStyle() == WayDescription.WDFLAG_LINESTYLE_DOTTED);
+
 		for (int i1 = 0; i1 < path.length; ){
 //			pc.g.setColor(wayDesc.lineColor);
 			int idx = path[i1++];	
@@ -2183,7 +2186,11 @@ public class Way extends Entity {
 			p.forward(t.nodeLat[idx],t.nodeLon[idx],p2,t);
 			idx = path[i1++];	
 			p.forward(t.nodeLat[idx],t.nodeLon[idx],p3,t);
-			pc.g.fillTriangle(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
+			if (dashed) {
+				FilledTriangle.fillTriangle(pc, p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
+			} else {
+				pc.g.fillTriangle(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
+			}
 //			pc.g.setColor(0);
 //#if polish.android
 			pc.g.drawLine(p1.x,p1.y,p2.x,p2.y);
