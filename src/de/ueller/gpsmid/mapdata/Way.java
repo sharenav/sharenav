@@ -2113,8 +2113,6 @@ public class Way extends Entity {
 		//#else
 		WayDescription wayDesc = Legend.getWayDescription((short) (type & 0xff));
 		//#endif
-
-		pc.g.setColor(wayDesc.lineColor);
 		
 		//#if polish.api.bigstyles
 		byte om = Legend.getWayOverviewMode(type);
