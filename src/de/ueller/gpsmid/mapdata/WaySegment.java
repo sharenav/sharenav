@@ -162,21 +162,10 @@ public class WaySegment {
     	pc.g.setColor(color);
 	    if (linewidth <= 1){ // a line with px1 width is faster drawn directly
 	    	pc.g.drawLine(point1.x,point1.y,point2.x,point2.y);
-	    }
-	    else if (linewidth == 0) {
-	    	// do nothing
-	    }
-	    else{
-
+	    } else {
 	        switch (align){
-	        case 2:        				
-		        linePoints.set(point1,point2,linewidth*2);
-	        						
-				//Change the one side
-				linePoints.a.x=point1.x;
-				linePoints.a.y=point1.y;
-				linePoints.c.x=point2.x;
-				linePoints.c.y=point2.y;
+	        case 0:
+		        linePoints.set(point1,point2,linewidth);
 				break;
 	        case 1:
 		        linePoints.set(point1,point2,linewidth*2);
@@ -185,8 +174,14 @@ public class WaySegment {
 	        	linePoints.d.x=point2.x;
 	        	linePoints.d.y=point2.y;	        	
 			    break;
-	        case 0:
-		        linePoints.set(point1,point2,linewidth);
+	        case 2:        				
+		        linePoints.set(point1,point2,linewidth*2);
+	        						
+				//Change the one side
+				linePoints.a.x=point1.x;
+				linePoints.a.y=point1.y;
+				linePoints.c.x=point2.x;
+				linePoints.c.y=point2.y;
 				break;
 	        }
 	        
