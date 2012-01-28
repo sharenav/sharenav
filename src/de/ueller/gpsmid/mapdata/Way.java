@@ -2188,14 +2188,13 @@ public class Way extends Entity {
 				FilledTriangle.fillTriangle(pc, p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
 			} else {
 				pc.g.fillTriangle(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
-			}
-//			pc.g.setColor(0);
+// TODO: Please add comment why this code is necessary on Android				
 //#if polish.android
-			pc.g.drawLine(p1.x,p1.y,p2.x,p2.y);
-			pc.g.drawLine(p2.x,p2.y,p3.x,p3.y);
-			pc.g.drawLine(p1.x,p1.y,p3.x,p3.y);
+				pc.g.drawLine(p1.x,p1.y,p2.x,p2.y);
+				pc.g.drawLine(p2.x,p2.y,p3.x,p3.y);
+				pc.g.drawLine(p1.x,p1.y,p3.x,p3.y);
 //#endif
-			
+			}			
 		}
 		paintAreaName(pc,t);
 	}
