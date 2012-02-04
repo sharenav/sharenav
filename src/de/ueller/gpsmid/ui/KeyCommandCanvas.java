@@ -1,8 +1,9 @@
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
  * 			Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net 
- * See Copying
+ * See file COPYING
  */
+
 package de.ueller.gpsmid.ui;
 
 import java.util.Timer;
@@ -42,7 +43,7 @@ public abstract class KeyCommandCanvas extends Canvas implements
 	protected IntTree nonReleasableKeyPressCommand = new IntTree();
 
 	/*
-	 * Explicitly make this function static, as otherwise some jvm implementations
+	 * Explicitly make this function static, as otherwise some JVM implementations
 	 * can't find the commandAction method in the inherited object.
 	 */
 	abstract public void commandAction(Command c, Displayable d);
@@ -59,28 +60,24 @@ public abstract class KeyCommandCanvas extends Canvas implements
 		if (keyboardLocked &&
 		    (keyCode != KEY_NUM9 && keyCode != 110)) {
 			GpsMid.getInstance().alert("GpsMid",
-						   (hasPointerEvents() ? Locale.get("keycommandcanvas.KeysAndTouchscreen")/*Keys and touchscreen locked. Hold down 9 or slide right on way bar to unlock.*/ : Locale.get("keycommandcanvas.KeysLocked")/*Keys locked. Hold down 9 to unlock.*/),					
-					3000);
+				(hasPointerEvents() ? Locale.get("keycommandcanvas.KeysAndTouchscreen")/*Keys and touchscreen locked. Hold down 9 or slide right on way bar to unlock.*/ 
+						: Locale.get("keycommandcanvas.KeysLocked")/*Keys locked. Hold down 9 to unlock.*/),					
+				3000);
 			ignoreKeyCode = keyCode;
 			return;
 		}
 
-//#if polish.android
+		//#if polish.android
 		//GpsMid.getInstance().alert("keycode", "keycode = " + keyCode, 3000);
-		if (keyCode == 0) {
+		if (keyCode == KeyEvent.KEYCODE_UNKNOWN) {
 			// #debug debug
 			logger.debug("  Turning key into SEARCH_CMD");
 			commandAction(Trace.getInstance().getCommand(Trace.SEARCH_CMD), (Displayable) null);
 			return;
 		}
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			// #debug debug
-			logger.debug("  Turning BACK key into ICON_MENU_CMD");
-			commandAction(Trace.getInstance().getCommand(Trace.ICON_MENU), (Displayable) null);
-			return;
-		}
-//#endif
-		// handle actions for repeatable keys like direction keys immediately
+		//#endif
+		
+		// Handle actions for repeatable keys like direction keys immediately
 		Command c = (Command) repeatableKeyPressCommand.get(keyCode);
 		if (c == null) {
 			/**
