@@ -201,51 +201,51 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	// endif
 
 	public void commandAction(Command c, Displayable d) {
-        if (c == SELECT_CMD) {
-		shutdown = true;
-		int choice = menuSplash.getSelectedIndex();
-		Command choices[] = {BACK_CMD, EXIT_CMD, ENABLE_CMD, DISABLE_CMD, ENGLISH_CMD};
-		commandAction(choices[choice], null);
+		if (c == SELECT_CMD) {
+			shutdown = true;
+			int choice = menuSplash.getSelectedIndex();
+			Command choices[] = {BACK_CMD, EXIT_CMD, ENABLE_CMD, DISABLE_CMD, ENGLISH_CMD};
+			commandAction(choices[choice], null);
         	return;
         }
         if (c == BACK_CMD) {
         	shutdown = true;
-		GpsMid.getInstance().showMapScreen();
+        	GpsMid.showMapScreen();
         	return;
         }
         if (c == EXIT_CMD) {
         	shutdown = true;
         	Configuration.setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, false, true);
 //#if polish.android
-		Configuration.setCfgBitState(Configuration.CFGBIT_RUNNING, false, true);
-		main.notifyDestroyed();
+        	Configuration.setCfgBitState(Configuration.CFGBIT_RUNNING, false, true);
+        	main.notifyDestroyed();
 //#else
         	main.exit();
 //#endif
         	return;
         }
         if (c == ENGLISH_CMD) {
-		main.alert("Splash", "Switching to English", 3000);
-		Configuration.setUiLang("en");
-		Configuration.setNaviLang("en");
-		Configuration.setOnlineLang("en");
-		Configuration.setWikipediaLang("en");
-		Configuration.setNamesOnMapLang("en");
+        	main.alert("Splash", "Switching to English", 3000);
+        	Configuration.setUiLang("en");
+        	Configuration.setNaviLang("en");
+        	Configuration.setOnlineLang("en");
+        	Configuration.setWikipediaLang("en");
+        	Configuration.setNamesOnMapLang("en");
         	return;
         }
         if (c == ENABLE_CMD) {
-		Configuration.setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, false, true);
-		main.alert("Splash", Locale.get("splash.ShowSplash"), 3000);
+        	Configuration.setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, false, true);
+        	main.alert("Splash", Locale.get("splash.ShowSplash"), 3000);
         	return;
         }
         if (c == DISABLE_CMD) {
-		Configuration.setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, true, true);
-		main.alert("Splash", Locale.get("splash.HideSplash"), 3000);
+        	Configuration.setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, true, true);
+        	main.alert("Splash", Locale.get("splash.HideSplash"), 3000);
         	return;
         }
 	}
 
-	public void show(){
+	public void show() {
 		GpsMid.getInstance().show(this);
 	}
 
@@ -270,16 +270,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	}
 
 	protected void pointerPressed(int x, int y) {
-		if (y < getHeight() / 5) {
-			keyPressed(KEY_STAR);
-		} else
-		// around the region where England is in the map
-		if (y > (2 * getHeight() / 5) && y < (3 * getHeight() / 5) ) {
-			keyPressed(KEY_POUND);
-		} else {
-			menu();
-			//repaint();
-		}
+		menu();
 	}
 	
 	protected void keyPressed(int keyCode) {
@@ -302,7 +293,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (initDone) {
 				shutdown = true;
-				GpsMid.getInstance().showMapScreen();
+				GpsMid.showMapScreen();
 				return;
 			} else {
 				shutdown = true;
