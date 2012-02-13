@@ -142,6 +142,7 @@ public class TraceLayout extends LayoutManager {
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RECORDING_BACKGROUND]);
 		e.setAdditionalOffsX(-1);
 		e.setVRelative(ele[SOLUTION]);
+		e.setActionID(Trace.TOGGLE_RECORDING_SUSP_CMD << 16);
 	
 		e = ele[CELLID]; addElement(e,
 				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
@@ -300,7 +301,7 @@ public class TraceLayout extends LayoutManager {
 		}
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
-		e.setActionID(Trace.SAVE_WAYP_CMD);
+		e.setActionID(Trace.SAVE_WAYP_CMD + (Trace.TOGGLE_RECORDING_CMD << 16));
 
 		e = ele[SEARCH]; 
 		addElement(e,
@@ -379,6 +380,8 @@ public class TraceLayout extends LayoutManager {
 		e = ele[POINT_OF_COMPASS];
 		e.setFlag(fontFlag2);
 		e = ele[SOLUTION];
+		e.setFlag(fontFlag2);
+		e = ele[RECORDED_COUNT];
 		e.setFlag(fontFlag2);
 		e = ele[CURRENT_TIME];
 		e.setFlag(fontFlag);
