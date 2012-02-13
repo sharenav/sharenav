@@ -62,7 +62,6 @@ scale alias 1: zoomed out 21x
   <version release="0.6.0"/>
   &colors;
 
-  
 <!-- SoundFiles for these sounds are automatically included into the midlet unless useRouting=false is set in .properties file:
 	 CONNECT, DISCONNECT, PREPARE, HALF, HARD, BEAR, LEFT, RIGHT, UTURN, THEN, SOON, AGAIN, TO, ENTER_MOTORWAY, LEAVE_MOTORWAY,
 	 RAB, 1ST, 2ND, 3RD, 4TH, 5TH, 6TH, RABEXIT, CHECK_DIRECTION, ROUTE_RECALCULATION, DEST_REACHED,
@@ -85,7 +84,7 @@ scale alias 1: zoomed out 21x
 	  <value name="city">
 		<description desc = "City"/>
 		<searchIcon src="city.png"/>
-		<namekey tag="name"/>	
+		<namekey tag="name"/>
 		<scale scale="9"/>
 		<hideable hideable="false"/>
 	  </value>
@@ -324,6 +323,20 @@ scale alias 1: zoomed out 21x
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>
+	  <value name ="drinking_water">
+		<description desc = "Drinking water"/>
+		<image src="drinking_water.png"/>
+		<namekey tag="name"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>		
+	  </value>
+	  <value name ="fountain">
+		<description desc = "Fountain"/>
+		<image src="fountain.png"/>
+		<namekey tag="name"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>		
+	  </value>
 	  <value name ="toilets">
 		<description desc = "Public toilet"/>
 		<image src="toilets.png"/>
@@ -469,14 +482,14 @@ scale alias 1: zoomed out 21x
 		<textscale scale="26"/>
 	  </value>
 <!--
-<value name="*">
+	  <value name="*">
 		<description desc = "Other amenity"/>
 		<image src="otheramenity.png"/>
 		<namekey tag="name"/>
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	   </value>
-      -->
+-->
 	</key>
 	<key tag="leisure">
 	  <value name ="water_park">
@@ -596,13 +609,13 @@ scale alias 1: zoomed out 21x
 <!--
 	  <value name="*">
 		<description desc = "Other shop"/>
-		<image src="othershop.png"/>
+		<image src="other_shop.png"/>
 		<namekey tag="name"/>
 		<namefallback tag = "*"/>
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>
-	-->
+-->
 	</key>
 	<key tag="highway">
 	   <value name="bus_stop">
@@ -656,6 +669,29 @@ scale alias 1: zoomed out 21x
 -->
 	</key>
 	<key tag="barrier">
+<!--
+	  <value name ="bollard">
+		<description desc = "Bollard"/>
+		<image src="bollard.png"/>
+		<namekey tag="name"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>	
+	  <value name ="gate">
+		<description desc = "Gate"/>
+		<image src="gate.png"/>
+		<namekey tag="name"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>	
+	  <value name ="lift_gate">
+		<description desc = "Lift gate"/>
+		<image src="lift_gate.png"/>
+		<namekey tag="name"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>
+-->
 	  <value name="toll_booth">
 		<description desc = "Toll station"/>
 		<image src="toll_station.png"/>		
@@ -665,7 +701,18 @@ scale alias 1: zoomed out 21x
 		<textscale scale="23"/>
 		<imageCentered value="true"/>			
 	  </value>
-	</key>	
+	</key>
+<!--
+	<key tag="traffic_sign">
+	  <value name ="city_limit">
+		<description desc = "City limit"/>
+		<image src="citylimit.png"/>
+		<namekey tag="name"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>	
+	</key>
+-->
 	<key tag="railway">
 	   <value name="station">
 		<description desc = "Railway station"/>
@@ -823,7 +870,7 @@ scale alias 1: zoomed out 21x
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>
-	  <!--
+<!--
 	  <value name="*">
 		<description desc = "Other tourism"/>
 		<image src="othertourism.png"/>
@@ -831,7 +878,7 @@ scale alias 1: zoomed out 21x
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>
-	   -->
+-->
 	</key>
 	<key tag="historic">
 	  <value name ="castle">
@@ -855,6 +902,15 @@ scale alias 1: zoomed out 21x
 	  <value name ="ruins">
 		<description desc = "Ruins"/>
 		<image src="ruins.png"/>
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+		<imageCentered value="true"/>
+	  </value>
+	  <value name ="wreck">
+		<description desc = "Wreck"/>
+		<image src="wreck.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
 		<scale scale="23"/>
@@ -957,6 +1013,15 @@ scale alias 1: zoomed out 21x
 			<scale scale="20"/>
 			<textscale scale="23"/>
 		</value>
+<!--
+		<value name ="water_well">
+			<description desc = "Water well"/>
+			<image src="water_well.png"/>
+			<namekey tag="name"/>
+			<scale scale="23"/>
+			<textscale scale="26"/>		
+		</value>
+-->
 	</key>
 	<key tag = "power">
 		<value name ="generator">

@@ -328,6 +328,20 @@ scale alias 1: zoomed out 21x
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>
+	  <value name ="drinking_water">
+		<description desc = "Drinking water"/>
+		<image src="drinking_water.png"/>
+		<namekey tag="name"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>		
+	  </value>
+	  <value name ="fountain">
+		<description desc = "Fountain"/>
+		<image src="fountain.png"/>
+		<namekey tag="name"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>		
+	  </value>
 	  <value name ="toilets">
 		<description desc = "Public toilet"/>
 		<image src="toilets.png"/>
@@ -465,14 +479,14 @@ scale alias 1: zoomed out 21x
 		<textscale scale="26"/>
 	  </value>
 <!--
-<value name="*">
+	  <value name="*">
 		<description desc = "Other amenity"/>
 		<image src="otheramenity.png"/>
 		<namekey tag="name"/>
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	   </value>
-      -->
+-->
 	</key>
 	<key tag="leisure">
 	  <value name ="water_park">
@@ -584,13 +598,13 @@ scale alias 1: zoomed out 21x
 <!--
 	  <value name="*">
 		<description desc = "Other shop"/>
-		<image src="othershop.png"/>
+		<image src="other_shop.png"/>
 		<namekey tag="name"/>
 		<namefallback tag = "*"/>
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>
-	-->
+-->
 	</key>
 	<key tag="highway">
 	   <value name="bus_stop">
@@ -644,6 +658,29 @@ scale alias 1: zoomed out 21x
 -->
 	</key>
 	<key tag="barrier">
+<!--
+	  <value name ="bollard">
+		<description desc = "Bollard"/>
+		<image src="bollard.png"/>
+		<namekey tag="name"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>	
+	  <value name ="gate">
+		<description desc = "Gate"/>
+		<image src="gate.png"/>
+		<namekey tag="name"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>	
+	  <value name ="lift_gate">
+		<description desc = "Lift gate"/>
+		<image src="lift_gate.png"/>
+		<namekey tag="name"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>
+-->
 	  <value name="toll_booth">
 		<description desc = "Toll station"/>
 		<image src="toll_station.png"/>		
@@ -653,7 +690,18 @@ scale alias 1: zoomed out 21x
 		<textscale scale="23"/>
 		<imageCentered value="true"/>			
 	  </value>
-	</key>	
+	</key>
+<!--
+	<key tag="traffic_sign">
+	  <value name ="city_limit">
+		<description desc = "City limit"/>
+		<image src="citylimit.png"/>
+		<namekey tag="name"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>
+	</key>
+-->
 	<key tag="railway">
 	   <value name="station">
 		<description desc = "Railway station"/>
@@ -849,6 +897,15 @@ scale alias 1: zoomed out 21x
 		<textscale scale="26"/>
 		<imageCentered value="true"/>
 	  </value>
+	  <value name ="wreck">
+		<description desc = "Wreck"/>
+		<image src="wreck.png"/>
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+		<imageCentered value="true"/>
+	  </value>
 	</key>
 	<key tag="natural">
 	  <value name="beach">
@@ -886,6 +943,7 @@ scale alias 1: zoomed out 21x
 		<textscale scale="20"/>
 	  </value>
 	  <value name="tree">
+		<specialisation key="monument" value="yes"/>
 		<description desc = "Significant tree"/>
 		<image src="trees.png"/>
 		<namekey tag="name"/>
@@ -937,6 +995,15 @@ scale alias 1: zoomed out 21x
 			<scale scale="20"/>
 			<textscale scale="23"/>
 		</value>
+<!--
+		<value name ="water_well">
+			<description desc = "Water well"/>
+			<image src="water_well.png"/>
+			<namekey tag="name"/>
+			<scale scale="23"/>
+			<textscale scale="26"/>		
+		</value>
+-->
 	</key>
 	<key tag = "power">
 		<value name ="generator">
