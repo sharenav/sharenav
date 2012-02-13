@@ -160,9 +160,13 @@ public class WaySegment {
     public void drawWideLine(int color, IntPoint point1,IntPoint point2,int linewidth,int align, PaintContext pc) {
 
     	pc.g.setColor(color);
-	    if (linewidth <= 1){ // a line with px1 width is faster drawn directly
-	    	pc.g.drawLine(point1.x,point1.y,point2.x,point2.y);
-	    } else {
+	    
+    	/* Always draw a line with px1 width also for wide lines because drawing a wide line might not work in every case.
+    	 * This is at least the case on Nokia 5800 with very offscreen lines in some angles (line to destination several 100 km in normal zoom)
+    	 */
+	    pc.g.drawLine(point1.x,point1.y,point2.x,point2.y);
+	    
+	    if (linewidth > 1) {
 	        switch (align){
 	        case 0:
 		        linePoints.set(point1,point2,linewidth);
@@ -184,6 +188,8 @@ public class WaySegment {
 				linePoints.c.y=point2.y;
 				break;
 	        }
+
+	        // System.out.println(linePoints);
 	        
 	        // now as we have calculated the coords, paint the line
 	        pc.g.fillTriangle(linePoints.a.x, linePoints.a.y, linePoints.b.x, linePoints.b.y,linePoints.d.x, linePoints.d.y);
