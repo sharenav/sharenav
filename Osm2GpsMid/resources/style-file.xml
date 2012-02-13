@@ -2110,7 +2110,11 @@ end -->
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "00A3A316" colorAtNight="00785656"/>		  	
+  				<lineColor color = "00A3A316" colorAtNight="00785656"/>
+			<!-- experimental dashed style for industrial areas -->
+			<!--
+ 				<lineStyle dashed = "true" /> 						  	
+			-->
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "brownfield">
