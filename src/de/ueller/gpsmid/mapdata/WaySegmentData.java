@@ -73,4 +73,9 @@ public class WaySegmentData {
 		this.c.set( lineP2.x + xb, lineP2.y + yb);
 		this.d.set( lineP2.x - xb, lineP2.y - yb);
 	}
+	
+	
+	public String toString() {
+		return "a: " + this.a.toString() + " b: " + this.b.toString() + " c: " + this.c.toString() + " d: " + this.d.toString();
+	}
 }
