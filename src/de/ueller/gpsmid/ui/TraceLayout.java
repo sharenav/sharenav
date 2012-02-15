@@ -319,8 +319,7 @@ public class TraceLayout extends LayoutManager {
 		}
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
-		e.setActionID(Trace.SEARCH_CMD);
-
+		e.setActionID(Trace.SEARCH_CMD + (Trace.MANAGE_WAYP_CMD << 8) + (Trace.MANAGE_TRACKS_CMD << 16));
 		
 		
 		e = ele[SPEEDING_SIGN]; addElement(e,
