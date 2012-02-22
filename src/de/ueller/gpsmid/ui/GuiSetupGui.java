@@ -143,17 +143,21 @@ public class GuiSetupGui extends Form implements CommandListener {
 		if (c == CMD_SAVE) {
 			try {
 				long mem=Long.parseLong(memField.getString());
-				int searchMax=Integer.parseInt(searchField.getString());
 				Configuration.setPhoneAllTimeMaxMemory(mem*1024);
+			} catch (NumberFormatException e) {
+				// nothing to do (ignore content)
+			}
+			try {
+				int searchMax=Integer.parseInt(searchField.getString());
 				Configuration.setSearchMax(searchMax);
 			} catch (NumberFormatException e) {
-				// nothing to do (igore content)
+				// nothing to do (ignore content)
 			}
 			try {
 				float dist=Float.parseFloat(poiSearchDistance.getString());
 				Configuration.setPoiSearchDistance(dist);
 			} catch (NumberFormatException e) {
-				// nothing to do (igore content)
+				// nothing to do (ignore content)
 			}
 			
 			Trace trace = Trace.getInstance();
