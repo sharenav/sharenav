@@ -761,20 +761,19 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 		if (locationProducer != null) {
 			locationProducer.close();
-		} else {
-			return;
-		}
-		int polling = 0;
-		while ((locationProducer != null) && (polling < 7)) {
-			polling++;
-			try {
-				wait(200);
-			} catch (InterruptedException e) {
-				break;
+			// wait for locationProducer to close
+			int polling = 0;
+			while ((locationProducer != null) && (polling < 7)) {
+				polling++;
+				try {
+					wait(200);
+				} catch (InterruptedException e) {
+					break;
+				}
 			}
-		}
-		if (locationProducer != null) {
-			logger.error(Locale.get("trace.LocationProducerTookTooLong")/*LocationProducer took too long to close, giving up*/);
+			if (locationProducer != null) {
+				logger.error(Locale.get("trace.LocationProducerTookTooLong")/*LocationProducer took too long to close, giving up*/);
+			}
 		}
 	}
 
