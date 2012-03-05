@@ -759,7 +759,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (imageCollector != null) {
 			imageCollector.suspend();
 		}
-		if (locationProducer != null) {
+		if (locationProducer != null && !gpx.isRecordingTrk()) {
 			locationProducer.close();
 			// wait for locationProducer to close
 			int polling = 0;
