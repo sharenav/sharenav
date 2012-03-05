@@ -2063,6 +2063,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 									if (!Configuration.getCfgBitState(Configuration.CFGBIT_SUPPRESS_SEARCH_WARNING)) {
 										GpsMid.getInstance().alert(Locale.get("SearchNames.SearchWarningTitle")/*Search warning*/,
 													   Locale.get("SearchNames.SearchWarning")/*Maximum search count exceeded, search interrupted*/, 500);
+										break;
 									}
 							} 
 						}
