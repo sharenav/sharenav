@@ -561,6 +561,7 @@ public class Configuration {
 			}
 			baseScale = readInt(database, RECORD_ID_BASESCALE);
 			calculateRealBaseScale();
+			destLineWidth = readInt(database, RECORD_ID_DEST_LINE_WIDTH);
 			
 			int configVersionStored = readInt(database, RECORD_ID_CONFIG_VERSION);
 			//#debug info
