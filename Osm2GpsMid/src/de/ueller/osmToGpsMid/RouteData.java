@@ -229,7 +229,7 @@ public class RouteData {
 			ArrayList<RouteNode> viaWayRouteNodes = restrictionViaWay.getAllRouteNodesOnTheWay();
 			
 			// if it's a circle way remove the first viaRouteNode
-			if (viaWayRouteNodes.get(0).id == viaWayRouteNodes.get(viaWayRouteNodes.size() -1 ).id) {
+			if (viaWayRouteNodes.size()>0 && viaWayRouteNodes.get(0).id == viaWayRouteNodes.get(viaWayRouteNodes.size() -1 ).id) {
 				viaWayRouteNodes.remove(0);
 			}
 			ArrayList<RouteNode> additionalViaRouteNodesCache = new ArrayList<RouteNode>();
