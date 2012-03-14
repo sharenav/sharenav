@@ -34,6 +34,11 @@ ant -propertyfile android.properties debug android
 
 cd dist
 
+for i in *.apk
+do
+ mv $i `echo $i | sed 's/Generic-/Generic-debug-/'`
+done
+
 ln -f -s `ls -t *droid*apk|head -1` GpsMid-latest-debug.apk
 
 tar cf - GpsMid-latest-debug.apk | ssh $user,gpsmid@shell.sf.net 'cd /home/project-web/gpsmid/htdocs/prebuild ; tar xpf -'
