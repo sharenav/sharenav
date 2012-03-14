@@ -493,7 +493,7 @@
 					description=""
 					vendorName="Harald Mueller"
 					infoUrl="http://gpsmid.sourceforge.net"
-					icon="GpsMid.png"
+					icon="gpsmid.png"
 					jarName="NMEAsim-${polish.version}.jar" 
 					jarUrl="${deploy-url}${polish.jarName}"					
 					deleteConfirm="Do you really want to kill me?" 
