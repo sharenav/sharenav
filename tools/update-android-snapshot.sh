@@ -32,6 +32,7 @@ ant clean
 
 ant -propertyfile android.properties debug android
 
+cd dist
 
 ln -f -s `ls -t *droid*apk|head -1` GpsMid-latest-debug.apk
 
