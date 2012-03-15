@@ -561,6 +561,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//#endif
 		//#if polish.android
 		i++;
+		i++;
 		//#endif
 		backlights = new String[i];
 
@@ -581,6 +582,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//#endif
 		//#if polish.android
 		backlights[i++] = Locale.get("guidiscover.withAndroidWakelock")/*with Android wakelock*/;
+		backlights[i++] = Locale.get("guidiscover.withAndroidWindowManager")/*with Android WindowManager*/;
 		//#endif
 
 		backlightOpts = new ChoiceGroup(Locale.get("guidiscover.BacklightOptions")/*Backlight Options:*/,
@@ -1068,6 +1070,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				//#endif
 				//#if polish.android
 					sellight[i++] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK);
+					sellight[i++] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WINDOW_MANAGER);
 				//#endif
 		
 				backlightOpts.setSelectedFlags(sellight);
@@ -1407,6 +1410,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//#endif
 		//#if polish.android
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK, sellight[i++]);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WINDOW_MANAGER, sellight[i++]);
 		//#endif
 		
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_METRIC, (metricUnits.getSelectedIndex() == 0));

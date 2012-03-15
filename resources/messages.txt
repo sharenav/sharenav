@@ -180,6 +180,7 @@ guidiscover.withSiemensAPI=with Siemens API
 guidiscover.withSamsungAPI=with Samsung API
 guidiscover.WpAlsoInTrack=Also put waypoints in track
 guidiscover.withAndroidWakelock=with Android wakelock
+guidiscover.withAndroidWindowManager=with Android WindowManager
 guidiscover.ButtonsRight=Buttons Right
 guidiscover.Symmetric=Symmetric
 guidiscover.TouchScreenLayout=Touchscreen layout

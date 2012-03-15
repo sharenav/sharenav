@@ -297,6 +297,8 @@ public class Configuration {
 	public final static byte CFGBIT_SIMPLIFY_MAP_WHEN_BUSY = 115;
 	/** bit 116: Flag whether to use movement for direction when moving (compass otherwise) */
 	public final static byte CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION = 116;
+	/** bit 117: backlight method ANDROID_WINDOW_MANAGER */
+	public final static byte CFGBIT_BACKLIGHT_ANDROID_WINDOW_MANAGER = 117;
 	
 	/**
 	 * These are the database record IDs for each configuration option
