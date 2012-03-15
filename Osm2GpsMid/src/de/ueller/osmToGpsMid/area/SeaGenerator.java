@@ -22,11 +22,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import uk.me.parabola.log.Logger;
-import uk.me.parabola.mkgmap.general.LineClipper;
 import uk.me.parabola.mkgmap.reader.osm.FakeIdGenerator;
-//import uk.me.parabola.mkgmap.reader.osm.GeneralRelation;
-//import uk.me.parabola.mkgmap.reader.osm.MultiPolygonRelation;
-//import uk.me.parabola.mkgmap.reader.osm.Relation;
 import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.MyMath;
 import de.ueller.osmToGpsMid.model.Bounds;
@@ -34,7 +30,6 @@ import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.Tile;
 import de.ueller.osmToGpsMid.model.Way;
-import de.ueller.osmToGpsMid.model.Path;
 
 /**
  * Static class which checks if there are coast lines in the tile which need to be

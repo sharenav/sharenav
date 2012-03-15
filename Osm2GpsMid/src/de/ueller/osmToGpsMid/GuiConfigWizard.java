@@ -1128,7 +1128,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("#	 If there is no internal version in Osm2GpsMid for the png / sound files, you must provide external versions\r\n");
 			fw.write("#	 in the current directory or sub-directories 'sound' and 'png' inside Osm2GpsMid.jar (when using internal style-file)\r\n");
 			fw.write("#	 or sub-directories 'sound' and 'png' in the same directory as the external style-file.\r\n");
-			fw.write("style-file = " + config.getStyleFileName() + "\r\n");
+			fw.write("style-file = " + config.getStyleFileName().replace("\\", "\\\\") + "\r\n");
 			fw.write("\r\n");
 			
 			fw.write("# Sound formats to be included in the midlet, default is useSounds=amr.\r\n");

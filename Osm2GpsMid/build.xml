@@ -21,7 +21,7 @@
 
 	<property name="lib.dir" value="${basedir}/lib"/>
 
-   	<property name="dist.dir" value="${basedir}/dist"/>
+   	<property name="dist.dir" value="${basedir}/../dist"/>
 	<property name="version" value="0.7.71"/>
 	<property name="mapversion" value="70"/>
 	<property name="buildlib" value="buildlib/explode.jar"/>
@@ -159,7 +159,7 @@
     		<attribute name="Built-By" value="${user.name}"/>
 			<attribute name="Main-Class" value="de.ueller.osmToGpsMid.BundleGpsMid"/>
 			<section name="${ant.project.name}">
-				<attribute name="Implementation-Title" value="Change Management Portlet"/>
+				<attribute name="Implementation-Title" value="GpsMid Navigation"/>
 				<attribute name="Implementation-Version" value="${version} ${TODAY_DE}"/>
 		   		<attribute name="Implementation-Vendor" value="Harald Mueller"/>
 			</section>
