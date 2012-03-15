@@ -205,18 +205,24 @@ public class FsDiscover
 			urlList.addElement(url);
 			String fileName;
 			String suffix;
+			//#if polish.android
+			// workaround for J2MEPolish 2.3 bug, jkpj 2012-03-15
+			Enumeration filelist = fc.list("*", false);
+			//#else
 			Enumeration filelist = fc.list();
+			//#endif
 			while (filelist.hasMoreElements()) {
 				fileName = (String) filelist.nextElement();
 				//#debug debug
 				logger.debug("found file: " + fileName);
 				// add files too if not choose dir only
 				//#if polish.android
-				FileConnection fc2 = (FileConnection) Connector.open(url + fileName);
-				if (fc2.isDirectory()) {
-					fileName += "/";
-					fc2.close();
-				}
+				// was workaround for J2MEPolish before 2.3
+				//FileConnection fc2 = (FileConnection) Connector.open(url + fileName);
+				//if (fc2.isDirectory()) {
+				//	fileName += "/";
+				//	fc2.close();
+				//}
 				//#endif
 				
 				// only add entries matching the criteria
