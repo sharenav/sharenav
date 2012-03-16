@@ -219,12 +219,18 @@ public class AndroidLocationInput
 	private void updateSolution(int state) {
 		logger.info("Update Solution");
 		//locationUpdated(locationManager, locationManager.getLastKnownLocation(provider), true);
+		if (state == LocationProvider.OUT_OF_SERVICE) {
+			if (receiverList != null) {
+				receiverList.receiveStatus(LocationMsgReceiver.STATUS_OFF, 0);
+				receiverList.receiveMessage(Locale.get("androidlocationinput.ProviderStopped")/*provider stopped*/);
+			}
+		}
 		if (state == LocationProvider.AVAILABLE) {
 			if (receiverList != null) {
 				receiverList.receiveStatus(LocationMsgReceiver.STATUS_ON, numSatellites);
 			}
 		}
-		if (state == LocationProvider.TEMPORARILY_UNAVAILABLE || state == LocationProvider.OUT_OF_SERVICE) {
+		if (state == LocationProvider.TEMPORARILY_UNAVAILABLE) {
 			if (receiverList != null) {
 				receiverList.receiveStatus(LocationMsgReceiver.STATUS_NOFIX, numSatellites);
 			}
@@ -238,9 +244,12 @@ public class AndroidLocationInput
 		GpsStatus gpsStatus = locationManager.getGpsStatus(null);
 		if (state == GpsStatus.GPS_EVENT_STOPPED) {
 			// FIXME do what's needed
+			numSatellites = 0;
+			updateSolution(LocationProvider.OUT_OF_SERVICE);
 		}
 		if (state == GpsStatus.GPS_EVENT_STARTED) {
 			// FIXME do what's needed
+			updateSolution(LocationProvider.AVAILABLE);
 		}
 		gpsState = state;
 		if (state == GpsStatus.GPS_EVENT_SATELLITE_STATUS && gpsStatus != null) {
@@ -259,9 +268,11 @@ public class AndroidLocationInput
 	}
 
 	public void onProviderDisabled(String provider) {
+		updateSolution(LocationProvider.OUT_OF_SERVICE);
 	}
 
 	public void onProviderEnabled(String provider) {
+		updateSolution(LocationProvider.AVAILABLE);
 	}
 
 	public void onStatusChanged(String provider, int state, Bundle b) {
