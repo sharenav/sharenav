@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.util.Vector;
 //#if polish.android
 import android.os.Bundle;
+import android.os.Looper;
 import de.enough.polish.android.midlet.MidletBridge;
 import android.content.Context;
 import android.location.Location;
@@ -35,14 +36,6 @@ import android.location.GpsSatellite;
 import java.util.Iterator;
 //#endif
 
-//#if polish.api.locationapix
-import javax.microedition.location.Coordinates;
-import javax.microedition.location.Criteria;
-import javax.microedition.location.Location;
-import javax.microedition.location.LocationException;
-import javax.microedition.location.LocationListener;
-import javax.microedition.location.LocationProvider;
-//#endif
 import de.ueller.gpsmid.data.Position;
 import de.ueller.util.Logger;
 import de.ueller.util.StringTokenizer;
@@ -144,7 +137,8 @@ public class AndroidLocationInput
 			}
 			if (locationManager != null || provider == null) {
 				try {
-					locationManager.requestLocationUpdates(provider, 0, 0, this);
+					// CHECKME is it OK to use main looper?
+					locationManager.requestLocationUpdates(provider, 0, 0, this, Looper.getMainLooper());
 				} catch (Exception e) {
 					logger.fatal("requestLocationUpdates fail: " +  e.getMessage());
 
