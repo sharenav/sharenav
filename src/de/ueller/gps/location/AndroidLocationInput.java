@@ -55,7 +55,7 @@ import de.enough.polish.util.Locale;
  */
 public class AndroidLocationInput 
 		//#if polish.android
-			implements GpsStatus.Listener, LocationListener
+		implements GpsStatus.Listener, LocationListener, LocationMsgProducer
 		//#endif
 {
 	private final static Logger logger = Logger.getInstance(AndroidLocationInput.class,
@@ -141,7 +141,7 @@ public class AndroidLocationInput
 					logger.exception(Locale.get("androidlocationinput.unexpectedExceptioninLocProv")/*unexpected exception while probing LocationManager criteria.*/,e);
 				}
 			}
-			if (locationManager != null) {
+			if (locationManager != null || provider == null) {
 				try {
 					locationManager.requestLocationUpdates(provider, 0, 0, this);
 				} catch (Exception e) {
