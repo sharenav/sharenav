@@ -28,7 +28,7 @@ formItem {
 }
 formItemFocused extends formItem {
 	font-color: white;
-	background-color: black;
+	background-color: gray;
 }
 title {
 	padding: 2;
@@ -40,7 +40,7 @@ title {
 	font-size: normal;
 	font-style: bold;
 	font-color: white;
-	background-color: black;
+	background-color: gray;
 	border: none;
 	layout: horizontal-center | horizontal-expand;
 }
