@@ -570,10 +570,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	 */
 	public void run() {
 		try {
-			//#if polish.android
-			Looper.prepare();
-			//#endif
-
 			if (running) {
 				receiveMessage(Locale.get("trace.GpsStarterRunning")/*GPS starter already running*/);
 				return;
@@ -744,10 +740,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			//#debug info
 			logger.info("end startLocationPovider thread");
 			//		setTitle("lp="+Configuration.getLocationProvider() + " " + Configuration.getBtUrl());
-			//#if polish.android
-			// FIXME causes problems when GpsMid is paused
-			Looper.loop();
-			//#endif
 		} catch (SecurityException se) {
 			/**
 			 * The application was not permitted to connect to the required resources

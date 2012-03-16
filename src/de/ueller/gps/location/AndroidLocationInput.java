@@ -56,6 +56,7 @@ public class AndroidLocationInput
 	private final static Logger logger = Logger.getInstance(AndroidLocationInput.class,
 			Logger.TRACE);
 
+	private Thread looperThread;
 	private LocationManager locationManager = null;
 	private final LocationMsgReceiverList receiverList;
 	private NmeaMessage smsg;
@@ -64,6 +65,7 @@ public class AndroidLocationInput
 	private volatile int numSatellites = 0;
 	private volatile int gpsState = 0;
 	private volatile int lmState = 0;
+	private Looper locationLooper = null;
 	private Criteria savedCriteria = null;
 
 	private OutputStream rawDataLogger;
@@ -75,14 +77,21 @@ public class AndroidLocationInput
 		this.receiverList = new LocationMsgReceiverList();
 	}
 
-
 	public boolean init(LocationMsgReceiver receiver) {
 		logger.info("Start AndroidLocation LocationProvider");
 		this.receiverList.addReceiver(receiver);
-		// We may be able to get some additional information such as the number
-		// of satellites form the NMEA string
-		smsg = new NmeaMessage(receiverList);
-		createLocationProvider();
+		looperThread = new Thread(new Runnable() {
+			public void run() {
+				Looper.prepare();
+				locationLooper = Looper.myLooper();
+				createLocationProvider();
+				// We may be able to get some additional information such as the number
+				// of satellites form the NMEA string
+				smsg = new NmeaMessage(receiverList);
+				Looper.loop();
+			}
+		} );
+		looperThread.run();
 		if (locationManager != null) {
 			return true;
 		} else {
@@ -209,6 +218,9 @@ public class AndroidLocationInput
 		if (locationManager != null) {
 			locationManager.removeUpdates(this);
 			locationManager.removeGpsStatusListener(this);
+			if (looperThread != null) {
+				locationLooper.quit();
+			}
 		}
 		locationManager = null;
 		receiverList.locationDecoderEnd();
