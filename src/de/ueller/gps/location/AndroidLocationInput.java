@@ -32,6 +32,7 @@ import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.location.Criteria;
 import android.location.GpsStatus;
+import android.location.GpsStatus.Listener;
 import android.location.GpsSatellite;
 import java.util.Iterator;
 //#endif
@@ -60,7 +61,7 @@ public class AndroidLocationInput
 	private NmeaMessage smsg;
 	Position pos = new Position(0f, 0f, 0f, 0f, 0f, 0, System.currentTimeMillis());
 
-	private int numSatellites = 0;
+	private volatile int numSatellites = 0;
 	private Criteria savedCriteria = null;
 
 	private OutputStream rawDataLogger;
@@ -135,10 +136,10 @@ public class AndroidLocationInput
 					logger.exception(Locale.get("androidlocationinput.unexpectedExceptioninLocProv")/*unexpected exception while probing LocationManager criteria.*/,e);
 				}
 			}
-			if (locationManager != null || provider == null) {
+			if (locationManager != null && provider != null) {
 				try {
-					// CHECKME is it OK to use main looper?
-					locationManager.requestLocationUpdates(provider, 0, 0, this, Looper.getMainLooper());
+					locationManager.requestLocationUpdates(provider, 0, 0, this);
+					locationManager.addGpsStatusListener(this);
 				} catch (Exception e) {
 					logger.fatal("requestLocationUpdates fail: " +  e.getMessage());
 
@@ -213,6 +214,8 @@ public class AndroidLocationInput
  * and setLocationListener(null... will work on all phones.
  */  
 			locationManager.removeUpdates(this);
+			locationManager.removeGpsStatusListener(this);
+
 			//locationManager.reset();
 		}
 		locationManager = null;
@@ -239,22 +242,19 @@ public class AndroidLocationInput
 	public void triggerPositionUpdate() {
 	}
 
-	// @Override
-		public void onGpsStatusChanged(int state) {
+	public void onGpsStatusChanged(int state) {
 		GpsStatus gpsStatus = locationManager.getGpsStatus(null);
-		if(gpsStatus != null) {
-			Iterable<GpsSatellite>satellites = gpsStatus.getSatellites();
-			Iterator<GpsSatellite>sat = satellites.iterator();
-			int i=0;
+		if (state == GpsStatus.GPS_EVENT_SATELLITE_STATUS && gpsStatus != null) {
+			Iterable<GpsSatellite> satellites = gpsStatus.getSatellites();
+			Iterator<GpsSatellite> sat = satellites.iterator();
+			int i = 0;
 			while (sat.hasNext()) {
 				GpsSatellite satellite = sat.next();
-				i++;
-				//strGpsStats+= (i++) + ": " + satellite.getPrn() + "," + satellite.usedInFix() + "," + satellite.getSnr() + "," + satellite.getAzimuth() + "," + satellite.getElevation()+ "\n\n";
+				if (satellite.usedInFix()) {
+					i++;
+				}
 			}
 			numSatellites = i;
-			numSatellites = 7+ i;
-		} else {
-			numSatellites = 22;
 		}
 		//updateSolution(state);
 	}
