@@ -29,6 +29,7 @@
       targets (2.1, 2.2, 2.3 etc.) can be uncommented in build.xml if needed
     - Android: add option for backlight setting: Android WindowManager (KEEP_SCREEN_ON)
     - Android: some minor adjustments due to upgrading to J2MEPolish 2.3, related to file dialogue
+    - Android: added an Android native location provider which can be used instead of JSR179
 
 GpsMid 0.7.7
     *** Map display ***

@@ -63,6 +63,7 @@ public class Configuration {
 	public final static int LOCATIONPROVIDER_NMEA = 2;
 	public final static int LOCATIONPROVIDER_JSR179 = 3;
 	public final static int LOCATIONPROVIDER_SECELL = 4;
+	public final static int LOCATIONPROVIDER_ANDROID = 5;
 	
 	// bit 0: render as street
 	public final static byte CFGBIT_STREETRENDERMODE = 0;
@@ -1276,12 +1277,13 @@ public class Configuration {
 				uiLangUse = "en";
 			}
 			
-			LOCATIONPROVIDER = new String[5];
+			LOCATIONPROVIDER = new String[6];
 			LOCATIONPROVIDER[0] = Locale.get("configuration.LPNone")/*None*/;
 			LOCATIONPROVIDER[1] = Locale.get("configuration.LPBluetoothSirf")/*Bluetooth (Sirf)*/;
 			LOCATIONPROVIDER[2] = Locale.get("configuration.LPBluetoothNMEA")/*Bluetooth (NMEA)*/;
 			LOCATIONPROVIDER[3] = Locale.get("configuration.LPInternalJSR179")/*Internal (JSR179)*/;
 			LOCATIONPROVIDER[4] = Locale.get("configuration.LPCellID")/*Cell-ID (OpenCellId.org)*/;
+			LOCATIONPROVIDER[5] = Locale.get("configuration.Android")/*Android*/;
 
 			projectionsString = new String[ProjFactory.COUNT];
 			projectionsString[ProjFactory.NORTH_UP] = Locale.get("projfactory.NorthUp")/*North Up*/;

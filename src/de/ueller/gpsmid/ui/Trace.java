@@ -645,6 +645,26 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					}
 					//#endif
 					break;
+				case Configuration.LOCATIONPROVIDER_ANDROID:
+					//#if polish.android
+					try {
+						Class AndroidLocationInputClass = Class.forName("de.ueller.gps.location.AndroidLocationInput");
+						locationProducer = (LocationMsgProducer) AndroidLocationInputClass.newInstance();
+					} catch (ClassNotFoundException cnfe) {
+						locationDecoderEnd();
+						logger.exception(Locale.get("trace.NoAndroidSupport")/*Your phone does not support Android location API, please use a different location provider*/, cnfe);
+						running = false;
+						return;
+					}
+					//#else
+					// keep Eclipse happy
+					if (true) {
+						logger.error(Locale.get("trace.AndroidNotCompiledIn")/*Location API for Android is not compiled in this version of GpsMid*/);
+						running = false;
+						return;
+					}
+					//#endif
+					break;
 
 			}
 			
