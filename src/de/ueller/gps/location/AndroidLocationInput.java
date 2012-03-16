@@ -33,6 +33,7 @@ import android.location.LocationProvider;
 import android.location.Criteria;
 import android.location.GpsStatus;
 import android.location.GpsStatus.Listener;
+import android.location.GpsStatus.NmeaListener;
 import android.location.GpsSatellite;
 import java.util.Iterator;
 //#endif
@@ -49,7 +50,7 @@ import de.enough.polish.util.Locale;
  */
 public class AndroidLocationInput 
 		//#if polish.android
-		implements GpsStatus.Listener, LocationListener, LocationMsgProducer
+		implements GpsStatus.Listener, GpsStatus.NmeaListener, LocationListener, LocationMsgProducer
 		//#endif
 {
 //#if polish.android
@@ -151,6 +152,7 @@ public class AndroidLocationInput
 				try {
 					locationManager.requestLocationUpdates(provider, 0, 0, this);
 					locationManager.addGpsStatusListener(this);
+					locationManager.addNmeaListener(this);
 				} catch (Exception e) {
 					logger.fatal("requestLocationUpdates fail: " +  e.getMessage());
 
@@ -218,6 +220,7 @@ public class AndroidLocationInput
 		if (locationManager != null) {
 			locationManager.removeUpdates(this);
 			locationManager.removeGpsStatusListener(this);
+			locationManager.removeNmeaListener(this);
 			if (looperThread != null) {
 				locationLooper.quit();
 			}
@@ -250,6 +253,57 @@ public class AndroidLocationInput
 	}
 
 	public void triggerPositionUpdate() {
+	}
+
+	public void onNmeaReceived(long timestamp, String nmeaString) {
+		//#debug info
+		logger.info("Using extra NMEA info in Android location provider: " + nmeaString);
+		// FIXME combine to one, duplicated in Jsr179Input and AndroidLocationInput
+		if (nmeaString != null) {
+			if (rawDataLogger != null) {
+				try {
+					rawDataLogger.write(nmeaString.getBytes());
+					rawDataLogger.flush();
+				} catch (IOException ioe) {
+					logger.exception(Locale.get("jsr179input.CouldNotWriteGPSLog")/*Could not write raw GPS log*/, ioe);
+				}
+			}
+			Vector messages = StringTokenizer.getVector(nmeaString, "$");
+			if (messages != null) {
+				for (int i = 0; i < messages.size(); i++) {
+					String nmeaMessage = (String) messages.elementAt(i);
+					if (nmeaMessage == null) {
+						continue;
+					}
+					if (nmeaMessage.startsWith("$")) {
+						// Cut off $GP from the start
+						nmeaMessage = nmeaMessage.substring(3);
+					} else if (nmeaMessage.startsWith("GP")) {
+						// Cut off GP from the start
+						nmeaMessage = nmeaMessage.substring(2);
+					}
+					int delimiterIdx = nmeaMessage.indexOf("*");
+					if (delimiterIdx > 0) {
+						// remove the checksum
+						nmeaMessage = nmeaMessage.substring(0, delimiterIdx);
+					}
+					delimiterIdx = nmeaMessage.indexOf(" ");
+					if (delimiterIdx > 0) {
+						// remove trailing whitespace because some mobiles like HTC Touch Diamond 2 with JavaFX
+						// receive NMEA sentences terminated by a space instead of a star followed by the checksum
+						nmeaMessage = nmeaMessage.substring(0, delimiterIdx);
+					}
+					//#debug info
+					logger.info("Decoding: " + nmeaMessage);
+					if ((nmeaMessage != null) && (nmeaMessage.length() > 5)) {
+						smsg.decodeMessage(nmeaMessage, false);
+						// get PDOP from the message
+						pos.pdop = smsg.getPosition().pdop;
+						numSatellites = smsg.getMAllSatellites();
+					}
+				}
+			}
+		}
 	}
 
 	public void onGpsStatusChanged(int state) {

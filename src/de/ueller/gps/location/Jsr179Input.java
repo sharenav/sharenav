@@ -164,6 +164,7 @@ public class Jsr179Input
 		//#debug info
 		logger.info("Using extra NMEA info in JSR179: " + nmeaString);
 		
+		// FIXME combine to one, duplicated in Jsr179Input and AndroidLocationInput
 		if (nmeaString != null) {
 			if (rawDataLogger != null) {
 				try {
