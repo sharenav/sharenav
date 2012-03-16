@@ -58,6 +58,7 @@ public class AndroidLocationInput
 		implements GpsStatus.Listener, LocationListener, LocationMsgProducer
 		//#endif
 {
+//#if polish.android
 	private final static Logger logger = Logger.getInstance(AndroidLocationInput.class,
 			Logger.TRACE);
 
@@ -145,6 +146,8 @@ public class AndroidLocationInput
 				try {
 					locationManager.requestLocationUpdates(provider, 0, 0, this);
 				} catch (Exception e) {
+					logger.fatal("requestLocationUpdates fail: " +  e.getMessage());
+
 					receiverList.receiveStatus(LocationMsgReceiver.STATUS_SECEX, 0);
 					locationManager = null;
 				}
@@ -315,4 +318,5 @@ public class AndroidLocationInput
 	public boolean removeLocationMsgReceiver(LocationMsgReceiver receiver) {
 		return receiverList.removeReceiver(receiver);
 	}
+//#endif
 }
