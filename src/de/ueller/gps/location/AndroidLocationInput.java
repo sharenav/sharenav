@@ -62,6 +62,8 @@ public class AndroidLocationInput
 	Position pos = new Position(0f, 0f, 0f, 0f, 0f, 0, System.currentTimeMillis());
 
 	private volatile int numSatellites = 0;
+	private volatile int gpsState = 0;
+	private volatile int lmState = 0;
 	private Criteria savedCriteria = null;
 
 	private OutputStream rawDataLogger;
@@ -205,18 +207,8 @@ public class AndroidLocationInput
 		// locationManager.setLocationListener(null, -1, -1, -1);
 		// }
 		if (locationManager != null) {
-/* locationManager.setLocationListener(null, 0, 0, 0) tends to freeze Samsung S8000 frequently when stopping GPS
- * was replaced by locationManager.reset() until 2010-10-21.
- * So if other mobile devices have issues with locationManager.reset(),
- * please document this here
- * - Aparently Gps is left on, on at least Nokia S40 phones and SE G705, without 
- * locationManager.setLocationListener(null, 0, 0, 0) - hopefully both reset()
- * and setLocationListener(null... will work on all phones.
- */  
 			locationManager.removeUpdates(this);
 			locationManager.removeGpsStatusListener(this);
-
-			//locationManager.reset();
 		}
 		locationManager = null;
 		receiverList.locationDecoderEnd();
@@ -244,6 +236,13 @@ public class AndroidLocationInput
 
 	public void onGpsStatusChanged(int state) {
 		GpsStatus gpsStatus = locationManager.getGpsStatus(null);
+		if (state == GpsStatus.GPS_EVENT_STOPPED) {
+			// FIXME do what's needed
+		}
+		if (state == GpsStatus.GPS_EVENT_STARTED) {
+			// FIXME do what's needed
+		}
+		gpsState = state;
 		if (state == GpsStatus.GPS_EVENT_SATELLITE_STATUS && gpsStatus != null) {
 			Iterable<GpsSatellite> satellites = gpsStatus.getSatellites();
 			Iterator<GpsSatellite> sat = satellites.iterator();
@@ -268,6 +267,7 @@ public class AndroidLocationInput
 	public void onStatusChanged(String provider, int state, Bundle b) {
 		//#debug info
 		logger.info("onStatusChanged(" + provider + "," + state + ")");
+		lmState = state;
 		updateSolution(state);
 	}
 

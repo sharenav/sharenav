@@ -745,7 +745,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			logger.info("end startLocationPovider thread");
 			//		setTitle("lp="+Configuration.getLocationProvider() + " " + Configuration.getBtUrl());
 			//#if polish.android
-			// FIXME might need something else
+			// FIXME causes problems when GpsMid is paused
 			Looper.loop();
 			//#endif
 		} catch (SecurityException se) {
@@ -759,6 +759,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		} catch (Exception e) {
 			logger.fatal(Locale.get("trace.TraceThreadCrashWith")/*Trace thread crashed unexpectedly with error */ +  e.getMessage());
 			e.printStackTrace();
+		} catch (Throwable t) {
+			running = false;
 		} finally {
 			running = false;
 		}
