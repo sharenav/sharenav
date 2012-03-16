@@ -485,7 +485,7 @@ public class Configuration {
 					}
 					if (arg.startsWith("--cellID=")) {
 						// Filename for a list of GSM cellIDs with their coordinates.
-						// This file can be obtained from http://myapp.fr/cellsIdData/ (OpenCellID.org)
+						// This file can be obtained from http://dump.opencellid.org/cellsIdData/ (OpenCellID.org)
 						cellSource = arg.substring(9);
 						// TODO: Shouldn't cellOperator be set too?
 					}
@@ -511,7 +511,7 @@ public class Configuration {
 						System.err.println("       or if you want to create a GpsMid for the whole region");
 						System.err.println("       contained in the.osm(.bz2) file");
 						System.err.println("  \"--cellID=\" specifies the file from which to load cellIDs for cell based positioning");
-						System.err.println("       The data comes from OpenCellId.org and the file can be found at http://myapp.fr/cellsIdData/");
+						System.err.println("       The data comes from OpenCellId.org and the file can be found at http://dump.opencellid.org/cellsIdData/");
 						System.err.println("  \"--map.name=\" specifies the output map zip basename");
 						System.err.println("  \"--mapzip\" builds a map zip named by properties midlet.name");
 						System.err.println("  \"--properties=\" points to a .properties file specifying additional parameters");

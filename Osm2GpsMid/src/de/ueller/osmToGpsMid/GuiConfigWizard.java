@@ -1464,7 +1464,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				config.setCellOperator("false");
 			} else if (CELL_SRC_DLOAD.equalsIgnoreCase(chosenProperty)) {
 				config.setCellOperator("true");
-				config.setCellSource("http://myapp.fr/cellsIdData/cells.txt.gz");
+				config.setCellSource("http://dump.opencellid.org/cellsIdData/cells.txt.gz");
 			} else if (CELL_SRC_FILE.equalsIgnoreCase(chosenProperty)) {
 				config.setCellOperator("true");
 				askCellFile();
