@@ -299,7 +299,8 @@ public class AndroidLocationInput
 						smsg.decodeMessage(nmeaMessage, false);
 						// get PDOP from the message
 						pos.pdop = smsg.getPosition().pdop;
-						numSatellites = smsg.getMAllSatellites();
+						// disable for now; could be this is incorrect for devices with GPS & GLONASS, and we get this from getGpsStatus()
+						// numSatellites = smsg.getMAllSatellites();
 					}
 				}
 			}
