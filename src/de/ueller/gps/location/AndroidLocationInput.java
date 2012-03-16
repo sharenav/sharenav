@@ -230,13 +230,6 @@ public class AndroidLocationInput
 			}
 		}
 		if (state == LocationProvider.TEMPORARILY_UNAVAILABLE || state == LocationProvider.OUT_OF_SERVICE) {
-			/**
-			 * Even though the receiver is temporarily un-available,
-			 * we still need to receive updates periodically, as some
-			 * implementations will otherwise not reacquire the GPS signal.
-			 * So setting setLocationListener to 0 interval, which should have given
-			 * you all the status changes, does not work.
-			 */
 			if (receiverList != null) {
 				receiverList.receiveStatus(LocationMsgReceiver.STATUS_NOFIX, numSatellites);
 			}
@@ -266,28 +259,24 @@ public class AndroidLocationInput
 		//updateSolution(state);
 	}
 
-	//@Override
-		public void onProviderDisabled(String provider) {
+	public void onProviderDisabled(String provider) {
 	}
 
-	//@Override
-		public void onProviderEnabled(String provider) {
+	public void onProviderEnabled(String provider) {
 	}
 
-	//@Override
-		public void onStatusChanged(String provider, int state, Bundle b) {
+	public void onStatusChanged(String provider, int state, Bundle b) {
 		//#debug info
 		logger.info("onStatusChanged(" + provider + "," + state + ")");
 		updateSolution(state);
 	}
 
-	//@Override
-		public void onLocationChanged(Location loc) {
+	public void onLocationChanged(Location loc) {
 		locationUpdated(locationManager, loc, false);
 	}
 
 	public void triggerLastKnownPositionUpdate() {
-		locationUpdated(locationManager, locationManager.getLastKnownLocation("gps"), true);
+		locationUpdated(locationManager, locationManager.getLastKnownLocation(provider), true);
 	}
 
 	public void disableRawLogging() {
