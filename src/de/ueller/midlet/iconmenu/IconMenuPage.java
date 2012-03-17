@@ -5,6 +5,7 @@
 
 package de.ueller.midlet.iconmenu;
 
+import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.ui.GpsMid;
 
@@ -71,12 +72,12 @@ public class IconMenuPage extends LayoutManager {
 	
 	public void loadIconBackgroundImage() {
 		// load icon background image
-		this.bgImage = loadIconImage("i_bg.png");
+		this.bgImage = loadIconImage(Configuration.getIconPrefix() + "i_bg.png");
 	}
 
 	public void loadIconHighlighterImage() {
 		// load icon highlighter image
-		this.hlImage = loadIconImage("i_hl.png");
+		this.hlImage = loadIconImage(Configuration.getIconPrefix() + "i_hl.png");
 	}
 
 	public void setCursor(int eleId) {

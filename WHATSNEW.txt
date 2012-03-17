@@ -33,6 +33,7 @@
     - Android: add option for backlight setting: Android WindowManager (KEEP_SCREEN_ON)
     - Android: some minor adjustments due to upgrading to J2MEPolish 2.3, related to file dialogue
     - Android: added an Android native location provider which can be used instead of JSR179
+    - Android: use huge icons by default
 
 GpsMid 0.7.7
     *** Map display ***

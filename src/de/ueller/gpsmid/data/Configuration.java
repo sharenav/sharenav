@@ -2180,6 +2180,16 @@ public class Configuration {
 		}
 	}
 
+	public static String getIconPrefix() {
+		// FIXME make this configurable - huge, large, etc.
+		//#if polish.android
+		return "huge_";
+		//return "large_";
+		//#else
+		return "";
+		//#endif
+	}
+
 	
 	public static void serialise(OutputStream os) throws IOException {
 		DataOutputStream dos = new DataOutputStream(os);

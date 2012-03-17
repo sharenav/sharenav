@@ -10,6 +10,7 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
+import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.midlet.util.ImageTools;
 import de.ueller.util.Logger;
@@ -123,7 +124,6 @@ public class LayoutElement {
 	
 	public int actionID = -1;
 
-	
 	public LayoutElement(LayoutManager lm) {
 		this.lm = lm;
 	}
@@ -365,11 +365,23 @@ public class LayoutElement {
 			}
 			Image orgImage;
 			try {
-				orgImage = Image.createImage("/" + imageName2 + ".png");
+				orgImage = Image.createImage("/" + Configuration.getIconPrefix() + imageName2 + ".png");
 			} catch (IOException ioe) {
 				//#debug debug
-				logger.debug("Fall back to i_bg.png for " + imageName2);
-				orgImage = Image.createImage("/i_bg.png");
+				logger.debug("Fall back to i_*.png for " + imageName2);
+				try {
+					orgImage = Image.createImage("/" + imageName2 + ".png");
+				} catch (IOException ioe2) {
+					//#debug debug
+					logger.debug("Fall back to *_i_bg.png for " + imageName2);
+					try {
+						orgImage = Image.createImage("/" + Configuration.getIconPrefix() + "i_bg.png");
+					} catch (IOException ioe3) {
+						//#debug debug
+						logger.debug("Fall back to i_bg.png for " + imageName2);
+						orgImage = Image.createImage("/i_bg.png");
+					}
+				}
 			}
 			if ( (flags & FLAG_ICONMENU_ICON) > 0) {
 				orgImage = scaleIconImage(orgImage, (IconMenuPage) lm, fontHeight, 0);
