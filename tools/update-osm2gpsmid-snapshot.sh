@@ -19,7 +19,7 @@ cd Osm2GpsMid
 ant clean
 ant
 cd ..
-cp -p Osm2GpsMid/dist/Osm2GpsMid-$ver.jar .
+cp -p dist/Osm2GpsMid-$ver.jar .
 
 # debug version build
 ant clean
@@ -30,7 +30,7 @@ cd Osm2GpsMid
 ant clean
 ant
 cd ..
-cp -p Osm2GpsMid/dist/Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar
+cp -p dist/Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar
 
 ln -f -s Osm2GpsMid-$ver-debug.jar Osm2GpsMid-debug-latest.jar
 ln -f -s Osm2GpsMid-$ver.jar Osm2GpsMid-latest.jar
