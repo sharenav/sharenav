@@ -1449,7 +1449,7 @@ public class Configuration {
 		InputStream is = null;
 		if (name.toLowerCase().endsWith(".dat")) {
 			// backwards compatibility - remove the enableMap68Filenames test after a time period
-			if (Legend.enableMap68Filenames && !name.toLowerCase().equals("legend.dat")) {
+			if (Legend.enableMap68Filenames && !name.toLowerCase().equals("/legend.dat")) {
 				name = "/dat" + name;
 			}
 		}
