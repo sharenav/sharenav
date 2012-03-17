@@ -6,6 +6,8 @@ package de.ueller.gpsmid.ui;
 
 import javax.microedition.lcdui.*;
 
+import java.io.IOException;
+
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.util.Logger;
@@ -21,6 +23,7 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 	
 	private ChoiceGroup routingTravelModesGroup;
 	private StringItem[] travelModeItems;
+	private ImageItem[] travelModeImages;
 	private Gauge gaugeRoutingEsatimationFac; 
 	private ChoiceGroup routingTurnRestrictionsGroup;
 	private ChoiceGroup continueMapWhileRouteing;
@@ -61,13 +64,31 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 			append(routingTravelModesGroup);
 		} else {
 			travelModeItems = new StringItem[Legend.getTravelModes().length];
+			travelModeImages = new ImageItem[Legend.getTravelModes().length];
 			for (int i = 0; i < travelModes.length; i++) {
 				travelModeItems[i] = new StringItem(i == 0 ? Locale.get("guiroute.TravelBy")/*Travel by*/ : "", travelModes[i], StringItem.BUTTON);
-			travelModeItems[i].addCommand(CMD_OK);
-			travelModeItems[i].setDefaultCommand(CMD_OK);
-			travelModeItems[i].setItemCommandListener(this);
-			//#style formItem
-			append(travelModeItems[i]);
+				// FIXME consider if someone might want to use routing icons on other platforms too
+				//#if polish.android
+				try {
+					travelModeImages[i] = new ImageItem(travelModes[i], 
+									    Image.createImage("/" + Configuration.getIconPrefix() + "r_" + travelModes[i] + ".png"),
+									    ImageItem.LAYOUT_RIGHT, travelModes[i]);
+				} catch (IOException ioe) {
+				}
+				//#endif
+				if (travelModeImages[i] != null) {
+					travelModeImages[i].addCommand(CMD_OK);
+					travelModeImages[i].setDefaultCommand(CMD_OK);
+					travelModeImages[i].setItemCommandListener(this);
+					//#style formItem
+					append(travelModeImages[i]);
+				} else {
+					travelModeItems[i].addCommand(CMD_OK);
+					travelModeItems[i].setDefaultCommand(CMD_OK);
+					travelModeItems[i].setItemCommandListener(this);
+					//#style formItem
+					append(travelModeItems[i]);
+				}
 			}
 		}
 
@@ -153,6 +174,9 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 		if (item != null) {
 			for (int i = 0; i < Legend.getTravelModes().length; i++) {
 				if (travelModeItems[i] == item) {
+					match = i;
+				}
+				if (travelModeImages[i] == item) {
 					match = i;
 				}
 				Configuration.setTravelMode(match);
