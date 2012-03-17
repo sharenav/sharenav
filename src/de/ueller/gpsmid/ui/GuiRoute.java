@@ -58,7 +58,13 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 		for (int i=0; i<travelModes.length; i++) {
 			travelModes[i]=Legend.getTravelModes()[i].travelModeName;
 		}
-		if (useAsSetupDialog) {
+		if (useAsSetupDialog
+		    // FIXME consider if someone might want to use routing icons on other platforms too
+		    //#if polish.android
+		    //#else
+		    || true
+		    //#endif
+			) {
 			routingTravelModesGroup = new ChoiceGroup(Locale.get("guiroute.TravelBy")/*Travel by*/, Choice.EXCLUSIVE, travelModes, null);
 			routingTravelModesGroup.setSelectedIndex(Configuration.getTravelModeNr(), true);
 			append(routingTravelModesGroup);
@@ -194,7 +200,13 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 		}
 
 		if (c == CMD_OK) {			
-			if (useAsSetupDialog) {
+			if (useAsSetupDialog
+			    // FIXME consider if someone might want to use routing icons on other platforms too
+			    //#if polish.android
+			    //#else
+			    || true
+			    //#endif
+				) {
 				Configuration.setTravelMode(routingTravelModesGroup.getSelectedIndex());
 			}
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION, (routingTurnRestrictionsGroup.getSelectedIndex() == 0) );			
