@@ -1739,6 +1739,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		int w = (this.getWidth() * 125) / 100;
 		int h = (this.getHeight() * 125) / 100;
 		*/
+		
+		// Ensure that only one image collector runs at the same time.
+		if ( imageCollector != null ) {
+			imageCollector.stop();
+			// alert("FIXME", "Avoided duplicate ImageCollector", 1500);
+		}
+		
 		imageCollector = new ImageCollector(tiles, this.getWidth(), this.getHeight(), this, images);
 //		projection = ProjFactory.getInstance(center,course, scale, getWidth(), getHeight());
 //		pc.setP(projection);
