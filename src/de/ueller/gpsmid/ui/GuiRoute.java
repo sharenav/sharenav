@@ -12,7 +12,7 @@ import de.ueller.util.Logger;
 import de.enough.polish.util.Locale;
 
 
-public class GuiRoute extends Form implements CommandListener {
+public class GuiRoute extends Form implements CommandListener, ItemCommandListener {
 	private final static Logger logger = Logger.getInstance(GuiRoute.class,Logger.DEBUG);
 
 	// commands
@@ -20,6 +20,7 @@ public class GuiRoute extends Form implements CommandListener {
 	private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.BACK, 3);
 	
 	private ChoiceGroup routingTravelModesGroup;
+	private StringItem[] travelModeItems;
 	private Gauge gaugeRoutingEsatimationFac; 
 	private ChoiceGroup routingTurnRestrictionsGroup;
 	private ChoiceGroup continueMapWhileRouteing;
@@ -54,9 +55,21 @@ public class GuiRoute extends Form implements CommandListener {
 		for (int i=0; i<travelModes.length; i++) {
 			travelModes[i]=Legend.getTravelModes()[i].travelModeName;
 		}
-		routingTravelModesGroup = new ChoiceGroup(Locale.get("guiroute.TravelBy")/*Travel by*/, Choice.EXCLUSIVE, travelModes, null);
-		routingTravelModesGroup.setSelectedIndex(Configuration.getTravelModeNr(), true);
-		append(routingTravelModesGroup);
+		if (useAsSetupDialog) {
+			routingTravelModesGroup = new ChoiceGroup(Locale.get("guiroute.TravelBy")/*Travel by*/, Choice.EXCLUSIVE, travelModes, null);
+			routingTravelModesGroup.setSelectedIndex(Configuration.getTravelModeNr(), true);
+			append(routingTravelModesGroup);
+		} else {
+			travelModeItems = new StringItem[Legend.getTravelModes().length];
+			for (int i = 0; i < travelModes.length; i++) {
+				travelModeItems[i] = new StringItem(i == 0 ? Locale.get("guiroute.TravelBy")/*Travel by*/ : "", travelModes[i], StringItem.BUTTON);
+			travelModeItems[i].addCommand(CMD_OK);
+			travelModeItems[i].setDefaultCommand(CMD_OK);
+			travelModeItems[i].setItemCommandListener(this);
+			//#style formItem
+			append(travelModeItems[i]);
+			}
+		}
 
 		gaugeRoutingEsatimationFac=new Gauge(Locale.get("guiroute.AllowPoorRoutes") + "/" + Locale.get("guiroute.CalculationSpeed")/*Calculation speed*/, true, 10, Configuration.getRouteEstimationFac());
 		append(gaugeRoutingEsatimationFac);
@@ -133,6 +146,22 @@ public class GuiRoute extends Form implements CommandListener {
 
 	}
 
+	public void commandAction(Command c, Item item) {
+		// set travel mode
+		// default to 0
+		int match = 0;
+		if (item != null) {
+			for (int i = 0; i < Legend.getTravelModes().length; i++) {
+				if (travelModeItems[i] == item) {
+					match = i;
+				}
+				Configuration.setTravelMode(match);
+			}
+		}
+		// forward item command action to form
+		commandAction(c, (Displayable) null);
+	}
+
 	public void commandAction(Command c, Displayable d) {
 
 		if (c == CMD_CANCEL) {			
@@ -141,7 +170,9 @@ public class GuiRoute extends Form implements CommandListener {
 		}
 
 		if (c == CMD_OK) {			
-			Configuration.setTravelMode(routingTravelModesGroup.getSelectedIndex());
+			if (useAsSetupDialog) {
+				Configuration.setTravelMode(routingTravelModesGroup.getSelectedIndex());
+			}
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION, (routingTurnRestrictionsGroup.getSelectedIndex() == 0) );			
 			Configuration.setRouteEstimationFac(gaugeRoutingEsatimationFac.getValue());
 
