@@ -22,6 +22,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import uk.me.parabola.log.Logger;
+import uk.me.parabola.mkgmap.general.LineClipper;
 import uk.me.parabola.mkgmap.reader.osm.FakeIdGenerator;
 import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.MyMath;
