@@ -387,6 +387,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private final Runtime runtime = Runtime.getRuntime();
 
 	private StringBuffer sbTemp = new StringBuffer();
+	private long lLastDragTime = 0;
 	
 	private RoutePositionMark dest = null;
 	
@@ -1915,6 +1916,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				// show the way bar even if ImageCollector is not running because it's necessary on touch screens to get to the icon menu
 				tl.ele[TraceLayout.WAYNAME].setText(" ");
 			}
+
+			lLastDragTime = System.currentTimeMillis();
 			
 			/* Beginning of voice instructions started from overlay code (besides showRoute above)
 			 */
@@ -3117,6 +3120,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 //			System.out.println("diff " + diffX + "/" + diffY + "  " + (pickPointEnd.radlat-pickPointStart.radlat) + "/" + (pickPointEnd.radlon-pickPointStart.radlon) ); 
 			imageCollector.newDataReady();
 			gpsRecenter = false;
+
+			long lCurrentTime = System.currentTimeMillis();
+			if ( lCurrentTime - lLastDragTime > 333) {
+				lLastDragTime = lCurrentTime;
+				repaint();
+			}
 		}
 	}
 	
