@@ -212,7 +212,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			throwError(e, "Reading nodes", tt);
 		}
 		logger.info("read nodes");
-		readVerify((byte) 0x55,"start of ways " ,ds,tt);
+		readVerify((byte) 0x55,"start of ways " ,ds);
 		int wayCount = ds.readShort();
 //		logger.trace("reading " + wayCount + " ways");
 		int lastread = 0;
@@ -283,9 +283,10 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			throwError(e, "Ways (last ok index " + lastread + " out of " + 
 					wayCount + ")", tt);
 		}
-		readVerify((byte) 0x56,"read final magic value",ds,tt);
+		readVerify((byte) 0x56,"read final magic value",ds);
 	}
-	private void readVerify(byte expect,String msg,DataInputStream is, Tile tt){
+	
+	private void readVerify(byte expect,String msg,DataInputStream is){
 		try {
 			byte next=is.readByte();
 			if (next == expect) {
