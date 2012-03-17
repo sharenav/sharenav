@@ -658,7 +658,7 @@ public class Configuration {
 			maxRouteTileSize = Integer.parseInt(getString("routing.maxTileSize"));
 
 			setIcons(getString("useIcons"));
-			if (attrToBoolean(useIcons) == 0 && !(useIcons.equals("small") || useIcons.equals("big")) ) {
+			if (attrToBoolean(useIcons) == 0 && !(useIcons.equals("small") || useIcons.equals("big") || useIcons.equals("large") || useIcons.equals("huge")) ) {
 				System.out.println("ERROR: Invalid properties file parameter useIcons=" + getString("useIcons"));
 				System.exit(1);
 			}

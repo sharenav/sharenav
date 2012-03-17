@@ -21,30 +21,40 @@ cd main
 call :svg2png 24 small_
 call :svg2png 32
 call :svg2png 48 big_
+call :svg2png 96 large_
+call :svg2png 192 huge_
 cd..
 
 cd rec
 call :svg2png 24 small_
 call :svg2png 32
 call :svg2png 48 big_
+call :svg2png 96 large_
+call :svg2png 192 huge_
 cd..
 
 cd route
 call :svg2png 24 small_
 call :svg2png 32
 call :svg2png 48 big_
+call :svg2png 96 large_
+call :svg2png 192 huge_
 cd..
 
 cd osm
 call :svg2png 24 small_
 call :svg2png 32
 call :svg2png 48 big_
+call :svg2png 96 large_
+call :svg2png 192 huge_
 cd..
 
 cd setup
 call :svg2png 24 small_
 call :svg2png 32
 call :svg2png 48 big_
+call :svg2png 96 large_
+call :svg2png 192 huge_
 cd..
 
 

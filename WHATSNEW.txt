@@ -24,6 +24,9 @@
     - On the map screen long tap * to toggle track recording
     - During track recording long tap recorded trackpoints on the map screen to suspend/resume track recording
     - On the map screen long tap _ to manage track list, double tap _ to manage waypoints
+    *** Icon Menu ***
+    - More icon sizes are included, you can now choose from "useIcons = small|true|big|large|huge" in the .properties file.
+      useIcons=large and useIcons=huge make sense for devices with high resolution displays
     *** Platforms ***
     - Android: cut down on the number of targets to simplify builds & distribution; different
       targets (2.1, 2.2, 2.3 etc.) can be uncommented in build.xml if needed

@@ -678,7 +678,7 @@ public class CreateGpsMidData implements FilenameFilter {
     	
     	if (iconsToDelete != null) {
     		for (File file : iconsToDelete) {
-    			if (file.getName().matches("(small|big)_is?_.*\\.png")
+    			if (file.getName().matches("(small|big|large|huge)_is?_.*\\.png")
     				|| (deleteAllIcons && file.getName().matches("is?_.*\\.png") && !file.getName().equalsIgnoreCase("i_bg.png")) 
     			) {
     				//System.out.println("Delete " + file.getName());
