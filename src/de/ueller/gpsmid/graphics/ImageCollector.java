@@ -19,6 +19,7 @@ import de.ueller.gpsmid.data.ScreenContext;
 import de.ueller.gpsmid.mapdata.Way;
 import de.ueller.gpsmid.mapdata.WayDescription;
 import de.ueller.gpsmid.routing.RouteInstructions;
+import de.ueller.gpsmid.routing.RouteLineProducer;
 import de.ueller.gpsmid.tile.Tile;
 import de.ueller.gpsmid.ui.Trace;
 import de.ueller.gpsmid.ui.TraceLayout;
@@ -26,6 +27,7 @@ import de.ueller.midlet.iconmenu.LayoutElement;
 import de.ueller.util.IntPoint;
 import de.ueller.util.Logger;
 import de.ueller.util.MoreMath;
+import java.util.Enumeration;
 
 /* This class collects all visible objects to an offline image for later painting.
  * It is run in a low priority to avoid interrupting the GUI.
@@ -33,7 +35,10 @@ import de.ueller.util.MoreMath;
 public class ImageCollector implements Runnable {
 	private final static Logger logger = Logger.getInstance(ImageCollector.class, 
 			Logger.TRACE);
-
+	
+	/** hashtable of not painted single tiles */
+	public static java.util.Hashtable htNotPaintedSingleTiles = new java.util.Hashtable();
+	
 	private volatile boolean shutdown = false;
 	private volatile boolean suspended = true;
 	private final Tile t[];
@@ -158,7 +163,10 @@ public class ImageCollector implements Runnable {
 					}
 					pc[nextCreate].state = PaintContext.STATE_IN_CREATE;
 				}
-				createPC = pc[nextCreate];				
+				
+				tr.requestRedraw();
+
+				createPC = pc[nextCreate];
 
 				long startTime = System.currentTimeMillis();
 
@@ -180,6 +188,9 @@ public class ImageCollector implements Runnable {
 				createPC.g = img[nextCreate].getGraphics();
 				createPC.g.setColor(Legend.COLORS[Legend.COLOR_MAP_BACKGROUND]);
 				createPC.g.fillRect(0, 0, xSize, ySize);
+				
+				htNotPaintedSingleTiles.clear();
+				
 //				createPC.g.setColor(0x00FF0000);
 //				createPC.g.drawRect(0, 0, xSize - 1, ySize - 1);
 //				createPC.g.drawRect(20, 20, xSize - 41, ySize - 41);
@@ -326,6 +337,20 @@ public class ImageCollector implements Runnable {
 						&& (Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS) 
 								|| Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS))) {
 					t[4].paint(createPC, (byte) 0);
+				}
+
+				if ( htNotPaintedSingleTiles.isEmpty() ) {
+					// No not displayed tile.
+					// The  request queue can be cleared.
+					// This can happen when zooming far out and then zooming in again.
+					// Then many tiles will be queued which are not needed.
+					if ( Trace.getInstance().getDataReader() != null
+							&&
+					// do not clear the request queue while the route line is created, as this also requests single tiles
+						!RouteLineProducer.isRunning()
+					) {
+						Trace.getInstance().getDataReader().clearRequestQueue();
+					}
 				}
 
 				icDuration = System.currentTimeMillis() - startTime;
