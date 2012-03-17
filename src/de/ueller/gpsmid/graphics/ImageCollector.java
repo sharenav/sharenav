@@ -74,6 +74,8 @@ public class ImageCollector implements Runnable {
 	public static float overviewTileScaleBoost = 1.0f;
 	boolean collectorReady=false;
 	
+	public int iDrawState = 0;
+	
 	public ImageCollector(Tile[] t, int x, int y, Trace tr, Images i) {
 		super();
 		this.t = t;
@@ -150,6 +152,8 @@ public class ImageCollector implements Runnable {
 				//#debug debug
 				logger.debug("Redrawing Map");
 				
+				iDrawState = 1;
+				
 				synchronized (this) {
 					while (pc[nextCreate].state != PaintContext.STATE_READY && !shutdown) {
 						try {
@@ -164,6 +168,7 @@ public class ImageCollector implements Runnable {
 					pc[nextCreate].state = PaintContext.STATE_IN_CREATE;
 				}
 				
+				iDrawState = 2;
 				tr.requestRedraw();
 
 				createPC = pc[nextCreate];
@@ -353,6 +358,8 @@ public class ImageCollector implements Runnable {
 						Trace.getInstance().getDataReader().clearRequestQueue();
 					}
 				}
+				
+				iDrawState = 0;
 
 				icDuration = System.currentTimeMillis() - startTime;
 				//#mdebug

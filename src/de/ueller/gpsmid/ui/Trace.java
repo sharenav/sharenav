@@ -386,6 +386,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	private final Runtime runtime = Runtime.getRuntime();
 
+	private StringBuffer sbTemp = new StringBuffer();
+	
 	private RoutePositionMark dest = null;
 	
 	WaySegment waySegment = new WaySegment();
@@ -2013,6 +2015,29 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				e.setText(Locale.get("trace.cellIDs")/*cellIDs*/);
 			}
 
+			// Display tile and paint state
+			if ( true ) {
+				sbTemp.setLength(0);
+				e = tl.ele[TraceLayout.REQUESTED_TILES];
+				if (tileReader.getRequestQueueSize() != 0) {
+					// Display the number of not yet loaded tiles.
+					sbTemp.append("T ");
+					sbTemp.append( tileReader.getRequestQueueSize());
+				}
+				if (imageCollector != null && imageCollector.iDrawState != 0 ) {
+					// Display a + if the image collector prepares the image.
+					if ( imageCollector.iDrawState == 1 )
+						sbTemp.append("+");
+					// Display a * if the image collector is drawing.
+					else if ( imageCollector.iDrawState == 2 )
+						sbTemp.append("*");
+				}
+				if (sbTemp.length() != 0 )	{
+					e.setText(sbTemp.toString());
+				}
+			}
+
+			
 			// show audio recording status
 			e = tl.ele[TraceLayout.AUDIOREC];
 			if (audioRec.isRecording()) {

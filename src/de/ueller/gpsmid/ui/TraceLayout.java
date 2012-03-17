@@ -43,7 +43,8 @@ public class TraceLayout extends LayoutManager {
 	public static final int CURRENT_TIME = 22;
 	public static final int ETA = 23;
 	public static final int ROUTE_OFFROUTE = 24;
-	public static final int ELE_COUNT = 25;
+	public static final int REQUESTED_TILES = 25;
+	public static final int ELE_COUNT = 26;
 
 	// special element ids
 	public static final byte SE_SCALEBAR = 1;
@@ -329,6 +330,13 @@ public class TraceLayout extends LayoutManager {
 		e.setSpecialElementID(SE_SPEEDING_SIGN);
 		e.setAdditionalOffsY(-5);
 		e.setVRelative(ele[SPEED_CURRENT]);		
+		
+		e = ele[REQUESTED_TILES];
+		addElement(e, LayoutElement.FLAG_HALIGN_LEFT |
+				LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
+				LayoutElement.FLAG_FONT_LARGE);
+		e.setAdditionalOffsY(5);
+		e.setVRelative(ele[SCALEBAR]);
 		
 		setOnScreenButtonSize();
 	}	
