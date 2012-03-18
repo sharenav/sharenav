@@ -1,10 +1,10 @@
     *** Android Support ***
     - many stability / usability improvements
-    - uses huge icon menu images by default making look the icons much better
-    - reduced the number of build targets to simplify builds & distribution; different
-      targets (2.1, 2.2, 2.3 etc.) can be uncommented in build.xml if needed
+    - huge icon menu images are used by default which makes the icons look much better
     - new option for backlight setting: Android WindowManager (KEEP_SCREEN_ON)
     - new Android native location provider which can be used instead of JSR179
+    - reduced the number of build targets to simplify builds & distribution; different
+      targets (2.1, 2.2, 2.3 etc.) can be uncommented in build.xml if needed
     - some minor adjustments due to upgrading to J2MEPolish 2.3, related to file dialogue
     *** Touchscreen / User Interface ***
     - On the map screen long tap * to toggle track recording
