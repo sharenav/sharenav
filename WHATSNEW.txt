@@ -1,3 +1,32 @@
+    *** Android Support ***
+    - many stability / usability improvements
+    - uses huge icon menu images by default making look the icons much better
+    - reduced the number of build targets to simplify builds & distribution; different
+      targets (2.1, 2.2, 2.3 etc.) can be uncommented in build.xml if needed
+    - new option for backlight setting: Android WindowManager (KEEP_SCREEN_ON)
+    - new Android native location provider which can be used instead of JSR179
+    - some minor adjustments due to upgrading to J2MEPolish 2.3, related to file dialogue
+    *** Touchscreen / User Interface ***
+    - On the map screen long tap * to toggle track recording
+    - During track recording long tap recorded trackpoints on the map screen to suspend/resume track recording
+    - On the map screen long tap _ to manage track list, double tap _ to manage waypoints
+    - In routing choice, added buttons for selection of route mode - no need to go through menu
+    - More icon sizes are included, you can now choose from "useIcons = small|true|big|large|huge" in the .properties file.
+      useIcons=large and useIcons=huge make sense for devices with high resolution displays
+    *** Map display ***
+    - The map screen now updated more often during panning when dragging the touch screen.
+      (not only after the ImageCollector class has finished drawing the map but every 1/3 s)
+      This improves zooming out very large maps. (thx walter9)
+    - Zooming far out and then zooming far in again works now faster because as soon as all tiles
+      for the map display are loaded remaining tile loading requests will be dropped (thx walter9)
+    - The number of not loaded tiles are displayed in the left upper corner,
+      and a * sign after the number if the map is actually being rendered (thx walter9)
+    - The width of the line to the destination is now configurable in Display Options,
+      default value is 2. (thx pos_ei_don for drawWideLine())
+    - some workarounds (mainly useful for sea rendering) for map data overflows which can
+      appear due to shortcomings of Osm2GpsMid
+    - Bug fix: The ImageCollector thread no more is started twice
+      when a saved destination is restored at GpsMid startup (thx walter9)
     *** Sea generation ***
     - greatly faster sea generation algorithm with option useSeaTiles = true
       in .properties file. It divides the map into roughly 20km * 20km areas
@@ -16,35 +45,6 @@
     - add support for toll rules for each travel mode to routemodes.inc.
       Ways will still be rendered with toll decoration only if toll=yes or toll=true is set
       regardless of toll rules or current travel mode
-    *** Map display ***
-    - The width of the line to the destination is now configurable in Display Options,
-      default value is 2. (thx pos_ei_don for drawWideLine())
-    - Zooming far out and then zooming far in again works now faster because as soon as all tiles
-      for the map display are loaded remaining tile loading requests will be dropped (thx walter9)
-    - The number of not loaded tiles are displayed in the left upper corner,
-      and a * sign after the number if the map is actually being rendered (thx walter9)
-    - Bug fix: The ImageCollector thread no more is started twice
-      when a saved destination is restored at GpsMid startup (thx walter9)
-    - some workarounds (mainly useful for sea rendering) for map data overflows which can
-      appear due to shortcomings of Osm2GpsMid
-    *** Touchscreen support ***
-    - The map screen now updated more often during panning when dragging the touch screen.
-      (not only after the ImageCollector class has finished drawing the map but every 1/3 s)
-      This improves zooming out very large maps. (thx walter9)
-    - On the map screen long tap * to toggle track recording
-    - During track recording long tap recorded trackpoints on the map screen to suspend/resume track recording
-    - On the map screen long tap _ to manage track list, double tap _ to manage waypoints
-    - In routing choice, added buttons for selection of route mode - no need to go through menu
-    *** Icon Menu ***
-    - More icon sizes are included, you can now choose from "useIcons = small|true|big|large|huge" in the .properties file.
-      useIcons=large and useIcons=huge make sense for devices with high resolution displays
-    *** Platforms ***
-    - Android: cut down on the number of targets to simplify builds & distribution; different
-      targets (2.1, 2.2, 2.3 etc.) can be uncommented in build.xml if needed
-    - Android: add option for backlight setting: Android WindowManager (KEEP_SCREEN_ON)
-    - Android: some minor adjustments due to upgrading to J2MEPolish 2.3, related to file dialogue
-    - Android: added an Android native location provider which can be used instead of JSR179
-    - Android: use huge icons by default
 
 GpsMid 0.7.7
     *** Map display ***
