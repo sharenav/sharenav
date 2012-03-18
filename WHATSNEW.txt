@@ -21,6 +21,8 @@
       for the map display are loaded remaining tile loading requests will be dropped (thx walter9)
     - The number of not loaded tiles are displayed in the left upper corner,
       and a * sign after the number if the map is actually being rendered (thx walter9)
+    - experimental support for dashed areas
+      add e.g. <lineStyle dashed = "true" /> for landuse/industrial in style-file)
     - The width of the line to the destination is now configurable in Display Options,
       default value is 2. (thx pos_ei_don for drawWideLine())
     - some workarounds (mainly useful for sea rendering) for map data overflows which can
