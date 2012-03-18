@@ -39,6 +39,8 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		mParent = parent;
 		mPos = pos;
 		//#if polish.api.online
+		this.append(Locale.get("guiwebinfo.helptouch")/*Online help (touchscreen)*/, null);
+		this.append(Locale.get("guiwebinfo.helpwiki")/*Online help (GpsMid wiki)*/, null);
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WIKIPEDIA_RSS)) {
 			this.append(Locale.get("guiwebinfo.WikipediaRSS")/*Wikipedia (RSS)*/, null);
 		}
@@ -158,6 +160,13 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 				if ((actualWay != null) && ((phone = trace.getUrl(actualWay.phoneIdx)) != null)) {
 					url = "tel:" + phone;
 				}
+			}
+			if (site.equalsIgnoreCase(Locale.get("guiwebinfo.helptouch")/*Online help (touchscreen)*/)) {
+				url = "https://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Touchscreen_Layout";
+			}
+
+			if (site.equalsIgnoreCase(Locale.get("guiwebinfo.helpwiki")/*Online help (Gpsmid wiki)*/)) {
+				url = "https://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Main_Page";				
 			}
 			try {
 				if (url != null) {
