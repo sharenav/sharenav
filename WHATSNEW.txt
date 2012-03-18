@@ -17,10 +17,20 @@
       Ways will still be rendered with toll decoration only if toll=yes or toll=true is set
       regardless of toll rules or current travel mode
     *** Map display ***
+    - The width of the line to the destination is now configurable in Display Options,
+      default value is 2. (thx pos_ei_don for drawWideLine())
+    - Zooming far out and then zooming far in again works now faster because as soon as all tiles
+      for the map display are loaded remaining tile loading requests will be dropped (thx walter9)
+    - The number of not loaded tiles are displayed in the left upper corner,
+      and a * sign after the number if the map is actually being rendered (thx walter9)
+    - Bug fix: The ImageCollector thread no more is started twice
+      when a saved destination is restored at GpsMid startup (thx walter9)
     - some workarounds (mainly useful for sea rendering) for map data overflows which can
       appear due to shortcomings of Osm2GpsMid
-    - The width of the line to the destination is now configurable in Display Options, default value is 2.
     *** Touchscreen support ***
+    - The map screen now updated more often during panning when dragging the touch screen.
+      (not only after the ImageCollector class has finished drawing the map but every 1/3 s)
+      This improves zooming out very large maps. (thx walter9)
     - On the map screen long tap * to toggle track recording
     - During track recording long tap recorded trackpoints on the map screen to suspend/resume track recording
     - On the map screen long tap _ to manage track list, double tap _ to manage waypoints
