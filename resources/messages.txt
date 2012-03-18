@@ -1243,3 +1243,5 @@ guiwebinfo.TopoMap=Topographic Map
 guiwebinfo.TopoMapFi=Topographic Map (Finland)
 guisetupgui.PoiDistance=POI Search Distance: 
 guidiscover.DestLineWidth=Destination Line Width:
+guiwebinfo.helptouch=Online help (touchscreen)
+guiwebinfo.helpwiki=Online help (GpsMid wiki)
