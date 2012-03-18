@@ -583,6 +583,7 @@ public class BundleGpsMid implements Runnable {
 				System.out.println("===================");
 				rd.create(config);
 				rd.optimise();
+				OsmParser.printMemoryUsage(1);
 			}
 			CreateGpsMidData cd = new CreateGpsMidData(parser, target.getCanonicalPath());
 			//				rd.write(target.getCanonicalPath());

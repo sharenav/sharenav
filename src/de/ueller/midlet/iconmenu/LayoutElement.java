@@ -21,6 +21,8 @@ import de.enough.polish.util.Locale;
 public class LayoutElement {
 	private final static Logger logger = Logger.getInstance(LayoutElement.class,Logger.DEBUG);
 
+	public static int[] iaTransparentPaintingBlack = { 0x700000 };
+
 	/** align element at minX of LayoutManager area */
 	public static final int FLAG_HALIGN_LEFT = (1<<0);
 	/** align element right at maxX of LayoutManager area */
@@ -72,6 +74,9 @@ public class LayoutElement {
 	public static final int FONT_FLAGS = FLAG_FONT_BOLD | FLAG_FONT_LARGE | FLAG_FONT_MEDIUM | FLAG_FONT_SMALL;
 	public static final int FLAG_IMAGE_GREY = (1<<24);
 	public static final int FLAG_IMAGE_TOGGLEABLE = (1<<25);
+
+
+	public static final int FLAG_TRANSPARENT_BACKGROUND_BOX = (1<<26);
 
 	
 	protected LayoutManager lm = null;
@@ -643,6 +648,37 @@ public class LayoutElement {
 				logger.trace("draw border at " + left + "," + top + " size: " + (right-left) + "/" + (bottom - top));
 				g.setStrokeStyle(Graphics.SOLID);
 				g.drawRect(left, top, right-left, bottom - top);
+			}
+			if ( (flags & FLAG_TRANSPARENT_BACKGROUND_BOX) > 0 ) {
+				//g.setColor(bgColor);
+				int iLeft = left + 1;
+				int iTop = top + 1;
+				int iWidth = right -left - 1;
+				int iHeight = bottom - top - 1;
+
+				if ( iaTransparentPaintingBlack.length < iWidth)
+				{
+					// The array contains int values for blending one line.
+					// The array size is increased here so it holds at minimum
+					// the requested number of pixels width.
+					iaTransparentPaintingBlack = new int[iWidth];
+
+					for ( int i = 0; i < iWidth; i++)
+						iaTransparentPaintingBlack[i] = 0x80000000;
+				}
+
+				// Blend transparent pixels line by line.
+				// The loop is neccessary for some mobiles (e.g. Samsung Wave) because
+				// a scan with of 0 is not working there.
+				for ( int i = 0; i < iHeight; i++)
+					g.drawRGB(iaTransparentPaintingBlack,
+						0,
+						iWidth,
+						iLeft,
+						iTop + i,
+						iWidth,
+						1,
+					   true);
 			}
 			if ( (flags & FLAG_ICONMENU_ICON) > 0 ) {
 				IconMenuPage imp = (IconMenuPage) lm;

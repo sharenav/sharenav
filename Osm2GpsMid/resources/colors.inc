@@ -32,7 +32,7 @@
 	<color of="map_posindicator" is="00000000" isAtNight="00FFFFFF"/>
 	<color of="scalebar" is="00000000" isAtNight="00FFFFFF"/>
 	<color of="zoom_button" is="00000000" isAtNight="00FFFFFF"/>
-	<color of="zoom_text" is="00000000" isAtNight="00FFFFFF" />
+	<color of="zoom_text" is="00FFFFFF" isAtNight="00FFFFFF" />
 	<color of="compass_direction_background" is="00FFFFC0" isAtNight="00000000"/>
 	<color of="compass_direction_text" is="00000000" isAtNight="00FFFFFF"/>
 	<color of="speeding_sign_border" is="00FF0000"/>
