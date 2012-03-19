@@ -87,18 +87,17 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 				} catch (IOException ioe) {
 				}
 				//#endif
+				travelModeItems[i].addCommand(CMD_OK);
+				travelModeItems[i].setDefaultCommand(CMD_OK);
+				travelModeItems[i].setItemCommandListener(this);
+				//#style formItem
+				append(travelModeItems[i]);
 				if (travelModeImages[i] != null) {
 					travelModeImages[i].addCommand(CMD_OK);
 					travelModeImages[i].setDefaultCommand(CMD_OK);
 					travelModeImages[i].setItemCommandListener(this);
 					//#style formItem
 					append(travelModeImages[i]);
-				} else {
-					travelModeItems[i].addCommand(CMD_OK);
-					travelModeItems[i].setDefaultCommand(CMD_OK);
-					travelModeItems[i].setItemCommandListener(this);
-					//#style formItem
-					append(travelModeItems[i]);
 				}
 			}
 		}
