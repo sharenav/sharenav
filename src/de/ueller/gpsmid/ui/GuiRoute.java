@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
+import de.ueller.midlet.util.ImageTools;
 import de.ueller.util.Logger;
 import de.enough.polish.util.Locale;
 
@@ -76,8 +77,12 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 				// FIXME consider if someone might want to use routing icons on other platforms too
 				//#if polish.android
 				try {
+					Image image = Image.createImage("/" + Configuration.getIconPrefix() + "r_" + travelModes[i] + ".png");
+
+					float scale = image.getWidth() / this.getWidth() * 4;
+
 					travelModeImages[i] = new ImageItem(travelModes[i], 
-									    Image.createImage("/" + Configuration.getIconPrefix() + "r_" + travelModes[i] + ".png"),
+									    ImageTools.scaleImage(image, (int) (image.getWidth() / scale), (int) (image.getHeight() / scale)),
 									    ImageItem.LAYOUT_RIGHT, travelModes[i]);
 				} catch (IOException ioe) {
 				}
