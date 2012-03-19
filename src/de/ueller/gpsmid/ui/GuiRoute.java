@@ -18,9 +18,12 @@ import de.enough.polish.util.Locale;
 public class GuiRoute extends Form implements CommandListener, ItemCommandListener {
 	private final static Logger logger = Logger.getInstance(GuiRoute.class,Logger.DEBUG);
 
-	// commands
-	private static final Command CMD_OK = new Command(Locale.get("generic.OK")/*Ok*/, GpsMidMenu.OK, 2);
-	private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.BACK, 3);
+	private static final Command CMD_SETUP_OK = new Command(Locale.get("generic.OK")/*Ok*/, GpsMidMenu.OK, 2);
+	private static final Command CMD_SETUP_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.BACK, 3);
+
+	// for route settings popup; want the back key on Android to cancel
+	private static final Command CMD_OK = new Command(Locale.get("generic.OK")/*Ok*/, Command.OK, 2);
+	private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, Command.BACK, 3);
 	
 	private ChoiceGroup routingTravelModesGroup;
 	private StringItem[] travelModeItems;
@@ -47,12 +50,15 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 		this.parent = parent;
 
 		setCommandListener(this);
-		addCommand(CMD_OK);
-		addCommand(CMD_CANCEL);
 
 		this.useAsSetupDialog = useAsSetupDialog;
 		if (useAsSetupDialog) {
+			addCommand(CMD_SETUP_OK);
+			addCommand(CMD_SETUP_CANCEL);
 			setTitle(Locale.get("guiroute.RoutingOptions")/*Routing Options*/);
+		} else {
+			addCommand(CMD_OK);
+			addCommand(CMD_CANCEL);
 		}
 
 		String travelModes[] = new String[Legend.getTravelModes().length];
@@ -87,14 +93,24 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 				} catch (IOException ioe) {
 				}
 				//#endif
-				travelModeItems[i].addCommand(CMD_OK);
-				travelModeItems[i].setDefaultCommand(CMD_OK);
+				if (useAsSetupDialog) {
+					travelModeItems[i].addCommand(CMD_SETUP_OK);
+					travelModeItems[i].setDefaultCommand(CMD_SETUP_OK);
+				} else {
+					travelModeItems[i].addCommand(CMD_OK);
+					travelModeItems[i].setDefaultCommand(CMD_OK);
+				}
 				travelModeItems[i].setItemCommandListener(this);
 				//#style formItem
 				append(travelModeItems[i]);
 				if (travelModeImages[i] != null) {
-					travelModeImages[i].addCommand(CMD_OK);
-					travelModeImages[i].setDefaultCommand(CMD_OK);
+					if (useAsSetupDialog) {
+						travelModeImages[i].addCommand(CMD_SETUP_OK);
+						travelModeImages[i].setDefaultCommand(CMD_SETUP_OK);
+					} else {
+						travelModeImages[i].addCommand(CMD_OK);
+						travelModeImages[i].setDefaultCommand(CMD_OK);
+					}
 					travelModeImages[i].setItemCommandListener(this);
 					//#style formItem
 					append(travelModeImages[i]);
@@ -198,12 +214,12 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 
 	public void commandAction(Command c, Displayable d) {
 
-		if (c == CMD_CANCEL) {			
+		if (c == CMD_CANCEL || c == CMD_SETUP_CANCEL) {
 			parent.show();
 			return;
 		}
 
-		if (c == CMD_OK) {			
+		if (c == CMD_OK || c == CMD_SETUP_OK) {
 			if (useAsSetupDialog
 			    // FIXME consider if someone might want to use routing icons on other platforms too
 			    //#if polish.android
