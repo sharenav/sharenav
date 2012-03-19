@@ -1134,14 +1134,15 @@ public class GuiSearch extends Canvas implements CommandListener,
 			// FIXME With this there's the problem that Back gets passed on to the next menu
 			// (e.g. route mode asking). See http://developer.android.com/sdk/android-2.0.html
 			// for Native Android workaround; not sure how to do this with J2MEPolish
-			if (keyCode == KeyEvent.KEYCODE_BACK && !isCursorValid()) {
+			if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == 10) {
 				destroy();
 				parent.show();
-			}
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
-				commandAction( ROUTE1_CMD, (Displayable) null);
 			} else {
-				commandAction( OK1_CMD, (Displayable) null);				
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
+					commandAction( ROUTE1_CMD, (Displayable) null);
+				} else {
+					commandAction( OK1_CMD, (Displayable) null);
+				}
 			}
 			return;
 //#else
