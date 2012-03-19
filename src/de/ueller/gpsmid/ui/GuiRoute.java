@@ -213,9 +213,13 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 			Configuration.setRouteEstimationFac(gaugeRoutingEsatimationFac.getValue());
 
 			String km=tfMainStreetNetDistanceKm.getString(); 
-			Configuration.setMainStreetDistanceKm(
-					(int) (Float.parseFloat(km)) 
-			);
+			int kilometers;
+			try {
+				kilometers = (int) (Float.parseFloat(km));
+				Configuration.setMainStreetDistanceKm(kilometers);
+			} catch (NumberFormatException e) {
+				kilometers = 3; // default
+			}
 
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_SUPPRESS_ROUTE_WARNING, routingWarningOptsGroup.isSelected(0));
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_USE_MOTORWAYS, routingAllowOptsGroup.isSelected(0));
