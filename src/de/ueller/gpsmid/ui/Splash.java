@@ -91,6 +91,9 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	private String mapVersion; 
 	private final String appVersion; 
 	private boolean initDone = false;
+	
+	private long lastKeyPressTime = 0;
+	private int lastKeyCode;
 
 	List menuSplash = new List("GpsMid", List.IMPLICIT);
 
@@ -153,14 +156,18 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		g.setFont(f);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		int sp = f.getHeight();
-		int x = (int) (5 * scale + (getWidth() - splash.getWidth()) / 2);
+		int x = (getWidth() + splash.getWidth()) / 2 - 2;
 		
 		g.drawImage(splash, getWidth() / 2, 0, Graphics.HCENTER | Graphics.TOP);
 
 		g.setColor(0xFFFF99);
-		g.drawString(appVersion + " " + mapVersion, (getWidth() + splash.getWidth()) / 2 - 2 , 2, 
-					 Graphics.TOP | Graphics.RIGHT);		
+		g.drawString(appVersion + " " + mapVersion, x , 2, Graphics.TOP | Graphics.RIGHT);		
+		if (Math.abs( System.currentTimeMillis() - lastKeyPressTime ) < 1000) {
+			g.drawString("keyCode: " + lastKeyCode, x , 2 + sp, Graphics.TOP | Graphics.RIGHT);
+		}
+
 		g.setColor(255, 40, 40);
+		x = (int) (5 * scale + (getWidth() - splash.getWidth()) / 2);
 		int startLine = top / sp;
 		int yc = topStart - top % sp;
 		g.setClip(0, topStart, getWidth(), getHeight() - topStart);
@@ -274,6 +281,9 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	}
 	
 	protected void keyPressed(int keyCode) {
+		lastKeyPressTime = System.currentTimeMillis();
+		lastKeyCode = keyCode;
+		
 		if (keyCode == KEY_STAR) {
 			boolean current = Configuration.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN);
 			Configuration.setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, !current, true);
