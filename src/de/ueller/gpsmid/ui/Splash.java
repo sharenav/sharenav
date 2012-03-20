@@ -286,10 +286,13 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		if (keyCode == KEY_POUND) {
 			commandAction(ENGLISH_CMD, this);
 		}
-		// FIXME With this there's the problem that Back gets passed on to the next menu
-		// See http://developer.android.com/sdk/android-2.0.html
-		// for Native Android workaround; not sure how to do this with J2MEPolish
-		//#if polish.android
+	}
+	//#if polish.android
+	// not in keyPressed() to solve the problem that Back gets passed on
+	// to the next menu
+	// See http://developer.android.com/sdk/android-2.0.html
+	// for a possible Native Android workaround
+	protected void keyReleased(int keyCode) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (initDone) {
 				shutdown = true;
@@ -303,7 +306,6 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 				return;
 			}
 		}
-		//#endif
-
 	}
+	//#endif
 }
