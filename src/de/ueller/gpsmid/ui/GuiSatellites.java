@@ -25,6 +25,10 @@ import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.Position;
 import de.ueller.util.Logger;
 
+//#if polish.android
+import android.view.KeyEvent;
+//#endif
+
 public class GuiSatellites extends KeyCommandCanvas implements CommandListener,
 		GpsMidDisplayable, LocationMsgReceiver  {
 
@@ -167,4 +171,15 @@ public class GuiSatellites extends KeyCommandCanvas implements CommandListener,
 	public void locationDecoderEnd(String msg) {
 		// Not interested, handled by Trace.
 	}
+	//#if polish.android
+	// not in keyPressed() to solve the problem that Back gets passed on
+	// to the next menu
+	// See http://developer.android.com/sdk/android-2.0.html
+	// for a possible Native Android workaround
+	protected void keyReleased(int keyCode) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			commandAction(BACK_CMD, (Displayable) null);
+		}
+	}
+	//#endif
 }
