@@ -64,12 +64,13 @@ public class SearchNames implements Runnable {
 			    for (int i = 8; i != 0; i--) {
 					try {
 					    synchronized (this) {
-					    	wait(300);						
+						    wait(300);
 					    }
+					    // repaint moved out of if(stopSearch), caused results to not be updated
+					    // when letters were typed rapidly which triggered frequent reSearch()es
+					    gui.triggerRepaint();
 					    if (stopSearch) {
-							break;
-					    } else {
-							gui.triggerRepaint();
+						    break;
 					    }
 					} catch (InterruptedException e) {
 					}
@@ -77,10 +78,10 @@ public class SearchNames implements Runnable {
 			}
 	    } catch (OutOfMemoryError oome ) {
 		    logger.fatal(Locale.get("searchnames.SearchNamesCrashedOOM")/*SearchNames thread crashed as out of memory: */ + oome.getMessage());
-	    	oome.printStackTrace();
+		    oome.printStackTrace();
 	    } catch (Exception e) {
 		    logger.fatal(Locale.get("searchnames.SearchNamesCrashedWith")/*SearchNames thread crashed unexpectedly with error */ +  e.getMessage());
-	    	e.printStackTrace();
+		    e.printStackTrace();
 	    }		
 	}
 	
@@ -115,28 +116,32 @@ public class SearchNames implements Runnable {
 					for (int i = 0; i < gui.wayPts.length; i++ ) {
 						if (gui.wayPts[i].displayName.length() > 0) {
 							if (gui.showAllWayPts || gui.wayPts[i].displayName.endsWith("*")) {
-			    				if (canonLen == 0
-			    					||
-			    					NumberCanon.canonial(gui.wayPts[i].displayName.substring(0, 1)).equals( cSearch )
-			    				) {
-					    			SearchResult sr = new SearchResult();
-					    			sr.lat = gui.wayPts[i].lat;
-					    			sr.lon = gui.wayPts[i].lon;	    			
-								//#if polish.api.bigsearch
-								sr.source = INDEX_WAYPOINTS;
-								//#endif
-					    			sr.nameIdx = i; 
-					    			gui.insertWptSearchResultSortedByNameOrDist(gui.wayPts, sr);
-					    			inserted = true;
-			    				}
-			    			}
+								if (canonLen == 0
+								    ||
+								    NumberCanon.canonial(gui.wayPts[i].displayName.substring(0, 1)).equals( cSearch )
+									) {
+									SearchResult sr = new SearchResult();
+									sr.lat = gui.wayPts[i].lat;
+									sr.lon = gui.wayPts[i].lon;
+									//#if polish.api.bigsearch
+									sr.source = INDEX_WAYPOINTS;
+									//#endif
+									sr.nameIdx = i;
+									gui.insertWptSearchResultSortedByNameOrDist(gui.wayPts, sr);
+									inserted = true;
+								}
+							}
 						}
-		    		}
+					}
 					if (!inserted) {
 						gui.state = GuiSearch.STATE_MAIN;
 						gui.setTitle();
 					} else {
-						gui.state = GuiSearch.STATE_FAVORITES;
+						// try to avoid a race with GuiSearch
+						// - don't go back to favorites state
+						if (gui.searchCanonLength() < 2) {
+							gui.state = GuiSearch.STATE_FAVORITES;
+						}
 						gui.displayReductionLevel = 0;
 						gui.setTitle();
 						return;

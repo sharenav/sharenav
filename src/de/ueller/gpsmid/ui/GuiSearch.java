@@ -312,6 +312,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 		
 	}
 
+	public int searchCanonLength() {
+		return searchCanon.length();
+	}
+
 	private boolean isCursorValid() {
 		return (cursor < result.size() && cursor >= 0 && result.size() != 0);
 	}
