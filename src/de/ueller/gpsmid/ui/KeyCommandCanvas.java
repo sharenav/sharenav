@@ -75,12 +75,6 @@ public abstract class KeyCommandCanvas extends Canvas implements
 			commandAction(Trace.getInstance().getCommand(Trace.SEARCH_CMD), (Displayable) null);
 			return;
 		}
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			// #debug debug
-			logger.debug("  Turning BACK key into EXIT_CMD");
-			commandAction(Trace.getInstance().getCommand(Trace.EXIT_CMD), (Displayable) null);
-			return;
-		}
 		//#endif
 		
 		// Handle actions for repeatable keys like direction keys immediately
@@ -169,6 +163,12 @@ public abstract class KeyCommandCanvas extends Canvas implements
 		if (keyCode == -111) {
 			commandAction(Trace.getInstance().getCommand(Trace.ICON_MENU), (Displayable) null);
 			ignoreKeyCode = keyCode;
+			return;
+		}
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			// #debug debug
+			logger.debug("  Turning BACK key into EXIT_CMD");
+			commandAction(Trace.getInstance().getCommand(Trace.EXIT_CMD), (Displayable) null);
 			return;
 		}
 		//#endif
