@@ -336,6 +336,12 @@ public class GpsMid extends MIDlet implements CommandListener {
 			trace.alert(title, message, timeout);
 		} else {
 			Alert alert = new Alert(title);
+			// FIXME when back key works, 
+			//#if polish.android
+			if (timeout == Alert.FOREVER) {
+				timeout = 10000;
+			}
+			//#endif
 			alert.setTimeout(timeout);
 			alert.setString(message);
 			alert.setCommandListener(this);
