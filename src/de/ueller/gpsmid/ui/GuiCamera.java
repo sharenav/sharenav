@@ -48,6 +48,10 @@ import de.ueller.util.StringTokenizer;
 
 import de.enough.polish.util.Locale;
 
+//#if polish.android
+import android.view.KeyEvent;
+//#endif
+
 /**
  * 
  * This class provides a camera capture form based on jsr-135 and jsr-234
@@ -387,6 +391,22 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		
 	}
 	
+	//#if polish.android
+	// See http://developer.android.com/sdk/android-2.0.html
+	// for a possible Native Android problem & workaround
+	public void keyReleased(int keyCode) {
+		logger.info("Released key code " + keyCode + " in Camera GUI");
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			//#if polish.api.mmapi
+			if (mPlayer != null) {
+				mPlayer.close();
+			}
+			//#endif
+			parent.show();
+		}
+	}
+	//#endif
+
 	public void commandAction(Command c, Item i) {
 //		 forward item command action to form
 		commandAction(c, (Displayable) null);
@@ -678,7 +698,5 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		logger.info("Setting picture directory to " + url);
 		Configuration.setPhotoUrl(url);
 		basedirectory = url;
-		
 	}
-
 }
