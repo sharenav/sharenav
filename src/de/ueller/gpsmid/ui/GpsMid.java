@@ -623,8 +623,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 	}
 
 	public void showBackLightLevel() {
-		if ( Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON,
-				false) ) {
+		if ( Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON) ) {
 			if ( Configuration.getCfgBitState(
 					Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED) ) {
 				String level = Integer.toString(Configuration.getBackLightLevel());

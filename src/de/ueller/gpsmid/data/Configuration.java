@@ -602,6 +602,7 @@ public class Configuration {
 			   			1L << CFGBIT_AUTOSAVE_MAPPOS;
 			if (getDefaultDeviceBacklightMethodCfgBit() != 0) {
 				setCfgBitSavedState(getDefaultDeviceBacklightMethodCfgBit(), true);
+				cfgBits_0_to_63 |= 1L << CFGBIT_BACKLIGHT_ON;
 			}
 			//#if polish.android
 			// (was) no bundle support for android yet, set a fixed location for map
