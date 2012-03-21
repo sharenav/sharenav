@@ -980,7 +980,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					|| (c == CMDS[PAN_UP2_CMD]) || (c == CMDS[PAN_DOWN2_CMD])) {
 				int panX = 0; int panY = 0;
 				int courseDiff = 0;
-				int backLightLevelDiff = 0;
+				int backLightLevelIndexDiff = 0;
 				if (c == CMDS[PAN_LEFT25_CMD]) {
 					panX = -25;
 				} else if (c == CMDS[PAN_RIGHT25_CMD]) {
@@ -997,7 +997,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					} else {
 						panX = -2;
 					}
-					backLightLevelDiff = -25;
+					backLightLevelIndexDiff = -1;
 				} else if (c == CMDS[PAN_RIGHT2_CMD]) {
 					if (TrackPlayer.isPlaying) {
 						TrackPlayer.faster();
@@ -1006,7 +1006,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					} else {
 						panX = 2;
 					}
-					backLightLevelDiff = 25;
+					backLightLevelIndexDiff = 1;
 				} else if (c == CMDS[PAN_UP2_CMD]) {
 					if (route!=null && Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_BROWSING)) {
 						RouteInstructions.toNextInstruction(1);
@@ -1021,11 +1021,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					}
 				}
 				
-				if (backLightLevelDiff !=0  &&  System.currentTimeMillis() < (lastBackLightOnTime + 2500)) {
+				if (backLightLevelIndexDiff !=0  &&  System.currentTimeMillis() < (lastBackLightOnTime + 2500)) {
 					// turn backlight always on when dimming
 					Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, true, false);
 					lastBackLightOnTime = System.currentTimeMillis();
-					Configuration.addToBackLightLevel(backLightLevelDiff);
+					Configuration.addToBackLightLevel(backLightLevelIndexDiff);
 					parent.showBackLightLevel();
 				} else if (imageCollector != null) {
 					if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
