@@ -1021,7 +1021,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					}
 				}
 				
-				if (backLightLevelIndexDiff !=0  &&  System.currentTimeMillis() < (lastBackLightOnTime + 2500)) {
+				if (backLightLevelIndexDiff !=0  &&  System.currentTimeMillis() < (lastBackLightOnTime + 5000)) {
 					// turn backlight always on when dimming
 					Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, true, false);
 					lastBackLightOnTime = System.currentTimeMillis();
@@ -3171,7 +3171,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			if (actionId > 0) {
 				// #debug debug
 				logger.debug("single tap button: " + actionId + " x: " + touchX + " y: " + touchY);
-				if (System.currentTimeMillis() < (lastBackLightOnTime + 2500)) {
+				if (System.currentTimeMillis() < (lastBackLightOnTime + 5000)) {
 					if (actionId == ZOOM_IN_CMD) {
 						actionId = PAN_RIGHT2_CMD;
 					} else if (actionId == ZOOM_OUT_CMD) {
