@@ -7,6 +7,8 @@ user=SOURCEFORGE_USERNAME_HERE
 ver=0.7.71-map70
 
 ant clean
+
+( cd Osm2GpsMid ; ant clean )
 #
 # workaround for the first i18n-messages failure
 #
@@ -16,18 +18,17 @@ ant -Ddevice=Generic/blackberry
 
 ant
 cd Osm2GpsMid
-ant clean
 ant
 cd ..
 cp -p dist/Osm2GpsMid-$ver.jar .
 
 # debug version build
 ant clean
+( cd Osm2GpsMid ; ant clean )
 ant debug -Ddevice=Generic/blackberry
 ant debug j2mepolish
 
 cd Osm2GpsMid
-ant clean
 ant
 cd ..
 cp -p dist/Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar
