@@ -27,7 +27,11 @@
       add e.g. <lineStyle dashed = "true" /> for landuse/industrial in style-file)
     - The width of the line to the destination is now configurable in Display Options,
       default value is 2. (thx pos_ei_don for drawWideLine())
-    - some workarounds (mainly useful for sea rendering) for map data overflows which can
+    - If backlight method is known for the phone model backlight is turned on by default in new midlets.
+    - Additional backlight level 10% for Nokia and Android mobiles, so now there is 1%, 10%, 25%, 50%, 75%, 100%
+    - Time to change backlight level with keys 1 and 3 or zoom buttons on touch screens
+      after toggling backlight has been increased to 5 seconds.
+    - Some workarounds (mainly useful for sea rendering) for map data overflows which can
       appear due to shortcomings of Osm2GpsMid
     - Bug fix: The ImageCollector thread no more is started twice
       when a saved destination is restored at GpsMid startup (thx walter9)

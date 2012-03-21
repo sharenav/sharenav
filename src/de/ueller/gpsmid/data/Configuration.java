@@ -1599,19 +1599,28 @@ public class Configuration {
 		Configuration.backLightLevel = backLightLevel;
 	}
 	
-	public static void addToBackLightLevel(int diffBacklight) {
-		backLightLevel += diffBacklight;
-		if (backLightLevel > 100
-		    || (!Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA) &&
-			!Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK))) {
+	public static void addToBackLightLevel(int backLightLevelIndexDiff) {
+		byte[] backLightLevels = {1, 10, 25, 50, 75, 100};
+		
+		// find index of current backlight level
+		int i = 0;
+		for (; i < backLightLevels.length && backLightLevels[i] != backLightLevel; i++) {
+			;
+		}
+		
+		i += backLightLevelIndexDiff;
+		if (i < 0) {
+			i = 0;
+		} else if ( i >= backLightLevels.length ) {
+			i = backLightLevels.length - 1;
+		}
+		backLightLevel = backLightLevels[i]; 
+ 
+		if (!Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA) &&
+			!Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)) {
 			backLightLevel = 100;
 		}
-		if (backLightLevel <= 1) {
-			backLightLevel = 1;
-		}
-		if (backLightLevel == 26) {
-			backLightLevel = 25;
-		}
+		
 		setBackLightLevel(backLightLevel);
 	}
 
