@@ -1305,7 +1305,23 @@ public class RouteInstructions {
 			return trace.getName(c.wayNameIdx);
 		} else {
 			WayDescription wayDesc = Legend.getWayDescription(c.wayType);
-			return Locale.get("imagecollector.unnamed")/*(unnamed */ + wayDesc.description + ")";
+			boolean nextWayIsOriginalNextWay = true;
+			// for unnamed links give the name or wayDescription of the next named way following the link
+			while (wayDesc.isHighwayLink() && i < route.size() - 2) {
+				nextWayIsOriginalNextWay = false;
+				i++;
+				c2 = (ConnectionWithNode) route.elementAt(i);
+				wayDesc = Legend.getWayDescription(c2.wayType);
+				if (c2.wayNameIdx != -1) {
+					String name = trace.getName(c2.wayNameIdx);
+					return (name == null) ? null : "... " + name;
+				}
+			}
+			/* 
+			 * if we did not find a name on the following links or the first way after the links return unnamed way type,
+			 * only prefix "..." if there's a link way before the way
+			 */
+			return (nextWayIsOriginalNextWay ? "" : "... ") + Locale.get("imagecollector.unnamed")/*(unnamed */ + wayDesc.description + ")";
 		}
 	}
 
