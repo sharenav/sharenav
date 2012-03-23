@@ -1245,3 +1245,5 @@ guisetupgui.PoiDistance=POI Search Distance:
 guidiscover.DestLineWidth=Destination Line Width:
 guiwebinfo.helptouch=Online help (touchscreen)
 guiwebinfo.helpwiki=Online help (GpsMid wiki)
+guidiscover.UseGpsTime=Use GPS time on display
+guidiscover.GpsFallback=Fallback to device clock when GPS unavailable

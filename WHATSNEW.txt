@@ -33,6 +33,8 @@
       after toggling backlight has been increased to 5 seconds.
     - Some workarounds (mainly useful for sea rendering) for map data overflows which can
       appear due to shortcomings of Osm2GpsMid
+    - option to use the GPS clock as clock source for on-map display
+      (currently only NMEA-transmitting GPS devices give clock information)
     - Bug fix: The ImageCollector thread no more is started twice
       when a saved destination is restored at GpsMid startup (thx walter9)
     *** Sea generation ***

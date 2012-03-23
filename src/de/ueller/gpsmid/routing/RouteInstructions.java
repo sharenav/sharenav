@@ -14,6 +14,7 @@ import de.ueller.gps.Node;
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.PaintContext;
+import de.ueller.gpsmid.data.Position;
 import de.ueller.gpsmid.data.RoutePositionMark;
 import de.ueller.gpsmid.graphics.ImageCollector;
 import de.ueller.gpsmid.mapdata.Way;
@@ -678,8 +679,19 @@ public class RouteInstructions {
 					
 					if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ETA_IN_MAP)) {
 						e = Trace.tl.ele[TraceLayout.ETA]; // e is used *twice* below (also as vRelative)
-						e.setText(DateTimeTools.getClock(System.currentTimeMillis() + remainingDurationFSecs * 200, true));
-		 				/*
+						Position pos = trace.getCurrentPosition();
+						if (Configuration.getCfgBitState(Configuration.CFGBIT_GPS_TIME)) {
+							if (pos.gpsTimeMillis != 0) {
+								e.setText(DateTimeTools.getClock(pos.gpsTimeMillis + trace.tzOffset + remainingDurationFSecs * 200, true));
+							} else if (Configuration.getCfgBitState(Configuration.CFGBIT_GPS_TIME_FALLBACK)) {
+								e.setText(DateTimeTools.getClock(System.currentTimeMillis() + remainingDurationFSecs * 200, true));
+							} else {
+								e.setText(" ");
+							}
+						} else {
+							e.setText(DateTimeTools.getClock(System.currentTimeMillis() + remainingDurationFSecs * 200, true));
+						}
+						/*
 						don't use new Date() - it is very slow on some Nokia devices			
 						Calendar currentTime = Calendar.getInstance();
 						currentTime.setTime( new Date( System.currentTimeMillis() + remainingDurationFSecs * 200) );		

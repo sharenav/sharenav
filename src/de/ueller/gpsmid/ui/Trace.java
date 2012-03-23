@@ -415,14 +415,19 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	
 	public Vector locationUpdateListeners;
 	private Projection panProjection;
-	
-	
+
+	public int tzOffset;
+
 	private Trace() throws Exception {
 		//#debug
 		logger.info("init Trace");
 		
 		this.parent = GpsMid.getInstance();
 		
+		// placeholder for timezone offset
+		tzOffset = 180 * 60 * 1000;
+		//tzOffset = 0;
+
 		Configuration.setHasPointerEvents(hasPointerEvents());	
 		
 		CMDS[EXIT_CMD] = new Command(Locale.get("generic.Exit")/*Exit*/, Command.EXIT, 2);
@@ -1637,7 +1642,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				Position setpos = new Position(center.radlat / MoreMath.FAC_DECTORAD,
     								center.radlon / MoreMath.FAC_DECTORAD,
 								    PositionMark.INVALID_ELEVATION, 0.0f, 0.0f, 1,
-							            System.currentTimeMillis(), Position.TYPE_MANUAL);
+							       	    System.currentTimeMillis(), Position.TYPE_MANUAL);
 				// implies center to gps, to give feedback as the gps rectangle
 				gpsRecenter = true;
 				// gpsRecenterInvalid = true;
@@ -2078,7 +2083,17 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP)) {
 				e = tl.ele[TraceLayout.CURRENT_TIME]; // e is used *twice* below (also as vRelative)
-				e.setText(DateTimeTools.getClock(System.currentTimeMillis(), true));
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_GPS_TIME)) {
+					if (pos.gpsTimeMillis != 0) {
+						e.setText(DateTimeTools.getClock(pos.gpsTimeMillis + tzOffset, true));
+					} else if (Configuration.getCfgBitState(Configuration.CFGBIT_GPS_TIME_FALLBACK)) {
+						e.setText(DateTimeTools.getClock(System.currentTimeMillis(), true));
+					} else {
+						e.setText(" ");
+					}
+				} else {
+					e.setText(DateTimeTools.getClock(System.currentTimeMillis(), true));
+				}
 
  				/*
 				don't use new Date() - it is very slow on some Nokia devices
@@ -3340,6 +3355,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				GpsMid.mNoiseMaker.playSound("DISCONNECT");
 			}
 		}
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_GPS_TIME)) {
+			pos.gpsTimeMillis = 0;
+		}
 		//if (gpx != null) {
 		//	/**
 		//	 * Close and Save the gpx recording, to ensure we don't loose data
@@ -3365,10 +3383,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		    && status != LocationMsgReceiver.STATUS_2D
 		    && status != LocationMsgReceiver.STATUS_3D
 		    && status != LocationMsgReceiver.STATUS_DGPS) {
-			// no fix, invalidate speed heuristic
+			// no fix, invalidate speed heuristic and GPS time
 			prevCourse = -1;
 			secondPrevCourse = -1;
 			thirdPrevCourse = -1;
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_GPS_TIME)) {
+				pos.gpsTimeMillis = 0;
+			}
 		}
 		// FIXME signal a sound on location gained or lost
 		solution = status;

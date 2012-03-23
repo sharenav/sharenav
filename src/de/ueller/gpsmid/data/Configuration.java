@@ -300,6 +300,10 @@ public class Configuration {
 	public final static byte CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION = 116;
 	/** bit 117: backlight method ANDROID_WINDOW_MANAGER */
 	public final static byte CFGBIT_BACKLIGHT_ANDROID_WINDOW_MANAGER = 117;
+	/** bit 118: use GPS time for on-screen time */
+	public final static byte CFGBIT_GPS_TIME = 118;
+	/** bit 119: fallback to device time when GPS time not available */
+	public final static byte CFGBIT_GPS_TIME_FALLBACK = 119;
 	
 	/**
 	 * These are the database record IDs for each configuration option

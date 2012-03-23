@@ -256,6 +256,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup backlightOpts;
 	private ChoiceGroup sizeOpts;
 	private ChoiceGroup mapInfoOpts;
+	private ChoiceGroup clockOpts;
 	private ChoiceGroup debugLog;
 	private ChoiceGroup debugSeverity;
 	private ChoiceGroup debugOther;
@@ -637,6 +638,14 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				Choice.MULTIPLE, mapInfos, null);
 		//#style formItem
 		menuDisplayOptions.append(mapInfoOpts);
+
+		String [] clockSettings = new String[2];
+		clockSettings[0] = Locale.get("guidiscover.UseGpsTime")/*Use GPS time on display*/;
+		clockSettings[1] = Locale.get("guidiscover.GpsFallback")/*Fallback to device clock when GPS unavailable*/;
+		clockOpts = new ChoiceGroup(Locale.get("guidiscover.Clock")/*Clock options:*/,
+				Choice.MULTIPLE, clockSettings, null);
+		//#style formItem
+		menuDisplayOptions.append(clockOpts);
 				
 		menuDisplayOptions.setCommandListener(this);
 	}
@@ -1081,6 +1090,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				mapInfoOpts.setSelectedIndex(4, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP));
 				mapInfoOpts.setSelectedIndex(5, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_WHEN_ROUTING));
 				mapInfoOpts.setSelectedIndex(6, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP));
+				clockOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_GPS_TIME));
+				clockOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_GPS_TIME_FALLBACK));
 				metricUnits.setSelectedIndex(Configuration.getCfgBitSavedState(Configuration.CFGBIT_METRIC) ? 0 : 1, true);
 				perfTuneOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY));
 				visualOpts.setSelectedIndex(0, ! Configuration.getCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS));
@@ -1421,6 +1432,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_WHEN_ROUTING, mapInfoOpts.isSelected(5));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP, mapInfoOpts.isSelected(6));
 		
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_GPS_TIME, clockOpts.isSelected(0));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_GPS_TIME_FALLBACK, clockOpts.isSelected(1));
+
 		String secs = tfAutoRecenterToGpsSecs.getString();
 		Configuration.setAutoRecenterToGpsMilliSecs(
 				(int) (Float.parseFloat(secs)) * 1000

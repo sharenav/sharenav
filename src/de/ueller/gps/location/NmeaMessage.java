@@ -220,7 +220,11 @@ public class NmeaMessage {
 				// Get Date from Calendar
 				dateDecode = cal.getTime();
 				// Get milliSecs since 01-Jan-1970 from Date
-				pos.timeMillis = dateDecode.getTime();
+				pos.gpsTimeMillis = dateDecode.getTime();
+				// FIXME? does this make sense? Not to me, elsewhere pos.timeMillis is from system time, not GPS time.
+				// in practice, this creates confusion at least in GuiTacho, which can show either system time or GPS
+				// time on the tacho display
+				pos.timeMillis = pos.gpsTimeMillis;
 				
 				if (receivePositionIsAllowed) {
 					receiver.receivePosition(pos);

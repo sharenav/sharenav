@@ -48,6 +48,8 @@ public class Position {
 	public float pdop = 0.0f;
 	/** currentTimeMillis() of this position. */
 	public long timeMillis;
+	/** GPS time of this position if available. */
+	public long gpsTimeMillis;
 	/** type of this position. */
 	public byte type;
 
