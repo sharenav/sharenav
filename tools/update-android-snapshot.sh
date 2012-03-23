@@ -4,6 +4,7 @@
 #
 
 user=SOURCEFORGE_USERNAME_HERE
+. ./android.properties
 
 ant clean
 
