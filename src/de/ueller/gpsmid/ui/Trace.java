@@ -425,8 +425,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		this.parent = GpsMid.getInstance();
 		
 		// placeholder for timezone offset
-		tzOffset = 180 * 60 * 1000;
-		//tzOffset = 0;
+		// tzOffset = 180 * 60 * 1000;
+		tzOffset = 0;
 
 		Configuration.setHasPointerEvents(hasPointerEvents());	
 		
