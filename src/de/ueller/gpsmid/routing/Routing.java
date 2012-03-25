@@ -708,7 +708,6 @@ public class Routing implements Runnable {
 	/**
 	 * @return some value that is the bigger the more course direction and segment direction differ
 	 */
-	// FIXME: this can be surely determined in a more efficient way
 	public static float getDirectionPenalty(int segIdx, int segmentDirection, float[] lats, float[] lons, int course) {
 		return getDirectionPenalty(lats[segIdx], lons[segIdx], lats[segIdx+segmentDirection], lons[segIdx+segmentDirection], course);
 	}
