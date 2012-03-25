@@ -58,6 +58,9 @@
     - add support for toll rules for each travel mode to routemodes.inc.
       Ways will still be rendered with toll decoration only if toll=yes or toll=true is set
       regardless of toll rules or current travel mode
+    - when turn restriction checking is on, take account also the driving direction
+      in route calculation - in other words, when driving with car, don't assume we
+      can start driving backwards without a u-turn or can just take a u-turn with no costs
 
 GpsMid 0.7.7
     *** Map display ***
