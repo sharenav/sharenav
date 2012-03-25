@@ -56,7 +56,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 27;
+	public final static int VERSION = 28;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -365,6 +365,7 @@ public class Configuration {
 	private static final int RECORD_ID_SEARCH_MAX = 54;
 	private static final int RECORD_ID_POI_SEARCH_DIST = 55;
 	private static final int RECORD_ID_DEST_LINE_WIDTH = 56;
+	private static final int RECORD_ID_TIME_DIFF = 57;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -487,6 +488,7 @@ public class Configuration {
 	private static boolean isSamsungS8000 = false;
 
 	private static int destLineWidth = 2;
+	private static int timeDiff = 0;
 
 	
 	public static void read() {
@@ -569,6 +571,7 @@ public class Configuration {
 			baseScale = readInt(database, RECORD_ID_BASESCALE);
 			calculateRealBaseScale();
 			destLineWidth = readInt(database, RECORD_ID_DEST_LINE_WIDTH);
+			timeDiff = readInt(database, RECORD_ID_TIME_DIFF);
 			
 			int configVersionStored = readInt(database, RECORD_ID_CONFIG_VERSION);
 			//#debug info
@@ -803,6 +806,9 @@ public class Configuration {
 		}
 		if (configVersionStored < 27) {
 			setDestLineWidth(2);
+		}
+		if (configVersionStored < 28) {
+			setTimeDiff(0);
 		}
 
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);
@@ -1543,11 +1549,19 @@ public class Configuration {
 		return destLineWidth;
 	}
 
+	public static int getTimeDiff() {
+		return timeDiff;
+	}
+
 	public static void setDestLineWidth(int destLineWidth) {
 		write(destLineWidth, RECORD_ID_DEST_LINE_WIDTH);
 		Configuration.destLineWidth = destLineWidth;
 	}
-	
+
+	public static void setTimeDiff(int timeDiff) {
+		write(timeDiff, RECORD_ID_TIME_DIFF);
+		Configuration.timeDiff = timeDiff;
+	}
 	
 	public static int getBaseScale() {
 		return baseScale;
@@ -2349,6 +2363,9 @@ public class Configuration {
 		}
 		if (version >= 27) {
 			destLineWidth = dis.readInt();
+		}
+		if (version >= 28) {
+			timeDiff = dis.readInt();
 		}
 	}
 	

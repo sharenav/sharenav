@@ -682,14 +682,14 @@ public class RouteInstructions {
 						Position pos = trace.getCurrentPosition();
 						if (Configuration.getCfgBitState(Configuration.CFGBIT_GPS_TIME)) {
 							if (pos.gpsTimeMillis != 0) {
-								e.setText(DateTimeTools.getClock(pos.gpsTimeMillis + trace.tzOffset + remainingDurationFSecs * 200, true));
+								e.setText(DateTimeTools.getClock(pos.gpsTimeMillis + Configuration.getTimeDiff()*1000*60 + remainingDurationFSecs * 200, true));
 							} else if (Configuration.getCfgBitState(Configuration.CFGBIT_GPS_TIME_FALLBACK)) {
-								e.setText(DateTimeTools.getClock(System.currentTimeMillis() + remainingDurationFSecs * 200, true));
+								e.setText(DateTimeTools.getClock(System.currentTimeMillis() + Configuration.getTimeDiff()*1000*60 + remainingDurationFSecs * 200, true));
 							} else {
 								e.setText(" ");
 							}
 						} else {
-							e.setText(DateTimeTools.getClock(System.currentTimeMillis() + remainingDurationFSecs * 200, true));
+							e.setText(DateTimeTools.getClock(System.currentTimeMillis() + Configuration.getTimeDiff()*1000*60 + remainingDurationFSecs * 200, true));
 						}
 						/*
 						don't use new Date() - it is very slow on some Nokia devices			

@@ -416,18 +416,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public Vector locationUpdateListeners;
 	private Projection panProjection;
 
-	public int tzOffset;
-
 	private Trace() throws Exception {
 		//#debug
 		logger.info("init Trace");
 		
 		this.parent = GpsMid.getInstance();
 		
-		// placeholder for timezone offset
-		// tzOffset = 180 * 60 * 1000;
-		tzOffset = 0;
-
 		Configuration.setHasPointerEvents(hasPointerEvents());	
 		
 		CMDS[EXIT_CMD] = new Command(Locale.get("generic.Exit")/*Exit*/, Command.EXIT, 2);
@@ -2085,14 +2079,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				e = tl.ele[TraceLayout.CURRENT_TIME]; // e is used *twice* below (also as vRelative)
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_GPS_TIME)) {
 					if (pos.gpsTimeMillis != 0) {
-						e.setText(DateTimeTools.getClock(pos.gpsTimeMillis + tzOffset, true));
+						e.setText(DateTimeTools.getClock(pos.gpsTimeMillis + Configuration.getTimeDiff()*1000*60, true));
 					} else if (Configuration.getCfgBitState(Configuration.CFGBIT_GPS_TIME_FALLBACK)) {
-						e.setText(DateTimeTools.getClock(System.currentTimeMillis(), true));
+						e.setText(DateTimeTools.getClock(System.currentTimeMillis() + Configuration.getTimeDiff()*1000*60, true));
 					} else {
 						e.setText(" ");
 					}
 				} else {
-					e.setText(DateTimeTools.getClock(System.currentTimeMillis(), true));
+					e.setText(DateTimeTools.getClock(System.currentTimeMillis() + Configuration.getTimeDiff()*1000*60, true));
 				}
 
  				/*

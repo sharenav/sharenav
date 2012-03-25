@@ -249,6 +249,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup renderOpts;
 	private ChoiceGroup visualOpts;
 	private TextField	tfDestLineWidth;
+	private TextField	tfTimeDiff;
 	private ChoiceGroup perfTuneOpts;
 	private ChoiceGroup metricUnits;
 	private ChoiceGroup distanceViews;
@@ -647,6 +648,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//#style formItem
 		menuDisplayOptions.append(clockOpts);
 				
+		tfTimeDiff = new TextField(Locale.get("guidiscover.TimeDiff")/*Time diff. in minutes between device & display time*/, Integer.toString(Configuration.getTimeDiff()), 5, TextField.DECIMAL);
+		//#style formItem
+		menuDisplayOptions.append(tfTimeDiff);
+
 		menuDisplayOptions.setCommandListener(this);
 	}
 	
@@ -1476,11 +1481,16 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS, ! sellight[0]);
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUND_WAY_ENDS, sellight[1]);
 
-		String w=tfDestLineWidth.getString(); 
-		Configuration.setDestLineWidth( 
-				(int) (Float.parseFloat(w)) 
+		String w=tfDestLineWidth.getString();
+		Configuration.setDestLineWidth(
+				(int) (Float.parseFloat(w))
 		);
-		
+
+		String d=tfTimeDiff.getString();
+		Configuration.setTimeDiff(
+				(int) (Float.parseFloat(d))
+		);
+
 		state = STATE_ROOT;
 		show();
 
@@ -1505,7 +1515,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		Logger.setGlobalLevel();
 		state = STATE_ROOT;
 		this.show();
-		
+
 		/**
 		 * In order to minimize surprise of the user that despite enabling logging here
 		 * nothing shows up in the log file, we warn the user if logging at the specified level

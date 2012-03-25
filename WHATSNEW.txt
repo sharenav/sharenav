@@ -35,6 +35,9 @@
       appear due to shortcomings of Osm2GpsMid
     - option to use the GPS clock as clock source for on-map display
       (currently only NMEA-transmitting GPS devices give clock information)
+    - option to set a time difference in minutes between device time and display time
+      (to work around platforms which for some reason give incorrect time
+      e.g. due to deficiencies in JVM time zone code)
     - Bug fix: The ImageCollector thread no more is started twice
       when a saved destination is restored at GpsMid startup (thx walter9)
     *** Sea generation ***
