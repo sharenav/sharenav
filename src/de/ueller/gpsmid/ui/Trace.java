@@ -1784,6 +1784,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					// nothing to do in that case						
 				}
 			}
+		} else {
+			logger.fatal(Locale.get("legend.bigstyleserrtitle")/*Map format error*/ + " " + Configuration.getMapUrl());
+			commandAction(SETUP_CMD);
 		}
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTO_START_GPS)) {
 			Thread thread = new Thread(this, "Trace");
@@ -1871,6 +1874,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		//#debug debug
 		logger.debug("Drawing Map screen");
 		
+		if (!Legend.isValid) {
+			commandAction(SETUP_CMD);
+		}
 		try {
 			int yc = 1;
 			int la = 18;
