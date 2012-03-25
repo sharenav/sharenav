@@ -837,6 +837,10 @@ public class RouteInstructions {
 		return false;
 	}
 	
+	public static void forceAgainstDirection() {
+		iBackwardCount = 99;
+	}
+	
 	
 	public static void resetOffRoute(Vector route, Node center) {
 		haveBeenOnRouteSinceCalculation = false;

@@ -48,6 +48,9 @@ public class Routing implements Runnable {
 	private int maxEstimationSpeed;
 	/** use maximum route calulation speed instead of deep search */
 	private boolean roadRun = false;
+	private boolean determinedAgainstDirectionPenalty = false;
+	private boolean avoidStartingInOsmWayDirection;
+	public boolean routeStartsAgainstMovingDirection = false;
 	
 	/** when true, the RouteTile will only load and return mainStreetNet RouteNodes, Connections and TurnRestrictions */ 
 	public static volatile boolean onlyMainStreetNet = false;
@@ -339,6 +342,13 @@ public class Routing implements Runnable {
 					continue;
 				}
 
+				// also do not try a u-turn back at the first connection
+				if ( (nodeSuccessor.toId == firstNodeId1 || nodeSuccessor.toId == firstNodeId2) &&
+					 (currentNode.state.connectionId == -1 || currentNode.state.connectionId == -2)  ) {
+					//System.out.println("currentNode.state.toId: " + currentNode.state.toId + " " + firstNodeId1 +  " " + firstNodeId2 + " " + currentNode.state.connectionId);
+					continue;
+				}
+				
 				int turnCost=getTurnCost(currentNode.fromBearing,nodeSuccessor.startBearing);
 				//System.out.println ("currentNode frombearing " + currentNode.fromBearing
 				//		    + " nodeSuccessor.startBearing " + nodeSuccessor.startBearing);
@@ -694,6 +704,36 @@ public class Routing implements Runnable {
 		return null;
 	}
 	
+
+	/**
+	 * @return some value that is the bigger the more course direction and segment direction differ
+	 */
+	// FIXME: this can be surely determined in a more efficient way
+	public static float getDirectionPenalty(int segIdx, int segmentDirection, float[] lats, float[] lons, int course) {
+		return getDirectionPenalty(lats[segIdx], lons[segIdx], lats[segIdx+segmentDirection], lons[segIdx+segmentDirection], course);
+	}
+	
+
+	/**
+	 * @return some value that is the bigger the more course direction and segment direction differ
+	 */
+	// FIXME: this can be surely determined in a more efficient way
+	public static float getDirectionPenalty(float lat1, float lon1, float lat2, float lon2, int course) {
+		float latCourse = lat1 + (float) (0.0001 * Math.cos(course * MoreMath.FAC_DECTORAD));
+		float lonCourse = lon1 + (float) (0.0001 * Math.sin(course * MoreMath.FAC_DECTORAD));
+
+		float courseVecX = lon1 - lonCourse;
+		float courseVecY = lat1 - latCourse;
+		float norm = (float) Math.sqrt(courseVecX * courseVecX + courseVecY * courseVecY);
+		courseVecX /= norm;
+		courseVecY /= norm;
+	
+		float segDirVecX = lon1 - lon2;
+		float segDirVecY = lat1 - lat2;
+		norm = (float) Math.sqrt((double)(segDirVecX * segDirVecX + segDirVecY * segDirVecY));
+		return (1.0f - (segDirVecX * courseVecX + segDirVecY * courseVecY) / norm);
+	}
+	
 		/**
 	 * prepares for solving a requested route, e.g. by determining the closest route nodes at the start and destination ways
 	 * @return true, if preparing was successful
@@ -747,6 +787,31 @@ public class Routing implements Runnable {
 				parent.receiveMessage(Locale.get("routing.CreatingFromConnections")/*Creating from connections*/);
 				Way w=(Way) fromMark.entity;
 				int nearestSegment=getNearestSeg(w, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
+				
+				int penOsmDirection = 0;
+				int penAgainstOsmDirection = 0;
+				determinedAgainstDirectionPenalty = false;
+				if (parent.manualRotationMode || parent.speed > 20) {
+					determinedAgainstDirectionPenalty = true;
+					int course = parent.getCourse();
+	//				System.out.println ("Nearest: " + nearestSegment + "/" + fromMark.nodeLat.length);
+					float penaltyOSMWayDirection = getDirectionPenalty(nearestSegment - 1, 1, fromMark.nodeLat,fromMark.nodeLon, course );
+					float penaltyAgainstOSMWayDirection = getDirectionPenalty(nearestSegment, -1, fromMark.nodeLat,fromMark.nodeLon,course);
+	//				System.out.println ("Trace Course: " + course);
+	//				System.out.println ("Penalty OSM Direction: " + penaltyOSMWayDirection);
+	//				System.out.println ("Penalty against OSM Direction: " + penaltyAgainstOSMWayDirection);
+					if (penaltyOSMWayDirection > penaltyAgainstOSMWayDirection) {
+	//					System.out.println("Avoid driving OSM Way Direction");
+						penOsmDirection = 1000;
+						avoidStartingInOsmWayDirection = false;
+					} else {
+	//					System.out.println("Avoid driving against OSM Way Direction");
+						penAgainstOsmDirection = 1000;
+						avoidStartingInOsmWayDirection = true;
+					}
+				}
+				routeStartsAgainstMovingDirection = false;
+				
 				// Roundabouts don't need to be explicitly tagged as oneways in OSM 
 				// according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
 					
@@ -759,7 +824,7 @@ public class Routing implements Runnable {
 //						parent.getRouteNodes().addElement(new RouteHelper(rn.lat,rn.lon,"next back"));
 						// TODO: fill in bearings and cost
 						Connection initialState=new Connection(rn,0,(byte)99,(byte)99, -1);
-						GraphNode firstNode=new GraphNode(initialState,null,0,0,(byte)99);
+						GraphNode firstNode=new GraphNode(initialState,null,penAgainstOsmDirection,0,(byte)99);
 						open.put(initialState.toId, firstNode);
 						nodes.addElement(firstNode);
 						/*
@@ -782,7 +847,7 @@ public class Routing implements Runnable {
 					firstNodeId2 = rn.id;
 					// TODO: fill in bearings and cost
 					Connection initialState=new Connection(rn,0,(byte)99,(byte)99, -2);
-					GraphNode firstNode=new GraphNode(initialState,null,0,0,(byte)99);
+					GraphNode firstNode=new GraphNode(initialState,null,penOsmDirection,0,(byte)99);
 					open.put(initialState.toId, firstNode);
 					nodes.addElement(firstNode);						
 					/*
@@ -967,11 +1032,17 @@ public class Routing implements Runnable {
 				sourcePathSegNodeDummyConnectionNode.to.lat=firstSourcePathSegNodeDummy1.radlat;
 				sourcePathSegNodeDummyConnectionNode.to.lon=firstSourcePathSegNodeDummy1.radlon;
 				sourcePathSegNodeDummyConnectionNode.to.id = firstNodeId2;  //remember id to be able to determine the connection with its duration
+				if (avoidStartingInOsmWayDirection && determinedAgainstDirectionPenalty) {
+					routeStartsAgainstMovingDirection = true;
+				}
 			}
 			if (firstNodeId2 == cFirst.to.id) {
 				sourcePathSegNodeDummyConnectionNode.to.lat=firstSourcePathSegNodeDummy2.radlat;
 				sourcePathSegNodeDummyConnectionNode.to.lon=firstSourcePathSegNodeDummy2.radlon;
 				sourcePathSegNodeDummyConnectionNode.to.id = firstNodeId1;  //remember id to be able to determine the connection with its duration
+				if (!avoidStartingInOsmWayDirection && determinedAgainstDirectionPenalty) {
+					routeStartsAgainstMovingDirection = true;
+				}
 			}
 
 			sequence.insertElementAt(sourcePathSegNodeDummyConnectionNode, 0);
