@@ -2673,6 +2673,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		return System.currentTimeMillis() - lastUserActionTime;
 	}
 	
+	public int getCourse() {
+		return course;
+	}
+	
 	public void updateCourse(int newcourse) {
 		coursegps = newcourse;
 		/*  don't rotate too fast
@@ -3513,6 +3517,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				resumeImageCollectorAfterRouteCalc();
 			}
 			ri.newRoute(this.route);
+
+			if (routeEngine.routeStartsAgainstMovingDirection) {
+				ri.forceAgainstDirection();
+			}
 			oldRecalculationTime = System.currentTimeMillis();
 		}
 		// show map always after route calculation
