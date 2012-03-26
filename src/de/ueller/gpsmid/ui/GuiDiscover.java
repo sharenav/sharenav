@@ -1268,6 +1268,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			url = null;
 		}
 		Configuration.setMapUrl(url);
+		Configuration.closeMapZipFile();
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS, mapSrcOptions.isSelected(0));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS, mapSrcOptions.isSelected(1));
 		Legend.reReadLegend();
@@ -1277,7 +1278,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		trace.recreateTraceLayout();
 		state = STATE_ROOT;
 		show();
-		logger.fatal(Locale.get("guidiscover.NeedRestart")/*Need to restart GpsMid, otherwise map is in an inconsistant state*/ + " " + Configuration.getMapUrl());
+		//logger.fatal(Locale.get("guidiscover.NeedRestart")/*Need to restart GpsMid, otherwise map is in an inconsistant state*/ + " " + Configuration.getMapUrl());
 	}
 
 	private void returnFromDisplayOptions() {

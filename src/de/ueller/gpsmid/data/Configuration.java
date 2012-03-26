@@ -1449,6 +1449,9 @@ public class Configuration {
 		write(autoRecenterToGpsMilliSecs, RECORD_ID_AUTO_RECENTER_TO_GPS_MILLISECS);
 	}
 	
+	public static void closeMapZipFile() {
+		mapZipFile = null;
+	}
 	/**
 	 * Opens a resource, either from the JAR, the file system or a ZIP archive,
 	 * depending on the configuration, see mapFromJar and mapFileUrl.
