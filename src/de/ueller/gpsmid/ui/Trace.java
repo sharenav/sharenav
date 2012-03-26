@@ -2564,11 +2564,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					Graphics.TOP | Graphics.HCENTER);
 			}
 			pc.g.setStrokeStyle(Graphics.SOLID);
-			waySegment.drawWideLine(
+			waySegment.drawWideLineSimple(
 				Legend.COLORS[Legend.COLOR_DEST_LINE],
 				new IntPoint(pc.getP().getImageCenter().x - imageCollector.xScreenOverscan, pc.getP().getImageCenter().y - imageCollector.yScreenOverscan),
 				new IntPoint(x, y),
-				Configuration.getDestLineWidth(), 0, pc
+				Configuration.getDestLineWidth(), pc
 			);
 			
 		}

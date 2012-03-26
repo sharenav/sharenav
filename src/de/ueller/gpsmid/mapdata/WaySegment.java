@@ -197,6 +197,33 @@ public class WaySegment {
 	
 	    }
 	}
+
+	/**
+	 *
+	 * @param color
+	 * @param point1
+	 * @param point2
+	 * @param linewidth
+	 */
+    public void drawWideLineSimple(int color, IntPoint point1, IntPoint point2, int linewidth, PaintContext pc) {
+
+		if ( linewidth == 0 )
+			return;
+
+    	pc.g.setColor(color);
+
+    	/* Always draw a line with px1 width also for wide lines because drawing a wide line might not work in every case.
+    	 * This is at least the case on Nokia 5800 with very offscreen lines in some angles (line to destination several 100 km in normal zoom)
+    	 */
+	    pc.g.drawLine(point1.x, point1.y, point2.x, point2.y);
+
+	    if (linewidth > 1) {
+			linePoints.set(point1,point2,linewidth-1);
+
+			pc.g.fillTriangle(linePoints.a.x, linePoints.a.y, linePoints.b.x, linePoints.b.y,linePoints.d.x, linePoints.d.y);
+			pc.g.fillTriangle(linePoints.a.x, linePoints.a.y, linePoints.c.x, linePoints.c.y,linePoints.d.x, linePoints.d.y);
+	     }
+	}
 	
     public void draw2Wings(IntPoint a,IntPoint b,IntPoint centerPoint, PaintContext pc) {
 	    	pc.g.drawLine(a.x +(int)((a.x-centerPoint.x)*0.5f), a.y +(int)((a.y-centerPoint.y)*0.5f), a.x,a.y);
