@@ -1947,6 +1947,19 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					if (movedAwayFromDest && Configuration.getCfgBitState(Configuration.CFGBIT_SND_DESTREACHED)) {
 						GpsMid.mNoiseMaker.playSound(RouteSyntax.getInstance().getDestReachedSound(), (byte) 7, (byte) 1);
 					}
+					// stop routing
+					if (routeCalc) {
+						if (routeEngine != null) {
+							routeEngine.cancelRouting();
+						}
+					}
+					endRouting();
+					// redraw immediately
+					synchronized (this) {
+						if (imageCollector != null) {
+							imageCollector.newDataReady();
+						}
+					}
 				} else if (!movedAwayFromDest) {
 					movedAwayFromDest = true;
 				}
