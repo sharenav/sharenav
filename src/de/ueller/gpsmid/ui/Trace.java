@@ -1848,6 +1848,19 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 	}
 	
+	public void restart() {
+		shutdown();
+		setBaseTilesRead(false);
+		tiles = new Tile[6];
+		try {
+			startup();
+		} catch (Exception e) {
+			logger.fatal(Locale.get("trace.GotExceptionDuringStartup")/*Got an exception during startup: */ + e.getMessage());
+			e.printStackTrace();
+			return;
+		}
+	}
+
 	public void sizeChanged(int w, int h) {
 		updateLastUserActionTime();
 		if (imageCollector != null) {
