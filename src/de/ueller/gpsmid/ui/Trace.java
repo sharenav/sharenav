@@ -371,6 +371,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	 */
 	private int course = 0;
 	private int coursegps = 0;
+	// is current course valid for deciding on how to route
 	private boolean courseValid = false;
 
 	public boolean atDest = false;
@@ -1046,6 +1047,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 							course = 0; //N
 						} else {
 							course += courseDiff;
+							validateCourse();
 							course %= 360;
 							if (course < 0) {
 								course += 360;
