@@ -149,13 +149,6 @@ public class WaySegment {
 		pc.g.drawLine(a.x, a.y, b.x, b.y);
 	}
 	
-	public void drawWideLineSimple(int color, IntPoint point1, IntPoint point2,
-			int linewidth, PaintContext pc) {
-		if (linewidth != 0) {
-			drawWideLine(color, point1, point2, linewidth - 1, 0, pc);
-		}
-	}
-	
     /** Draws a wide line from 2 given points.
 	 *  @param point1
 	 *  @param point2
