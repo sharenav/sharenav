@@ -793,7 +793,8 @@ public class Routing implements Runnable {
 				// FIXME add support for routemodes speed option, see https://sourceforge.net/tracker/index.php?func=detail&aid=3420838&group_id=192084&atid=939977
 				//if (parent.manualRotationMode || parent.speed > 20) {
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION) &&
-				    Configuration.getTravelMode().isWithTurnRestrictions()) {
+				    Configuration.getTravelMode().isWithTurnRestrictions()
+				    && parent.isCourseValid()) {
 					determinedAgainstDirectionPenalty = true;
 					int course = parent.getCourse();
 	//				System.out.println ("Nearest: " + nearestSegment + "/" + fromMark.nodeLat.length);

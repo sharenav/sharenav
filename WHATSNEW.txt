@@ -11,6 +11,7 @@
     - On the map screen long tap * to toggle track recording
     - During track recording long tap recorded trackpoints on the map screen to suspend/resume track recording
     - On the map screen long tap _ to manage track list, double tap _ to manage waypoints
+    - On the map screen long tap on compass dir to turn map North up and invalidate course for routing
     - In routing choice, added buttons for selection of route mode - no need to go through menu
     - More icon sizes are included, you can now choose from "useIcons = small|true|big|large|huge" in the .properties file.
       useIcons=large and useIcons=huge make sense for devices with high resolution displays

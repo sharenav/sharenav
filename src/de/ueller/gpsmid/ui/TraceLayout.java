@@ -115,7 +115,8 @@ public class TraceLayout extends LayoutManager {
 		e.setVRelative(ele[TITLEBAR]);
 		e.setColor(Legend.COLORS[Legend.COLOR_COMPASS_DIRECTION_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_COMPASS_DIRECTION_BACKGROUND]);
-		e.setActionID(Trace.MANUAL_ROTATION_MODE_CMD + (Trace.TOGGLE_MAP_PROJ_CMD << 8));
+		e.setActionID(Trace.MANUAL_ROTATION_MODE_CMD + (Trace.TOGGLE_MAP_PROJ_CMD << 8)
+			      + (Trace.NORTH_UP_CMD << 16));
 	
 		e = ele[SOLUTION]; addElement(e,
 			LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |

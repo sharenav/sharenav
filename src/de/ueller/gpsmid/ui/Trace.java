@@ -170,8 +170,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	protected static final int CELLID_LOCATION_CMD = 59;
 	protected static final int MANUAL_LOCATION_CMD = 60;
 	protected static final int EDIT_ENTITY = 61;
+	protected static final int NORTH_UP_CMD = 62;
 
-	private final Command [] CMDS = new Command[62];
+	private final Command [] CMDS = new Command[63];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -370,6 +371,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	 */
 	private int course = 0;
 	private int coursegps = 0;
+	private boolean courseValid = false;
 
 	public boolean atDest = false;
 	public boolean movedAwayFromDest = true;
@@ -1506,12 +1508,18 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				setFullScreenMode(fullScreen);
 				return;
 			}
+			if (c == CMDS[NORTH_UP_CMD]) {
+				course = 0;
+				invalidateCourse();
+				alert(Locale.get("trace.ManualRotation"), Locale.get("trace.ManualToNorth"), 750);
+			}
 			if (c == CMDS[TOGGLE_MAP_PROJ_CMD]) {
 				if (manualRotationMode) {
 					if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
 						compassDeviation = 0;
 					} else {
 						course = 0;
+						invalidateCourse();
 					}
 					alert(Locale.get("trace.ManualRotation"), Locale.get("trace.ManualToNorth"), 750);
 				} else {
@@ -2745,6 +2753,18 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		while (course > 360) {
 			course -= 360;
 		}
+		validateCourse();
+	}
+
+	public boolean isCourseValid() {
+		return courseValid;
+	}
+	private void invalidateCourse() {
+		courseValid = false;
+	}
+
+	private void validateCourse() {
+		courseValid = true;
 	}
 
 	public synchronized void receivePosition(Position pos) {
