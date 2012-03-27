@@ -1455,9 +1455,9 @@ public class Gpx extends Tile implements Runnable, InputListener {
 		StringBuffer sb = new StringBuffer(128);
 		//if (wayPt.lat > 90) wayPt.lat = wayPt.lat * MoreMath.FAC_DECTORAD * MoreMath.FAC_DECTORAD;
 		//if (wayPt.lon > 180) wayPt.lon = wayPt.lon * MoreMath.FAC_DECTORAD * MoreMath.FAC_DECTORAD;
-		sb.append("<wpt lat='").append(wayPt.lat * MoreMath.FAC_RADTODEC);
-		sb.append("' lon='").append(wayPt.lon * MoreMath.FAC_RADTODEC).append("'>\r\n");
-		sb.append("<name>").append(HelperRoutines.utf2xml(wayPt.displayName)).append("</name>\r\n");
+		sb.append("<wpt lat='").append(wayPt.lat * MoreMath.FAC_RADTODEC)
+		  .append("' lon='").append(wayPt.lon * MoreMath.FAC_RADTODEC).append("'>\r\n")
+		  .append("<name>").append(HelperRoutines.utf2xml(wayPt.displayName)).append("</name>\r\n");
 		if (wayPt.ele != PositionMark.INVALID_ELEVATION)
 		{
 			sb.append("<ele>").append(wayPt.ele).append("</ele>\r\n");

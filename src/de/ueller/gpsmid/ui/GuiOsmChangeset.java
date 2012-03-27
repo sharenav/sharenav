@@ -77,11 +77,11 @@ public class GuiOsmChangeset extends Form implements GpsMidDisplayable,
 
 	public String toXML() {
 		StringBuffer xml = new StringBuffer();
-		xml.append("<osm>\n<changeset>\n");
-		xml.append("<tag k=\"created_by\" v=\"GpsMid_"
-				+ Legend.getAppVersion() + "\"/>\n");
-		xml.append("<tag k=\"comment\" v=\"" + HttpHelper.escapeXML(comment) + "\" />\n");
-		xml.append("</changeset>\n</osm>\n");
+		xml.append("<osm>\n<changeset>\n")
+		   .append("<tag k=\"created_by\" v=\"GpsMid_"
+				+ Legend.getAppVersion() + "\"/>\n")
+		   .append("<tag k=\"comment\" v=\"" + HttpHelper.escapeXML(comment) + "\" />\n")
+		   .append("</changeset>\n</osm>\n");
 		return xml.toString();
 	}
 
