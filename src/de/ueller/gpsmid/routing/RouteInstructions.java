@@ -1416,12 +1416,12 @@ public class RouteInstructions {
 				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_VERY_SMALL_DISTANCE) > 0) { 
 					sb.append("(small distance) ");
 				}
-				sb.append(RouteSyntax.getInstance().getTextInstruction(ri));
-				sb.append(" into ");
-				sb.append((name==null?"":name));
-				sb.append(" then go ");
-				sb.append(Configuration.getCfgBitState(Configuration.CFGBIT_METRIC) ? dist : dist / 0.9144 + 0.5 );
-				sb.append(Configuration.getCfgBitState(Configuration.CFGBIT_METRIC) ? Locale.get("guitacho.m") : Locale.get("guitacho.yd") );
+				sb.append(RouteSyntax.getInstance().getTextInstruction(ri))
+				  .append(" into ")
+				  .append((name==null?"":name))
+				  .append(" then go ")
+				  .append(Configuration.getCfgBitState(Configuration.CFGBIT_METRIC) ? dist : dist / 0.9144 + 0.5 )
+				  .append(Configuration.getCfgBitState(Configuration.CFGBIT_METRIC) ? Locale.get("guitacho.m") : Locale.get("guitacho.yd") );
 				//sb.append(Trace.showDistance(dist, Trace.DISTANCE_GENERIC));
 				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_ONEDIRECTION_ONLY) > 0) { 
 					sb.append(" (onedirection_only)");
@@ -1438,9 +1438,9 @@ public class RouteInstructions {
 				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_BEAR_RIGHT) > 0) { 
 					sb.append(" (bear right)");
 				}
-				sb.append(" Cons:" + c.to.getConSize() + " numRoutableWays: " + c.numToRoutableWays + " startBearing: " + c.startBearing + "/" + c.wayConStartBearing + " endBearing: "+ c.endBearing + "/" + c.wayConEndBearing);
-				sb.append(" Duration: " + c.durationFSecsToNext / 5);
-				sb.append(" Route Speed in km/h: " + (int) (3.6f * 5 * c.wayDistanceToNext / c.durationFSecsToNext));
+				sb.append(" Cons:" + c.to.getConSize() + " numRoutableWays: " + c.numToRoutableWays + " startBearing: " + c.startBearing + "/" + c.wayConStartBearing + " endBearing: "+ c.endBearing + "/" + c.wayConEndBearing)
+				  .append(" Duration: " + c.durationFSecsToNext / 5)
+				  .append(" Route Speed in km/h: " + (int) (3.6f * 5 * c.wayDistanceToNext / c.durationFSecsToNext));
 				System.out.println(sb.toString());
 			}
 		}		

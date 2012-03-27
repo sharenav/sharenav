@@ -72,9 +72,9 @@ public class HelperRoutines {
 		
 		//Construct a track name from the current time
 		StringBuffer formatedStr = new StringBuffer();
-		formatedStr.append(cal.get(Calendar.YEAR)).append("-").append(formatInt2(cal.get(Calendar.MONTH) + 1));
-		formatedStr.append("-").append(formatInt2(cal.get(Calendar.DAY_OF_MONTH))).append("_");
-		formatedStr.append(formatInt2(cal.get(Calendar.HOUR_OF_DAY))).append("-").append(formatInt2(cal.get(Calendar.MINUTE)));
+		formatedStr.append(cal.get(Calendar.YEAR)).append("-").append(formatInt2(cal.get(Calendar.MONTH) + 1))
+		           .append("-").append(formatInt2(cal.get(Calendar.DAY_OF_MONTH))).append("_")
+		           .append(formatInt2(cal.get(Calendar.HOUR_OF_DAY))).append("-").append(formatInt2(cal.get(Calendar.MINUTE)));
 		
 		return formatedStr.toString();
 	}

@@ -325,14 +325,14 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		ret.append("\nliving ");
 		for (loop = 0; loop < livingQueue.size(); loop++) {
 			tt = (SingleTile) livingQueue.elementAt(loop);
-			ret.append(tt.toString());
-			ret.append(" ");
+			ret.append(tt.toString())
+			   .append(" ");
 		}
 		ret.append("\nrequest ");
 		for (loop = 0; loop < requestQueue.size(); loop++) {
 			tt = (SingleTile) requestQueue.elementAt(loop);
-			ret.append(tt.toString());
-			ret.append(" ");
+			ret.append(tt.toString())
+			   .append(" ");
 		}
 		return ret.toString();
 	}

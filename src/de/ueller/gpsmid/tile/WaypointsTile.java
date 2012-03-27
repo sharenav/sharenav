@@ -172,8 +172,8 @@ public class WaypointsTile extends Tile {
 					if (waypt.displayName.length() > maxLen) {
 						// Truncate name to maximum maxLen chars plus "..." where required.
 						sb.setLength(0);
-						sb.append(waypt.displayName.substring(0, maxLen));
-						sb.append("...");
+						sb.append(waypt.displayName.substring(0, maxLen))
+						  .append("...");
 						pc.g.drawString(sb.toString(), pc.lineP2.x, pc.lineP2.y,
 										Graphics.HCENTER | Graphics.BOTTOM);
 					}
