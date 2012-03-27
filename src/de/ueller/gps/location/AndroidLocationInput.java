@@ -38,6 +38,7 @@ import android.location.GpsSatellite;
 import java.util.Iterator;
 //#endif
 
+import de.ueller.gps.Satellite;
 import de.ueller.gpsmid.data.Position;
 import de.ueller.util.Logger;
 import de.ueller.util.StringTokenizer;
@@ -73,6 +74,8 @@ public class AndroidLocationInput
 
 	private static String provider;
 
+	/** Array with information about the satellites */
+	private Satellite satellites[] = new Satellite[36];
 	
 	public AndroidLocationInput() {
 		this.receiverList = new LocationMsgReceiverList();
@@ -297,7 +300,7 @@ public class AndroidLocationInput
 					//#debug info
 					logger.info("Decoding: " + nmeaMessage);
 					if ((nmeaMessage != null) && (nmeaMessage.length() > 5)) {
-						smsg.decodeMessage(nmeaMessage, false);
+						smsg.decodeMessage(nmeaMessage, false, false);
 						// get *DOP from the message
 						pos.pdop = smsg.getPosition().pdop;
 						pos.hdop = smsg.getPosition().hdop;
@@ -323,16 +326,37 @@ public class AndroidLocationInput
 		}
 		gpsState = state;
 		if (state == GpsStatus.GPS_EVENT_SATELLITE_STATUS && gpsStatus != null) {
-			Iterable<GpsSatellite> satellites = gpsStatus.getSatellites();
-			Iterator<GpsSatellite> sat = satellites.iterator();
+			for (int j = 0; j < 36; j++) {
+				/**
+				 * Resetting all the satellites to non locked
+				 */
+				if ((satellites[j] != null)) {
+					satellites[j].isLocked(false);
+				}
+			}
+			Iterable<GpsSatellite> andSatellites = gpsStatus.getSatellites();
+			Iterator<GpsSatellite> sat = andSatellites.iterator();
 			int i = 0;
 			while (sat.hasNext()) {
 				GpsSatellite satellite = sat.next();
-				if (satellite.usedInFix()) {
-					i++;
+				if (satellites[i] == null) {
+					satellites[i] = new Satellite();
+				}
+				if (i < 36) {
+					satellites[i].isLocked(satellite.usedInFix());
+					satellites[i].id = i;
+					satellites[i].azimut = satellite.getAzimuth();
+					satellites[i].elev = satellite.getElevation();
+					satellites[i].snr = (int) satellite.getSnr();
+					if (satellite.usedInFix()) {
+						i++;
+					}
 				}
 			}
 			numSatellites = i;
+			if (numSatellites > 0) {
+				receiverList.receiveSatellites(satellites);
+			}
 		}
 		//updateSolution(state);
 	}

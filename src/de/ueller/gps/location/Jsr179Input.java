@@ -202,7 +202,7 @@ public class Jsr179Input
 					//#debug info
 					logger.info("Decoding: " + nmeaMessage);
 					if ((nmeaMessage != null) && (nmeaMessage.length() > 5)) {
-						smsg.decodeMessage(nmeaMessage, false);
+						smsg.decodeMessage(nmeaMessage, false, true);
 						// get *DOP from the message
 						pos.pdop = smsg.getPosition().pdop;
 						pos.hdop = smsg.getPosition().hdop;

@@ -111,7 +111,7 @@ public class NmeaMessage {
 	}
 	
 	public void decodeMessage() {
-		decodeMessage(buffer.toString(), true);
+		decodeMessage(buffer.toString(), true, true);
 	}
 
 	public Position getPosition() {
@@ -128,15 +128,20 @@ public class NmeaMessage {
 	 * @param nmea_sentence The NMEA sentence to be decoded
 	 * @param receivePositionIsAllowed Set to true if it is allowed to forward 
 	 * 		a new position from the NMEA sentence to the LocationMsgReceiver.
+	 * @param receiveSatellitesIsAllowed Set to true if it is allowed to forward 
+	 * 		satellite info from the NMEA sentence to the LocationMsgReceiver.
 	 */
-	public void decodeMessage(String nmea_sentence, boolean receivePositionIsAllowed) {
+	public void decodeMessage(String nmea_sentence, boolean receivePositionIsAllowed,
+				  boolean receiveSatellitesIsAllowed) {
 		
         Vector param = StringTokenizer.getVector(nmea_sentence, spChar);
 		String sentence = (String)param.elementAt(0);
 		try {
 //			receiver.receiveMessage("got " + buffer.toString() );
 			if (lastMsgGSV && ! "GSV".equals(sentence)) {
-	            receiver.receiveSatellites(satellites);
+				if (receiveSatellitesIsAllowed) {
+					receiver.receiveSatellites(satellites);
+				}
 	            lastMsgGSV = false;
 			}
 			if ("GGA".equals(sentence)) {
@@ -306,7 +311,9 @@ public class NmeaMessage {
 	            	satellites[i] = null;
 	            }
 	            if (getIntegerToken((String)param.elementAt(2)) == getIntegerToken((String)param.elementAt(1))) {
-	            	receiver.receiveSatellites(satellites);
+			    if (receiveSatellitesIsAllowed) {
+				    receiver.receiveSatellites(satellites);
+			    }
 		            lastMsgGSV = false;
 	            }
 			}
