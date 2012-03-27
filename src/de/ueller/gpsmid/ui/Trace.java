@@ -2402,20 +2402,25 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 	
 	private void setPointOfTheCompass() {
-		String c = "";
+		StringBuffer c = new StringBuffer(5);
 		if (ProjFactory.getProj() != ProjFactory.NORTH_UP
 				&& Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS)) {
-			c = Configuration.getCompassDirection(course);
+			c.append(Configuration.getCompassDirection(course));
 		}
-		// if tl shows big onscreen buttons add spaces to compass directions consisting of only one char or not shown
-		if (tl.bigOnScreenButtons && c.length() <= 1) {
+		// if tl shows big onscreen buttons add spaces to short compass directions
+		if (tl.bigOnScreenButtons) {
 			if (ProjFactory.getProj() == ProjFactory.NORTH_UP) {
-				c = "(" + Configuration.getCompassDirection(0) + ")";
-			} else {
-				c = " " + c + " ";
+				c.setLength(0);
+				c.append('(');
+				c.append(Configuration.getCompassDirection(0));
+				c.append(')');
+			}
+			while (c.length() <= 3) {
+				c.insert(0,' ');
+				c.append(' ');
 			}
 		}
-		tl.ele[TraceLayout.POINT_OF_COMPASS].setText(c);
+		tl.ele[TraceLayout.POINT_OF_COMPASS].setText(c.toString());
 	}
 	
 	private int showConnectStatistics(Graphics g, int yc, int la) {
