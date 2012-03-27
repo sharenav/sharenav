@@ -203,8 +203,10 @@ public class Jsr179Input
 					logger.info("Decoding: " + nmeaMessage);
 					if ((nmeaMessage != null) && (nmeaMessage.length() > 5)) {
 						smsg.decodeMessage(nmeaMessage, false);
-						// get PDOP from the message
+						// get *DOP from the message
 						pos.pdop = smsg.getPosition().pdop;
+						pos.hdop = smsg.getPosition().hdop;
+						pos.vdop = smsg.getPosition().vdop;
 						numSatellites = smsg.getMAllSatellites();
 					}
 				}

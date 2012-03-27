@@ -274,9 +274,11 @@ public class NmeaMessage {
 					}
 				}
 				/**
-				 * PDOP (dilution of precision)
+				 * PDOP & HDOP (dilution of precision)
 				 */
 				pos.pdop = getFloatToken((String)param.elementAt(15));
+				pos.hdop = getFloatToken((String)param.elementAt(16));
+				pos.vdop = getFloatToken((String)param.elementAt(17));
 				/**
 			     *  Horizontal dilution of precision (HDOP)
 			     *  Vertical dilution of precision (VDOP)

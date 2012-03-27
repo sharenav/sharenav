@@ -297,8 +297,10 @@ public class AndroidLocationInput
 					logger.info("Decoding: " + nmeaMessage);
 					if ((nmeaMessage != null) && (nmeaMessage.length() > 5)) {
 						smsg.decodeMessage(nmeaMessage, false);
-						// get PDOP from the message
+						// get *DOP from the message
 						pos.pdop = smsg.getPosition().pdop;
+						pos.hdop = smsg.getPosition().hdop;
+						pos.vdop = smsg.getPosition().vdop;
 						// disable for now; could be this is incorrect for devices with GPS & GLONASS, and we get this from getGpsStatus()
 						// numSatellites = smsg.getMAllSatellites();
 					}

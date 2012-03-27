@@ -63,6 +63,8 @@
       in route calculation - in other words, when driving with car, don't assume we
       can start driving backwards without a u-turn or can just take a u-turn with no costs
     - optionally stop routing when we arrive at destination
+    *** Tacho ***
+    - HDOP is shown in tachometer
 
 GpsMid 0.7.7
     *** Map display ***

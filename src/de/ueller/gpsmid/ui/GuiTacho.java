@@ -140,7 +140,8 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 				.append(HelperRoutines.formatInt2(cal.get(Calendar.YEAR) % 100));
 		g.drawString(timeString.toString(), 3, y, Graphics.TOP | Graphics.LEFT);
 		
-		g.drawString(parent.solutionStr, (w >> 1) + 3, y, Graphics.TOP
+		g.drawString("HDOP: " + pos.hdop
+			     + " " + parent.solutionStr, (w >> 1) + 3, y, Graphics.TOP
 				| Graphics.LEFT);
 		
 		timeString.setLength(0);
