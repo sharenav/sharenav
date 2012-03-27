@@ -196,6 +196,7 @@ public class AndroidLocationInput
 		pos.course = location.getBearing();
 		pos.speed = location.getSpeed();
 		pos.timeMillis = location.getTime();
+		pos.accuracy = location.getAccuracy();
 		if (lastKnown) {
 			pos.type = Position.TYPE_GPS_LASTKNOWN;
 		} else {

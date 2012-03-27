@@ -306,6 +306,8 @@ public class Configuration {
 	public final static byte CFGBIT_GPS_TIME_FALLBACK = 119;
 	/** bit 120: stop routing when arriving at destination */
 	public final static byte CFGBIT_STOP_ROUTING_AT_DESTINATION = 120;
+	/** bit 121: show accuracy wit solution string */
+	public final static byte CFGBIT_SHOW_ACCURACY = 121;
 	
 	/**
 	 * These are the database record IDs for each configuration option

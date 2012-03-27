@@ -50,6 +50,8 @@ public class Position {
 	public float hdop = 0.0f;
 	/** Vertical dilution of precision */
 	public float vdop = 0.0f;
+	/** Accuracy */
+	public float accuracy = 0.0f;
 	/** currentTimeMillis() of this position. */
 	public long timeMillis;
 	/** GPS time of this position if available. */

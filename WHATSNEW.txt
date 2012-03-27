@@ -41,6 +41,7 @@
     - Bug fix: The ImageCollector thread no more is started twice
       when a saved destination is restored at GpsMid startup (thx walter9)
     - Map switch can now be done without restarting GpsMid
+    - Accuracy of fix can be shown with GPS status
     *** Sea generation ***
     - greatly faster sea generation algorithm with option useSeaTiles = true
       in .properties file. It divides the map into roughly 20km * 20km areas

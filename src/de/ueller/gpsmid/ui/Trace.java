@@ -2036,7 +2036,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 										  solution == LocationMsgReceiver.STATUS_MANUAL)) {
 					eSolution.setText(Locale.get("solution.Off")/*Off*/);
 				} else {
-					eSolution.setText(solutionStr);
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ACCURACY) && pos.accuracy > 0) {
+						eSolution.setText(solutionStr + "/" + (int) pos.accuracy);
+					} else {
+						eSolution.setText(solutionStr);
+					}
 				}
 			}
 
