@@ -2411,13 +2411,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (tl.bigOnScreenButtons) {
 			if (ProjFactory.getProj() == ProjFactory.NORTH_UP) {
 				c.setLength(0);
-				c.append('(');
-				c.append(Configuration.getCompassDirection(0));
-				c.append(')');
+				c.append('(').append(Configuration.getCompassDirection(0)).append(')');
 			}
 			while (c.length() <= 3) {
-				c.insert(0,' ');
-				c.append(' ');
+				c.insert(0,' ').append(' ');
 			}
 		}
 		tl.ele[TraceLayout.POINT_OF_COMPASS].setText(c.toString());
