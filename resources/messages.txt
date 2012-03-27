@@ -1248,3 +1248,4 @@ guiwebinfo.helpwiki=Online help (GpsMid wiki)
 guidiscover.UseGpsTime=Use GPS time on display
 guidiscover.GpsFallback=Fallback to device clock when GPS unavailable
 guidiscover.TimeDiff=Time diff. in minutes between device & display time
+guiroute.stopAtDest=Stop routing when at destination

@@ -147,7 +147,7 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 
 		tfMainStreetNetDistanceKm = new TextField(Locale.get("guiroute.DistanceToMainStreet")/*Distance in km to main street net (used for large route distances):*/, Integer.toString(Configuration.getMainStreetDistanceKm()), 5, TextField.DECIMAL);
 		append(tfMainStreetNetDistanceKm);
-		
+
 		String [] routingStrategyOpts = new String[3];
 		boolean[] selRoutingStrategy = new boolean[3];
 		routingStrategyOpts[0] = Locale.get("guiroute.LookForMotorways")/*Look for motorways*/; selRoutingStrategy[0]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_TRY_FIND_MOTORWAY);
@@ -180,12 +180,14 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 			tfMinRouteLineWidth = new TextField(Locale.get("guiroute.MinimumWidth")/*Minimum width of route line*/, Integer.toString(Configuration.getMinRouteLineWidth()), 1, TextField.DECIMAL);
 			append(tfMinRouteLineWidth);
 			
-			String [] routingOpts = new String[4];
-			boolean[] selRouting = new boolean[4];
+			String [] routingOpts = new String[5];
+			boolean[] selRouting = new boolean[5];
 			routingOpts[0] = Locale.get("guiroute.AutoRecalculation")/*Auto recalculation*/; selRouting[0]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_AUTO_RECALC);
 			routingOpts[1] = Locale.get("guiroute.RouteBrowsing")/*Route browsing with up/down keys*/; selRouting[1]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_BROWSING);
 			routingOpts[2] = Locale.get("guiroute.HideQuietArrows")/*Hide quiet arrows*/; selRouting[2]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_HIDE_QUIET_ARROWS);
 			routingOpts[3] = Locale.get("guiroute.AskForRoutingOptions")/*Ask for Routing Options*/; selRouting[3]=!Configuration.getCfgBitSavedState(Configuration.CFGBIT_DONT_ASK_FOR_ROUTING_OPTIONS);
+			routingOpts[4] = Locale.get("guiroute.stopAtDest")/*Stop routing when at destination*/; selRouting[4]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_STOP_ROUTING_AT_DESTINATION);
+
 			routingOptsGroup = new ChoiceGroup(Locale.get("guiroute.Other")/*Other*/, Choice.MULTIPLE, routingOpts ,null);
 			routingOptsGroup.setSelectedFlags(selRouting);
 			append(routingOptsGroup);
@@ -265,12 +267,13 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 						(int) (Float.parseFloat(w)) 
 				); 
 				
-				boolean[] selRouting = new boolean[4];
+				boolean[] selRouting = new boolean[5];
 				routingOptsGroup.getSelectedFlags(selRouting);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_AUTO_RECALC, selRouting[0]);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_BROWSING, selRouting[1]);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_HIDE_QUIET_ARROWS, selRouting[2]);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_DONT_ASK_FOR_ROUTING_OPTIONS, !selRouting[3]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_STOP_ROUTING_AT_DESTINATION, selRouting[4]);
 
 				String s=tfTrafficSignalCalcDelay.getString(); 
 				Configuration.setTrafficSignalCalcDelay( 

@@ -1947,7 +1947,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					if (movedAwayFromDest && Configuration.getCfgBitState(Configuration.CFGBIT_SND_DESTREACHED)) {
 						GpsMid.mNoiseMaker.playSound(RouteSyntax.getInstance().getDestReachedSound(), (byte) 7, (byte) 1);
 					}
-					if (movedAwayFromDest) {
+					if (movedAwayFromDest
+					    && Configuration.getCfgBitState(Configuration.CFGBIT_STOP_ROUTING_AT_DESTINATION)) {
 						// stop routing
 						if (routeCalc) {
 							if (routeEngine != null) {

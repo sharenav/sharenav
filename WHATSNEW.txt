@@ -62,9 +62,7 @@
     - when turn restriction checking is on, take account also the driving direction
       in route calculation - in other words, when driving with car, don't assume we
       can start driving backwards without a u-turn or can just take a u-turn with no costs
-    - stop routing when we arrive at destination; with current GpsMid it's easy
-      enough to turn routing back on again by a single key or touch area if
-      it's needed again
+    - optionally stop routing when we arrive at destination
 
 GpsMid 0.7.7
     *** Map display ***

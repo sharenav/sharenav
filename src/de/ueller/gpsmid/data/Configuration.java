@@ -304,6 +304,8 @@ public class Configuration {
 	public final static byte CFGBIT_GPS_TIME = 118;
 	/** bit 119: fallback to device time when GPS time not available */
 	public final static byte CFGBIT_GPS_TIME_FALLBACK = 119;
+	/** bit 120: stop routing when arriving at destination */
+	public final static byte CFGBIT_STOP_ROUTING_AT_DESTINATION = 120;
 	
 	/**
 	 * These are the database record IDs for each configuration option
