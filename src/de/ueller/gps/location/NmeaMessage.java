@@ -169,7 +169,8 @@ public class NmeaMessage {
 				mAllSatellites = getIntegerToken((String)param.elementAt(7));
 				
 				// Relative accuracy of horizontal position
-				
+				pos.hdop = getFloatToken((String)param.elementAt(8));
+
 				// meters above mean sea level
 				alt = getFloatToken((String)param.elementAt(9));
 				// Height of geoid above WGS84 ellipsoid
