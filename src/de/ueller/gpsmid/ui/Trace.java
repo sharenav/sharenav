@@ -3575,8 +3575,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			ri.newRoute(this.route);
 
-			if (routeEngine.routeStartsAgainstMovingDirection) {
-				ri.forceAgainstDirection();
+			if (routeEngine != null) {
+				if (routeEngine.routeStartsAgainstMovingDirection) {
+					ri.forceAgainstDirection();
+				}
+			} else {
+				alert("Warning", "routeEngine==null", 3000);
 			}
 			oldRecalculationTime = System.currentTimeMillis();
 		}
