@@ -43,6 +43,7 @@
       when a saved destination is restored at GpsMid startup (thx walter9)
     - Map switch can now be done without restarting GpsMid
     - Accuracy of fix can be shown with GPS status
+    - Number of satellites is show in some more cases also in NoFix situations.
     *** Sea generation ***
     - greatly faster sea generation algorithm with option useSeaTiles = true
       in .properties file. It divides the map into roughly 20km * 20km areas
