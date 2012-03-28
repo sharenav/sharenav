@@ -65,6 +65,9 @@ public class AndroidLocationInput
 	Position pos = new Position(0f, 0f, 0f, 0f, 0f, 0, System.currentTimeMillis());
 
 	private volatile int numSatellites = 0;
+	private volatile boolean hasFix = false;
+	private volatile int currentState = LocationMsgReceiver.STATUS_OFF;
+	private volatile long lastFixTimestamp;
 	private volatile int gpsState = 0;
 	private volatile int lmState = 0;
 	private Looper locationLooper = null;
@@ -187,12 +190,14 @@ public class AndroidLocationInput
 		if (location == null) {
 			return;
 		}
+		hasFix = true;
+		if (currentState != LocationProvider.AVAILABLE) {
+			updateSolution(LocationProvider.AVAILABLE);
+		}
+		lastFixTimestamp = System.currentTimeMillis();
 		//#debug debug
 		logger.debug("received Location: " + location);
 		
-		//if (receiverList.getCurrentStatus() == LocationMsgReceiver.STATUS_NOFIX) {
-		receiverList.receiveStatus(LocationMsgReceiver.STATUS_ON, numSatellites);				
-		//}
 		pos.latitude = (float) location.getLatitude();
 		pos.longitude = (float) location.getLongitude();
 		pos.altitude = (float) location.getAltitude();
@@ -237,25 +242,35 @@ public class AndroidLocationInput
 
 	private void updateSolution(int state) {
 		logger.info("Update Solution");
+		currentState = state;
+		if ((System.currentTimeMillis() - lastFixTimestamp) > 3000) {
+			hasFix = false;
+		}
 		//locationUpdated(locationManager, locationManager.getLastKnownLocation(provider), true);
 		if (state == LocationProvider.OUT_OF_SERVICE) {
 			if (receiverList != null) {
 				receiverList.receiveStatus(LocationMsgReceiver.STATUS_OFF, 0);
 				receiverList.receiveMessage(Locale.get("androidlocationinput.ProviderStopped")/*provider stopped*/);
 			}
-		}
-		if (state == LocationProvider.AVAILABLE) {
+			// some devices, e.g. Samsung Galaxy Note will claim LocationProvider.AVAILABLE
+			// even when there's no fix, so use a timestamp to detect
+		} else if (state == LocationProvider.TEMPORARILY_UNAVAILABLE || !hasFix) {
+			if (receiverList != null) {
+				receiverList.receiveStatus(LocationMsgReceiver.STATUS_NOFIX, numSatellites);
+			}
+		} else if (state == LocationProvider.AVAILABLE || hasFix) {
 			if (receiverList != null) {
 				receiverList.receiveStatus(LocationMsgReceiver.STATUS_ON, numSatellites);
 			}
 		}
-		if (state == LocationProvider.TEMPORARILY_UNAVAILABLE) {
-			if (receiverList != null) {
-				receiverList.receiveStatus(LocationMsgReceiver.STATUS_NOFIX, numSatellites);
-			}
-		}
 	}
 
+	public void invalidateFix() {
+		hasFix = false;
+		if (currentState != LocationProvider.TEMPORARILY_UNAVAILABLE) {
+			updateSolution(LocationProvider.TEMPORARILY_UNAVAILABLE);
+		}
+	}
 	public void triggerPositionUpdate() {
 	}
 
@@ -316,9 +331,11 @@ public class AndroidLocationInput
 	public void onGpsStatusChanged(int state) {
 		GpsStatus gpsStatus = locationManager.getGpsStatus(null);
 		if (state == GpsStatus.GPS_EVENT_STOPPED) {
-			// FIXME do what's needed
+			hasFix = false;
 			numSatellites = 0;
 			updateSolution(LocationProvider.OUT_OF_SERVICE);
+		} else if ((System.currentTimeMillis() - lastFixTimestamp) > 3000) {
+			invalidateFix();
 		}
 		if (state == GpsStatus.GPS_EVENT_STARTED) {
 			// FIXME do what's needed
@@ -362,6 +379,7 @@ public class AndroidLocationInput
 	}
 
 	public void onProviderDisabled(String provider) {
+		hasFix = false;
 		updateSolution(LocationProvider.OUT_OF_SERVICE);
 	}
 
