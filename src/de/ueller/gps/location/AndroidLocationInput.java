@@ -320,8 +320,11 @@ public class AndroidLocationInput
 						pos.pdop = smsg.getPosition().pdop;
 						pos.hdop = smsg.getPosition().hdop;
 						pos.vdop = smsg.getPosition().vdop;
-						// disable for now; could be this is incorrect for devices with GPS & GLONASS, and we get this from getGpsStatus()
-						// numSatellites = smsg.getMAllSatellites();
+						// disable for now if we have a fix; could be this is incorrect for devices with GPS & GLONASS, and we get this from getGpsStatus()
+						if (!hasFix) {
+							numSatellites = smsg.getMAllSatellites();
+							updateSolution(LocationProvider.TEMPORARILY_UNAVAILABLE);
+						}
 					}
 				}
 			}

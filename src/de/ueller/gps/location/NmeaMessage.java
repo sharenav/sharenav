@@ -88,6 +88,8 @@ public class NmeaMessage {
 	private final LocationMsgReceiver receiver;
 	/** The number of satellites received (field 6 from message GGA) */
 	private int mAllSatellites;
+	/** The number of satellites received (from GSV) */
+	private int gsvSatellites;
 	/** Quality of data, 0 = no fix, 1 = GPS, 2 = DGPS */
 	private int qual;
 	/** Flag if last received message was GSV */
@@ -298,6 +300,9 @@ public class NmeaMessage {
 	            int j;
 	            // Calculate which satellites are in this message (message number * 4)
 	            j = (getIntegerToken((String)param.elementAt(2)) - 1) * 4;
+		    if (getIntegerToken((String)param.elementAt(2)) == 1) {
+			    gsvSatellites = 0;
+		    }
 	            int noSatInView =(getIntegerToken((String)param.elementAt(3)));
 	            for (int i = 4; i < param.size() && j < 12; i += 4, j++) {
 	            	if (satellites[j] == null) {
@@ -307,12 +312,17 @@ public class NmeaMessage {
 	            	satellites[j].elev = getIntegerToken((String)param.elementAt(i + 1));
 	            	satellites[j].azimut = getIntegerToken((String)param.elementAt(i + 2));
 	            	satellites[j].snr = getIntegerToken((String)param.elementAt(i + 3));
+			/** The number of satellites received (from GSV) */
+			if (satellites[j].snr != 0) {
+				gsvSatellites++;
+			}
 	            }
 	            lastMsgGSV = true;
 	            for (int i = noSatInView; i < 12; i++) {
 	            	satellites[i] = null;
 	            }
 	            if (getIntegerToken((String)param.elementAt(2)) == getIntegerToken((String)param.elementAt(1))) {
+			    mAllSatellites = gsvSatellites;
 			    if (receiveSatellitesIsAllowed) {
 				    receiver.receiveSatellites(satellites);
 			    }
