@@ -100,7 +100,8 @@ public class NmeaMessage {
 	private final Position pos = new Position(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1, 0);
 	/** Needed to turn GPS time and date (which are in UTC) into timeMillis */
 	private final Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-
+	/** Count exceptions and stop giving them when there's a bunch */
+	private int exceptionCount;
 
 	public NmeaMessage(LocationMsgReceiver receiver) {
 		this.receiver = receiver;
@@ -319,7 +320,21 @@ public class NmeaMessage {
 	            }
 			}
 		} catch (RuntimeException e) {
-			logger.exception(Locale.get("nmeamessage.ErrorDecoding")/*Error while decoding */ + sentence, e);
+			if (checkExceptionCount()) {
+				logger.exception(Locale.get("nmeamessage.ErrorDecoding")/*Error while decoding */ + sentence, e);
+			}
+		}
+	}
+
+	private boolean checkExceptionCount() {
+		exceptionCount++;
+		if (exceptionCount < 3) {
+			return true;
+		} else if (exceptionCount == 3) {
+			logger.error(Locale.get("nmeamessage.TooManyErrors")/*Too many exceptions, stoppping reporting them*/);
+			return false;
+		} else {
+			return false;
 		}
 	}
 
