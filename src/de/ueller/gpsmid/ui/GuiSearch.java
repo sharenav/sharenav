@@ -78,6 +78,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private final Command DEL_CMD = new Command(Locale.get("generic.Delete")/*Delete*/, Command.ITEM, 4);
 	private final Command CLEAR_CMD = new Command(Locale.get("guisearch.Clear")/*Clear*/, Command.ITEM, 5);
 	private final Command BOOKMARK_CMD = new Command(Locale.get("guisearch.Bookmark")/*Add to way points*/, Command.ITEM, 6);
+	private final Command FAVORITE_CMD = new Command(Locale.get("guisearch.Favorite")/*Add to favorites*/, Command.ITEM, 6);
 	private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 7);
 	private final Command OVERVIEW_MAP_CMD = new Command(Locale.get("guisearch.OverviewMap")/*Overview/Filter map*/, Command.ITEM, 8);
 	private final Command POI_CMD = new Command(Locale.get("guisearch.NearestPoi")/*Nearest POI*/, Command.ITEM, 9);
@@ -261,6 +262,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		addCommand(DEL_CMD);
 		addCommand(CLEAR_CMD);
 		addCommand(BOOKMARK_CMD);
+		addCommand(FAVORITE_CMD);
 		addCommand(BACK_CMD);
 		addCommand(OVERVIEW_MAP_CMD);
 		addCommand(POI_CMD);
@@ -506,13 +508,16 @@ public class GuiSearch extends Canvas implements CommandListener,
 			repaint();
 			return;
 		}
-		if (c == BOOKMARK_CMD) {
+		if (c == BOOKMARK_CMD || c == FAVORITE_CMD) {
 			if (cursor >= result.size()) {
 				return;
 			}
 			SearchResult sr = (SearchResult) result.elementAt(cursor);
 			PositionMark positionMark = new PositionMark(sr.lat,sr.lon);
 			positionMark.displayName=nameForResult(sr);
+			if (c == FAVORITE_CMD) {
+				positionMark.displayName += "*";
+			}
 			parent.gpx.addWayPt(positionMark);
 			parent.show();
 			return;

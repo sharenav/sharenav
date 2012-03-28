@@ -1250,3 +1250,4 @@ guidiscover.GpsFallback=Fallback to device clock when GPS unavailable
 guidiscover.TimeDiff=Time diff. in minutes between device & display time
 guiroute.stopAtDest=Stop routing when at destination
 guidiscover.Accuracy=Accuracy with GPS status
+guisearch.Favorite=Add to favorites
