@@ -56,7 +56,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 28;
+	public final static int VERSION = 29;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -374,6 +374,7 @@ public class Configuration {
 	private static final int RECORD_ID_POI_SEARCH_DIST = 55;
 	private static final int RECORD_ID_DEST_LINE_WIDTH = 56;
 	private static final int RECORD_ID_TIME_DIFF = 57;
+	private static final int RECORD_ID_CFGBITS_128_TO_191 = 58;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -411,6 +412,8 @@ public class Configuration {
 	private static long cfgBitsDefault_0_to_63 = 0;
 	private static long cfgBits_64_to_127 = 0;
 	private static long cfgBitsDefault_64_to_127 = 0;
+	private static long cfgBits_128_to_191 = 0;
+	private static long cfgBitsDefault_128_to_191 = 0;
 	private static int detailBoost = 0;
 	private static int detailBoostPOI = 0;
 	private static int detailBoostDefault = 0;
@@ -511,6 +514,7 @@ public class Configuration {
 			}
 			cfgBits_0_to_63 = readLong(database, RECORD_ID_CFGBITS_0_TO_63);
 			cfgBits_64_to_127 = readLong(database, RECORD_ID_CFGBITS_64_TO_127);
+			cfgBits_128_to_191 = readLong(database, RECORD_ID_CFGBITS_128_TO_191);
 			btUrl = readString(database, RECORD_ID_BT_URL);
 			locationProvider = readInt(database, RECORD_ID_LOCATION_PROVIDER);
 			gpxUrl = readString(database, RECORD_ID_GPX_URL);
@@ -818,8 +822,11 @@ public class Configuration {
 		if (configVersionStored < 28) {
 			setTimeDiff(0);
 		}
-
-		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);
+		if (configVersionStored < 29) {
+			cfgBits_64_to_127 |= 1L << CFGBIT_NAVI_ARROWS_IN_MAP;
+		}
+		
+		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127, cfgBits_128_to_191);
 	}
 
 	private final static String sanitizeString(String s) {
@@ -1123,11 +1130,17 @@ public class Configuration {
 			} else {
 				return ((cfgBits_0_to_63 & (1L << bit)) != 0);
 			}
-		} else {
+		} else if (bit < 128) {
 			if (getDefault) {
 				return ((cfgBitsDefault_64_to_127 & (1L << (bit - 64) )) != 0);
 			} else {
 				return ((cfgBits_64_to_127 & (1L << (bit - 64) )) != 0);
+			}
+		} else {
+			if (getDefault) {
+				return ((cfgBitsDefault_128_to_191 & (1L << (bit - 128) )) != 0);
+			} else {
+				return ((cfgBits_128_to_191 & (1L << (bit - 128) )) != 0);
 			}
 		}
 	}
@@ -1160,7 +1173,7 @@ public class Configuration {
 				}
 				write(cfgBitsDefault_0_to_63, RECORD_ID_CFGBITS_0_TO_63);
 			}
-		} else {
+		} else if (bit < 128) {
 			bit -= 64;
 			// set bit
 			Configuration.cfgBits_64_to_127 |= (1L << bit);
@@ -1176,6 +1189,22 @@ public class Configuration {
 				}
 				write(cfgBitsDefault_64_to_127, RECORD_ID_CFGBITS_64_TO_127);
 			}
+		} else {
+			bit -= 128;
+			// set bit
+			Configuration.cfgBits_128_to_191 |= (1L << bit);
+			if (!state) {
+				// clear bit
+				Configuration.cfgBits_128_to_191 ^= (1L << bit);
+			}
+			if (savePermanent) {
+				Configuration.cfgBitsDefault_128_to_191 |= (1L << bit);
+				if (!state) {
+					// clear bit
+					Configuration.cfgBitsDefault_128_to_191 ^= (1L << bit);
+				}
+				write(cfgBitsDefault_128_to_191, RECORD_ID_CFGBITS_128_TO_191);
+			}
 		}
 	}
 
@@ -1183,7 +1212,7 @@ public class Configuration {
 		setCfgBitState(bit, state, true);
 	}
 	
-	private static void setCfgBits(long cfgBits_0_to_63, long cfgBits_64_to_127) {
+	private static void setCfgBits(long cfgBits_0_to_63, long cfgBits_64_to_127, long cfgBits_128_to_191) {
 		Configuration.cfgBits_0_to_63 = cfgBits_0_to_63;
 		Configuration.cfgBitsDefault_0_to_63 = cfgBits_0_to_63;
 		write(cfgBitsDefault_0_to_63, RECORD_ID_CFGBITS_0_TO_63);
@@ -1191,6 +1220,10 @@ public class Configuration {
 		Configuration.cfgBits_64_to_127 = cfgBits_64_to_127;
 		Configuration.cfgBitsDefault_64_to_127 = cfgBits_64_to_127;
 		write(cfgBitsDefault_64_to_127, RECORD_ID_CFGBITS_64_TO_127);
+
+		Configuration.cfgBits_128_to_191 = cfgBits_128_to_191;
+		Configuration.cfgBitsDefault_128_to_191 = cfgBits_128_to_191;
+		write(cfgBitsDefault_128_to_191, RECORD_ID_CFGBITS_128_TO_191);
 	}
 	
 	public static int getDetailBoost() {
@@ -2238,6 +2271,7 @@ public class Configuration {
 		dos.writeInt(VERSION);
 		dos.writeLong(cfgBitsDefault_0_to_63);
 		dos.writeLong(cfgBitsDefault_64_to_127);
+		dos.writeLong(cfgBitsDefault_128_to_191);
 		dos.writeUTF(sanitizeString(btUrl));
 		dos.writeInt(locationProvider);
 		dos.writeUTF(sanitizeString(gpxUrl));
@@ -2301,7 +2335,7 @@ public class Configuration {
 			throw new IOException(Locale.get("configuration.ConfigVersionMismatch")/*Version of the stored config does not match with current GpsMid*/);
 		}
 		boolean destPosValid = getCfgBitSavedState(CFGBIT_SAVED_DESTPOS_VALID);
-		setCfgBits(dis.readLong(), dis.readLong());
+		setCfgBits(dis.readLong(), dis.readLong(), version >= 29 ? dis.readLong() : 0L);
 		setCfgBitSavedState(CFGBIT_SAVED_DESTPOS_VALID, destPosValid);
 		setBtUrl(desanitizeString(dis.readUTF()));
 		setLocationProvider(dis.readInt());
