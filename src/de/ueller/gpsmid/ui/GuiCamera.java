@@ -125,7 +125,13 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 				 * Nokia seems to have used a non standard locator to specify
 				 * the Player for capturing photos
 				 */
+				//#if polish.android
+				// Android doesn't work currently (2012-03-29) at all, but if it will be added to J2MEPolish,
+				// it probably won't be the non-Standard Nokia way
+				mPlayer = Manager.createPlayer("capture://video");
+				//#else
 				mPlayer = Manager.createPlayer("capture://image");
+				//#endif
 			} catch (MediaException me) {
 				/**
 				 * This is the standard locator.
@@ -138,15 +144,32 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 				logger.error(Locale.get("guicamera.CouldntInitializeCameraPlayer")/*Could not initialize camera player*/);
 				return;
 			}
-			mPlayer.realize();
-
-			video = (VideoControl) mPlayer
+			// Then again Samsung (Xcover 271) doesn't complain on creating capture://image, but barfs later, so we'll try to catch that one here
+			try {
+				mPlayer.realize();
+				video = (VideoControl) mPlayer
 					.getControl("VideoControl");
-			video.initDisplayMode(VideoControl.USE_DIRECT_VIDEO, this);
-			video.setDisplayFullScreen(true);
-			video.setVisible(true);
+				video.initDisplayMode(VideoControl.USE_DIRECT_VIDEO, this);
+				video.setDisplayFullScreen(true);
+				video.setVisible(true);
 
-			mPlayer.start();
+				mPlayer.start();
+			} catch (MediaException me) {
+				mPlayer = Manager.createPlayer("capture://video");
+				mPlayer.realize();
+				video = (VideoControl) mPlayer
+					.getControl("VideoControl");
+				video.initDisplayMode(VideoControl.USE_DIRECT_VIDEO, this);
+				video.setDisplayFullScreen(true);
+				video.setVisible(true);
+
+				mPlayer.start();
+			}
+			if (mPlayer == null) {
+				logger.error(Locale.get("guicamera.CouldntInitializeCameraPlayer")/*Could not initialize camera player*/);
+				return;
+			}
+
 			//#if polish.api.advancedmultimedia
 			CameraControl camera = (CameraControl) mPlayer
 					.getControl("CameraControl");
