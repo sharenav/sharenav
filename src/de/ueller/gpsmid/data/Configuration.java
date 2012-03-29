@@ -308,6 +308,10 @@ public class Configuration {
 	public final static byte CFGBIT_STOP_ROUTING_AT_DESTINATION = 120;
 	/** bit 121: show accuracy wit solution string */
 	public final static byte CFGBIT_SHOW_ACCURACY = 121;
+	/** bit 122: show big on-left-corner navigation icons */
+	public final static byte CFGBIT_NAVI_ARROWS_BIG = 122;
+	/** bit 123: show in-map small navigation icons */
+	public final static byte CFGBIT_NAVI_ARROWS_IN_MAP = 123;
 	
 	/**
 	 * These are the database record IDs for each configuration option

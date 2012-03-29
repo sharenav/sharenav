@@ -281,6 +281,9 @@ public class RouteInstructions {
 				    	// distance to next instruction or when the next instruction is the destination to the closest point on the destination way
 				    	finalRouteSeg = iNow == route.size() - 1;
 				    	distNow = ProjMath.getDistance(center.radlat, center.radlon, finalRouteSeg ? closestPointOnDestWay.radlat : cNow.to.lat, finalRouteSeg ? closestPointOnDestWay.radlon : cNow.to.lon);
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_NAVI_ARROWS_BIG)) {
+						outputRouteIcons(pc, iNow, (int) distNow);
+					}
 					// if necessary, convert to yards for voice output
 					if (!Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
 						distNow = distNow / 0.9144 + 0.5;
@@ -508,7 +511,9 @@ public class RouteInstructions {
 								//#debug debug
 								if (pict==null) logger.debug("got NULL pict");													
 								if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_INVISIBLE) == 0 ) {
-									pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
+									if (Configuration.getCfgBitState(Configuration.CFGBIT_NAVI_ARROWS_IN_MAP)) {
+										pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
+									}
 //									pc.g.setColor(0x0);
 //									pc.g.drawString("" + i, pc.lineP2.x+7, pc.lineP2.y+5, Graphics.BOTTOM | Graphics.LEFT);
 								}
@@ -1395,6 +1400,48 @@ public class RouteInstructions {
 	
 	public static void reallowInInstruction() {
 		iInInstructionSaidArrow = -1;
+	}
+
+	public void outputRouteIcons(PaintContext pc, int start, int firstDist) {
+		String name=null;
+		RouteSyntax routeSyntax = RouteSyntax.getInstance();
+		int iconCount = 0;
+		ConnectionWithNode c;
+		int dist;
+		for (int i=start; i<route.size()-1; i++){
+			c = (ConnectionWithNode) route.elementAt(i);
+			name=null;
+			if (c.wayNameIdx != -1) {
+				name=trace.getName(c.wayNameIdx);
+			}
+			if (i == start) {
+				dist = firstDist;
+			} else {
+				dist= (int) c.wayDistanceToNext;
+			}
+			if ((c.wayRouteFlags & Legend.ROUTE_FLAG_QUIET) != 0
+			    || c.wayRouteInstruction == RouteInstructions.RI_STRAIGHT_ON
+			    || c.wayRouteInstruction == RouteInstructions.RI_SKIPPED
+			    || iconCount > 2) {
+				// do nothing
+			} else {
+				// FIXME name doesn't work well, get from textual routing instructions
+				if (iconCount == 0 || iconCount == 1) {
+					Image icon = getRoutingImage(pc, c.wayRouteInstruction);
+					if (icon == pc.images.IMG_MARK) {
+						icon = null;
+					}
+					trace.setRouteIcon(pc, iconCount, icon);
+				}
+				iconCount++;
+			}
+		}
+		if (iconCount < 2) {
+			trace.setRouteIcon(pc, 1, (Image) null);
+		}
+		if (iconCount < 1) {
+			trace.setRouteIcon(pc, 0, (Image) null);
+		}
 	}
 
 	public void outputRoutePath() {

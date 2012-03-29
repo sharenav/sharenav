@@ -27,6 +27,7 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 //#if polish.android
 import android.os.Looper;
@@ -90,6 +91,7 @@ import de.ueller.gpsmid.tile.Tile;
 import de.ueller.midlet.iconmenu.IconActionPerformer;
 import de.ueller.midlet.iconmenu.LayoutElement;
 import de.ueller.midlet.ui.CompletionListener;
+import de.ueller.midlet.util.ImageTools;
 import de.ueller.util.CancelMonitorInterface;
 import de.ueller.util.DateTimeTools;
 import de.ueller.util.HelperRoutines;
@@ -3688,6 +3690,22 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		traceIconMenu = null;
 	}
 	
+	/** paint big direction arrows for navigation */
+	public void setRouteIcon(PaintContext pc, int iconNumber, Image origIcon) {
+		// FIXME would it be better for this to be an element in TraceLayout?
+		// Probably at least if the distance and optionally streetname
+		// are added to information shown
+		if (origIcon != null) {
+			int height = getHeight() / 7;
+			int width = height;
+			Image icon = ImageTools.scaleImage(origIcon, width, height);
+			pc.g.drawImage(icon, (getHeight() >= 320 ? 5 : 30),
+				       15 + getHeight()/40
+				       + iconNumber * (height + getHeight()/40),
+				       Graphics.TOP|Graphics.LEFT);
+		}
+	}
+
 	/** interface for IconMenuWithPages: recreate the icon menu from scratch and show it (introduced for reflecting size change of the Canvas) */
 	public void recreateAndShowIconMenu() {
 		uncacheIconMenu();

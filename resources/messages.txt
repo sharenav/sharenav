@@ -1252,3 +1252,5 @@ guiroute.stopAtDest=Stop routing when at destination
 guidiscover.Accuracy=Accuracy with GPS status
 guisearch.Favorite=Add to favorites
 nmeamessage.TooManyErrors=Too many exceptions, stopping reporting them
+guiroute.maparrows=Show in-map arrows
+guiroute.bigarrows=Show big navigation arrows

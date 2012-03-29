@@ -67,6 +67,8 @@
       in route calculation - in other words, when driving with car, don't assume we
       can start driving backwards without a u-turn or can just take a u-turn with no costs
     - optionally stop routing when we arrive at destination
+    - big navigation arrows for next two instructions in uppper left corner;
+      options to show or not show the big arrows or the small in-map arrows.
     *** Tacho ***
     - HDOP is shown in tachometer
 
