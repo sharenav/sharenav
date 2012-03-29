@@ -512,9 +512,16 @@ public class Configuration {
 				System.out.println("Could not open config"); // Logger won't work if config is not read yet
 				return;
 			}
+			
+			int configVersionStored = readInt(database, RECORD_ID_CONFIG_VERSION);
+			//#debug info
+			logger.info("Config version stored: " + configVersionStored);
+			
 			cfgBits_0_to_63 = readLong(database, RECORD_ID_CFGBITS_0_TO_63);
 			cfgBits_64_to_127 = readLong(database, RECORD_ID_CFGBITS_64_TO_127);
-			cfgBits_128_to_191 = readLong(database, RECORD_ID_CFGBITS_128_TO_191);
+			if (configVersionStored >= 29) {
+				cfgBits_128_to_191 = readLong(database, RECORD_ID_CFGBITS_128_TO_191);
+			}
 			btUrl = readString(database, RECORD_ID_BT_URL);
 			locationProvider = readInt(database, RECORD_ID_LOCATION_PROVIDER);
 			gpxUrl = readString(database, RECORD_ID_GPX_URL);
@@ -585,10 +592,6 @@ public class Configuration {
 			destLineWidth = readInt(database, RECORD_ID_DEST_LINE_WIDTH);
 			timeDiff = readInt(database, RECORD_ID_TIME_DIFF);
 			
-			int configVersionStored = readInt(database, RECORD_ID_CONFIG_VERSION);
-			//#debug info
-			logger.info("Config version stored: " + configVersionStored);
-
 			/* close the record store before accessing it nested for writing
 			 * might otherwise cause problems on some devices
 			 * see [ gpsmid-Bugs-2983148 ] Recordstore error on startup, settings are not persistent 
