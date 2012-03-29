@@ -385,50 +385,8 @@ public class RouteInstructions {
 							}
 						}
 	
-						Image pict = pc.images.IMG_MARK; aPaint=0;
 						aPaint = c.wayRouteInstruction;
-						switch (aPaint) {
-							case RI_HARD_RIGHT:		pict=pc.images.IMG_HARDRIGHT; break;
-							case RI_RIGHT:			pict=pc.images.IMG_RIGHT; break;
-							case RI_BEAR_RIGHT:
-							case RI_HALF_RIGHT:		pict=pc.images.IMG_HALFRIGHT; break;
-							case RI_STRAIGHT_ON:	pict=pc.images.IMG_STRAIGHTON; break;
-							case RI_BEAR_LEFT:
-							case RI_HALF_LEFT:		pict=pc.images.IMG_HALFLEFT; break;
-							case RI_LEFT:			pict=pc.images.IMG_LEFT; break;
-							case RI_HARD_LEFT:		pict=pc.images.IMG_HARDLEFT; break;
-							case RI_UTURN:			pict=pc.images.IMG_UTURN; break;
-//							case RI_BEAR_LEFT:
-//							case RI_BEAR_RIGHT:		pict=pc.images.IMG_STRAIGHTON;
-//													if (
-//														(c.wayRouteFlags & (Legend.ROUTE_FLAG_BEAR_LEFT + Legend.ROUTE_FLAG_BEAR_RIGHT)) > 0
-//														&& i < route.size()-1
-//													) {
-//														ConnectionWithNode cNext = (ConnectionWithNode) route.elementAt(i+1);  
-//														int turn = (int) ((cNext.wayConStartBearing - c.wayConEndBearing) * 2); 
-//														if (turn > 180) turn -= 360;
-//														if (turn < -180) turn += 360;
-//														if (Math.abs(turn) > 5) {
-//															if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_BEAR_LEFT) > 0) {
-//																pict=pc.images.IMG_HALFLEFT;
-//															} else {
-//																pict=pc.images.IMG_HALFRIGHT;
-//															}
-//														}
-//													}
-//													break;
-							case RI_ENTER_MOTORWAY:
-							case RI_BEAR_LEFT_ENTER_MOTORWAY:
-							case RI_BEAR_RIGHT_ENTER_MOTORWAY:
-													pict=pc.images.IMG_MOTORWAYENTER; break;
-							case RI_LEAVE_MOTORWAY:
-							case RI_BEAR_LEFT_LEAVE_MOTORWAY:
-							case RI_BEAR_RIGHT_LEAVE_MOTORWAY:
-													pict=pc.images.IMG_MOTORWAYLEAVE; break;					
-							case RI_INTO_TUNNEL:	pict=pc.images.IMG_TUNNEL_INTO; break;
-							case RI_OUT_OF_TUNNEL:	pict=pc.images.IMG_TUNNEL_OUT_OF; break;					
-						}
-						
+						Image pict = getRoutingImage(pc, aPaint);
 						if (trace.atDest) {
 							aPaint = RI_DEST_REACHED;
 						}
@@ -716,6 +674,53 @@ public class RouteInstructions {
 		} catch (Exception e) {
 			logger.silentexception("Unhandled exception in showRoute()", e);
 		}
+	}
+
+	private Image getRoutingImage(PaintContext pc, int instruction) {
+		Image pict = pc.images.IMG_MARK;
+		switch (instruction) {
+		case RI_HARD_RIGHT:		pict=pc.images.IMG_HARDRIGHT; break;
+		case RI_RIGHT:			pict=pc.images.IMG_RIGHT; break;
+		case RI_BEAR_RIGHT:
+		case RI_HALF_RIGHT:		pict=pc.images.IMG_HALFRIGHT; break;
+		case RI_STRAIGHT_ON:	pict=pc.images.IMG_STRAIGHTON; break;
+		case RI_BEAR_LEFT:
+		case RI_HALF_LEFT:		pict=pc.images.IMG_HALFLEFT; break;
+		case RI_LEFT:			pict=pc.images.IMG_LEFT; break;
+		case RI_HARD_LEFT:		pict=pc.images.IMG_HARDLEFT; break;
+		case RI_UTURN:			pict=pc.images.IMG_UTURN; break;
+//							case RI_BEAR_LEFT:
+//							case RI_BEAR_RIGHT:		pict=pc.images.IMG_STRAIGHTON;
+//													if (
+//														(c.wayRouteFlags & (Legend.ROUTE_FLAG_BEAR_LEFT + Legend.ROUTE_FLAG_BEAR_RIGHT)) > 0
+//														&& i < route.size()-1
+//													) {
+//														ConnectionWithNode cNext = (ConnectionWithNode) route.elementAt(i+1);  
+//														int turn = (int) ((cNext.wayConStartBearing - c.wayConEndBearing) * 2); 
+//														if (turn > 180) turn -= 360;
+//														if (turn < -180) turn += 360;
+//														if (Math.abs(turn) > 5) {
+//															if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_BEAR_LEFT) > 0) {
+//																pict=pc.images.IMG_HALFLEFT;
+//															} else {
+//																pict=pc.images.IMG_HALFRIGHT;
+//															}
+//														}
+//													}
+//													break;
+		case RI_ENTER_MOTORWAY:
+		case RI_BEAR_LEFT_ENTER_MOTORWAY:
+		case RI_BEAR_RIGHT_ENTER_MOTORWAY:
+			pict=pc.images.IMG_MOTORWAYENTER; break;
+		case RI_LEAVE_MOTORWAY:
+		case RI_BEAR_LEFT_LEAVE_MOTORWAY:
+		case RI_BEAR_RIGHT_LEAVE_MOTORWAY:
+			pict=pc.images.IMG_MOTORWAYLEAVE; break;					
+		case RI_INTO_TUNNEL:	pict=pc.images.IMG_TUNNEL_INTO; break;
+		case RI_OUT_OF_TUNNEL:	pict=pc.images.IMG_TUNNEL_OUT_OF; break;					
+		}
+						
+		return pict;
 	}
 
 	public static void drawRouteDot(Graphics g, IntPoint p, int radius) {
