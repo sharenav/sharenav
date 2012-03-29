@@ -71,6 +71,8 @@
       options to show or not show the big arrows or the small in-map arrows.
     *** Tacho ***
     - HDOP is shown in tachometer
+    *** Phone models ***
+    - make photos work on Samsung Xcover B271 (and probably some other Samsungs too)
 
 GpsMid 0.7.7
     *** Map display ***
