@@ -1535,6 +1535,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				course = 0;
 				invalidateCourse();
 				alert(Locale.get("trace.ManualRotation"), Locale.get("trace.ManualToNorth"), 750);
+				return;
 			}
 			if (c == CMDS[TOGGLE_MAP_PROJ_CMD]) {
 				if (manualRotationMode) {
