@@ -40,7 +40,7 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 	
 		IconMenuPage mp;
 		// Main
-		mp = createAndAddMenuPage(Locale.get("traceiconmenu.MainTop")/* Main */, 3, 4);
+		mp = createAndAddMenuPage(Locale.get("traceiconmenu.MainTop")/* Main */, 3, 3);
 		iconToggleGps =		mp.createAndAddIcon(Locale.get("traceiconmenu.StartGPS")/*Start GPS*/, "i_gps", Trace.CONNECT_GPS_CMD);
 		iconToggleGps.setFlag(LayoutElement.FLAG_IMAGE_TOGGLEABLE);
 		mp.createAndAddIcon(Locale.get("generic.Search")/*Search*/, "i_search", Trace.SEARCH_CMD);
@@ -51,7 +51,6 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 		mp.createAndAddIcon(Locale.get("traceiconmenu.Overview")/*Overview/Filter Map*/, "i_overview", Trace.OVERVIEW_MAP_CMD);
 		
 		iconOnlineInfo =	mp.createAndAddIcon(Locale.get("traceiconmenu.Online")/*Online*/, "i_online", Trace.ONLINE_INFO_CMD);		
-		mp.createAndAddIcon(Locale.get("generic.About")/*About*/, "i_about", Trace.ABOUT_CMD);
 		mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
 
 		mp.createAndAddIcon(Locale.get("generic.Exit")/*Exit*/, "i_exit", Trace.EXIT_CMD);
@@ -143,6 +142,7 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 		// Route
 		mp = createAndAddMenuPage(Locale.get("traceiconmenu.HelpPage")/* Help */, 3, 3);
 
+		mp.createAndAddIcon(Locale.get("generic.About")/*About*/, "i_about", Trace.ABOUT_CMD);
 		iconHelpOnlineTouch = mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Touch")/*Touch*/, "i_online", Trace.HELP_ONLINE_TOUCH_CMD);
 		iconHelpOnlineWiki = mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Wiki")/*Wiki*/, "i_online", Trace.HELP_ONLINE_WIKI_CMD);
 		mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Keys")/*Keys*/, "is_keys", Trace.KEYS_HELP_CMD);
