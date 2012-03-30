@@ -3734,7 +3734,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	
 		
 	/** interface for received actions from the IconMenu GUI */
-	public void performIconAction(int actionId) {
+	public void performIconAction(int actionId, String choiceName) {
 		show();
 		updateLastUserActionTime();
 		// when we are low on memory or during route calculation do not cache the icon menu (including scaled images)

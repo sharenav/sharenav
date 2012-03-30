@@ -182,6 +182,10 @@ public class IconMenuPage extends LayoutManager {
 	protected int getActiveEleActionId() {
 		return this.getElementAt(rememberEleId).actionID;
 	}
+
+	protected String getActiveEleChoiceName() {
+		return this.getElementAt(rememberEleId).getText();
+	}
 	
 	
 	/**

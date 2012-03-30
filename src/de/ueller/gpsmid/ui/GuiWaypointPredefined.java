@@ -53,7 +53,7 @@ public class GuiWaypointPredefined extends IconMenuWithPagesGui {
 		/* (non-Javadoc)
 		 * @see de.ueller.gps.tools.IconActionPerformer#performIconAction(int)
 		 */
-		public void performIconAction(int actionId) {
+		public void performIconAction(int actionId, String choiceName) {
 			WaypointTemplate templ = (WaypointTemplate)mPredefines.elementAt(actionId);
 			mLogger.info("Item " + templ.mLabel + " selected");
 			if (templ.mWayptText.indexOf("%f") != -1) {

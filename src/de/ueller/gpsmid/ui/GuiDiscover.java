@@ -1772,7 +1772,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	}
 
 	/** Interface for received actions from the IconMenu GUI */
-	public void performIconAction(int actionId) {
+	public void performIconAction(int actionId, String choiceName) {
 		show();
 		if (actionId == IconActionPerformer.BACK_ACTIONID) {
 			uncacheIconMenu();
