@@ -79,6 +79,9 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		if (c == SELECT_CMD) {
 			String site = getString(getSelectedIndex());
 			String url = getUrlForSite(site);
+			if (url == null) {
+				url = getStaticUrlForSite(site);
+			}
 			openUrl(url);
 			mParent.show();
 		}
@@ -168,6 +171,11 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 				url = "tel:" + phone;
 			}
 		}
+		return url;
+	}
+
+	public static String getStaticUrlForSite(String site) {
+		String url = null;
 		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.helptouch")/*Online help (touchscreen)*/)) {
 			url = "https://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Touchscreen_Layout";
 		}
@@ -178,7 +186,7 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		return url;
 	}
 
-	public void openUrl(String url) {
+	public static void openUrl(String url) {
 		try {
 			if (url != null) {
 				// #debug info
