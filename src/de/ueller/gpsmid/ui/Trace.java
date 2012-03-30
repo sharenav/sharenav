@@ -173,8 +173,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	protected static final int MANUAL_LOCATION_CMD = 60;
 	protected static final int EDIT_ENTITY = 61;
 	protected static final int NORTH_UP_CMD = 62;
+	protected static final int HELP_ONLINE_TOUCH_CMD = 63;
+	protected static final int HELP_ONLINE_WIKI_CMD = 64;
+	protected static final int KEYS_HELP_CMD = 65;
 
-	private final Command [] CMDS = new Command[63];
+	private final Command [] CMDS = new Command[66];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -490,6 +493,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		CMDS[EDIT_ADDR_CMD] = new Command(Locale.get("trace.AddAddrNode")/*Add Addr node*/,Command.ITEM,100);
 		CMDS[CELLID_LOCATION_CMD] = new Command(Locale.get("trace.CellidLocation")/*Set location from CellID*/,Command.ITEM,100);
 		CMDS[MANUAL_LOCATION_CMD] = new Command(Locale.get("trace.ManualLocation")/*Set location manually*/,Command.ITEM,100);
+		CMDS[HELP_ONLINE_TOUCH_CMD] = new Command(Locale.get("guidiscovericonmenu.Touch")/**/,Command.ITEM,100);
+		CMDS[HELP_ONLINE_WIKI_CMD] = new Command(Locale.get("guidiscovericonmenu.Wiki")/**/,Command.ITEM,100);
+		CMDS[KEYS_HELP_CMD] = new Command(Locale.get("guidiscover.KeyShortcuts")/**/,Command.ITEM,100);
 
 		addAllCommands();
 		
@@ -1510,6 +1516,19 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				boolean fullScreen = !Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN);
 				Configuration.setCfgBitState(Configuration.CFGBIT_FULLSCREEN, fullScreen, false);
 				setFullScreenMode(fullScreen);
+				return;
+			}
+			if (c == CMDS[HELP_ONLINE_TOUCH_CMD]) {
+				GuiWebInfo.openUrl(GuiWebInfo.getStaticUrlForSite(Locale.get("guiwebinfo.helptouch")));
+				return;
+			}
+			if (c == CMDS[HELP_ONLINE_WIKI_CMD]) {
+				GuiWebInfo.openUrl(GuiWebInfo.getStaticUrlForSite(Locale.get("guiwebinfo.helpwiki")));
+				return;
+			}
+			if (c == CMDS[KEYS_HELP_CMD]) {
+				GuiKeyShortcuts gks = new GuiKeyShortcuts(this);
+				gks.show();
 				return;
 			}
 			if (c == CMDS[NORTH_UP_CMD]) {

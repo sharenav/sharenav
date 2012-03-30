@@ -28,6 +28,8 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 	LayoutElement iconEditPOI;
 	LayoutElement iconAddAddr;
 	LayoutElement iconEditWay;
+	LayoutElement iconHelpOnlineTouch;
+	LayoutElement iconHelpOnlineWiki;
 	
 	private static int rememberedEleId = 0;
 	private static int rememberedTabNr = 0;
@@ -81,6 +83,8 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 		iconEditWay.makeImageGreyed();
 		//#endif
 		
+		createAndAddHelpMenu();
+
 		setActiveTabAndCursor(rememberedTabNr, rememberedEleId);
 	}
 	
@@ -131,6 +135,17 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 		mp.createAndAddIcon(Locale.get("traceiconmenu.SetDest")/*Set dest*/, "i_setdest", Trace.SET_DEST_CMD);
 		mp.createAndAddIcon(Locale.get("traceiconmenu.ShowDest")/*Show dest*/, "i_showdest", Trace.SHOW_DEST_CMD);		
 		mp.createAndAddIcon(Locale.get("traceiconmenu.ClearDest")/*Clear dest*/, "i_cleardest", Trace.CLEAR_DEST_CMD);		
+		mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
+	}
+
+	private void createAndAddHelpMenu() {
+		IconMenuPage mp;
+		// Route
+		mp = createAndAddMenuPage(Locale.get("traceiconmenu.HelpPage")/* Help */, 3, 3);
+
+		iconHelpOnlineTouch = mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Touch")/*Touch*/, "i_online", Trace.HELP_ONLINE_TOUCH_CMD);
+		iconHelpOnlineWiki = mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Wiki")/*Wiki*/, "i_online", Trace.HELP_ONLINE_WIKI_CMD);
+		mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Keys")/*Keys*/, "is_keys", Trace.KEYS_HELP_CMD);
 		mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
 	}
 

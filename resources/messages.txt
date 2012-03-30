@@ -1254,3 +1254,6 @@ guisearch.Favorite=Add to favorites
 nmeamessage.TooManyErrors=Too many exceptions, stopping reporting them
 guiroute.maparrows=Show in-map arrows
 guiroute.bigarrows=Show big navigation arrows
+traceiconmenu.HelpPage= Help
+guidiscovericonmenu.Touch=Touchscreen help
+guidiscovericonmenu.Wiki=Wiki
