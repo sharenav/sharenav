@@ -79,9 +79,6 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		if (c == SELECT_CMD) {
 			String site = getString(getSelectedIndex());
 			String url = getUrlForSite(site);
-			if (url == null) {
-				url = getStaticUrlForSite(site);
-			}
 			openUrl(url);
 			mParent.show();
 		}
