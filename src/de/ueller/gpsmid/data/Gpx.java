@@ -956,6 +956,15 @@ public class Gpx extends Tile implements Runnable, InputListener {
 	 * @return Vector of waypoints
 	 */
 	public Vector listWayPoints() {
+		return listWayPoints(false);
+	}
+
+	/** Returns a list of all way points, sorted by the current search criterion.
+	 * 
+	 * @param favorites flag if only favorites wanted
+	 * @return Vector of waypoints
+	 */
+	public Vector listWayPoints(boolean favorites) {
 		int sortmode = Configuration.getWaypointSortMode();
 		Node centerPos = Trace.getInstance().center;
 		Vector source = wayPtTile.listWayPt();
@@ -963,6 +972,13 @@ public class Gpx extends Tile implements Runnable, InputListener {
 		PositionMark insert;
 		PositionMark compare;
 		for (int i = 0; i < source.size(); i++) {
+			if (favorites) {
+				PositionMark waypt = (PositionMark)source.elementAt(i);
+				if (waypt.displayName.charAt(waypt.displayName.length()-1) != '*') {
+					continue;
+				}
+
+			}
 			// We want to insert source[i] at the right position into sorted
 			insert = (PositionMark)source.elementAt(i);
 			float distInsert = ProjMath.getDistance(centerPos.radlat, centerPos.radlon,

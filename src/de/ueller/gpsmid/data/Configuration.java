@@ -312,6 +312,8 @@ public class Configuration {
 	public final static byte CFGBIT_NAVI_ARROWS_BIG = 122;
 	/** bit 123: show in-map small navigation icons */
 	public final static byte CFGBIT_NAVI_ARROWS_IN_MAP = 123;
+	/** bit 124: show favorite destinations in route icon menu */
+	public final static byte CFGBIT_FAVORITES_IN_ROUTE_ICON_MENU = 124;
 	
 	/**
 	 * These are the database record IDs for each configuration option

@@ -176,8 +176,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	protected static final int HELP_ONLINE_TOUCH_CMD = 63;
 	protected static final int HELP_ONLINE_WIKI_CMD = 64;
 	protected static final int KEYS_HELP_CMD = 65;
+	protected static final int ROUTE_TO_FAVORITE_CMD = 66;
 
-	private final Command [] CMDS = new Command[66];
+	private final Command [] CMDS = new Command[67];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -496,6 +497,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		CMDS[HELP_ONLINE_TOUCH_CMD] = new Command(Locale.get("guidiscovericonmenu.Touch")/**/,Command.ITEM,100);
 		CMDS[HELP_ONLINE_WIKI_CMD] = new Command(Locale.get("guidiscovericonmenu.Wiki")/**/,Command.ITEM,100);
 		CMDS[KEYS_HELP_CMD] = new Command(Locale.get("guidiscover.KeyShortcuts")/**/,Command.ITEM,100);
+		CMDS[ROUTE_TO_FAVORITE_CMD] = new Command(Locale.get("guidiscover.KeyShortcuts")/**/,Command.ITEM,100);
 
 		addAllCommands();
 		
@@ -3735,6 +3737,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		
 	/** interface for received actions from the IconMenu GUI */
 	public void performIconAction(int actionId, String choiceName) {
+		System.out.println("choiceName: " + choiceName);
 		show();
 		updateLastUserActionTime();
 		// when we are low on memory or during route calculation do not cache the icon menu (including scaled images)
@@ -3743,7 +3746,24 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			logger.info("low mem: Uncaching traceIconMenu");
 			uncacheIconMenu();
 		}
-		if (actionId != IconActionPerformer.BACK_ACTIONID) {
+		if (actionId == ROUTE_TO_FAVORITE_CMD && gpx != null && choiceName != null) {
+			// set destination from choiceName
+			choiceName += "*";
+			Vector wpt = gpx.listWayPoints();
+			PositionMark[] wayPts = new PositionMark[wpt.size()];
+			wpt.copyInto(wayPts);
+			PositionMark result = null;
+			for (int i = 0; i < wayPts.length; i++ ) {
+				if (choiceName.equals(wayPts[i].displayName)) {
+					result = wayPts[i];
+				}
+			}
+			if (result != null) {
+				RoutePositionMark pm1 = new RoutePositionMark(result.lat, result.lon);
+				setDestination(pm1);
+				commandAction(ROUTING_START_CMD);
+			}
+		} else if (actionId != IconActionPerformer.BACK_ACTIONID) {
 			commandAction(actionId);
 		}
 	}

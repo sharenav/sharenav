@@ -6,10 +6,13 @@
 package de.ueller.gpsmid.ui;
 
 import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.midlet.iconmenu.IconActionPerformer;
 import de.ueller.midlet.iconmenu.IconMenuPage;
 import de.ueller.midlet.iconmenu.IconMenuWithPagesGui;
 import de.ueller.midlet.iconmenu.LayoutElement;
+
+import java.util.Vector;
 
 import javax.microedition.lcdui.Graphics;
 
@@ -34,11 +37,13 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 	private static int rememberedEleId = 0;
 	private static int rememberedTabNr = 0;
 	
+	public PositionMark[] wayPts;
 	
 	public TraceIconMenu(GpsMidDisplayable parent, IconActionPerformer actionPerformer) {
 		super(parent, actionPerformer);
 	
 		IconMenuPage mp;
+
 		// Main
 		mp = createAndAddMenuPage(Locale.get("traceiconmenu.MainTop")/* Main */, 3, 3);
 		iconToggleGps =		mp.createAndAddIcon(Locale.get("traceiconmenu.StartGPS")/*Start GPS*/, "i_gps", Trace.CONNECT_GPS_CMD);
@@ -128,15 +133,35 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 	private void createAndAddRoutingMenu() {
 		IconMenuPage mp;
 		// Route
-		mp = createAndAddMenuPage(Locale.get("traceiconmenu.RoutePage")/* Route */, 3, 3);
+		mp = createAndAddMenuPage(Locale.get("traceiconmenu.RoutePage")/* Route */, 3,
+					  Configuration.getCfgBitSavedState(Configuration.CFGBIT_FAVORITES_IN_ROUTE_ICON_MENU) ? 
+					  (countFavorites() - 2) / 3 + 3 : 3);
 		iconToggleRoute = mp.createAndAddIcon(Locale.get("traceiconmenu.Calc")/*Calculate*/, "i_calc", Trace.ROUTING_TOGGLE_CMD);
 		iconToggleRoute.setFlag(LayoutElement.FLAG_IMAGE_TOGGLEABLE);
 		mp.createAndAddIcon(Locale.get("traceiconmenu.SetDest")/*Set dest*/, "i_setdest", Trace.SET_DEST_CMD);
 		mp.createAndAddIcon(Locale.get("traceiconmenu.ShowDest")/*Show dest*/, "i_showdest", Trace.SHOW_DEST_CMD);		
 		mp.createAndAddIcon(Locale.get("traceiconmenu.ClearDest")/*Clear dest*/, "i_cleardest", Trace.CLEAR_DEST_CMD);		
 		mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_FAVORITES_IN_ROUTE_ICON_MENU)) {
+			addFavoritesToRoutingMenu(mp);
+		}
 	}
 
+	private int countFavorites() {
+		Vector wpt = Trace.getInstance().gpx.listWayPoints(true);
+		return wpt.size();
+	}
+	// FIXME when favorites are changed, the icon layout should be recreated
+	private void addFavoritesToRoutingMenu(IconMenuPage mp) {
+		Vector wpt = Trace.getInstance().gpx.listWayPoints(true);
+		wayPts = new PositionMark[wpt.size()];
+		wpt.copyInto(wayPts);
+		for (int i = 0; i < wayPts.length; i++ ) {
+			String name = wayPts[i].displayName;
+			name = name.substring(0, name.length()-1);
+			mp.createAndAddIcon(name, "i_calc1", Trace.ROUTE_TO_FAVORITE_CMD);
+		}
+	}
 	private void createAndAddHelpMenu() {
 		IconMenuPage mp;
 		// Route

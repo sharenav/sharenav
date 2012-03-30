@@ -17,6 +17,7 @@
       useIcons=large and useIcons=huge make sense for devices with high resolution displays
     - Links to online help for touchscreen and GpsMid wiki in Online menu
     - Help tab added to icon menu
+    - Favorites can be optionally shown as routing targets in route icon menu
     *** Map display ***
     - The map screen now updated more often during panning when dragging the touch screen.
       (not only after the ImageCollector class has finished drawing the map but every 1/3 s)

@@ -1257,3 +1257,4 @@ guiroute.bigarrows=Show big navigation arrows
 traceiconmenu.HelpPage= Help
 guidiscovericonmenu.Touch=Touchscreen help
 guidiscovericonmenu.Wiki=Wiki
+guisetupgui.FavoritesInRouteIconMenu=Favorites in route icon menu
