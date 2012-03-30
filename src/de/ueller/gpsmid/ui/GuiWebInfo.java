@@ -168,23 +168,25 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 			if (site.equalsIgnoreCase(Locale.get("guiwebinfo.helpwiki")/*Online help (Gpsmid wiki)*/)) {
 				url = "https://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Main_Page";				
 			}
-			try {
-				if (url != null) {
-					// #debug info
-					mLogger.info("Platform request for " + url);
-					//#if polish.api.online
-					GpsMid.getInstance().platformRequest(url);
-					//#else
-					GpsMid.getInstance().alert (Locale.get("guisearch.OpenUrlTitle"),
-								    Locale.get("guisearch.OpenUrl") +  " " + url, Alert.FOREVER);
-					//#endif
-				}
-			} catch (Exception e) {
-				mLogger.exception("Could not open url " + url, e);
-			}
+			openUrl(url);
 			mParent.show();
 		}
-
 	}
 
+	public void openUrl(String url) {
+		try {
+			if (url != null) {
+				// #debug info
+				mLogger.info("Platform request for " + url);
+				//#if polish.api.online
+				GpsMid.getInstance().platformRequest(url);
+				//#else
+				GpsMid.getInstance().alert (Locale.get("guisearch.OpenUrlTitle"),
+							    Locale.get("guisearch.OpenUrl") +  " " + url, Alert.FOREVER);
+				//#endif
+			}
+		} catch (Exception e) {
+			mLogger.exception("Could not open url " + url, e);
+		}
+	}
 }
