@@ -34,6 +34,8 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 	LayoutElement iconHelpOnlineTouch;
 	LayoutElement iconHelpOnlineWiki;
 	
+	private final int favoriteMax = 3;
+
 	private static int rememberedEleId = 0;
 	private static int rememberedTabNr = 0;
 	
@@ -149,17 +151,22 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 
 	private int countFavorites() {
 		Vector wpt = Trace.getInstance().gpx.listWayPoints(true);
-		return wpt.size();
+		return wpt.size() > favoriteMax ? favoriteMax : wpt.size();
 	}
 	// FIXME when favorites are changed, the icon layout should be recreated
 	private void addFavoritesToRoutingMenu(IconMenuPage mp) {
 		Vector wpt = Trace.getInstance().gpx.listWayPoints(true);
 		wayPts = new PositionMark[wpt.size()];
 		wpt.copyInto(wayPts);
+		int count = 0;
 		for (int i = 0; i < wayPts.length; i++ ) {
 			String name = wayPts[i].displayName;
 			name = name.substring(0, name.length()-1);
+			count++;
 			mp.createAndAddIcon(name, "i_calc1", Trace.ROUTE_TO_FAVORITE_CMD);
+			if (count >= favoriteMax) {
+				break;
+			}
 		}
 	}
 	private void createAndAddHelpMenu() {
