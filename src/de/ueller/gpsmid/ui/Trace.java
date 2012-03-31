@@ -177,8 +177,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	protected static final int HELP_ONLINE_WIKI_CMD = 64;
 	protected static final int KEYS_HELP_CMD = 65;
 	protected static final int ROUTE_TO_FAVORITE_CMD = 66;
+	protected static final int ROTATE_TRAVEL_MODE_CMD = 67;
 
-	private final Command [] CMDS = new Command[67];
+	private final Command [] CMDS = new Command[68];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -498,6 +499,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		CMDS[HELP_ONLINE_WIKI_CMD] = new Command(Locale.get("guidiscovericonmenu.Wiki")/**/,Command.ITEM,100);
 		CMDS[KEYS_HELP_CMD] = new Command(Locale.get("guidiscover.KeyShortcuts")/**/,Command.ITEM,100);
 		CMDS[ROUTE_TO_FAVORITE_CMD] = new Command(Locale.get("guidiscover.KeyShortcuts")/**/,Command.ITEM,100);
+		CMDS[ROTATE_TRAVEL_MODE_CMD] = new Command(Locale.get("guiroute.TravelBy")/**/,Command.ITEM,100);
 
 		addAllCommands();
 		
@@ -1533,6 +1535,15 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				gks.show();
 				return;
 			}
+			if (c == CMDS[ROTATE_TRAVEL_MODE_CMD]) {
+				int mode = Configuration.getTravelModeNr();
+				mode++;
+				if (mode >= Legend.getTravelModes().length) {
+					mode = 0;
+				}
+				Configuration.setTravelMode(mode);
+				return;
+			}
 			if (c == CMDS[NORTH_UP_CMD]) {
 				course = 0;
 				invalidateCourse();
@@ -2148,6 +2159,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				e.setText(Locale.get("trace.Air")/*Air:*/ + showDistance((int) distLine, DISTANCE_AIR));
 			}
 			
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_TRAVEL_MODE_IN_MAP)) {
+				e = tl.ele[TraceLayout.TRAVEL_MODE];
+				e.setText(Configuration.getTravelMode().getName());
+			}
+
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP)) {
 				e = tl.ele[TraceLayout.CURRENT_TIME]; // e is used *twice* below (also as vRelative)
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_GPS_TIME)) {

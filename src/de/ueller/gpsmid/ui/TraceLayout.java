@@ -44,7 +44,8 @@ public class TraceLayout extends LayoutManager {
 	public static final int ETA = 23;
 	public static final int ROUTE_OFFROUTE = 24;
 	public static final int REQUESTED_TILES = 25;
-	public static final int ELE_COUNT = 26;
+	public static final int TRAVEL_MODE = 26;
+	public static final int ELE_COUNT = 27;
 
 	// special element ids
 	public static final byte SE_SCALEBAR = 1;
@@ -338,7 +339,20 @@ public class TraceLayout extends LayoutManager {
 				LayoutElement.FLAG_FONT_LARGE);
 		e.setAdditionalOffsY(5);
 		e.setVRelative(ele[SCALEBAR]);
-		
+
+		e = ele[TRAVEL_MODE];
+		addElement(e, 
+				   LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
+				LayoutElement.FLAG_FONT_MEDIUM |
+				LayoutElement.FLAG_BACKGROUND_BOX);
+		// FIXME create a color for this at map format change
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_CLOCK_BACKGROUND]);
+		e.setColor(Legend.COLORS[Legend.COLOR_CLOCK_TEXT]);
+		e.setVRelative(ele[ROUTE_INSTRUCTION]);
+		e.setHRelative(ele[ETA]);
+		e.setAdditionalOffsX(-2);
+		e.setActionID(Trace.ROTATE_TRAVEL_MODE_CMD);
+
 		setOnScreenButtonSize();
 	}	
 	
