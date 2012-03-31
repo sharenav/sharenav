@@ -407,6 +407,8 @@ public class TraceLayout extends LayoutManager {
 		e.setFlag(fontFlag2);
 		e = ele[CURRENT_TIME];
 		e.setFlag(fontFlag);
+		e = ele[TRAVEL_MODE];
+		e.setFlag(fontFlag);
 		e = ele[ROUTE_DISTANCE];
 		e.setFlag(fontFlag);
 		e = ele[WAYNAME];
