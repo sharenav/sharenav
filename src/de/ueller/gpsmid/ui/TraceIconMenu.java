@@ -34,7 +34,7 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 	LayoutElement iconHelpOnlineTouch;
 	LayoutElement iconHelpOnlineWiki;
 	
-	private final int favoriteMax = 3;
+	private final int favoriteMax = 20;
 
 	private static int rememberedEleId = 0;
 	private static int rememberedTabNr = 0;
