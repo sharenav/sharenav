@@ -974,7 +974,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 		for (int i = 0; i < source.size(); i++) {
 			if (favorites) {
 				PositionMark waypt = (PositionMark)source.elementAt(i);
-				if (waypt.displayName.charAt(waypt.displayName.length()-1) != '*') {
+				if (! waypt.displayName.endsWith("*") ) {
 					continue;
 				}
 
