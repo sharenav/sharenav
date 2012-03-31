@@ -413,7 +413,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	
 	private static volatile Trace traceInstance = null;
 
-	private Routing	routeEngine;
+	private volatile Routing	routeEngine;
 
 	/*
 	private static Font smallBoldFont;
