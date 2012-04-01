@@ -893,4 +893,51 @@ public class MoreMath {
 		}
 	}
 	
+	/**
+	 * Hyperbolic cosine.
+	 * <p>
+	 * Hyperbolic cosine: (e^x+e^-x)/2
+	 * 
+	 * @param x
+	 *            float
+	 * @return float cosh(x)
+	 */
+	public static final float cosh(float x) {
+		return (MoreMath.pow(MoreMath.E, x) + MoreMath.pow(MoreMath.E, -x)) / 2.0f;
+	}
+	/**
+	 * Hyperbolic tangent.
+	 * <p>
+	 * Hyperbolic cosine: sinh(x)/cosh(x)
+	 * 
+	 * @param x
+	 *            float
+	 * @return float tanh(x)
+	 */
+	public static final float tanh(float x) {
+		return (MoreMath.sinh(x) / MoreMath.cosh(x));
+	}
+	/**
+	 * hyperbolic arctangent
+	 * @param x
+	 *            float
+	 * @return float atanh(x)
+	 */
+	public static final float atanh(float x) {
+		//return (float) (1.0 / (1.0 - (MoreMath.pow(x, (float) 2.0))));
+		return (float) (log((float)((1.0 + x) / (1.0 -x))) / 2.0);
+	}
+	/**
+	 * Hyperbolic arccos.
+	 * <p>
+	 * 
+	 * @param x
+	 *            float
+	 * @return float acosh(x)
+	 */
+	public static final float acosh(float x) {
+//		logger.info("enter acosh " + x);
+		return MoreMath.log(x + ((float) Math.sqrt(x * x - 1)));
+	}
+
 }
