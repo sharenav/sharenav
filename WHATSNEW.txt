@@ -47,6 +47,8 @@
     - Accuracy of fix can be shown with GPS status
     - Number of satellites is show in some more cases also in NoFix situations.
     - Optional travel mode display (& setting on touch screen phones) on map
+    - On new GpsMid installations on devices with a display height or width > 400
+      the base zoom level is now 24 instead of 23 (map is zoomed once in).
     *** Sea generation ***
     - greatly faster sea generation algorithm with option useSeaTiles = true
       in .properties file. It divides the map into roughly 20km * 20km areas
@@ -72,6 +74,8 @@
     - optionally stop routing when we arrive at destination
     - big navigation arrows for next two instructions in uppper left corner;
       options to show or not show the big arrows or the small in-map arrows.
+    - On new GpsMid installations on devices with a display height or width > 400
+      the minimum route line width is now 5 instead of 3.
     *** Tacho ***
     - HDOP is shown in tachometer
     *** Phone models ***
