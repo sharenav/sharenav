@@ -15,6 +15,7 @@ import de.ueller.gps.Node;
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.PaintContext;
+import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.gpsmid.data.ScreenContext;
 import de.ueller.gpsmid.mapdata.Way;
 import de.ueller.gpsmid.mapdata.WayDescription;
@@ -24,6 +25,9 @@ import de.ueller.gpsmid.tile.Tile;
 import de.ueller.gpsmid.ui.Trace;
 import de.ueller.gpsmid.ui.TraceLayout;
 import de.ueller.midlet.iconmenu.LayoutElement;
+//#if polish.api.finland
+import de.ueller.util.ETRSTM35FINconvert;
+//#endif
 import de.ueller.util.IntPoint;
 import de.ueller.util.Logger;
 import de.ueller.util.MoreMath;
@@ -650,12 +654,26 @@ public class ImageCollector implements Runnable {
 
 		LayoutElement e = Trace.tl.ele[TraceLayout.WAYNAME];
 		if (showLatLon) {
+//#if polish.api.finland
+			// show Finnish ETRS-TM35FIN coordinates
+			// FIXME: add a config option for selection of coordinates
+			if (true) {
+				PositionMark pmETRS = ETRSTM35FINconvert.latlonToEtrs(paintPC.center.radlat, paintPC.center.radlon);
+				e.setText(Locale.get("imagecollector.lat")/* lat: */
+					  + Float.toString(pmETRS.lat)
+					  + " " + Locale.get("imagecollector.lon")/* lon: */
+					  + Float.toString(pmETRS.lon));
+			} else {
+//#endif
 			e.setText(Locale.get("imagecollector.lat")/* lat: */
 				  + Float.toString(paintPC.center.radlat
 						   * MoreMath.FAC_RADTODEC)
 				  + Locale.get("imagecollector.lon")/* lon: */
 				  + Float.toString(paintPC.center.radlon
 						   * MoreMath.FAC_RADTODEC));
+//#if polish.api.finland
+			}
+//#endif
 		} else {
 			if (name != null && name.length() > 0) {
 				e.setText(name);
