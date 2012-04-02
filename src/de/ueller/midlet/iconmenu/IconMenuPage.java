@@ -152,6 +152,9 @@ public class IconMenuPage extends LayoutManager {
 		if (currentRow + offsRow < 0) { // bottom boundary
 			return false;
 		}
+		if (currentRow + offsRow >= numRows) { // Bottom boundary coming from top
+			return false;
+		}
 //		if (currentY + offsY >= numRows) { // Bottom boundary coming from top
 //			return false;
 //		}
@@ -168,7 +171,7 @@ public class IconMenuPage extends LayoutManager {
 	}
 	
 	private int getEleId(int col, int row) {
-		if (numCols == 3) {
+		if (numCols != 4) { // 3 or more than 4
 			return col + row * numCols;
 		} else { // numCols == 4 - arrange elements similarly as they are arranged in the 3-column setup
 			if (col == 3) {
