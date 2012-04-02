@@ -668,7 +668,7 @@ public class ImageCollector implements Runnable {
 			e.setText(Locale.get("imagecollector.lat")/* lat: */
 				  + Float.toString(paintPC.center.radlat
 						   * MoreMath.FAC_RADTODEC)
-				  + Locale.get("imagecollector.lon")/* lon: */
+				  + " " + Locale.get("imagecollector.lon")/* lon: */
 				  + Float.toString(paintPC.center.radlon
 						   * MoreMath.FAC_RADTODEC));
 //#if polish.api.finland
