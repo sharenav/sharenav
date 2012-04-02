@@ -114,6 +114,7 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 				+ "%2C"
 				+ (mPos.longitude * MoreMath.FAC_RADTODEC);
 		}
+//#if polish.api.finland
 		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.TopoMapFi")/*Topographic Map*/)) {
 			// url working at 2011-07-29
 			url = "http://kansalaisen.karttapaikka.fi/kartanhaku/koordinaattihaku.html?feature=ktjraja&y="
@@ -122,6 +123,7 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 				+ (mPos.longitude * MoreMath.FAC_RADTODEC)
 				+ "&scale=10000&srsName=EPSG%3A4258&lang=fi";
 		}
+//#endif
 		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.GeoHack")/*GeoHack*/)) {
 			int deglat, minlat;
 			float deglatf, seclat;
