@@ -49,9 +49,11 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_GEOHACK)) {
 			this.append(Locale.get("guiwebinfo.GeoHack")/*GeoHack*/, null);
 		}
+//#if polish.api.finland
 		if (Legend.enableUrlTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_TOPOMAP)) {
 			this.append(Locale.get("guiwebinfo.TopoMapFi")/*Topographic Map (Finland)*/, null);
 		}
+//#endif
 		//#endif
 		if (Legend.enableUrlTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITE)) {
 			this.append(Locale.get("guiwebinfo.Website")/*Website*/, null);
