@@ -514,6 +514,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				// if the map display is wide enough, use big tab buttons by default
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS, true);
 			}
+			if (Math.max(getWidth(), getHeight()) > 400) {
+				Configuration.setBaseScale(24);				
+				Configuration.setMinRouteLineWidth(5);								
+			}
 			if (hasPointerEvents()) {
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_LARGE_FONT, true);
 			}
