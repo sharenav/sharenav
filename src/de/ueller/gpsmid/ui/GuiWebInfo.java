@@ -32,6 +32,13 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 	private Way actualWay;
 	private Trace trace;
 
+//#if polish.api.finland
+	// FIXME handle the API key some other way
+	private final static String reittiopasAuth = "";
+	private final static String reittiopasCoordSpec = "&epsg_in=wgs84&epsg_out=wgs84";
+	private final static String reittiopasUrl = "http://api.reittiopas.fi/hsl/prod/?" + reittiopasAuth + reittiopasCoordSpec;
+//#endif
+
 	public GuiWebInfo(GpsMidDisplayable parent, Position pos, PaintContext pc) {
 		super(Locale.get("guiwebinfo.ContactWebOrPhone")/*Contact by web or phone*/, List.IMPLICIT);
 		actualWay = pc.actualWay;
@@ -53,6 +60,8 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		if (Legend.enableUrlTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_TOPOMAP)) {
 			this.append(Locale.get("guiwebinfo.TopoMapFi")/*Topographic Map (Finland)*/, null);
 		}
+		this.append(Locale.get("guiwebinfo.ReittiopasAddress"), null);
+		this.append(Locale.get("guiwebinfo.ReittiopasStop"), null);
 //#endif
 		//#endif
 		if (Legend.enableUrlTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITE)) {
@@ -124,6 +133,20 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 				+ "&x="
 				+ (mPos.longitude * MoreMath.FAC_RADTODEC)
 				+ "&scale=10000&srsName=EPSG%3A4258&lang=fi";
+		}
+		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.ReittiopasAddress"))) {
+			url = reittiopasUrl
+				+ "&request=reverse_geocode&coordinate="
+				+ (mPos.longitude * MoreMath.FAC_RADTODEC) + ","
+				+ (mPos.latitude * MoreMath.FAC_RADTODEC)
+				+ "&format=txt";
+		}
+		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.ReittiopasStop"))) {
+			url = reittiopasUrl
+				+ "&request=reverse_geocode&coordinate="
+				+ (mPos.longitude * MoreMath.FAC_RADTODEC) + ","
+				+ (mPos.latitude * MoreMath.FAC_RADTODEC)
+				+ "&result_contains=stop" + "&format=txt";
 		}
 //#endif
 		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.GeoHack")/*GeoHack*/)) {

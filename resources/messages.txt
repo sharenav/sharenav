@@ -1258,3 +1258,5 @@ traceiconmenu.HelpPage= Help
 guidiscovericonmenu.Touch=Touchscreen help
 guidiscovericonmenu.Wiki=Wiki
 guisetupgui.FavoritesInRouteIconMenu=Favorites in route icon menu
+guiwebinfo.ReittiopasAddress=Get street address (Reittiopas)
+guiwebinfo.ReittiopasStop=Get nearest transport stop (Reittiopas)

@@ -787,3 +787,5 @@ traceiconmenu.HelpPage= Ohjeita
 guidiscovericonmenu.Touch=Kosketusnäytön ohjeita
 guidiscovericonmenu.Wiki=Wiki
 guisetupgui.FavoritesInRouteIconMenu=Suosikit kuvakevalikossa
+guiwebinfo.ReittiopasAddress=Näytä katuosoite (Reittiopas)
+guiwebinfo.ReittiopasStop=Näytä lähin pysäkki (Reittiopas)
