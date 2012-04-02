@@ -39,8 +39,6 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		mParent = parent;
 		mPos = pos;
 		//#if polish.api.online
-		this.append(Locale.get("guiwebinfo.helptouch")/*Online help (touchscreen)*/, null);
-		this.append(Locale.get("guiwebinfo.helpwiki")/*Online help (GpsMid wiki)*/, null);
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WIKIPEDIA_RSS)) {
 			this.append(Locale.get("guiwebinfo.WikipediaRSS")/*Wikipedia (RSS)*/, null);
 		}
