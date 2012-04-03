@@ -192,6 +192,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public final static int DISTANCE_AIR = 4;
 	public final static int DISTANCE_UNKNOWN = 5;
 
+	public final static int LAYOUTMODE_MAP_WITH_OVERLAYS = 1;
+	public final static int LAYOUTMODE_HALF_MAP = 2;
+
 //	private SirfInput si;
 	private LocationMsgProducer locationProducer;
 	private LocationMsgProducer cellIDLocationProducer = null;
@@ -425,6 +428,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	
 	public Vector locationUpdateListeners;
 	private Projection panProjection;
+
+	// FIXME add UI switch for this; perhaps a flag named
+	// "show half-size map in icon menu", then
+	// icon menu with predefined waypoints can be used
+	// to enter waypoints without switching all the
+	// time between map & icon menu
+	//private int layoutMode = LAYOUTMODE_HALF_MAP;
+	private int layoutMode = LAYOUTMODE_MAP_WITH_OVERLAYS;
 
 	private Trace() throws Exception {
 		//#debug
@@ -1914,6 +1925,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		updateLastUserActionTime();
 		if (imageCollector != null) {
 			logger.info("Size of Canvas changed to " + w + "|" + h);
+			System.out.println("Size of Canvas changed to " + w + "|" + h);
 			stopImageCollector();
 			try {
 				startImageCollector();
@@ -1928,7 +1940,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			updatePosition();
 		}
 
-		tl = new TraceLayout(0, 0, w, h);
+		if (layoutMode == LAYOUTMODE_HALF_MAP) {
+			tl = new TraceLayout(0, 0, w, h / 2);
+		} else {
+			tl = new TraceLayout(0, 0, w, h);
+		}
 	}
 
 
@@ -3549,7 +3565,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 	
 	public void recreateTraceLayout() {
-		tl = new TraceLayout(0, 0, getWidth(), getHeight());
+		if (layoutMode == LAYOUTMODE_HALF_MAP) {
+			tl = new TraceLayout(0, 0, getWidth(), getHeight()/2);
+		} else {
+			tl = new TraceLayout(0, 0, getWidth(), getHeight());
+		}
 	}
 
 	public void resetSize() {
@@ -3843,5 +3863,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return Integer.toString((int)(meters / 0.9144 + 0.5f)) + Locale.get("guitacho.yd");
 			}
 		}
+	}
+	public int getLayoutMode() {
+		return layoutMode;
 	}
 }

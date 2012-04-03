@@ -90,6 +90,9 @@ public class ImageCollector implements Runnable {
 			// with overscan
 			xScreenOverscan = x*12/100;
 			yScreenOverscan = y*12/100;
+			if (tr.getLayoutMode() == Trace.LAYOUTMODE_HALF_MAP) {
+				yScreenOverscan = 0;
+			}
 			xSize = x+2*xScreenOverscan;
 			ySize = y+2*yScreenOverscan;
 		} else {
@@ -99,8 +102,13 @@ public class ImageCollector implements Runnable {
 			xScreenOverscan = 0;
 			yScreenOverscan = 0;
 		}
-		img[0] = Image.createImage(xSize, ySize);
-		img[1] = Image.createImage(xSize, ySize);
+		if (tr.getLayoutMode() == Trace.LAYOUTMODE_HALF_MAP) {
+			img[0] = Image.createImage(xSize, ySize / 2);
+			img[1] = Image.createImage(xSize, ySize / 2);
+		} else {
+			img[0] = Image.createImage(xSize, ySize);
+			img[1] = Image.createImage(xSize, ySize);
+		}
 		try {
 			pc[0] = new PaintContext(tr, i);
 			pc[0].setP(p1);
@@ -452,11 +460,12 @@ public class ImageCollector implements Runnable {
 		nextSc.dest = screenPc.dest;
 		nextSc.xSize = screenPc.xSize;
 		nextSc.ySize = screenPc.ySize;
-		Projection p = ProjFactory.getInstance(nextSc.center, nextSc.course,
-				nextSc.scale, xSize, ySize);
+		Projection p = ProjFactory.getInstance(nextSc.center, nextSc.course, nextSc.scale, xSize,
+						       (screenPc.trace.getLayoutMode() == Trace.LAYOUTMODE_HALF_MAP) ? (int) (ySize / 2) : ySize);
 //		System.out.println("p  =" + p);
 		Projection p1 = ProjFactory.getInstance(nextSc.center,
-				pc[nextPaint].course, pc[nextPaint].scale, xSize, ySize);
+				pc[nextPaint].course, pc[nextPaint].scale, xSize,
+							(screenPc.trace.getLayoutMode() == Trace.LAYOUTMODE_HALF_MAP) ? (int) (ySize / 2) : ySize);
 //		System.out.println("p  =" + p1);
 		nextSc.setP(p);
 		screenPc.setP(p);
@@ -473,6 +482,9 @@ public class ImageCollector implements Runnable {
 		}
 		int screenXCenter = xSize / 2 - xScreenOverscan;
 		int screenYCenter = ySize / 2 - yScreenOverscan;
+		if (paintPC.trace.getLayoutMode() == Trace.LAYOUTMODE_HALF_MAP) {
+			screenYCenter = ySize / 4 - yScreenOverscan;
+		}
 		int newXCenter = screenXCenter;
 		int newYCenter = screenYCenter;
 
