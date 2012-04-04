@@ -29,6 +29,7 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
+import javax.microedition.lcdui.TextField;
 //#if polish.android
 import android.os.Looper;
 import android.view.WindowManager;
@@ -436,6 +437,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	// time between map & icon menu
 	//private int layoutMode = LAYOUTMODE_HALF_MAP;
 	private int layoutMode = LAYOUTMODE_MAP_WITH_OVERLAYS;
+
+	private GuiWaypointPredefinedForm mForm;
 
 	private Trace() throws Exception {
 		//#debug
@@ -3796,10 +3799,20 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				showAlertLoadingWpt();
 			} else {
 				PositionMark posMark = getPosMark();
-				posMark.displayName = choiceName;
+				if (choiceName.indexOf("%s") != -1) {
+					mForm = new GuiWaypointPredefinedForm(this, null);
+					mForm.setData(choiceName, choiceName, TextField.ANY, posMark);
+					mForm.show();
+				} else if (choiceName.indexOf("%f") != -1) {
+					mForm = new GuiWaypointPredefinedForm(this, null);
+					mForm.setData(choiceName, choiceName, TextField.DECIMAL, posMark);
+					mForm.show();
+				} else {
+					posMark.displayName = choiceName;
+				}
 				gpx.addWayPt(posMark);
+				newDataReady();
 			}
-			newDataReady();
 			return;
 		} else if (actionId == ROUTE_TO_FAVORITE_CMD && gpx != null && choiceName != null) {
 			// set destination from choiceName
