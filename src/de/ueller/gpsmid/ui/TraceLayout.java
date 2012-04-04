@@ -238,7 +238,9 @@ public class TraceLayout extends LayoutManager {
 				LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
 				LayoutElement.FLAG_VALIGN_CENTER_AT_TOP_OF_ELEMENT |
 				LayoutElement.FLAG_FONT_LARGE |
+				LayoutElement.FLAG_FONT_BOLD |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
+				LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 		);
@@ -251,11 +253,14 @@ public class TraceLayout extends LayoutManager {
 				LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
 				LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 				LayoutElement.FLAG_FONT_LARGE |
+				LayoutElement.FLAG_FONT_BOLD |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
+				LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 		);
 		e.setVRelative(ele[ZOOM_OUT]);
+		e.setAdditionalOffsY(-2);
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setActionID(Trace.ZOOM_IN_CMD);
@@ -265,7 +270,9 @@ public class TraceLayout extends LayoutManager {
 					       LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
 					       LayoutElement.FLAG_VALIGN_CENTER_AT_TOP_OF_ELEMENT |
 					       LayoutElement.FLAG_FONT_LARGE |
+						   LayoutElement.FLAG_FONT_BOLD |
 					       LayoutElement.FLAG_BACKGROUND_BORDER |
+						   LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
 					       LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
 					       LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 					       );
@@ -279,11 +286,14 @@ public class TraceLayout extends LayoutManager {
 						  LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
 						  LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 						  LayoutElement.FLAG_FONT_LARGE |
+						  LayoutElement.FLAG_FONT_BOLD |
 						  LayoutElement.FLAG_BACKGROUND_BORDER |
+						  LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
 						  LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
 						  LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 						  );
 		e.setVRelative(ele[SHOW_DEST]);
+		e.setAdditionalOffsY(-2);
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setActionID(Trace.RECENTER_GPS_CMD + (Trace.MANUAL_LOCATION_CMD << 8));
@@ -294,11 +304,14 @@ public class TraceLayout extends LayoutManager {
 				LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
 				(isPortraitLayout ? LayoutElement.FLAG_VALIGN_BELOW_RELATIVE : LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE) |				
 				LayoutElement.FLAG_FONT_LARGE |
+				LayoutElement.FLAG_FONT_BOLD |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
+				LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 				);
 		e.setVRelative(ele[SHOW_DEST]);
+		e.setAdditionalOffsY(2);
 		if (!isPortraitLayout) {
 			e.setHRelative(ele[RECENTER_GPS]);
 		}
@@ -312,11 +325,14 @@ public class TraceLayout extends LayoutManager {
 				LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
 				(isPortraitLayout ? LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE : LayoutElement.FLAG_VALIGN_BELOW_RELATIVE) |				
 				LayoutElement.FLAG_FONT_LARGE |
+				LayoutElement.FLAG_FONT_BOLD |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
+				LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 				);
 		e.setVRelative(ele[RECENTER_GPS]);
+		e.setAdditionalOffsY(-2);
 		if (!isPortraitLayout) {
 			e.setHRelative(ele[RECENTER_GPS]);
 		}
