@@ -1310,37 +1310,21 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				if (gpx.isLoadingWaypoints()) {
 					showAlertLoadingWpt();
 				} else {
-					PositionMark posMark = null;
-					if (gpsRecenter) {
-						// TODO: If we lose the fix the old position and height
-						// will be used silently -> we should inform the user
-						// here that we have no fix - he may not know what's going on.
-						posMark = new PositionMark(center.radlat, center.radlon,
-								(int)pos.altitude, pos.timeMillis,
-								/* fix */ (byte)-1, /* sats */ (byte)-1,
-								/* sym */ (byte)-1, /* type */ (byte)-1);
-					} else {
-						// Cursor does not point to current position
-						// -> it does not make sense to add elevation and GPS fix info.
-						posMark = new PositionMark(center.radlat, center.radlon,
-								PositionMark.INVALID_ELEVATION,
-								pos.timeMillis, /* fix */ (byte)-1,
-								/* sats */ (byte)-1, /* sym */ (byte)-1,
-								/* type */ (byte)-1);
-					}
+					PositionMark posMark = getPosMark();
 					/*
-					if (Configuration.getCfgBitState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF)) {
-        				if (guiWaypointPredefined == null) {
-        					guiWaypointPredefined = new GuiWaypointPredefined(this);
-        				}
-        				if (guiWaypointPredefined != null) {
-        					guiWaypointPredefined.setData(posMark);
-        					guiWaypointPredefined.show();
-        				}
-					} else {
+					  if (Configuration.getCfgBitState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF)) {
+					  if (guiWaypointPredefined == null) {
+					  guiWaypointPredefined = new GuiWaypointPredefined(this);
+					  }
+					  if (guiWaypointPredefined != null) {
+					  guiWaypointPredefined.setData(posMark);
+					  guiWaypointPredefined.show();
+					  }
+					  } else {
+					  showGuiWaypointSave(posMark);
+					  }
 					*/
-						showGuiWaypointSave(posMark);
-					//}
+					showGuiWaypointSave(posMark);
 				}
 				return;
 			}
@@ -3585,6 +3569,27 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		return dest;
 	}
 
+	public PositionMark getPosMark() {
+		PositionMark posMark = null;
+		if (gpsRecenter) {
+			// TODO: If we lose the fix the old position and height
+			// will be used silently -> we should inform the user
+			// here that we have no fix - he may not know what's going on.
+			posMark = new PositionMark(center.radlat, center.radlon,
+						   (int)pos.altitude, pos.timeMillis,
+						   /* fix */ (byte)-1, /* sats */ (byte)-1,
+						   /* sym */ (byte)-1, /* type */ (byte)-1);
+		} else {
+			// Cursor does not point to current position
+			// -> it does not make sense to add elevation and GPS fix info.
+			posMark = new PositionMark(center.radlat, center.radlon,
+						   PositionMark.INVALID_ELEVATION,
+						   pos.timeMillis, /* fix */ (byte)-1,
+						   /* sats */ (byte)-1, /* sym */ (byte)-1,
+						   /* type */ (byte)-1);
+		}
+		return posMark;
+	}
 	public void setDestination(RoutePositionMark dest) {
 		endRouting();
 		this.dest = dest;
