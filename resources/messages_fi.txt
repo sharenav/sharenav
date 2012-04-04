@@ -789,3 +789,5 @@ guidiscovericonmenu.Wiki=Wiki
 guisetupgui.FavoritesInRouteIconMenu=Suosikit kuvakevalikossa
 guiwebinfo.ReittiopasAddress=Näytä katuosoite (Reittiopas)
 guiwebinfo.ReittiopasStop=Näytä lähin pysäkki (Reittiopas)
+guiwaypointpre.Input=Syötä:
+generic.Save=Talleta
