@@ -11,8 +11,8 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.ItemCommandListener;
-import javax.microedition.lcdui.TextField;
 import javax.microedition.lcdui.StringItem;
+import javax.microedition.lcdui.TextField;
 
 import de.enough.polish.util.Locale;
 
