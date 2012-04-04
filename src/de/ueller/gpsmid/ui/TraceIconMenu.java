@@ -42,11 +42,20 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 	public PositionMark[] wayPts;
 	
 	// FIXME read from config file and/or add a UI to change these
-	// example:
-	// private final static String[] predefs =
-	// { "S40", "S50", "S60", "S80", "Speed %f", "Path %s"};
-	private final static String[] predefs =
-	{ };
+	private final static String[] predefs = {
+		"City limit",
+		"Speed %f",
+		"Speed end",
+		"House nr.",
+		"Bus stop",
+		"Agr 1 asph",
+		"Agr %f gravel",
+		"Agr %f grass",
+		"Waypoint",
+		"Phone",
+		"Path %s",
+		"Back" };
+	private String[] predefsToShow = { };
 
 	public TraceIconMenu(GpsMidDisplayable parent, IconActionPerformer actionPerformer) {
 		super(parent, actionPerformer);
@@ -104,11 +113,15 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 	private void createAndAddRecordingMenu() {
 		IconMenuPage mp;
 		// Recordings
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF)) {
+			// FIXME read from config file and/or add a UI to change these
+			predefsToShow = predefs;
+		}
 		mp = createAndAddMenuPage((this.getWidth() >= 176) 
 				? Locale.get("traceiconmenu.RecordTop")/* Recordings */
 				: Locale.get("traceiconmenu.RecTop")/* Rec */, 3,
 true ? 
-					  (predefs.length - 1) / 3 + 4 : 4);
+					  (predefsToShow.length) / 3 + 4 : 4);
 		iconToggleTrackRec = mp.createAndAddIcon(Locale.get("traceiconmenu.RecordTrack"), 
 				"i_rectrack", Trace.START_RECORD_CMD);
 		iconToggleTrackRec.setFlag(LayoutElement.FLAG_IMAGE_TOGGLEABLE);
@@ -167,8 +180,8 @@ true ?
 
 	// FIXME when predefs are changed, the icon layout should be recreated
 	private void addPredefsToWayptMenu(IconMenuPage mp) {
-		for (int i = 0; i < predefs.length; i++) {
-			mp.createAndAddIcon(predefs[i], "i_savewpt", Trace.SAVE_WAYP_CMD);
+		for (int i = 0; i < predefsToShow.length; i++) {
+			mp.createAndAddIcon(predefsToShow[i], "i_savewpt", Trace.SAVE_WAYP_CMD);
 		}
 	}
 
