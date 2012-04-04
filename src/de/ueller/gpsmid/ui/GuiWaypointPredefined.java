@@ -135,7 +135,8 @@ public class GuiWaypointPredefined extends IconMenuWithPagesGui {
 			}
 		}
 		
-		mForm = new GuiWaypointPredefinedForm(parent, this);
+		mForm = null;
+		//mForm = new GuiWaypointPredefinedForm(parent, (GpsMidDIsplayable) this);
 	}
 
 	public void setData(PositionMark posMark)

@@ -44,7 +44,7 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 	// FIXME read from config file and/or add a UI to change these
 	// example:
 	// private final static String[] predefs =
-	// { "S40", "S50", "S60", "S80"};
+	// { "S40", "S50", "S60", "S80", "Speed %f", "Path %s"};
 	private final static String[] predefs =
 	{ };
 
