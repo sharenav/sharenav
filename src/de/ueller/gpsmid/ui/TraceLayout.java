@@ -302,7 +302,7 @@ public class TraceLayout extends LayoutManager {
 		addElement(e,
 				(isPortraitLayout ? LayoutElement.FLAG_HALIGN_LEFT : LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE) |
 				LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
-				(isPortraitLayout ? LayoutElement.FLAG_VALIGN_BELOW_RELATIVE : LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE) |				
+				LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |				
 				LayoutElement.FLAG_FONT_LARGE |
 				LayoutElement.FLAG_FONT_BOLD |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
@@ -310,11 +310,14 @@ public class TraceLayout extends LayoutManager {
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 				);
-		e.setVRelative(ele[SHOW_DEST]);
-		e.setAdditionalOffsY(2);
-		if (!isPortraitLayout) {
+		if (isPortraitLayout) {		
+			e.setVRelative(ele[SHOW_DEST]);
+		} else {
+			e.setVRelative(ele[RECENTER_GPS]);			
 			e.setHRelative(ele[RECENTER_GPS]);
+			e.setAdditionalOffsX(2);
 		}
+		e.setAdditionalOffsY(2);
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setActionID(Trace.SAVE_WAYP_CMD + (Trace.TOGGLE_RECORDING_CMD << 16));
@@ -323,7 +326,7 @@ public class TraceLayout extends LayoutManager {
 		addElement(e,
 				(isPortraitLayout ? LayoutElement.FLAG_HALIGN_LEFT : LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE) |
 				LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
-				(isPortraitLayout ? LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE : LayoutElement.FLAG_VALIGN_BELOW_RELATIVE) |				
+				LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |				
 				LayoutElement.FLAG_FONT_LARGE |
 				LayoutElement.FLAG_FONT_BOLD |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
@@ -331,11 +334,14 @@ public class TraceLayout extends LayoutManager {
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 				);
-		e.setVRelative(ele[RECENTER_GPS]);
-		e.setAdditionalOffsY(-2);
-		if (!isPortraitLayout) {
-			e.setHRelative(ele[RECENTER_GPS]);
+		if (isPortraitLayout) {
+			e.setVRelative(ele[RECENTER_GPS]);
+		} else {
+			e.setVRelative(ele[SHOW_DEST]);
+			e.setHRelative(ele[RECENTER_GPS]);			
+			e.setAdditionalOffsX(2);
 		}
+		e.setAdditionalOffsY(-2);
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setActionID(Trace.SEARCH_CMD + (Trace.MANAGE_WAYP_CMD << 8) + (Trace.MANAGE_TRACKS_CMD << 16));
