@@ -3791,7 +3791,17 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			logger.info("low mem: Uncaching traceIconMenu");
 			uncacheIconMenu();
 		}
-		if (actionId == ROUTE_TO_FAVORITE_CMD && gpx != null && choiceName != null) {
+		if (actionId == SAVE_WAYP_CMD && gpx != null && choiceName != null) {
+			if (gpx.isLoadingWaypoints()) {
+				showAlertLoadingWpt();
+			} else {
+				PositionMark posMark = getPosMark();
+				posMark.displayName = choiceName;
+				gpx.addWayPt(posMark);
+			}
+			newDataReady();
+			return;
+		} else if (actionId == ROUTE_TO_FAVORITE_CMD && gpx != null && choiceName != null) {
 			// set destination from choiceName
 			choiceName += "*";
 			Vector wpt = gpx.listWayPoints();

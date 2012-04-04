@@ -41,6 +41,13 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 	
 	public PositionMark[] wayPts;
 	
+	// FIXME read from config file and/or add a UI to change these
+	// example:
+	// private final static String[] predefs =
+	// { "S40", "S50", "S60", "S80"};
+	private final static String[] predefs =
+	{ };
+
 	public TraceIconMenu(GpsMidDisplayable parent, IconActionPerformer actionPerformer) {
 		super(parent, actionPerformer);
 	
@@ -99,8 +106,9 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 		// Recordings
 		mp = createAndAddMenuPage((this.getWidth() >= 176) 
 				? Locale.get("traceiconmenu.RecordTop")/* Recordings */
-				: Locale.get("traceiconmenu.RecTop")/* Rec */, 3, 4);
-		
+				: Locale.get("traceiconmenu.RecTop")/* Rec */, 3,
+true ? 
+					  (predefs.length - 1) / 3 + 4 : 4);
 		iconToggleTrackRec = mp.createAndAddIcon(Locale.get("traceiconmenu.RecordTrack"), 
 				"i_rectrack", Trace.START_RECORD_CMD);
 		iconToggleTrackRec.setFlag(LayoutElement.FLAG_IMAGE_TOGGLEABLE);
@@ -130,6 +138,9 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 				"i_sendsms", Trace.SEND_MESSAGE_CMD);
 		mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, 
 				"i_back", IconActionPerformer.BACK_ACTIONID);
+
+		// FIXME only if predefined waypoint function enabled
+		addPredefsToWayptMenu(mp);
 	}
 
 	private void createAndAddRoutingMenu() {
@@ -153,6 +164,14 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 		Vector wpt = Trace.getInstance().gpx.listWayPoints(true);
 		return wpt.size() > favoriteMax ? favoriteMax : wpt.size();
 	}
+
+	// FIXME when predefs are changed, the icon layout should be recreated
+	private void addPredefsToWayptMenu(IconMenuPage mp) {
+		for (int i = 0; i < predefs.length; i++) {
+			mp.createAndAddIcon(predefs[i], "i_savewpt", Trace.SAVE_WAYP_CMD);
+		}
+	}
+
 	// FIXME when favorites are changed, the icon layout should be recreated
 	private void addFavoritesToRoutingMenu(IconMenuPage mp) {
 		Vector wpt = Trace.getInstance().gpx.listWayPoints(true);
