@@ -9,7 +9,10 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.Item;
+import javax.microedition.lcdui.ItemCommandListener;
 import javax.microedition.lcdui.TextField;
+import javax.microedition.lcdui.StringItem;
 
 import de.enough.polish.util.Locale;
 
@@ -18,20 +21,23 @@ import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.util.Logger;
 
 
-public class GuiWaypointPredefinedForm extends Form implements CommandListener {
+public class GuiWaypointPredefinedForm extends Form implements CommandListener, ItemCommandListener {
+	//#if polish.android
+	private StringItem OKField;
+	//#endif
 	private TextField mFldInput;
 	private static final Command mSaveCmd = new Command(Locale.get("generic.Save"), Command.OK, 1);
 	private static final Command mBackCmd = new Command(Locale.get("generic.Back"), Command.BACK, 2);
 	
 	private final Trace mTrace;
-	private final GuiWaypointPredefined mParent;
+	private final GpsMidDisplayable mParent;
 	private String mWayptText;
 	private int mType;
 	private PositionMark mWaypt;
 	
 	protected static final Logger logger = Logger.getInstance(GuiWaypointPredefinedForm.class, Logger.TRACE);
 
-	public GuiWaypointPredefinedForm(GpsMidDisplayable tr, GuiWaypointPredefined parent) {
+	public GuiWaypointPredefinedForm(GpsMidDisplayable tr, GpsMidDisplayable parent) {
 		super("");
 		mTrace = (Trace)tr;
 		mParent = parent;
@@ -45,13 +51,24 @@ public class GuiWaypointPredefinedForm extends Form implements CommandListener {
 	private void jbInit() throws Exception {
 		mFldInput = new TextField(Locale.get("guiwaypointpre.Input")/*Input:*/, "", 
 				Configuration.MAX_WAYPOINTNAME_LENGTH, TextField.ANY);
-		
+
 		// Set up this Displayable to listen to command events
 		setCommandListener(this);
 		// add the commands
 		addCommand(mBackCmd);
 		addCommand(mSaveCmd);
+		//#if polish.android
+		OKField = new StringItem(Locale.get("traceiconmenu.SaveWpt"), Locale.get("generic.Save"), StringItem.BUTTON);
+		OKField.addCommand(mSaveCmd);
+		OKField.setDefaultCommand(mSaveCmd);
+		OKField.setItemCommandListener(this);
+		//#endif
+
 		this.append(mFldInput);
+		//#if polish.android
+		//#style formItem
+		this.append(OKField);
+		//#endif
 	}
 
 	public void setData(String label, String wayptText, int type, PositionMark waypt) {
@@ -71,6 +88,10 @@ public class GuiWaypointPredefinedForm extends Form implements CommandListener {
 		}
 	}
 
+	public void commandAction(Command cmd, Item item) {
+		commandAction(cmd, (Displayable) mTrace);
+	}
+
 	public void commandAction(Command cmd, Displayable displayable) {
 		if (cmd == mSaveCmd) {
 			int placePos = mWayptText.indexOf("%");
@@ -80,6 +101,18 @@ public class GuiWaypointPredefinedForm extends Form implements CommandListener {
 
 			logger.info("Saving waypoint with name: " + mWaypt.displayName + 
 					" ele: " + mWaypt.ele);
+			//#if polish.android
+			mTrace.gpx.addWayPt(mWaypt);
+
+			// Wait a bit before displaying the map again. Hopefully
+			// this avoids the sporadic freezing after saving a waypoint.
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException ie) {
+			}
+			mTrace.show();				
+			return;
+			//#else
 			Thread adder = new Thread(new Runnable() {
 				public void run()
 				{
@@ -98,6 +131,7 @@ public class GuiWaypointPredefinedForm extends Form implements CommandListener {
 			adder.setPriority(Thread.MAX_PRIORITY);
 			adder.start();
 			return;
+			//#endif
 		}
 		else if (cmd == mBackCmd) {
 			mParent.show();
