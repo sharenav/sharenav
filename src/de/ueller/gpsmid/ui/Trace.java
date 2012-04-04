@@ -3800,11 +3800,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			} else {
 				PositionMark posMark = getPosMark();
 				if (choiceName.indexOf("%s") != -1) {
-					mForm = new GuiWaypointPredefinedForm(this, null);
+					mForm = new GuiWaypointPredefinedForm(this, this);
 					mForm.setData(choiceName, choiceName, TextField.ANY, posMark);
 					mForm.show();
 				} else if (choiceName.indexOf("%f") != -1) {
-					mForm = new GuiWaypointPredefinedForm(this, null);
+					mForm = new GuiWaypointPredefinedForm(this, this);
 					mForm.setData(choiceName, choiceName, TextField.DECIMAL, posMark);
 					mForm.show();
 				} else {
