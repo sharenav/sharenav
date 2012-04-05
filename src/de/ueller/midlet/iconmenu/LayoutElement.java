@@ -21,7 +21,7 @@ import de.enough.polish.util.Locale;
 public class LayoutElement {
 	private final static Logger logger = Logger.getInstance(LayoutElement.class,Logger.DEBUG);
 
-	public static int[] iaTransparentPaintingBlack = { 0x700000 };
+	public static int[] iaTransparentPainting = { 0x700000 };
 
 	/** align element at minX of LayoutManager area */
 	public static final int FLAG_HALIGN_LEFT = (1<<0);
@@ -656,22 +656,23 @@ public class LayoutElement {
 				int iWidth = right -left - 1;
 				int iHeight = bottom - top - 1;
 
-				if ( iaTransparentPaintingBlack.length < iWidth)
+				if ( iaTransparentPainting.length < iWidth)
 				{
 					// The array contains int values for blending one line.
 					// The array size is increased here so it holds at minimum
 					// the requested number of pixels width.
-					iaTransparentPaintingBlack = new int[iWidth];
+					iaTransparentPainting = new int[iWidth];
 
-					for ( int i = 0; i < iWidth; i++)
-						iaTransparentPaintingBlack[i] = 0x80000000;
+					for ( int i = 0; i < iWidth;)
+						iaTransparentPainting[i++] = 0x80FFFFFF;
+						//iaTransparentPaintingBlack[i++] = 0x80000000;
 				}
 
 				// Blend transparent pixels line by line.
 				// The loop is neccessary for some mobiles (e.g. Samsung Wave) because
 				// a scan with of 0 is not working there.
 				for ( int i = 0; i < iHeight; i++)
-					g.drawRGB(iaTransparentPaintingBlack,
+					g.drawRGB(iaTransparentPainting,
 						0,
 						iWidth,
 						iLeft,
