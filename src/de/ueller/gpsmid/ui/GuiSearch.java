@@ -855,7 +855,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_ARROWS]);
 				gc.drawString("v", getWidth(), getHeight() - 7,
 						Graphics.BOTTOM | Graphics.RIGHT);				
-				return;
+				break;
 			}
 
 			if (i == cursor){
