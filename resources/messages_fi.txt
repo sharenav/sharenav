@@ -791,3 +791,4 @@ guiwebinfo.ReittiopasAddress=Näytä katuosoite (Reittiopas)
 guiwebinfo.ReittiopasStop=Näytä lähin pysäkki (Reittiopas)
 guiwaypointpre.Input=Syötä:
 generic.Save=Talleta
+guisearch.fulltextshort=fulltext

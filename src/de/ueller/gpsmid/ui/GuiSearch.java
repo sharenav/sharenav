@@ -795,7 +795,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 						      Locale.get("guisearch.label5")/* jkl5*/, Locale.get("guisearch.label6")/* mno6*/,
 						      Locale.get("guisearch.label7")/*pqrs7*/, Locale.get("guisearch.label8")/* tuv8*/,
 						      Locale.get("guisearch.label9")/*wxyz9*/, 
-						      Locale.get("guisearch.more")/*more*/, "  0  ", 
+						      Locale.get("guisearch.fulltextshort")/*fulltext*/, "  0  ", 
 						      Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
 						      Locale.get("guisearch.pound")/*_#end*/ :
 						      Locale.get("guisearch.poundNameSearch")/*#end*/};
@@ -1665,7 +1665,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 				} else if (touchedElementId == GuiSearchLayout.KEY_0) {
 					keyPressed('0');
 				} else if (touchedElementId == GuiSearchLayout.KEY_STAR) {
-					keyPressed(KEY_STAR);
+					if (cursorKeypad) {
+						keyPressed(KEY_STAR);
+					} else {
+						commandAction(FULLT_CMD, (Displayable) null);
+					}
 				} else if (touchedElementId == GuiSearchLayout.KEY_POUND || (cursorKeypad && touchedElementId == GuiSearchLayout.KEY_9)) {
 					keyPressed(KEY_POUND);
 				} else if (touchedElementId == GuiSearchLayout.KEY_BACKSPACE) {
