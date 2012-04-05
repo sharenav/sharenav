@@ -598,6 +598,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 			fulltextForm.addCommand(BACK_CMD);
 			fulltextForm.addCommand(OK_CMD);
 			fulltextForm.setCommandListener(this);
+			//#if polish.android
+			Display.getDisplay(GpsMid.getInstance()).setCurrentItem(fulltextSearchField);
+			//#endif
 			GpsMid.getInstance().show(fulltextForm);			
 		}
 	}
