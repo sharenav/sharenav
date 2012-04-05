@@ -76,6 +76,8 @@
       options to show or not show the big arrows or the small in-map arrows.
     - On new GpsMid installations on devices with a display height or width > 400
       the minimum route line width is now 5 instead of 3.
+    *** Predefined waypoints ***
+    - An option for predefined waypoints (entered via the icon menu) is now available.
     *** Tacho ***
     - HDOP is shown in tachometer
     *** Phone models ***
