@@ -1634,7 +1634,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 					keyPressed('1');
 				} else if (touchedElementId == GuiSearchLayout.KEY_2) {
 					if (cursorKeypad) {
+						//#if polish.android
+						keyPressed(19);
+						//#else
 						keyPressed(getKeyCode(UP));
+						//#endif
 					} else {
 						keyPressed('2');
 					}
@@ -1647,7 +1651,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 					}
 				} else if (touchedElementId == GuiSearchLayout.KEY_4) {
 					if (cursorKeypad) {
+						//#if polish.android
+						keyPressed(21);
+						//#else
 						keyPressed(getKeyCode(LEFT));
+						//#endif
 					} else {
 						keyPressed('4');
 					}
@@ -1659,7 +1667,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 					}
 				} else if (touchedElementId == GuiSearchLayout.KEY_6) {
 					if (cursorKeypad) {
+						//#if polish.android
+						keyPressed(22);
+						//#else
 						keyPressed(getKeyCode(RIGHT));
+						//#endif
 					} else {
 						keyPressed('6');
 					}
@@ -1672,7 +1684,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 					}
 				} else if (touchedElementId == GuiSearchLayout.KEY_8) {
 					if (cursorKeypad) {
+						//#if polish.android
+						keyPressed(20);
+						//#else
 						keyPressed(getKeyCode(DOWN));
+						//#endif
 					} else {
 						keyPressed('8');
 					}
