@@ -332,7 +332,7 @@ public class BundleGpsMid implements Runnable {
 
 				if (compressed && dontCompress != null) {
 					for (String extension : dontCompress) {
-						if (files[i].getName().endsWith(extension)) {
+						if (files[i].getName().toLowerCase().endsWith(extension)) {
 							ze.setMethod(ZipOutputStream.STORED);
 							storethis = true;
 						}

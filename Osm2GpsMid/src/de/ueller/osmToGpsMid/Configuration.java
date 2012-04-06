@@ -679,7 +679,7 @@ public class Configuration {
 				setCellSource(getString("cellSource"));
 			}
 
-			setDontCompress(getString("dontCompress"));
+			setDontCompress(getString("dontCompress").toLowerCase());
 
 			setUseLang(getString("lang"));
 			if (! getString("useLang").equals("*")) {
