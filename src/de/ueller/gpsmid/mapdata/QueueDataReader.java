@@ -214,6 +214,9 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		logger.info("read nodes");
 		readVerify((byte) 0x55,"start of ways " ,ds);
 		int wayCount = ds.readShort();
+		if (wayCount < 0) {
+			wayCount += 65536;
+		}
 //		logger.trace("reading " + wayCount + " ways");
 		int lastread = 0;
 		try {
