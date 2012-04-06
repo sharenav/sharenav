@@ -29,7 +29,10 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.Item;
+import javax.microedition.lcdui.ItemCommandListener;
 import javax.microedition.lcdui.List;
+import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
 
 import de.ueller.gpsmid.data.Configuration;
@@ -58,7 +61,7 @@ import de.ueller.util.ProjMath;
 import de.enough.polish.util.Locale;
 
 public class GuiSearch extends Canvas implements CommandListener,
-		      GpsMidDisplayable, InputListener, KeySelectMenuReducedListener, CancelMonitorInterface {
+		      GpsMidDisplayable, InputListener, KeySelectMenuReducedListener, CancelMonitorInterface, ItemCommandListener  {
 
 	protected static final int VIRTUALKEY_PRESSED = 1;
 
@@ -152,6 +155,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private ChoiceGroup poiSelectionCG;
 	private TextField poiSelectionMaxDistance;
 	private TextField fulltextSearchField;
+	//#if polish.android
+	private StringItem OKField;
+	//#endif
 	
 	
 	public volatile byte state;
@@ -322,6 +328,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 		return (cursor < result.size() && cursor >= 0 && result.size() != 0);
 	}
 	
+	public void commandAction(Command cmd, Item item) {
+		commandAction(cmd, (Displayable) parent);
+	}
+
 	public void commandAction(Command c, Displayable d) {
 //		System.out.println("got Command " + c);
 		if (state == STATE_MAIN || state == STATE_FAVORITES) {
@@ -599,6 +609,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 			fulltextForm.addCommand(OK_CMD);
 			fulltextForm.setCommandListener(this);
 			//#if polish.android
+			OKField = new StringItem("", Locale.get("generic.OK"), StringItem.BUTTON);
+			OKField.addCommand(OK_CMD);
+			OKField.setDefaultCommand(OK_CMD);
+			OKField.setItemCommandListener(this);
+			//#style formItem
+			fulltextForm.append(OKField);
 			Display.getDisplay(GpsMid.getInstance()).setCurrentItem(fulltextSearchField);
 			//#endif
 			GpsMid.getInstance().show(fulltextForm);			
