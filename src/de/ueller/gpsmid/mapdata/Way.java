@@ -2203,7 +2203,7 @@ public class Way extends Entity {
 				FilledTriangle.fillTriangle(pc, p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
 			} else {
 				pc.g.fillTriangle(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
-// TODO: Please add comment why this code is necessary on Android				
+// Without these, there are ugly light-color gaps in filled areas on Android devices
 //#if polish.android
 				pc.g.drawLine(p1.x,p1.y,p2.x,p2.y);
 				pc.g.drawLine(p2.x,p2.y,p3.x,p3.y);
