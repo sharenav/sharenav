@@ -64,6 +64,8 @@
       devices and less often on faster devices
     - heed max search count for POI search, bugfix for name search fencepost error
     - allow to save result as a favorite
+    - fulltext search now easily accessible on touch screen phones;
+      the "*" key function moved to the cursor keyboard
     *** Routing ***
     - add support for toll rules for each travel mode to routemodes.inc.
       Ways will still be rendered with toll decoration only if toll=yes or toll=true is set
