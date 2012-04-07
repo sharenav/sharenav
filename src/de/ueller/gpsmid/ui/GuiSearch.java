@@ -1743,6 +1743,17 @@ public class GuiSearch extends Canvas implements CommandListener,
 		logger.debug("PointerReleased: " + x + "," + y);
 		pointerActionDone = true;
 
+		//#if polish.android
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)
+		    && gsl.getElementIdAtPointer(x, y) >= 0 && gsl.isAnyActionIdAtPointer(x, y)) {
+			if (tapAutoReleaseTimerTask != null) {
+				tapAutoReleaseTimerTask.cancel();
+			}
+			tapAutoReleaseTimerTask = null;
+			autoPointerRelease(x, y);
+		}
+		//#endif
+
 		// If this could be a double click
 		if (potentialDoubleClick
 				&&
