@@ -258,7 +258,10 @@ public class SingleTile extends Tile implements QueueableTile {
 								short destLat = (short)((pc.dest.lat - centerLat) * MoreMath.FIXPT_MULT);
 								short destLon = (short)((pc.dest.lon - centerLon) * MoreMath.FIXPT_MULT);
 								for (int i1 = 0; i1 < w.path.length; i1++) {
-									short s = w.path[i1];
+									int s = w.path[i1];
+									if (s < 0) {
+										s += 65536;
+									}
 									if ((Math.abs(nodeLat[s] - destLat) < 2) && 
 											(Math.abs(nodeLon[s] - destLon) < 2)) {
 										// logger.debug("found dest way");

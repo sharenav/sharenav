@@ -1017,6 +1017,9 @@ public class Way extends Entity {
 		
 		for (int i1 = 0; i1 < path.length; i1++) {
 			int idx = path[i1];
+			if (idx < 0) {
+				idx += 65536;
+			}
 			p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2,t);
 			
 			if (lineP1 == null) {
@@ -1046,6 +1049,9 @@ public class Way extends Entity {
 						// instead of screen coordinates if the screen is
 						// centered to the gps position.
 						int idxp = path[i1-1];
+						if (idxp < 0) {
+							idxp += 65536;
+						}
 						fSegmentLong1 =  t.nodeLon[idxp] *  MoreMath.FIXPT_MULT_INV + t.centerLon;
 						fSegmentLat1 = t.nodeLat[idxp] *  MoreMath.FIXPT_MULT_INV + t.centerLat;
 						fSegmentLong2 = t.nodeLon[idx] *  MoreMath.FIXPT_MULT_INV + t.centerLon;
@@ -2179,16 +2185,25 @@ public class Way extends Entity {
 		for (int i1 = 0; i1 < path.length; ){
 //			pc.g.setColor(wayDesc.lineColor);
 			int idx = path[i1++];	
+			if (idx < 0) {
+				idx += 65536;
+			}
 			p.forward(t.nodeLat[idx],t.nodeLon[idx],p1,t);
 			idx = path[i1++];	
+			if (idx < 0) {
+				idx += 65536;
+			}
 			p.forward(t.nodeLat[idx],t.nodeLon[idx],p2,t);
 			idx = path[i1++];	
+			if (idx < 0) {
+				idx += 65536;
+			}
 			p.forward(t.nodeLat[idx],t.nodeLon[idx],p3,t);
 			if (dashed) {
 				FilledTriangle.fillTriangle(pc, p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
 			} else {
 				pc.g.fillTriangle(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
-// TODO: Please add comment why this code is necessary on Android				
+// Without these, there are ugly light-color gaps in filled areas on Android devices
 //#if polish.android
 				pc.g.drawLine(p1.x,p1.y,p2.x,p2.y);
 				pc.g.drawLine(p2.x,p2.y,p3.x,p3.y);
@@ -2259,6 +2274,9 @@ public class Way extends Entity {
 		int maxY = clipY;
 		for (int i1 = 0; i1 < path.length; i1++) {
 			int idx = path[i1];			
+			if (idx < 0) {
+				idx += 65536;
+			}
 			p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, t);
 			x = lineP2.x;
 			y = lineP2.y;
@@ -2466,7 +2484,11 @@ public class Way extends Entity {
 			nodes = t.nodeLon;
 		}
 		for (int i = 0; i < len; i++) {
-			lat[i] = nodes[path[i]] * MoreMath.FIXPT_MULT_INV + offset;
+			int pathI = path[i];
+			if (pathI < 0) {
+				pathI += 65536;
+			}
+			lat[i] = nodes[pathI] * MoreMath.FIXPT_MULT_INV + offset;
 		}
 		return lat;
 	}
