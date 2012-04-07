@@ -7,6 +7,7 @@
       targets (2.1, 2.2, 2.3 etc.) can be uncommented in build.xml if needed
     - some minor adjustments due to upgrading to J2MEPolish 2.3, related to file dialogue
     - various UI improvements and fixes with back key handling
+    - audio recording now works (n.b.: the location is currently always /sdcard directory)
     *** Touchscreen / User Interface ***
     - On the map screen long tap * to toggle track recording
     - During track recording long tap recorded trackpoints on the map screen to suspend/resume track recording
