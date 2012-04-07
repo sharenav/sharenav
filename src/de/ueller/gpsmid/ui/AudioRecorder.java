@@ -16,6 +16,9 @@ import javax.microedition.media.MediaException;
 import javax.microedition.media.Player;
 import javax.microedition.media.control.RecordControl;
 //#endif
+//#if polish.android
+import android.media.MediaRecorder;
+//#endif
 
 
 import de.ueller.gpsmid.data.Configuration;
@@ -32,8 +35,12 @@ public class AudioRecorder  implements SelectionListener{
 	private final static Logger logger = Logger.getInstance(AudioRecorder.class, Logger.DEBUG);
 	
 	//#if polish.api.mmapi	
+	//#if polish.android
+	private MediaRecorder recorder;
+	//#else
 	private Player mPlayer;
 	private RecordControl record;	
+	//#endif
 	//#endif
 	private String basedirectory;
 	
@@ -41,6 +48,13 @@ public class AudioRecorder  implements SelectionListener{
 		//#if polish.api.mmapi
 		try{
 			String supportRecording = System.getProperty("supports.audio.capture");
+			//#if polish.api.mmapi
+			//#if polish.android
+			recorder = new MediaRecorder();
+			recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+			recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+			recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+			//#else
 			if ((supportRecording == null) || (!supportRecording.equalsIgnoreCase("true"))) {
 				logger.error(Locale.get("audiorecorder.PhoneNoRecordSupp")/*Phone does not support recording*/);
 			}
@@ -57,7 +71,10 @@ public class AudioRecorder  implements SelectionListener{
 				logger.error(Locale.get("audiorecorder.FailedGettingRecordControl")/*Failed to get RecordControl*/);
 				return false;
 			}
+			//#endif polish.android
 			basedirectory = Configuration.getPhotoUrl();
+			//#if polish.android
+			//#else
 			if (basedirectory == null) {
 				logger.error(Locale.get("audiorecorder.SpecifyDir")/*Dont know where to save the recording, please specify a directory and try again*/);
 				//#if polish.api.fileConnection				
@@ -66,20 +83,40 @@ public class AudioRecorder  implements SelectionListener{
 				record = null;
 				return false;
 			}
+			//#endif
 			String fileSubPart = "GpsMid-" + HelperRoutines.formatSimpleDateSecondNow();
+			//#if polish.android
+			// FIXME with the normal line tries to open /file:/sdcard/GpsMid-201.. and fails
+			//
+			basedirectory = "/sdcard/";
+			//#endif
 			String fileName = basedirectory + fileSubPart +".amr";
 			logger.info("Saving audio stream to " + fileName);
 			// Some JVMs seem to require the file to already exist before they can record to it
 			//#if polish.api.fileConnection
+			//#if polish.android
+			// with READ_WRITE there's an exception:
+			// W/System.err(11824): java.lang.IllegalArgumentException: Unknown connection type:-1
+			// W/System.err(11824):    at de.enough.polish.android.io.Connector.createConnection(Connector.java:78)
+			// W/System.err(11824):    at de.enough.polish.android.io.Connector.open(Connector.java:53)
+			// W/System.err(11824):    at de.ueller.gpsmid.ui.AudioRecorder.startRecorder(AudioRecorder.java:95)
+			//#else
 			Connection c = Connector.open( fileName, Connector.READ_WRITE);
 			FileConnection fc = (FileConnection) c;
 			if (!fc.exists()) {
 				fc.create();
 			}
 			//#endif
+			//#endif
+			//#if polish.android
+			recorder.setOutputFile(fileName);
+			recorder.prepare();
+			recorder.start();   // Recording is now started			
+			//#else
 			record.setRecordLocation(fileName);
 			record.startRecord();
 			mPlayer.start();
+			//#endif
 			
 			/**
 			 * Add a waypoint marker at the current position in order to later
@@ -93,10 +130,18 @@ public class AudioRecorder  implements SelectionListener{
 			tr.alert(Locale.get("audiorecorder.audRecording")/*Audio recording*/, 
 				 Locale.get("audiorecorder.recTo")/*Recording audio to*/ + " " + fileName, 1500);
 		} catch (SecurityException se) {
+			//#if polish.android
+			recorder = null;
+			//#else
 			record = null;
+			//#endif
 			logger.error(Locale.get("audiorecorder.PermisionDeniedRecordingAudio")/*Permision denied to record audio*/);
 		} catch (Exception me) {
+			//#if polish.android
+			recorder = null;
+			//#else
 			record = null;
+			//#endif
 			logger.exception(Locale.get("audiorecorder.FailedStartingRecording")/*Failed to start recording*/, me);
 			// offer a chance to fix a possibly improper URL
 			//#if polish.api.fileConnection				
@@ -104,28 +149,45 @@ public class AudioRecorder  implements SelectionListener{
 			//#endif
 		}
 		//#endif
+		//#endif
 
 		return true;
 	}
 	
 	public void stopRecord() {
 		//#if polish.api.mmapi
+		//#if polish.android
+		if (recorder == null)
+			return;
+		//#else
 		if (record == null)
 			return;
+		//#endif
+		//#if polish.android
+		//#else
 		try{
+		//#endif
+			//#if polish.android
+			recorder.stop();
+			recorder.release();
+			//#else
 			record.stopRecord();
 			record.commit();
 			record = null;
 			mPlayer.stop();
 			mPlayer.close();
+			//#endif
 			Trace tr = Trace.getInstance();
 			tr.alert(Locale.get("audiorecorder.audRecording")/*Audio recording*/, 
 				 Locale.get("audiorecorder.stopped")/*Stopped audio recording*/, 750);
+		//#if polish.android
+		//#else
 		} catch (IOException ioe) {
 			logger.exception(Locale.get("audiorecorder.FailedSavingAudioRecording")/*Failed to save audio recording*/, ioe);
 		} catch (MediaException e) {
 			logger.exception(Locale.get("audiorecorder.FailedClosingAudioRecording")/*Failed to close audio recording*/, e);
 		}
+		//#endif
 		//#endif
  
 	}
@@ -133,7 +195,11 @@ public class AudioRecorder  implements SelectionListener{
 	public boolean isRecording() {
 		boolean res = false;
 		//#if polish.api.mmapi
+		//#if polish.android
+		res = (recorder != null);		
+		//#else
 		res = (record != null);		
+		//#endif
 		//#endif
 		return res;
 	}
