@@ -2922,6 +2922,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				}
 			}
 		}
+		pos.altitude += Configuration.getAltitudeCorrection();
+		altitude = (int) (pos.altitude);
 		if (gpx.isRecordingTrk()) {
 			try {
 				// don't tracklog manual cellid position or gps start/stop last known position
@@ -2934,8 +2936,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				receiveMessage(e.getMessage());
 			}
 		}
-		pos.altitude += Configuration.getAltitudeCorrection();
-		altitude = (int) (pos.altitude);
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTOZOOM)
 				&& gpsRecenter
 				&& (isGpsConnected() || TrackPlayer.isPlaying)
