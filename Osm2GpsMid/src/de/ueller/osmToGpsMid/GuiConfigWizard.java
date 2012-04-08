@@ -1093,6 +1093,13 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				}
 			}
 			fw.write("\r\n");
+
+			fw.write("# File endings of files to not compress.\r\n");
+			fw.write("# e.g. for Android and WinCE uncompressed WAV files are required\r\n");
+			fw.write("# Example to not compress files ending with wav: dontCompress = wav\r\n");
+			fw.write("dontCompress = " + config.getDontCompress() + "\r\n");
+			fw.write("\r\n");			
+
 			fw.write("# Editing support.\r\n");
 			fw.write("enableEditing = " + config.enableEditingSupport + "\r\n");
 			fw.write("\r\n");
