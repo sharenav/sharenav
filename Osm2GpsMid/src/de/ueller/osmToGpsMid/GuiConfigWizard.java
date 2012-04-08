@@ -1104,12 +1104,10 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("enableEditing = " + config.enableEditingSupport + "\r\n");
 			fw.write("\r\n");
 
-			fw.write("\r\n");
 			fw.write("# Housenumber support.\r\n");
 			fw.write("useHouseNumbers = " + config.useHouseNumbers + "\r\n");
 			fw.write("\r\n");
 
-			fw.write("\r\n");
 			fw.write("# Routing ability can be disabled to save space in the midlet by setting to false.\r\n");
 			fw.write("# Or set to one or more defined in the style-file, e.g. motorcar, bicycle, foot.\r\n");
 			fw.write("useRouting = " + config.useRouting + "\r\n");
