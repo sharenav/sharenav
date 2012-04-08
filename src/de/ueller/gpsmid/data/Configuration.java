@@ -672,9 +672,13 @@ public class Configuration {
 			//#endif
 			// set default location provider to JSR-179 if available
 			//#if polish.api.locationapi
+			//#if polish.android
+			setLocationProvider(LOCATIONPROVIDER_ANDROID);
+			//#else
 			if (getDeviceSupportsJSR179()) {
 				setLocationProvider(LOCATIONPROVIDER_JSR179);
 			}
+			//#endif
 			//#endif
 			//#debug info
 			logger.info("Default config for version 0.4.0+ set.");
@@ -836,6 +840,11 @@ public class Configuration {
 			cfgBits_64_to_127 |= 1L << CFGBIT_NAVI_ARROWS_IN_MAP;
 		}
 		if (configVersionStored < 30) {
+			//#if polish.android
+			cfgBits_64_to_127 |= 
+				1L << CFGBIT_NOSTREETBORDERS |
+				1L << CFGBIT_ROUND_WAY_ENDS;
+			//#endif
 			setAltitudeCorrection(0);
 		}
 		
@@ -1926,6 +1935,9 @@ public class Configuration {
 		// a list of return codes for microedition.platform can be found at:
 		// http://www.club-java.com/TastePhone/J2ME/MIDP_Benchmark.jsp
 
+		//#if polish.android
+		return CFGBIT_BACKLIGHT_ANDROID_WINDOW_MANAGER;
+		//#else
 		//#if polish.api.nokia-ui || polish.api.min-siemapi
 		String phoneModel = getPhoneModel();
 		// determine default backlight method for devices from the wiki
@@ -1947,6 +1959,7 @@ public class Configuration {
         }
 		//#endif
 		return 0;
+		//#endif
 	}
 	
 	private static boolean getDefaultIconMenuBackCmdSupport() {
