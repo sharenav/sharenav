@@ -1261,4 +1261,4 @@ guisetupgui.FavoritesInRouteIconMenu=Favorites in route icon menu
 guiwebinfo.ReittiopasAddress=Get street address (Reittiopas)
 guiwebinfo.ReittiopasStop=Get nearest transport stop (Reittiopas)
 guisearch.fulltextshort=fulltext
-
+guidiscover.AltitudeCorrection=Altitude correction

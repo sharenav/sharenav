@@ -797,3 +797,4 @@ guisearch.clabel5=kohteeksi
 guisearch.clabel7=näytä
 guisearch.sel=kursori
 guisearch.cursor=kursori
+guidiscover.AltitudeCorrection=Korkeuden korjaus

@@ -56,7 +56,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 29;
+	public final static int VERSION = 30;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -379,6 +379,7 @@ public class Configuration {
 	private static final int RECORD_ID_DEST_LINE_WIDTH = 56;
 	private static final int RECORD_ID_TIME_DIFF = 57;
 	private static final int RECORD_ID_CFGBITS_128_TO_191 = 58;
+	private static final int RECORD_ID_ALTITUDE_CORRECTION = 59;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -504,6 +505,7 @@ public class Configuration {
 
 	private static int destLineWidth = 2;
 	private static int timeDiff = 0;
+	private static int altitudeCorrection = 0;
 
 	
 	public static void read() {
@@ -595,6 +597,7 @@ public class Configuration {
 			calculateRealBaseScale();
 			destLineWidth = readInt(database, RECORD_ID_DEST_LINE_WIDTH);
 			timeDiff = readInt(database, RECORD_ID_TIME_DIFF);
+			altitudeCorrection = readInt(database, RECORD_ID_ALTITUDE_CORRECTION);
 			
 			/* close the record store before accessing it nested for writing
 			 * might otherwise cause problems on some devices
@@ -831,6 +834,9 @@ public class Configuration {
 		}
 		if (configVersionStored < 29) {
 			cfgBits_64_to_127 |= 1L << CFGBIT_NAVI_ARROWS_IN_MAP;
+		}
+		if (configVersionStored < 30) {
+			setAltitudeCorrection(0);
 		}
 		
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127, cfgBits_128_to_191);
@@ -1604,6 +1610,10 @@ public class Configuration {
 		return timeDiff;
 	}
 
+	public static int getAltitudeCorrection() {
+		return altitudeCorrection;
+	}
+
 	public static void setDestLineWidth(int destLineWidth) {
 		write(destLineWidth, RECORD_ID_DEST_LINE_WIDTH);
 		Configuration.destLineWidth = destLineWidth;
@@ -1612,6 +1622,11 @@ public class Configuration {
 	public static void setTimeDiff(int timeDiff) {
 		write(timeDiff, RECORD_ID_TIME_DIFF);
 		Configuration.timeDiff = timeDiff;
+	}
+	
+	public static void setAltitudeCorrection(int correction) {
+		write(correction, RECORD_ID_ALTITUDE_CORRECTION);
+		Configuration.altitudeCorrection = correction;
 	}
 	
 	public static int getBaseScale() {
@@ -2326,6 +2341,7 @@ public class Configuration {
 		dos.writeInt(getProjDefault());
 		dos.writeInt(getSearchMax());
 		dos.writeInt(getDestLineWidth());
+		dos.writeInt(getAltitudeCorrection());
 		/*
 		 * Don't store destpos in export - perhaps later add a function for "move the app" which would store also destpos
 		dos.writeUTF(Float.toString(destPos.radlat));
@@ -2418,6 +2434,9 @@ public class Configuration {
 		}
 		if (version >= 28) {
 			timeDiff = dis.readInt();
+		}
+		if (version >= 29) {
+			altitudeCorrection = dis.readInt();
 		}
 	}
 	

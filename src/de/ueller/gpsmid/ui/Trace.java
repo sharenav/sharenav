@@ -2934,6 +2934,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				receiveMessage(e.getMessage());
 			}
 		}
+		pos.altitude += Configuration.getAltitudeCorrection();
 		altitude = (int) (pos.altitude);
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTOZOOM)
 				&& gpsRecenter
