@@ -1059,17 +1059,14 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				fw.write("cellSource = " + config.getCellSource().replace("\\", "\\\\") + "\r\n");
 				fw.write("useCellID = " + config.getString("useCellID") + "\r\n");
 			}
-			fw.write("\r\n");
 			fw.write("# Store cellids for phones without LAC.\r\n");
 			fw.write("cellIDnoLAC = " + config.getCellIDnoLAC() + "\r\n");
 			fw.write("\r\n");
 
-			fw.write("\r\n");
 			fw.write("# Generate sea from coastlines.\r\n");
 			fw.write("generateSea = " + config.getGenerateSea() + "\r\n");
 			fw.write("\r\n");
 
-			fw.write("\r\n");
 			fw.write("# You can have up to 9 regions.\r\n");
 			fw.write("# Ways and POIs in any of the regions will be written to the bundle.\r\n");
 			Vector<Bounds> bounds = config.getBounds();
@@ -1080,6 +1077,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				}
 			}
 			fw.write("\r\n");
+
 			fw.write("# To choose a different device specific build, use the app property.\r\n");
 			fw.write("# GpsMid-Generic-full should work for most phones (except BlackBerry).\r\n");
 			String app = config.getAppParam();
