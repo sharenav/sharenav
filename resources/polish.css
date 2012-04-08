@@ -12,7 +12,7 @@ listItem {
 }
 listItemFocused extends listItem {
 	font-color: white;
-	background-color: black;
+	background-color: gray;
 }
 formItem {
 	font-color: black;
