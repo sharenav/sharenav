@@ -8,6 +8,9 @@
     - some minor adjustments due to upgrading to J2MEPolish 2.3, related to file dialogue
     - various UI improvements and fixes with back key handling
     - audio recording now works (n.b.: the location is currently always /sdcard directory)
+    - For easier support of sounds for routing by default WAV and AMR files
+      are stored uncompressed in the map data as required for Android
+      (.properties parameter default dontCompress = wav,amr)
     *** Touchscreen / User Interface ***
     - On the map screen long tap * to toggle track recording
     - During track recording long tap recorded trackpoints on the map screen to suspend/resume track recording
@@ -80,6 +83,10 @@
       options to show or not show the big arrows or the small in-map arrows.
     - On new GpsMid installations on devices with a display height or width > 400
       the minimum route line width is now 5 instead of 3.
+    *** Osm2GpsMid GUI ***
+    - Route destinations for the route corridor are saved in last.properties. After loading
+      a .properties file with route destinations you can press "Calculate Route Corridor"
+      to (re-)generate the route corridor.
     *** Predefined waypoints ***
     - An option for predefined waypoints (entered via the icon menu) is now available.
     *** Tacho ***
