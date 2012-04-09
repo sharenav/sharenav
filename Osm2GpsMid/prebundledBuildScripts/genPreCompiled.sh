@@ -4,6 +4,7 @@ ulimit -Sv 14000000
 renice 15 $$
 
 function genPBF {
+    # $1 = name of PBF file w/o ext, $2 = name of bundle file w/o ext, $3 = Midlet name suffix
     echo "========================" >> build.log
     echo -e "Processing $2, midlet name GpsMid$3-0.7.7-map69\n\n" >> build.log
     echo "Processing $2, midlet name GpsMid$3-0.7.7-map69"
@@ -15,6 +16,7 @@ function genPBF {
 }
 
 function genBZ2 {
+    # $1 = name of BZ2 file w/o ext, $2 = name of bundle file w/o ext, $3 = Midlet name suffix
     echo "========================" >> build.log
     echo -e "Processing $2, midlet name GpsMid$3-0.7.7-map69\n\n" >> build.log
     echo "Processing $2, midlet name GpsMid$3-0.7.7-map69"
@@ -48,14 +50,14 @@ rm build.log
 
 # Africa
 genPBF canary Canary Canary
-genBZ2 congo Congo Cd
+genPBF congo Congo Cd
 genBZ2 egypt Egypt Eg
-genBZ2 ethiopia Ethiopia Et
+genPBF ethiopia Ethiopia Et
 genBZ2 kenya Kenya Ke
 genPBF libya Libya Ly
-genBZ2 morocco Morocco Ma
+genPBF morocco Morocco Ma
 genBZ2 namibia Namibia Na
-genBZ2 nigeria Nigeria Ne
+genPBF nigeria Nigeria Ne
 genBZ2 seychelles Seychelles Sc
 genPBF south_africa South_Africa Za
 genBZ2 tunesia Tunesia Tn
@@ -74,7 +76,7 @@ genPBF colorado Denver Den
 genPBF haiti Haiti Ht
 genPBF louisiana NewOrleans NO
 genBZ2 jamaica Jamaica Jm
-genBZ2 mexico Mexico Mx
+genPBF mexico Mexico Mx
 genPBF new_york NYC NYC
 genPBF ontario Ontario ON
 genBZ2 puerto_rico PuertoRico Pr
@@ -85,25 +87,24 @@ genBZ2 venezuela Venezuela Ve
 genBZ2 afghanistan Afghanistan Af
 genBZ2 bahrain Bahrain Bh
 genBZ2 bangladesh Bangladesh Bd
-genBZ2 brunei Brunai Bn
 genPBF china China Cn
 genBZ2 cyprus Cyprus Cy
 genPBF india India In
 genPBF india SouthIndia SIn
 genPBF indonesia Indonesia Id
-genBZ2 iran Iran Ir
+genPBF iran Iran Ir
 genPBF iraq Iraq Iq
 genPBF israel Israel Il
+genPBF japan Japan Jp
 genBZ2 jordan Jordan Jo
 genPBF kazakhstan Kazakhstan Kz
 genBZ2 kuwait Kuwait Kw
 genBZ2 lebanon Lebanon Lb
-genBZ2 malaysia Malaysia My
+genPBF malaysia_singapore_brunei MalaysiaSingaporeBrunei MySgBn
 genBZ2 myanmar Myanmar Mm
 genPBF pakistan Pakistan Pk
 genPBF philippines Philippines Ph
 genBZ2 saudi_arabia Saudi Sa
-genBZ2 singapore Singapore Sg
 genBZ2 south_korea South_Korea Kr
 genBZ2 sri_lanka Sri_Lanka Lk
 genBZ2 syria Syria Sy
