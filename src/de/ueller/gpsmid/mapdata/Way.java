@@ -1307,6 +1307,9 @@ public class Way extends Entity {
 			for (int i1 = 0; i1 < path.length; i1++) {
 				// get the next line point coordinates into lineP2
 				int idx = this.path[i1];
+				if (idx < 0) {
+					idx += 65536;
+				}
 				// forward() is in Mercator.java
 				p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, t);
 				// if we got only one line point, get a second one 
