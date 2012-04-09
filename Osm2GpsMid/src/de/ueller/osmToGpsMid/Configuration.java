@@ -43,6 +43,8 @@ import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.EntityDescription;
 import de.ueller.osmToGpsMid.model.POIdescription;
 import de.ueller.osmToGpsMid.model.WayDescription;
+import de.ueller.osmToGpsMid.route.Location;
+import de.ueller.osmToGpsMid.route.Route;
 
 /**
  * This class reads and holds all the configuration information needed to generate
@@ -416,6 +418,9 @@ public class Configuration {
 		/** Bounding boxes, read from properties and/or drawn by the user on the map. */
 		private final Vector<Bounds> bounds;
 		
+		/** Route Destinations, read from properties and/or set by the user on the map. */
+		Vector<Location> routeList=new Vector<Location>();
+		
 		/** The parser for the style file */
 		private LegendParser legend;
 		
@@ -555,7 +560,6 @@ public class Configuration {
 					cf = getClass().getResourceAsStream("/version.properties");
 				}
 				loadPropFile(cf);
-				readBounds();
 			} catch (Exception e) {
 				System.out.println("Could not load the configuration properly for conversion");
 				e.printStackTrace();
@@ -623,6 +627,7 @@ public class Configuration {
 				System.out.println("Loading built in defaults (version.properties)");
 				loadPropFile(getClass().getResourceAsStream("/version.properties"));
 				bounds.removeAllElements();
+				routeList.removeAllElements();
 			} catch (IOException e) {
 				e.printStackTrace();
 				System.exit(1);
@@ -649,6 +654,9 @@ public class Configuration {
 
 			URL propertiesAddress = getClass().getResource("/version.properties");
 			vb = new PropertyResourceBundle(propertiesAddress.openStream());
+			
+			readBounds();
+			readRouteList();
 			
 			setRouting(getString("useRouting"));
 			useUrlTags = getString("useUrlTags").equalsIgnoreCase("true");
@@ -1212,6 +1220,44 @@ public class Configuration {
 			}
 			return cmis;
 		}
+
+		/** Returns the route destination that were retrieved from the current properties file.
+		 * @return Vector of locations
+		 */
+		public Vector<Location> getRouteList() {
+			return routeList;
+		}
+
+		/** Reads route destinations from the current properties file (defined by 'rb')
+		 * or, theoretically from version.properties, but this doesn't contain any
+		 * bounds, and puts them in the vector 'routeList'.
+		 */
+		public void readRouteList() {
+			routeList.removeAllElements();
+			int i = 0;
+			try {
+				while (true) {
+					getFloat("routeDest." + (i + 1) + ".lat");
+					getFloat("routeDest." + (i + 1) + ".lon");
+					i++;
+				}
+			} catch (RuntimeException e) {
+				;
+			}
+			if (i > 0) {
+				System.out.println("Found " + i + " route destinations");
+				for (int l = 0; l < i; l++) {
+					Location location = new Location( getFloat("routeDest." + (l + 1) + ".lat"), getFloat("routeDest." + (l + 1) + ".lon") );
+					addRouteDestination(location);
+				}
+			}
+		}
+		
+		public void addRouteDestination(Location location) {
+			routeList.add(location);
+			new Route().revResolv(location);
+		}
+
 
 		/** Returns the bounds that were retrieved from the current properties file.
 		 * @return Vector of bounds

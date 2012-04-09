@@ -10,6 +10,7 @@
  */
 package de.ueller.osmToGpsMid;
 
+import de.ueller.osmToGpsMid.Configuration;
 import static de.ueller.osmToGpsMid.GetText._;
 
 import java.awt.BorderLayout;
@@ -67,6 +68,7 @@ import javax.swing.filechooser.FileFilter;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapArea;
+import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
@@ -258,7 +260,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	JFileChooser jStyleFileChooser;
 	/** Component handling the map display */
 	JMapViewer map;
-	Vector<Location> routeList=new Vector<Location>();
 	Pattern startPattern=Pattern.compile("<gml:LineString");
 	Pattern posPattern=Pattern.compile("<gml:pos>([0-9.]+) ([0-9.]+)</gml:pos>");
 	Vector<Coordinate> routeResult=new Vector<Coordinate>();
@@ -328,7 +329,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.gridy = 1;
 		jpRouteCorridor.add(jlRouteCorridor, gbc);
 
-		destList=new JTable(new LocationTableModel(routeList));
+		destList=new JTable(new LocationTableModel(config.getRouteList()));
 		destList.setToolTipText("Add route corridor destinations with Alt+Click or Shift+Click on the map");
 		gbc.gridwidth = 1;
 		gbc.weightx = 1;
@@ -735,6 +736,19 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		}
 		map.setMapRectangleList(rects);
 	}
+
+	/** Takes the route destinations from the config object and puts them on the map.
+	 */
+	private void addRouteDestMarkers() {
+		LinkedList<MapMarker> mapMarkers = new LinkedList<MapMarker>();
+		Vector<Location> locations = config.getRouteList();
+		for (Location lc : locations) {
+			MapMarkerDot d = new MapMarkerDot(lc.getNode().lat, lc.getNode().lon);
+			mapMarkers.add(d);
+		}
+		map.setMapMarkerList(mapMarkers);
+	}
+
 	
 	/** Updates the GUI elements from the settings currently found in config.
 	 * This is usually needed after reading a bundle file.
@@ -978,7 +992,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			try {
 				System.out.println("Loading properties specified by GUI: " + propName);
 				config.loadPropFile(new FileInputStream(propName));
-				config.readBounds();
+				addRouteDestMarkers();
+				destList.repaint();
 			} catch (IOException ioe) {
 				JOptionPane.showMessageDialog(this,
 						"Failed to load properties file. Error is: "
@@ -1077,6 +1092,18 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				}
 			}
 			fw.write("\r\n");
+			
+			fw.write("# Route corridor destinations\r\n");
+			fw.write("# Coordinates of route destinations which are used to calculate the route corridor.\r\n");
+			fw.write("# Osm2GpsMid " + config.getVersion() + " supports this only with Osm2GpsMid Wizard.\r\n");
+			if (config.getRouteList() != null) {
+				int i = 1;
+				for (Location lc : config.getRouteList()) {
+					fw.write(lc.toPropertyString(i++));
+				}
+			}
+			fw.write("\r\n");
+			
 
 			fw.write("# To choose a different device specific build, use the app property.\r\n");
 			fw.write("# GpsMid-Generic-full should work for most phones (except BlackBerry).\r\n");
@@ -1196,7 +1223,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				config.setRouting("motorcar");
 			}
 		} else if ("ClearRoute-click".equalsIgnoreCase(event.getActionCommand())) {
-			routeList.clear();
+			config.getRouteList().clear();
 			map.setMapMarkerList(new LinkedList<MapMarker>());
 			destList.repaint();
 		} else if (JCB_HOUSENUMBERS.equalsIgnoreCase(event.getActionCommand())) {
@@ -1223,8 +1250,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	 * 
 	 */
 	private void handleCalculateRoute() {
-		if (routeList.size() > 1) {
-			Route route = new Route(routeList, 10000,map);
+		if (config.getRouteList().size() > 1) {
+			Route route = new Route(config.getRouteList(), 10000,map);
 			Area a=route.createArea();
 			config.setArea(a);
 		} else {
@@ -1372,7 +1399,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				try {
 					System.out.println("Loading properties from last.properties");
 					config.loadPropFile(new FileInputStream("last.properties"));
-					config.readBounds();
+					addRouteDestMarkers();
+					destList.repaint();
 				} catch (IOException ioe) {
 					JOptionPane.showMessageDialog(this,
 							"Failed to load properties file. Error is: "
@@ -1388,7 +1416,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 					System.out.println("Loading properties specified by GUI: " +
 							chosenProperty);
 					config.loadPropFile(new FileInputStream(chosenProperty));
-					config.readBounds();
+					addRouteDestMarkers();
+					destList.repaint();
 				} catch (IOException ioe) {
 					JOptionPane.showMessageDialog(this,
 							"Failed to load properties file. Error is: "
@@ -1405,7 +1434,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 						throw new IOException("Properties file could not be opened.");
 					}
 					config.loadPropFile(is);
-					config.readBounds();
+					addRouteDestMarkers();
+					destList.repaint();
 				} catch (IOException ioe) {
 					JOptionPane.showMessageDialog(this,
 							"Failed to load built in properties. Error is: "
@@ -1534,10 +1564,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	@Override
 	public void addRouteDestination(Coordinate clickPoint) {
 		Location location = new Location((float)clickPoint.getLat(),(float)clickPoint.getLon());
-		routeList.add(location);
-		new Route().revResolv(location);
+		config.addRouteDestination(location);
 		destList.repaint();
-		
-		
 	}
+		
 }
