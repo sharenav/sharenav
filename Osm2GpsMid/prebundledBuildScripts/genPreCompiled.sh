@@ -50,7 +50,7 @@ rm build.log
 
 # Africa
 genPBF canary Canary Canary
-genPBF congo Congo Cd
+genPBF congo_democratic_republic Congo Cd
 genBZ2 egypt Egypt Eg
 genPBF ethiopia Ethiopia Et
 genBZ2 kenya Kenya Ke
@@ -59,28 +59,28 @@ genPBF morocco Morocco Ma
 genBZ2 namibia Namibia Na
 genPBF nigeria Nigeria Ne
 genBZ2 seychelles Seychelles Sc
-genPBF south_africa South_Africa Za
-genBZ2 tunesia Tunesia Tn
+genPBF south_africa_and_lesotho South_Africa Za
+genBZ2 tunisia Tunesia Tn
 genBZ2 zimbabwe Zimbabwe Zw
 
 # Americas
 genPBF argentina Argentina Ar
 genPBF brazil Brazil Br
-genPBF britishcolumbia BritishColumbia BC
+genPBF british-columbia BritishColumbia BC
 genPBF california BayArea BayArea
 genPBF california LosAngeles LA
 genPBF colombia Colombia Co
 genPBF colorado Boulder Boulder
 genPBF colorado Colorado Col
 genPBF colorado Denver Den
-genPBF haiti Haiti Ht
+genPBF haiti-and-domrep Haiti Ht
 genPBF louisiana NewOrleans NO
 genBZ2 jamaica Jamaica Jm
 genPBF mexico Mexico Mx
-genPBF new_york NYC NYC
+genPBF new-york NYC NYC
 genPBF ontario Ontario ON
 genBZ2 puerto_rico PuertoRico Pr
-genBZ2 trinidad Trinidad Tt
+genBZ2 trinidad_and_tobago Trinidad Tt
 genBZ2 venezuela Venezuela Ve
 
 # Asia
@@ -95,7 +95,7 @@ genPBF indonesia Indonesia Id
 genPBF iran Iran Ir
 genPBF iraq Iraq Iq
 genPBF israel Israel Il
-genPBF japan Japan Jp
+# Runs out of memory: genPBF japan Japan Jp
 genBZ2 jordan Jordan Jo
 genPBF kazakhstan Kazakhstan Kz
 genBZ2 kuwait Kuwait Kw
@@ -110,7 +110,7 @@ genBZ2 sri_lanka Sri_Lanka Lk
 genBZ2 syria Syria Sy
 genBZ2 thailand Thailand Th 
 genPBF turkey Turkey Tr
-genBZ2 uae UAE UAE
+genBZ2 united_arab_emirates UAE UAE
 
 # Australia
 genPBF australia-oceania Australia Au
@@ -122,22 +122,22 @@ genPBF australia-oceania Victoria Vic
 genPBF australia-oceania NSW NSW
 
 # Europe
-genBZ2 albania Albania Al
-genBZ2 armenia Armenia Am
+genPBF albania Albania Al
+genPBF armenia Armenia Am
 genPBF austria Austria At
 genPBF austria Wien W
 genPBF belarus Belarus By
 genPBF belgium Belgium Be
-genBZ2 bosnia Bosnia-Herzegovina Ba
-genBZ2 bulgaria Bulgaria Bg
-genBZ2 croatia Croatia Hr
+genPBF bosnia-herzegovina Bosnia-Herzegovina Ba
+genPBF bulgaria Bulgaria Bg
+genPBF croatia Croatia Hr
 genPBF czech_republic Czech Cz
 genPBF czech_republic Praha Praha
 genPBF denmark Denmark Dk
 genPBF estonia Estonia Ee
 genPBF finland Finland Fi
 genPBF finland Helsinki Hel
-genBZ2 georgia Georgia Ge
+genPBF georgia Georgia Ge
 genPBF germany Stuttgart St
 genPBF germany Schleswig SW
 genPBF germany RheinMain RM
@@ -156,7 +156,7 @@ genPBF great_britain london Lon
 genPBF great_britain NorthEngland NEng
 genPBF greece Greece Gr
 genPBF hungary Hungary Hu
-genBZ2 iceland Iceland Is
+genPBF iceland Iceland Is
 genPBF ile-de-france Paris P
 genPBF ireland Ireland Ie
 genPBF italy Rome Rome
@@ -165,13 +165,13 @@ genPBF italy Torino Torino
 genPBF italy SouthItaly SIt
 genPBF italy NorthItaly NIt
 genPBF italy CentralItaly CIt
-genBZ2 kosovo Kosovo Kos
-genBZ2 latvia Latvia Lv
-genBZ2 lithuania Lithuania Lt
-genBZ2 luxembourg Luxembourg Lu
-genBZ2 macedonia Macedonia Mk
+genPBF kosovo Kosovo Kos
+genPBF latvia Latvia Lv
+genPBF lithuania Lithuania Lt
+genPBF luxembourg Luxembourg Lu
+genPBF macedonia Macedonia Mk
 genPBF malta Malta Mt
-genBZ2 moldova Moldova Md
+genPBF moldova Moldova Md
 genPBF netherlands Netherlands Nl
 genPBF netherlands Amsterdam Amst
 genPBF netherlands AmsterdamRotterdam AR
@@ -182,11 +182,11 @@ genPBF poland Krakow Krakow
 genPBF poland Lodz Lodz
 genPBF portugal Portugal Pt
 genPBF romania Romania Ro
-genPBF russia_europe moscow Mos
-genPBF russia_europe StPetersburg StPeter
-genPBF russia_europe Russia_european Rue
+genPBF russia-european-part moscow Mos
+genPBF russia-european-part StPetersburg StPeter
+genPBF russia-european-part Russia_european Rue
 genPBF slovakia Slovakia Sk
-genBZ2 slovenia Slovenia Si
+genPBF slovenia Slovenia Si
 genPBF spain Spain Es
 genPBF spain Madrid Mad
 genPBF sweden Sweden Se
