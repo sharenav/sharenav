@@ -471,23 +471,11 @@ public class SingleTile extends Tile implements QueueableTile {
 		
 		// logger.debug("draw txt " + );
 		String name;
-		String url = null;
-		String phone = null;
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE)) {
 			name = Legend.getNodeTypeDesc(t);
 		}
 		else {
 			name = pc.trace.getName(nameIdx[i]);
-		}
-		if (Legend.enableUrlTags) {
-			if (urlIdx[i] != -1) {
-				url = pc.trace.getUrl(urlIdx[i]);
-			}
-		}
-		if (Legend.enablePhoneTags) {
-			if (phoneIdx[i] != -1) {
-				phone = pc.trace.getUrl(phoneIdx[i]);
-			}
 		}
 		if (name != null) {			
 			Font originalFont = pc.g.getFont();
