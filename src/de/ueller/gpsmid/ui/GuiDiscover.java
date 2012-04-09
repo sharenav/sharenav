@@ -267,6 +267,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup cellIDStartup;
 	private ChoiceGroup btKeepAlive;
 	private ChoiceGroup btAutoRecon;
+	private TextField tfAltitudeCorrection;
 	  
 	private String gpsUrlStr;
 	private String rawLogDir;
@@ -411,6 +412,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		menuSelectLocProv.append(cellIDStartup);
 		//#style formItem
 		menuSelectLocProv.append(rawLogCG);
+		tfAltitudeCorrection = new TextField(Locale.get("guidiscover.AltitudeCorrection")/*Altitude correction*/, Integer.toString(Configuration.getAltitudeCorrection()), 3, TextField.DECIMAL);
+		//#style formItem
+		menuSelectLocProv.append(tfAltitudeCorrection);
 		menuSelectLocProv.setCommandListener(this);
 	}
 
@@ -902,6 +906,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				} else {
 					state = STATE_ROOT;
 				}
+				String w=tfAltitudeCorrection.getString();
+				Configuration.setAltitudeCorrection(
+							       (int) (Float.parseFloat(w))
+							       );
+
+
 				show();
 				break;
 			case STATE_BT_OPT:
