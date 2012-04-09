@@ -179,6 +179,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	protected static final int KEYS_HELP_CMD = 65;
 	protected static final int ROUTE_TO_FAVORITE_CMD = 66;
 	protected static final int ROTATE_TRAVEL_MODE_CMD = 67;
+	protected static final int SAVE_PREDEF_WAYP_CMD = 68;
 
 	private final Command [] CMDS = new Command[68];
 
@@ -3795,7 +3796,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			logger.info("low mem: Uncaching traceIconMenu");
 			uncacheIconMenu();
 		}
-		if (actionId == SAVE_WAYP_CMD && gpx != null && choiceName != null) {
+		if (actionId == SAVE_PREDEF_WAYP_CMD && gpx != null && choiceName != null) {
 			if (gpx.isLoadingWaypoints()) {
 				showAlertLoadingWpt();
 			} else {

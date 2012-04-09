@@ -89,6 +89,10 @@
       to (re-)generate the route corridor.
     *** Predefined waypoints ***
     - An option for predefined waypoints (entered via the icon menu) is now available.
+      Currently the predefined waypoints are fixed in the program, in the future they
+      will be user-settable. When a predefined waypoint icon is pressed, the named
+      waypoint (possibly with extra info asked from user) will be saved as a waypoint
+      and in the track if track is recording.
     *** Tacho ***
     - HDOP is shown in tachometer
     *** Phone models ***

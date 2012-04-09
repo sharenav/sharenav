@@ -181,7 +181,7 @@ true ?
 	// FIXME when predefs are changed, the icon layout should be recreated
 	private void addPredefsToWayptMenu(IconMenuPage mp) {
 		for (int i = 0; i < predefsToShow.length; i++) {
-			mp.createAndAddIcon(predefsToShow[i], "i_savewpt", Trace.SAVE_WAYP_CMD);
+			mp.createAndAddIcon(predefsToShow[i], "i_savewpt", Trace.SAVE_PREDEF_WAYP_CMD);
 		}
 	}
 
