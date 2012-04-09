@@ -174,7 +174,7 @@ genPBF malta Malta Mt
 genPBF moldova Moldova Md
 genPBF netherlands Netherlands Nl
 genPBF netherlands Amsterdam Amst
-genPBF netherlands AmsterdamRotterdam AR
+genPBF netherlands AmsterdamRotterdam AmstRott
 genPBF norway SouthNorway SNor
 genPBF poland Poland Pl
 genPBF poland Warsaw Warsaw
