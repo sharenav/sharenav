@@ -14,6 +14,7 @@ import de.ueller.gps.Node;
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.PaintContext;
+import de.ueller.gpsmid.data.Position;
 import de.ueller.gpsmid.data.RoutePositionMark;
 import de.ueller.gpsmid.graphics.ImageCollector;
 import de.ueller.gpsmid.mapdata.Way;
@@ -280,6 +281,9 @@ public class RouteInstructions {
 				    	// distance to next instruction or when the next instruction is the destination to the closest point on the destination way
 				    	finalRouteSeg = iNow == route.size() - 1;
 				    	distNow = ProjMath.getDistance(center.radlat, center.radlon, finalRouteSeg ? closestPointOnDestWay.radlat : cNow.to.lat, finalRouteSeg ? closestPointOnDestWay.radlon : cNow.to.lon);
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_NAVI_ARROWS_BIG)) {
+						outputRouteIcons(pc, iNow, (int) distNow);
+					}
 					// if necessary, convert to yards for voice output
 					if (!Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
 						distNow = distNow / 0.9144 + 0.5;
@@ -384,50 +388,8 @@ public class RouteInstructions {
 							}
 						}
 	
-						Image pict = pc.images.IMG_MARK; aPaint=0;
 						aPaint = c.wayRouteInstruction;
-						switch (aPaint) {
-							case RI_HARD_RIGHT:		pict=pc.images.IMG_HARDRIGHT; break;
-							case RI_RIGHT:			pict=pc.images.IMG_RIGHT; break;
-							case RI_BEAR_RIGHT:
-							case RI_HALF_RIGHT:		pict=pc.images.IMG_HALFRIGHT; break;
-							case RI_STRAIGHT_ON:	pict=pc.images.IMG_STRAIGHTON; break;
-							case RI_BEAR_LEFT:
-							case RI_HALF_LEFT:		pict=pc.images.IMG_HALFLEFT; break;
-							case RI_LEFT:			pict=pc.images.IMG_LEFT; break;
-							case RI_HARD_LEFT:		pict=pc.images.IMG_HARDLEFT; break;
-							case RI_UTURN:			pict=pc.images.IMG_UTURN; break;
-//							case RI_BEAR_LEFT:
-//							case RI_BEAR_RIGHT:		pict=pc.images.IMG_STRAIGHTON;
-//													if (
-//														(c.wayRouteFlags & (Legend.ROUTE_FLAG_BEAR_LEFT + Legend.ROUTE_FLAG_BEAR_RIGHT)) > 0
-//														&& i < route.size()-1
-//													) {
-//														ConnectionWithNode cNext = (ConnectionWithNode) route.elementAt(i+1);  
-//														int turn = (int) ((cNext.wayConStartBearing - c.wayConEndBearing) * 2); 
-//														if (turn > 180) turn -= 360;
-//														if (turn < -180) turn += 360;
-//														if (Math.abs(turn) > 5) {
-//															if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_BEAR_LEFT) > 0) {
-//																pict=pc.images.IMG_HALFLEFT;
-//															} else {
-//																pict=pc.images.IMG_HALFRIGHT;
-//															}
-//														}
-//													}
-//													break;
-							case RI_ENTER_MOTORWAY:
-							case RI_BEAR_LEFT_ENTER_MOTORWAY:
-							case RI_BEAR_RIGHT_ENTER_MOTORWAY:
-													pict=pc.images.IMG_MOTORWAYENTER; break;
-							case RI_LEAVE_MOTORWAY:
-							case RI_BEAR_LEFT_LEAVE_MOTORWAY:
-							case RI_BEAR_RIGHT_LEAVE_MOTORWAY:
-													pict=pc.images.IMG_MOTORWAYLEAVE; break;					
-							case RI_INTO_TUNNEL:	pict=pc.images.IMG_TUNNEL_INTO; break;
-							case RI_OUT_OF_TUNNEL:	pict=pc.images.IMG_TUNNEL_OUT_OF; break;					
-						}
-						
+						Image pict = getRoutingImage(pc, aPaint);
 						if (trace.atDest) {
 							aPaint = RI_DEST_REACHED;
 						}
@@ -549,7 +511,9 @@ public class RouteInstructions {
 								//#debug debug
 								if (pict==null) logger.debug("got NULL pict");													
 								if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_INVISIBLE) == 0 ) {
-									pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
+									if (Configuration.getCfgBitState(Configuration.CFGBIT_NAVI_ARROWS_IN_MAP)) {
+										pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
+									}
 //									pc.g.setColor(0x0);
 //									pc.g.drawString("" + i, pc.lineP2.x+7, pc.lineP2.y+5, Graphics.BOTTOM | Graphics.LEFT);
 								}
@@ -678,8 +642,19 @@ public class RouteInstructions {
 					
 					if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ETA_IN_MAP)) {
 						e = Trace.tl.ele[TraceLayout.ETA]; // e is used *twice* below (also as vRelative)
-						e.setText(DateTimeTools.getClock(System.currentTimeMillis() + remainingDurationFSecs * 200, true));
-		 				/*
+						Position pos = trace.getCurrentPosition();
+						if (Configuration.getCfgBitState(Configuration.CFGBIT_GPS_TIME)) {
+							if (pos.gpsTimeMillis != 0) {
+								e.setText(DateTimeTools.getClock(pos.gpsTimeMillis + Configuration.getTimeDiff()*1000*60 + remainingDurationFSecs * 200, true));
+							} else if (Configuration.getCfgBitState(Configuration.CFGBIT_GPS_TIME_FALLBACK)) {
+								e.setText(DateTimeTools.getClock(System.currentTimeMillis() + Configuration.getTimeDiff()*1000*60 + remainingDurationFSecs * 200, true));
+							} else {
+								e.setText(" ");
+							}
+						} else {
+							e.setText(DateTimeTools.getClock(System.currentTimeMillis() + Configuration.getTimeDiff()*1000*60 + remainingDurationFSecs * 200, true));
+						}
+						/*
 						don't use new Date() - it is very slow on some Nokia devices			
 						Calendar currentTime = Calendar.getInstance();
 						currentTime.setTime( new Date( System.currentTimeMillis() + remainingDurationFSecs * 200) );		
@@ -704,6 +679,53 @@ public class RouteInstructions {
 		} catch (Exception e) {
 			logger.silentexception("Unhandled exception in showRoute()", e);
 		}
+	}
+
+	private Image getRoutingImage(PaintContext pc, int instruction) {
+		Image pict = pc.images.IMG_MARK;
+		switch (instruction) {
+		case RI_HARD_RIGHT:		pict=pc.images.IMG_HARDRIGHT; break;
+		case RI_RIGHT:			pict=pc.images.IMG_RIGHT; break;
+		case RI_BEAR_RIGHT:
+		case RI_HALF_RIGHT:		pict=pc.images.IMG_HALFRIGHT; break;
+		case RI_STRAIGHT_ON:	pict=pc.images.IMG_STRAIGHTON; break;
+		case RI_BEAR_LEFT:
+		case RI_HALF_LEFT:		pict=pc.images.IMG_HALFLEFT; break;
+		case RI_LEFT:			pict=pc.images.IMG_LEFT; break;
+		case RI_HARD_LEFT:		pict=pc.images.IMG_HARDLEFT; break;
+		case RI_UTURN:			pict=pc.images.IMG_UTURN; break;
+//							case RI_BEAR_LEFT:
+//							case RI_BEAR_RIGHT:		pict=pc.images.IMG_STRAIGHTON;
+//													if (
+//														(c.wayRouteFlags & (Legend.ROUTE_FLAG_BEAR_LEFT + Legend.ROUTE_FLAG_BEAR_RIGHT)) > 0
+//														&& i < route.size()-1
+//													) {
+//														ConnectionWithNode cNext = (ConnectionWithNode) route.elementAt(i+1);  
+//														int turn = (int) ((cNext.wayConStartBearing - c.wayConEndBearing) * 2); 
+//														if (turn > 180) turn -= 360;
+//														if (turn < -180) turn += 360;
+//														if (Math.abs(turn) > 5) {
+//															if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_BEAR_LEFT) > 0) {
+//																pict=pc.images.IMG_HALFLEFT;
+//															} else {
+//																pict=pc.images.IMG_HALFRIGHT;
+//															}
+//														}
+//													}
+//													break;
+		case RI_ENTER_MOTORWAY:
+		case RI_BEAR_LEFT_ENTER_MOTORWAY:
+		case RI_BEAR_RIGHT_ENTER_MOTORWAY:
+			pict=pc.images.IMG_MOTORWAYENTER; break;
+		case RI_LEAVE_MOTORWAY:
+		case RI_BEAR_LEFT_LEAVE_MOTORWAY:
+		case RI_BEAR_RIGHT_LEAVE_MOTORWAY:
+			pict=pc.images.IMG_MOTORWAYLEAVE; break;					
+		case RI_INTO_TUNNEL:	pict=pc.images.IMG_TUNNEL_INTO; break;
+		case RI_OUT_OF_TUNNEL:	pict=pc.images.IMG_TUNNEL_OUT_OF; break;					
+		}
+						
+		return pict;
 	}
 
 	public static void drawRouteDot(Graphics g, IntPoint p, int radius) {
@@ -823,6 +845,10 @@ public class RouteInstructions {
 			return true;
 		}
 		return false;
+	}
+	
+	public static void forceAgainstDirection() {
+		iBackwardCount = 99;
 	}
 	
 	
@@ -1305,7 +1331,23 @@ public class RouteInstructions {
 			return trace.getName(c.wayNameIdx);
 		} else {
 			WayDescription wayDesc = Legend.getWayDescription(c.wayType);
-			return Locale.get("imagecollector.unnamed")/*(unnamed */ + wayDesc.description + ")";
+			boolean nextWayIsOriginalNextWay = true;
+			// for unnamed links give the name or wayDescription of the next named way following the link
+			while (wayDesc.isHighwayLink() && i < route.size() - 2) {
+				nextWayIsOriginalNextWay = false;
+				i++;
+				c2 = (ConnectionWithNode) route.elementAt(i);
+				wayDesc = Legend.getWayDescription(c2.wayType);
+				if (c2.wayNameIdx != -1) {
+					String name = trace.getName(c2.wayNameIdx);
+					return (name == null) ? null : "... " + name;
+				}
+			}
+			/* 
+			 * if we did not find a name on the following links or the first way after the links return unnamed way type,
+			 * only prefix "..." if there's a link way before the way
+			 */
+			return (nextWayIsOriginalNextWay ? "" : "... ") + Locale.get("imagecollector.unnamed")/*(unnamed */ + wayDesc.description + ")";
 		}
 	}
 
@@ -1360,6 +1402,48 @@ public class RouteInstructions {
 		iInInstructionSaidArrow = -1;
 	}
 
+	public void outputRouteIcons(PaintContext pc, int start, int firstDist) {
+		String name=null;
+		RouteSyntax routeSyntax = RouteSyntax.getInstance();
+		int iconCount = 0;
+		ConnectionWithNode c;
+		int dist;
+		for (int i=start; i<route.size()-1; i++){
+			c = (ConnectionWithNode) route.elementAt(i);
+			name=null;
+			if (c.wayNameIdx != -1) {
+				name=trace.getName(c.wayNameIdx);
+			}
+			if (i == start) {
+				dist = firstDist;
+			} else {
+				dist= (int) c.wayDistanceToNext;
+			}
+			if ((c.wayRouteFlags & Legend.ROUTE_FLAG_QUIET) != 0
+			    || c.wayRouteInstruction == RouteInstructions.RI_STRAIGHT_ON
+			    || c.wayRouteInstruction == RouteInstructions.RI_SKIPPED
+			    || iconCount > 2) {
+				// do nothing
+			} else {
+				// FIXME name doesn't work well, get from textual routing instructions
+				if (iconCount == 0 || iconCount == 1) {
+					Image icon = getRoutingImage(pc, c.wayRouteInstruction);
+					if (icon == pc.images.IMG_MARK) {
+						icon = null;
+					}
+					trace.setRouteIcon(pc, iconCount, icon);
+				}
+				iconCount++;
+			}
+		}
+		if (iconCount < 2) {
+			trace.setRouteIcon(pc, 1, (Image) null);
+		}
+		if (iconCount < 1) {
+			trace.setRouteIcon(pc, 0, (Image) null);
+		}
+	}
+
 	public void outputRoutePath() {
 		String name=null;
 		int dist=0;
@@ -1384,12 +1468,12 @@ public class RouteInstructions {
 				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_VERY_SMALL_DISTANCE) > 0) { 
 					sb.append("(small distance) ");
 				}
-				sb.append(RouteSyntax.getInstance().getTextInstruction(ri));
-				sb.append(" into ");
-				sb.append((name==null?"":name));
-				sb.append(" then go ");
-				sb.append(Configuration.getCfgBitState(Configuration.CFGBIT_METRIC) ? dist : dist / 0.9144 + 0.5 );
-				sb.append(Configuration.getCfgBitState(Configuration.CFGBIT_METRIC) ? Locale.get("guitacho.m") : Locale.get("guitacho.yd") );
+				sb.append(RouteSyntax.getInstance().getTextInstruction(ri))
+				  .append(" into ")
+				  .append((name==null?"":name))
+				  .append(" then go ")
+				  .append(Configuration.getCfgBitState(Configuration.CFGBIT_METRIC) ? dist : dist / 0.9144 + 0.5 )
+				  .append(Configuration.getCfgBitState(Configuration.CFGBIT_METRIC) ? Locale.get("guitacho.m") : Locale.get("guitacho.yd") );
 				//sb.append(Trace.showDistance(dist, Trace.DISTANCE_GENERIC));
 				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_ONEDIRECTION_ONLY) > 0) { 
 					sb.append(" (onedirection_only)");
@@ -1406,9 +1490,9 @@ public class RouteInstructions {
 				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_BEAR_RIGHT) > 0) { 
 					sb.append(" (bear right)");
 				}
-				sb.append(" Cons:" + c.to.getConSize() + " numRoutableWays: " + c.numToRoutableWays + " startBearing: " + c.startBearing + "/" + c.wayConStartBearing + " endBearing: "+ c.endBearing + "/" + c.wayConEndBearing);
-				sb.append(" Duration: " + c.durationFSecsToNext / 5);
-				sb.append(" Route Speed in km/h: " + (int) (3.6f * 5 * c.wayDistanceToNext / c.durationFSecsToNext));
+				sb.append(" Cons:" + c.to.getConSize() + " numRoutableWays: " + c.numToRoutableWays + " startBearing: " + c.startBearing + "/" + c.wayConStartBearing + " endBearing: "+ c.endBearing + "/" + c.wayConEndBearing)
+				  .append(" Duration: " + c.durationFSecsToNext / 5)
+				  .append(" Route Speed in km/h: " + (int) (3.6f * 5 * c.wayDistanceToNext / c.durationFSecsToNext));
 				System.out.println(sb.toString());
 			}
 		}		

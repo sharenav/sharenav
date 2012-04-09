@@ -11,6 +11,9 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.Item;
+import javax.microedition.lcdui.ItemCommandListener;
+import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
 
 import de.ueller.gpsmid.data.Configuration;
@@ -21,7 +24,10 @@ import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.ChoiceGroup;
 
 
-public class GuiWaypointSave extends Form implements CommandListener {
+public class GuiWaypointSave extends Form implements CommandListener, ItemCommandListener {
+	//#if polish.android
+	private StringItem OKField;
+	//#endif
 	private TextField fldName;
 	private TextField fldEle;
 	private ChoiceGroup cg;
@@ -59,10 +65,20 @@ public class GuiWaypointSave extends Form implements CommandListener {
 		// add the commands
 		addCommand(backCmd);
 		addCommand(saveCmd);
+		//#if polish.android
+		OKField = new StringItem(Locale.get("traceiconmenu.SaveWpt"), Locale.get("generic.Save"), StringItem.BUTTON);
+		OKField.addCommand(saveCmd);
+		OKField.setDefaultCommand(saveCmd);
+		OKField.setItemCommandListener(this);
+		//#endif
 		this.append(fldName);
 		this.append(Locale.get("guiwaypointsave.OptionalData")/*Optional data*/);
 		this.append(fldEle);		
 		this.append(cg);
+		//#if polish.android
+		//#style formItem
+		this.append(OKField);
+		//#endif
 	}
 	
 	public void setData(PositionMark posMark)
@@ -77,6 +93,21 @@ public class GuiWaypointSave extends Form implements CommandListener {
 		} else {
 			fldEle.setString("");			
 		}
+	}
+
+	public void saveWaypoint(PositionMark posMark) {
+		parent.gpx.addWayPt(waypt);
+
+		// Wait a bit before displaying the map again. Hopefully
+		// this avoids the sporadic freezing after saving a waypoint.
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException ie) {
+		}
+	}
+
+	public void commandAction(Command cmd, Item item) {
+		commandAction(cmd, (Displayable) parent);
 	}
 
 	public void commandAction(Command cmd, Displayable displayable) {
@@ -99,15 +130,7 @@ public class GuiWaypointSave extends Form implements CommandListener {
 				waypt.ele = PositionMark.INVALID_ELEVATION;
 			}
 					
-			parent.gpx.addWayPt(waypt);
-
-			// Wait a bit before displaying the map again. Hopefully
-			// this avoids the sporadic freezing after saving a waypoint.
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException ie) {
-			}
-
+			saveWaypoint(waypt);
 			// Recenter GPS after saving a Waypoint if this option is selected
 			if (cg.isSelected(1)) {
 				parent.gpsRecenter = true;
@@ -126,15 +149,7 @@ public class GuiWaypointSave extends Form implements CommandListener {
 						waypt.ele = PositionMark.INVALID_ELEVATION;
 					}
 					
-					parent.gpx.addWayPt(waypt);
-
-					// Wait a bit before displaying the map again. Hopefully
-					// this avoids the sporadic freezing after saving a waypoint.
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException ie) {
-					}
-
+					saveWaypoint(waypt);
 					// Recenter GPS after saving a Waypoint if this option is selected
 					if (cg.isSelected(1)) {
 						parent.gpsRecenter = true;

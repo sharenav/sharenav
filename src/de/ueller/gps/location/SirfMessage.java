@@ -23,8 +23,8 @@ public class SirfMessage {
 	private final static Logger logger = Logger.getInstance(SirfInput.class,Logger.DEBUG);
 	
 	public SirfMessage(LocationMsgReceiver receiver) {
-		this.receiver = receiver;}
-
+		this.receiver = receiver;
+	}
 
 	public SirfMessage(byte[] readBuffer,LocationMsgReceiver receiver) {
 		this.receiver=receiver;

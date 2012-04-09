@@ -312,10 +312,11 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 				inTabRow = false;
 				repaint();
 			} else {
-				performIconAction(getActiveMenuPage().getActiveEleActionId());
+				performIconAction(getActiveMenuPage().getActiveEleActionId(),
+						  getActiveMenuPage().getActiveEleChoiceName());
 			}
 		} else if (c == BACK_CMD) {
-			performIconAction(IconActionPerformer.BACK_ACTIONID);
+			performIconAction(IconActionPerformer.BACK_ACTIONID, null);
 		}
 	}
 	
@@ -335,7 +336,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		}
 //#if polish.android
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			performIconAction(IconActionPerformer.BACK_ACTIONID);
+			performIconAction(IconActionPerformer.BACK_ACTIONID, null);
 			return;
 		}
 //#endif
@@ -415,7 +416,8 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 						repaint();
 				} else {
 					if(iconFromKeyCode < getActiveMenuPage().size()){
-						performIconAction(getActiveMenuPage().getElementAt(iconFromKeyCode).actionID);
+						performIconAction(getActiveMenuPage().getElementAt(iconFromKeyCode).actionID,
+								  getActiveMenuPage().getElementAt(iconFromKeyCode).getText());
 					}
 				}
 			}
@@ -441,8 +443,9 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 					setActiveTab(newTab);
 				} else {
 					int actionId = getActiveMenuPage().getActionIdAtPointer(x, y);
+					String choiceName = getActiveMenuPage().getChoiceNameAtPointer(x, y);
 					if (actionId >= 0) {
-						performIconAction(actionId);
+						performIconAction(actionId, choiceName);
 						return;
 					}
 				}
@@ -505,12 +508,12 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	}
 	
 
-	private void performIconAction(int actionId) {
+	private void performIconAction(int actionId, String choiceName) {
 		//#debug debug
 		logger.debug("Perform action " + actionId);
 		// Pass the action id to the listening action performer
 		if (actionPerformer != null) {
-			actionPerformer.performIconAction(actionId);
+			actionPerformer.performIconAction(actionId, choiceName);
 		} else {
 			//#debug error
 			logger.error(Locale.get("iconmenuwithpagesgui.NoIconActionPerformerSet")/*No IconActionPerformer set!*/);

@@ -165,6 +165,12 @@ public abstract class KeyCommandCanvas extends Canvas implements
 			ignoreKeyCode = keyCode;
 			return;
 		}
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			// #debug debug
+			logger.debug("  Turning BACK key into EXIT_CMD");
+			commandAction(Trace.getInstance().getCommand(Trace.EXIT_CMD), (Displayable) null);
+			return;
+		}
 		//#endif
 		final Command doubleC = (Command) doubleKeyPressCommand.get(keyCode);
 		// key was pressed twice quickly

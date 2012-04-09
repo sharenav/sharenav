@@ -10,6 +10,7 @@
  */
 package de.ueller.osmToGpsMid;
 
+import de.ueller.osmToGpsMid.Configuration;
 import static de.ueller.osmToGpsMid.GetText._;
 
 import java.awt.BorderLayout;
@@ -67,6 +68,7 @@ import javax.swing.filechooser.FileFilter;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapArea;
+import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
@@ -258,7 +260,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	JFileChooser jStyleFileChooser;
 	/** Component handling the map display */
 	JMapViewer map;
-	Vector<Location> routeList=new Vector<Location>();
 	Pattern startPattern=Pattern.compile("<gml:LineString");
 	Pattern posPattern=Pattern.compile("<gml:pos>([0-9.]+) ([0-9.]+)</gml:pos>");
 	Vector<Coordinate> routeResult=new Vector<Coordinate>();
@@ -328,7 +329,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.gridy = 1;
 		jpRouteCorridor.add(jlRouteCorridor, gbc);
 
-		destList=new JTable(new LocationTableModel(routeList));
+		destList=new JTable(new LocationTableModel(config.getRouteList()));
 		destList.setToolTipText("Add route corridor destinations with Alt+Click or Shift+Click on the map");
 		gbc.gridwidth = 1;
 		gbc.weightx = 1;
@@ -735,6 +736,19 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		}
 		map.setMapRectangleList(rects);
 	}
+
+	/** Takes the route destinations from the config object and puts them on the map.
+	 */
+	private void addRouteDestMarkers() {
+		LinkedList<MapMarker> mapMarkers = new LinkedList<MapMarker>();
+		Vector<Location> locations = config.getRouteList();
+		for (Location lc : locations) {
+			MapMarkerDot d = new MapMarkerDot(lc.getNode().lat, lc.getNode().lon);
+			mapMarkers.add(d);
+		}
+		map.setMapMarkerList(mapMarkers);
+	}
+
 	
 	/** Updates the GUI elements from the settings currently found in config.
 	 * This is usually needed after reading a bundle file.
@@ -978,7 +992,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			try {
 				System.out.println("Loading properties specified by GUI: " + propName);
 				config.loadPropFile(new FileInputStream(propName));
-				config.readBounds();
+				addRouteDestMarkers();
+				destList.repaint();
 			} catch (IOException ioe) {
 				JOptionPane.showMessageDialog(this,
 						"Failed to load properties file. Error is: "
@@ -1059,17 +1074,14 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				fw.write("cellSource = " + config.getCellSource().replace("\\", "\\\\") + "\r\n");
 				fw.write("useCellID = " + config.getString("useCellID") + "\r\n");
 			}
-			fw.write("\r\n");
 			fw.write("# Store cellids for phones without LAC.\r\n");
 			fw.write("cellIDnoLAC = " + config.getCellIDnoLAC() + "\r\n");
 			fw.write("\r\n");
 
-			fw.write("\r\n");
 			fw.write("# Generate sea from coastlines.\r\n");
 			fw.write("generateSea = " + config.getGenerateSea() + "\r\n");
 			fw.write("\r\n");
 
-			fw.write("\r\n");
 			fw.write("# You can have up to 9 regions.\r\n");
 			fw.write("# Ways and POIs in any of the regions will be written to the bundle.\r\n");
 			Vector<Bounds> bounds = config.getBounds();
@@ -1080,6 +1092,19 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				}
 			}
 			fw.write("\r\n");
+			
+			fw.write("# Route corridor destinations\r\n");
+			fw.write("# Coordinates of route destinations which are used to calculate the route corridor.\r\n");
+			fw.write("# Osm2GpsMid " + config.getVersion() + " supports this only with Osm2GpsMid Wizard.\r\n");
+			if (config.getRouteList() != null) {
+				int i = 1;
+				for (Location lc : config.getRouteList()) {
+					fw.write(lc.toPropertyString(i++));
+				}
+			}
+			fw.write("\r\n");
+			
+
 			fw.write("# To choose a different device specific build, use the app property.\r\n");
 			fw.write("# GpsMid-Generic-full should work for most phones (except BlackBerry).\r\n");
 			String app = config.getAppParam();
@@ -1093,16 +1118,21 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				}
 			}
 			fw.write("\r\n");
+
+			fw.write("# File endings of files to not compress.\r\n");
+			fw.write("# e.g. for Android and WinCE uncompressed WAV files are required\r\n");
+			fw.write("# Example to not compress files ending with wav: dontCompress = wav\r\n");
+			fw.write("dontCompress = " + config.getDontCompress() + "\r\n");
+			fw.write("\r\n");			
+
 			fw.write("# Editing support.\r\n");
 			fw.write("enableEditing = " + config.enableEditingSupport + "\r\n");
 			fw.write("\r\n");
 
-			fw.write("\r\n");
 			fw.write("# Housenumber support.\r\n");
 			fw.write("useHouseNumbers = " + config.useHouseNumbers + "\r\n");
 			fw.write("\r\n");
 
-			fw.write("\r\n");
 			fw.write("# Routing ability can be disabled to save space in the midlet by setting to false.\r\n");
 			fw.write("# Or set to one or more defined in the style-file, e.g. motorcar, bicycle, foot.\r\n");
 			fw.write("useRouting = " + config.useRouting + "\r\n");
@@ -1128,7 +1158,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("#	 If there is no internal version in Osm2GpsMid for the png / sound files, you must provide external versions\r\n");
 			fw.write("#	 in the current directory or sub-directories 'sound' and 'png' inside Osm2GpsMid.jar (when using internal style-file)\r\n");
 			fw.write("#	 or sub-directories 'sound' and 'png' in the same directory as the external style-file.\r\n");
-			fw.write("style-file = " + config.getStyleFileName() + "\r\n");
+			fw.write("style-file = " + config.getStyleFileName().replace("\\", "\\\\") + "\r\n");
 			fw.write("\r\n");
 			
 			fw.write("# Sound formats to be included in the midlet, default is useSounds=amr.\r\n");
@@ -1162,7 +1192,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("\r\n");
 			
 			fw.write("# Whether to include icons for icon menu and their size to include.\r\n");
-			fw.write("#  Possible values: false|small|true|big, true is the default medium size\r\n");
+			fw.write("#  Possible values: false|small|true|big|large|huge, true is the default medium size\r\n");
 			fw.write("useIcons = " + config.getUseIcons() + "\r\n");
 			fw.write("\r\n");
 			fw.write("# Name of the Midlet on the phone\r\n");
@@ -1193,7 +1223,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				config.setRouting("motorcar");
 			}
 		} else if ("ClearRoute-click".equalsIgnoreCase(event.getActionCommand())) {
-			routeList.clear();
+			config.getRouteList().clear();
 			map.setMapMarkerList(new LinkedList<MapMarker>());
 			destList.repaint();
 		} else if (JCB_HOUSENUMBERS.equalsIgnoreCase(event.getActionCommand())) {
@@ -1220,8 +1250,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	 * 
 	 */
 	private void handleCalculateRoute() {
-		if (routeList.size() > 1) {
-			Route route = new Route(routeList, 10000,map);
+		if (config.getRouteList().size() > 1) {
+			Route route = new Route(config.getRouteList(), 10000,map);
 			Area a=route.createArea();
 			config.setArea(a);
 		} else {
@@ -1369,7 +1399,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				try {
 					System.out.println("Loading properties from last.properties");
 					config.loadPropFile(new FileInputStream("last.properties"));
-					config.readBounds();
+					addRouteDestMarkers();
+					destList.repaint();
 				} catch (IOException ioe) {
 					JOptionPane.showMessageDialog(this,
 							"Failed to load properties file. Error is: "
@@ -1385,7 +1416,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 					System.out.println("Loading properties specified by GUI: " +
 							chosenProperty);
 					config.loadPropFile(new FileInputStream(chosenProperty));
-					config.readBounds();
+					addRouteDestMarkers();
+					destList.repaint();
 				} catch (IOException ioe) {
 					JOptionPane.showMessageDialog(this,
 							"Failed to load properties file. Error is: "
@@ -1402,7 +1434,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 						throw new IOException("Properties file could not be opened.");
 					}
 					config.loadPropFile(is);
-					config.readBounds();
+					addRouteDestMarkers();
+					destList.repaint();
 				} catch (IOException ioe) {
 					JOptionPane.showMessageDialog(this,
 							"Failed to load built in properties. Error is: "
@@ -1464,7 +1497,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				config.setCellOperator("false");
 			} else if (CELL_SRC_DLOAD.equalsIgnoreCase(chosenProperty)) {
 				config.setCellOperator("true");
-				config.setCellSource("http://myapp.fr/cellsIdData/cells.txt.gz");
+				config.setCellSource("http://dump.opencellid.org/cellsIdData/cells.txt.gz");
 			} else if (CELL_SRC_FILE.equalsIgnoreCase(chosenProperty)) {
 				config.setCellOperator("true");
 				askCellFile();
@@ -1531,10 +1564,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	@Override
 	public void addRouteDestination(Coordinate clickPoint) {
 		Location location = new Location((float)clickPoint.getLat(),(float)clickPoint.getLon());
-		routeList.add(location);
-		new Route().revResolv(location);
+		config.addRouteDestination(location);
 		destList.repaint();
-		
-		
 	}
+		
 }

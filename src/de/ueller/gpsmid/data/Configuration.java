@@ -56,13 +56,14 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 27;
+	public final static int VERSION = 30;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
 	public final static int LOCATIONPROVIDER_NMEA = 2;
 	public final static int LOCATIONPROVIDER_JSR179 = 3;
 	public final static int LOCATIONPROVIDER_SECELL = 4;
+	public final static int LOCATIONPROVIDER_ANDROID = 5;
 	
 	// bit 0: render as street
 	public final static byte CFGBIT_STREETRENDERMODE = 0;
@@ -297,6 +298,24 @@ public class Configuration {
 	public final static byte CFGBIT_SIMPLIFY_MAP_WHEN_BUSY = 115;
 	/** bit 116: Flag whether to use movement for direction when moving (compass otherwise) */
 	public final static byte CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION = 116;
+	/** bit 117: backlight method ANDROID_WINDOW_MANAGER */
+	public final static byte CFGBIT_BACKLIGHT_ANDROID_WINDOW_MANAGER = 117;
+	/** bit 118: use GPS time for on-screen time */
+	public final static byte CFGBIT_GPS_TIME = 118;
+	/** bit 119: fallback to device time when GPS time not available */
+	public final static byte CFGBIT_GPS_TIME_FALLBACK = 119;
+	/** bit 120: stop routing when arriving at destination */
+	public final static byte CFGBIT_STOP_ROUTING_AT_DESTINATION = 120;
+	/** bit 121: show accuracy wit solution string */
+	public final static byte CFGBIT_SHOW_ACCURACY = 121;
+	/** bit 122: show big on-left-corner navigation icons */
+	public final static byte CFGBIT_NAVI_ARROWS_BIG = 122;
+	/** bit 123: show in-map small navigation icons */
+	public final static byte CFGBIT_NAVI_ARROWS_IN_MAP = 123;
+	/** bit 124: show favorite destinations in route icon menu */
+	public final static byte CFGBIT_FAVORITES_IN_ROUTE_ICON_MENU = 124;
+	/** bit 125: show travel mode in map */
+	public final static byte CFGBIT_SHOW_TRAVEL_MODE_IN_MAP = 125;
 	
 	/**
 	 * These are the database record IDs for each configuration option
@@ -358,6 +377,9 @@ public class Configuration {
 	private static final int RECORD_ID_SEARCH_MAX = 54;
 	private static final int RECORD_ID_POI_SEARCH_DIST = 55;
 	private static final int RECORD_ID_DEST_LINE_WIDTH = 56;
+	private static final int RECORD_ID_TIME_DIFF = 57;
+	private static final int RECORD_ID_CFGBITS_128_TO_191 = 58;
+	private static final int RECORD_ID_ALTITUDE_CORRECTION = 59;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -395,6 +417,8 @@ public class Configuration {
 	private static long cfgBitsDefault_0_to_63 = 0;
 	private static long cfgBits_64_to_127 = 0;
 	private static long cfgBitsDefault_64_to_127 = 0;
+	private static long cfgBits_128_to_191 = 0;
+	private static long cfgBitsDefault_128_to_191 = 0;
 	private static int detailBoost = 0;
 	private static int detailBoostPOI = 0;
 	private static int detailBoostDefault = 0;
@@ -480,6 +504,8 @@ public class Configuration {
 	private static boolean isSamsungS8000 = false;
 
 	private static int destLineWidth = 2;
+	private static int timeDiff = 0;
+	private static int altitudeCorrection = 0;
 
 	
 	public static void read() {
@@ -492,8 +518,16 @@ public class Configuration {
 				System.out.println("Could not open config"); // Logger won't work if config is not read yet
 				return;
 			}
+			
+			int configVersionStored = readInt(database, RECORD_ID_CONFIG_VERSION);
+			//#debug info
+			logger.info("Config version stored: " + configVersionStored);
+			
 			cfgBits_0_to_63 = readLong(database, RECORD_ID_CFGBITS_0_TO_63);
 			cfgBits_64_to_127 = readLong(database, RECORD_ID_CFGBITS_64_TO_127);
+			if (configVersionStored >= 29) {
+				cfgBits_128_to_191 = readLong(database, RECORD_ID_CFGBITS_128_TO_191);
+			}
 			btUrl = readString(database, RECORD_ID_BT_URL);
 			locationProvider = readInt(database, RECORD_ID_LOCATION_PROVIDER);
 			gpxUrl = readString(database, RECORD_ID_GPX_URL);
@@ -562,11 +596,9 @@ public class Configuration {
 			baseScale = readInt(database, RECORD_ID_BASESCALE);
 			calculateRealBaseScale();
 			destLineWidth = readInt(database, RECORD_ID_DEST_LINE_WIDTH);
+			timeDiff = readInt(database, RECORD_ID_TIME_DIFF);
+			altitudeCorrection = readInt(database, RECORD_ID_ALTITUDE_CORRECTION);
 			
-			int configVersionStored = readInt(database, RECORD_ID_CONFIG_VERSION);
-			//#debug info
-			logger.info("Config version stored: " + configVersionStored);
-
 			/* close the record store before accessing it nested for writing
 			 * might otherwise cause problems on some devices
 			 * see [ gpsmid-Bugs-2983148 ] Recordstore error on startup, settings are not persistent 
@@ -599,6 +631,7 @@ public class Configuration {
 			   			1L << CFGBIT_AUTOSAVE_MAPPOS;
 			if (getDefaultDeviceBacklightMethodCfgBit() != 0) {
 				setCfgBitSavedState(getDefaultDeviceBacklightMethodCfgBit(), true);
+				cfgBits_0_to_63 |= 1L << CFGBIT_BACKLIGHT_ON;
 			}
 			//#if polish.android
 			// (was) no bundle support for android yet, set a fixed location for map
@@ -639,9 +672,13 @@ public class Configuration {
 			//#endif
 			// set default location provider to JSR-179 if available
 			//#if polish.api.locationapi
+			//#if polish.android
+			setLocationProvider(LOCATIONPROVIDER_ANDROID);
+			//#else
 			if (getDeviceSupportsJSR179()) {
 				setLocationProvider(LOCATIONPROVIDER_JSR179);
 			}
+			//#endif
 			//#endif
 			//#debug info
 			logger.info("Default config for version 0.4.0+ set.");
@@ -796,8 +833,22 @@ public class Configuration {
 		if (configVersionStored < 27) {
 			setDestLineWidth(2);
 		}
-
-		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);
+		if (configVersionStored < 28) {
+			setTimeDiff(0);
+		}
+		if (configVersionStored < 29) {
+			cfgBits_64_to_127 |= 1L << CFGBIT_NAVI_ARROWS_IN_MAP;
+		}
+		if (configVersionStored < 30) {
+			//#if polish.android
+			cfgBits_64_to_127 |= 
+				1L << CFGBIT_NOSTREETBORDERS |
+				1L << CFGBIT_ROUND_WAY_ENDS;
+			//#endif
+			setAltitudeCorrection(0);
+		}
+		
+		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127, cfgBits_128_to_191);
 	}
 
 	private final static String sanitizeString(String s) {
@@ -1101,11 +1152,17 @@ public class Configuration {
 			} else {
 				return ((cfgBits_0_to_63 & (1L << bit)) != 0);
 			}
-		} else {
+		} else if (bit < 128) {
 			if (getDefault) {
 				return ((cfgBitsDefault_64_to_127 & (1L << (bit - 64) )) != 0);
 			} else {
 				return ((cfgBits_64_to_127 & (1L << (bit - 64) )) != 0);
+			}
+		} else {
+			if (getDefault) {
+				return ((cfgBitsDefault_128_to_191 & (1L << (bit - 128) )) != 0);
+			} else {
+				return ((cfgBits_128_to_191 & (1L << (bit - 128) )) != 0);
 			}
 		}
 	}
@@ -1138,7 +1195,7 @@ public class Configuration {
 				}
 				write(cfgBitsDefault_0_to_63, RECORD_ID_CFGBITS_0_TO_63);
 			}
-		} else {
+		} else if (bit < 128) {
 			bit -= 64;
 			// set bit
 			Configuration.cfgBits_64_to_127 |= (1L << bit);
@@ -1154,6 +1211,22 @@ public class Configuration {
 				}
 				write(cfgBitsDefault_64_to_127, RECORD_ID_CFGBITS_64_TO_127);
 			}
+		} else {
+			bit -= 128;
+			// set bit
+			Configuration.cfgBits_128_to_191 |= (1L << bit);
+			if (!state) {
+				// clear bit
+				Configuration.cfgBits_128_to_191 ^= (1L << bit);
+			}
+			if (savePermanent) {
+				Configuration.cfgBitsDefault_128_to_191 |= (1L << bit);
+				if (!state) {
+					// clear bit
+					Configuration.cfgBitsDefault_128_to_191 ^= (1L << bit);
+				}
+				write(cfgBitsDefault_128_to_191, RECORD_ID_CFGBITS_128_TO_191);
+			}
 		}
 	}
 
@@ -1161,7 +1234,7 @@ public class Configuration {
 		setCfgBitState(bit, state, true);
 	}
 	
-	private static void setCfgBits(long cfgBits_0_to_63, long cfgBits_64_to_127) {
+	private static void setCfgBits(long cfgBits_0_to_63, long cfgBits_64_to_127, long cfgBits_128_to_191) {
 		Configuration.cfgBits_0_to_63 = cfgBits_0_to_63;
 		Configuration.cfgBitsDefault_0_to_63 = cfgBits_0_to_63;
 		write(cfgBitsDefault_0_to_63, RECORD_ID_CFGBITS_0_TO_63);
@@ -1169,6 +1242,10 @@ public class Configuration {
 		Configuration.cfgBits_64_to_127 = cfgBits_64_to_127;
 		Configuration.cfgBitsDefault_64_to_127 = cfgBits_64_to_127;
 		write(cfgBitsDefault_64_to_127, RECORD_ID_CFGBITS_64_TO_127);
+
+		Configuration.cfgBits_128_to_191 = cfgBits_128_to_191;
+		Configuration.cfgBitsDefault_128_to_191 = cfgBits_128_to_191;
+		write(cfgBitsDefault_128_to_191, RECORD_ID_CFGBITS_128_TO_191);
 	}
 	
 	public static int getDetailBoost() {
@@ -1274,12 +1351,13 @@ public class Configuration {
 				uiLangUse = "en";
 			}
 			
-			LOCATIONPROVIDER = new String[5];
+			LOCATIONPROVIDER = new String[6];
 			LOCATIONPROVIDER[0] = Locale.get("configuration.LPNone")/*None*/;
 			LOCATIONPROVIDER[1] = Locale.get("configuration.LPBluetoothSirf")/*Bluetooth (Sirf)*/;
 			LOCATIONPROVIDER[2] = Locale.get("configuration.LPBluetoothNMEA")/*Bluetooth (NMEA)*/;
 			LOCATIONPROVIDER[3] = Locale.get("configuration.LPInternalJSR179")/*Internal (JSR179)*/;
 			LOCATIONPROVIDER[4] = Locale.get("configuration.LPCellID")/*Cell-ID (OpenCellId.org)*/;
+			LOCATIONPROVIDER[5] = Locale.get("configuration.Android")/*Android*/;
 
 			projectionsString = new String[ProjFactory.COUNT];
 			projectionsString[ProjFactory.NORTH_UP] = Locale.get("projfactory.NorthUp")/*North Up*/;
@@ -1434,6 +1512,9 @@ public class Configuration {
 		write(autoRecenterToGpsMilliSecs, RECORD_ID_AUTO_RECENTER_TO_GPS_MILLISECS);
 	}
 	
+	public static void closeMapZipFile() {
+		mapZipFile = null;
+	}
 	/**
 	 * Opens a resource, either from the JAR, the file system or a ZIP archive,
 	 * depending on the configuration, see mapFromJar and mapFileUrl.
@@ -1445,7 +1526,7 @@ public class Configuration {
 		InputStream is = null;
 		if (name.toLowerCase().endsWith(".dat")) {
 			// backwards compatibility - remove the enableMap68Filenames test after a time period
-			if (Legend.enableMap68Filenames && !name.toLowerCase().equals("legend.dat")) {
+			if (Legend.enableMap68Filenames && !name.toLowerCase().equals("/legend.dat")) {
 				name = "/dat" + name;
 			}
 		}
@@ -1534,11 +1615,28 @@ public class Configuration {
 		return destLineWidth;
 	}
 
+	public static int getTimeDiff() {
+		return timeDiff;
+	}
+
+	public static int getAltitudeCorrection() {
+		return altitudeCorrection;
+	}
+
 	public static void setDestLineWidth(int destLineWidth) {
 		write(destLineWidth, RECORD_ID_DEST_LINE_WIDTH);
 		Configuration.destLineWidth = destLineWidth;
 	}
+
+	public static void setTimeDiff(int timeDiff) {
+		write(timeDiff, RECORD_ID_TIME_DIFF);
+		Configuration.timeDiff = timeDiff;
+	}
 	
+	public static void setAltitudeCorrection(int correction) {
+		write(correction, RECORD_ID_ALTITUDE_CORRECTION);
+		Configuration.altitudeCorrection = correction;
+	}
 	
 	public static int getBaseScale() {
 		return baseScale;
@@ -1594,19 +1692,31 @@ public class Configuration {
 		Configuration.backLightLevel = backLightLevel;
 	}
 	
-	public static void addToBackLightLevel(int diffBacklight) {
-		backLightLevel += diffBacklight;
-		if (backLightLevel > 100
-		    || (!Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA) &&
-			!Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK))) {
+	public static boolean isBackLightDimmable() {
+		return Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA) || Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK);
+	}
+	
+	public static void addToBackLightLevel(int backLightLevelIndexDiff) {
+		byte[] backLightLevels = {1, 10, 25, 50, 75, 100};
+		
+		// find index of current backlight level
+		int i = 0;
+		for (; i < backLightLevels.length && backLightLevels[i] != backLightLevel; i++) {
+			;
+		}
+		
+		i += backLightLevelIndexDiff;
+		if (i < 0) {
+			i = 0;
+		} else if ( i >= backLightLevels.length ) {
+			i = backLightLevels.length - 1;
+		}
+		backLightLevel = backLightLevels[i]; 
+ 
+		if (!isBackLightDimmable()) {
 			backLightLevel = 100;
 		}
-		if (backLightLevel <= 1) {
-			backLightLevel = 1;
-		}
-		if (backLightLevel == 26) {
-			backLightLevel = 25;
-		}
+		
 		setBackLightLevel(backLightLevel);
 	}
 
@@ -1825,6 +1935,9 @@ public class Configuration {
 		// a list of return codes for microedition.platform can be found at:
 		// http://www.club-java.com/TastePhone/J2ME/MIDP_Benchmark.jsp
 
+		//#if polish.android
+		return CFGBIT_BACKLIGHT_ANDROID_WINDOW_MANAGER;
+		//#else
 		//#if polish.api.nokia-ui || polish.api.min-siemapi
 		String phoneModel = getPhoneModel();
 		// determine default backlight method for devices from the wiki
@@ -1846,6 +1959,7 @@ public class Configuration {
         }
 		//#endif
 		return 0;
+		//#endif
 	}
 	
 	private static boolean getDefaultIconMenuBackCmdSupport() {
@@ -2176,12 +2290,23 @@ public class Configuration {
 		}
 	}
 
+	public static String getIconPrefix() {
+		// FIXME make this configurable - huge, large, etc.
+		//#if polish.android
+		return "huge_";
+		//return "large_";
+		//#else
+		return "";
+		//#endif
+	}
+
 	
 	public static void serialise(OutputStream os) throws IOException {
 		DataOutputStream dos = new DataOutputStream(os);
 		dos.writeInt(VERSION);
 		dos.writeLong(cfgBitsDefault_0_to_63);
 		dos.writeLong(cfgBitsDefault_64_to_127);
+		dos.writeLong(cfgBitsDefault_128_to_191);
 		dos.writeUTF(sanitizeString(btUrl));
 		dos.writeInt(locationProvider);
 		dos.writeUTF(sanitizeString(gpxUrl));
@@ -2229,6 +2354,7 @@ public class Configuration {
 		dos.writeInt(getProjDefault());
 		dos.writeInt(getSearchMax());
 		dos.writeInt(getDestLineWidth());
+		dos.writeInt(getAltitudeCorrection());
 		/*
 		 * Don't store destpos in export - perhaps later add a function for "move the app" which would store also destpos
 		dos.writeUTF(Float.toString(destPos.radlat));
@@ -2245,7 +2371,7 @@ public class Configuration {
 			throw new IOException(Locale.get("configuration.ConfigVersionMismatch")/*Version of the stored config does not match with current GpsMid*/);
 		}
 		boolean destPosValid = getCfgBitSavedState(CFGBIT_SAVED_DESTPOS_VALID);
-		setCfgBits(dis.readLong(), dis.readLong());
+		setCfgBits(dis.readLong(), dis.readLong(), version >= 29 ? dis.readLong() : 0L);
 		setCfgBitSavedState(CFGBIT_SAVED_DESTPOS_VALID, destPosValid);
 		setBtUrl(desanitizeString(dis.readUTF()));
 		setLocationProvider(dis.readInt());
@@ -2318,6 +2444,12 @@ public class Configuration {
 		}
 		if (version >= 27) {
 			destLineWidth = dis.readInt();
+		}
+		if (version >= 28) {
+			timeDiff = dis.readInt();
+		}
+		if (version >= 29) {
+			altitudeCorrection = dis.readInt();
 		}
 	}
 	

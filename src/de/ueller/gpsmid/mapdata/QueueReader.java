@@ -62,6 +62,7 @@ public abstract class QueueReader implements Runnable {
 		Tile tt;
 		int loop;
 		cleanOldLivingTiles(0);
+		// Should the request queue made empty here?
 		for (loop = 0; loop < requestQueue.size(); loop++) {
 			tt = (Tile) requestQueue.elementAt(loop);
 			tt.cleanup(0);
@@ -109,6 +110,18 @@ public abstract class QueueReader implements Runnable {
 		return loop;
 	}
 
+	public synchronized void clearRequestQueue() {
+		Tile tt;
+		int loop;
+		for (loop = 0; loop < requestQueue.size(); loop++) {
+			tt = (Tile) requestQueue.elementAt(loop);
+			if ( tt.cleanup(0)) {
+				notificationQueue.removeElementAt(loop);
+				requestQueue.removeElementAt(loop--);
+			}
+		}
+	}
+	
 	public void run() {
 		Tile tt;
 		// logger.info("DataReader Thread start ");

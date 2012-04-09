@@ -41,8 +41,6 @@ public class GuiSearchLayout extends LayoutManager {
 
 	public boolean usingVerticalLayout = false;
 	
-	public static boolean bigOnScreenButtons = false;
-	
 	private static int xdiff = 0;
 	private static int ydiff = 0;
 

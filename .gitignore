@@ -8,3 +8,5 @@
 /.externalToolBuilders
 /.polishSettings
 /.project
+/build.properties
+/android.properties

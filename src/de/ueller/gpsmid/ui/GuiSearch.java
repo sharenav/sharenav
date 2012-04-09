@@ -29,7 +29,10 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.Item;
+import javax.microedition.lcdui.ItemCommandListener;
 import javax.microedition.lcdui.List;
+import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
 
 import de.ueller.gpsmid.data.Configuration;
@@ -58,7 +61,7 @@ import de.ueller.util.ProjMath;
 import de.enough.polish.util.Locale;
 
 public class GuiSearch extends Canvas implements CommandListener,
-		      GpsMidDisplayable, InputListener, KeySelectMenuReducedListener, CancelMonitorInterface {
+		      GpsMidDisplayable, InputListener, KeySelectMenuReducedListener, CancelMonitorInterface, ItemCommandListener  {
 
 	protected static final int VIRTUALKEY_PRESSED = 1;
 
@@ -78,6 +81,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private final Command DEL_CMD = new Command(Locale.get("generic.Delete")/*Delete*/, Command.ITEM, 4);
 	private final Command CLEAR_CMD = new Command(Locale.get("guisearch.Clear")/*Clear*/, Command.ITEM, 5);
 	private final Command BOOKMARK_CMD = new Command(Locale.get("guisearch.Bookmark")/*Add to way points*/, Command.ITEM, 6);
+	private final Command FAVORITE_CMD = new Command(Locale.get("guisearch.Favorite")/*Add to favorites*/, Command.ITEM, 6);
 	private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 7);
 	private final Command OVERVIEW_MAP_CMD = new Command(Locale.get("guisearch.OverviewMap")/*Overview/Filter map*/, Command.ITEM, 8);
 	private final Command POI_CMD = new Command(Locale.get("guisearch.NearestPoi")/*Nearest POI*/, Command.ITEM, 9);
@@ -151,6 +155,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private ChoiceGroup poiSelectionCG;
 	private TextField poiSelectionMaxDistance;
 	private TextField fulltextSearchField;
+	//#if polish.android
+	private StringItem OKField;
+	//#endif
 	
 	
 	public volatile byte state;
@@ -261,6 +268,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		addCommand(DEL_CMD);
 		addCommand(CLEAR_CMD);
 		addCommand(BOOKMARK_CMD);
+		addCommand(FAVORITE_CMD);
 		addCommand(BACK_CMD);
 		addCommand(OVERVIEW_MAP_CMD);
 		addCommand(POI_CMD);
@@ -312,10 +320,18 @@ public class GuiSearch extends Canvas implements CommandListener,
 		
 	}
 
+	public int searchCanonLength() {
+		return searchCanon.length();
+	}
+
 	private boolean isCursorValid() {
 		return (cursor < result.size() && cursor >= 0 && result.size() != 0);
 	}
 	
+	public void commandAction(Command cmd, Item item) {
+		commandAction(cmd, (Displayable) parent);
+	}
+
 	public void commandAction(Command c, Displayable d) {
 //		System.out.println("got Command " + c);
 		if (state == STATE_MAIN || state == STATE_FAVORITES) {
@@ -401,7 +417,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				destroy();
 				parent.show();				
 				if (c == ROUTE1_CMD || c == ROUTE2_CMD) {
-					parent.performIconAction(Trace.ROUTING_START_WITH_MODE_SELECT_CMD);
+					parent.performIconAction(Trace.ROUTING_START_WITH_MODE_SELECT_CMD, null);
 				}
 				return;
 			}
@@ -502,13 +518,16 @@ public class GuiSearch extends Canvas implements CommandListener,
 			repaint();
 			return;
 		}
-		if (c == BOOKMARK_CMD) {
+		if (c == BOOKMARK_CMD || c == FAVORITE_CMD) {
 			if (cursor >= result.size()) {
 				return;
 			}
 			SearchResult sr = (SearchResult) result.elementAt(cursor);
 			PositionMark positionMark = new PositionMark(sr.lat,sr.lon);
 			positionMark.displayName=nameForResult(sr);
+			if (c == FAVORITE_CMD) {
+				positionMark.displayName += "*";
+			}
 			parent.gpx.addWayPt(positionMark);
 			parent.show();
 			return;
@@ -589,6 +608,15 @@ public class GuiSearch extends Canvas implements CommandListener,
 			fulltextForm.addCommand(BACK_CMD);
 			fulltextForm.addCommand(OK_CMD);
 			fulltextForm.setCommandListener(this);
+			//#if polish.android
+			OKField = new StringItem("", Locale.get("generic.OK"), StringItem.BUTTON);
+			OKField.addCommand(OK_CMD);
+			OKField.setDefaultCommand(OK_CMD);
+			OKField.setItemCommandListener(this);
+			//#style formItem
+			fulltextForm.append(OKField);
+			Display.getDisplay(GpsMid.getInstance()).setCurrentItem(fulltextSearchField);
+			//#endif
 			GpsMid.getInstance().show(fulltextForm);			
 		}
 	}
@@ -783,7 +811,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 						      Locale.get("guisearch.label5")/* jkl5*/, Locale.get("guisearch.label6")/* mno6*/,
 						      Locale.get("guisearch.label7")/*pqrs7*/, Locale.get("guisearch.label8")/* tuv8*/,
 						      Locale.get("guisearch.label9")/*wxyz9*/, 
-						      Locale.get("guisearch.more")/*more*/, "  0  ", 
+						      Locale.get("guisearch.fulltextshort")/*fulltext*/, "  0  ", 
 						      Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
 						      Locale.get("guisearch.pound")/*_#end*/ :
 						      Locale.get("guisearch.poundNameSearch")/*#end*/};
@@ -846,7 +874,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_ARROWS]);
 				gc.drawString("v", getWidth(), getHeight() - 7,
 						Graphics.BOTTOM | Graphics.RIGHT);				
-				return;
+				break;
 			}
 
 			if (i == cursor){
@@ -1134,14 +1162,15 @@ public class GuiSearch extends Canvas implements CommandListener,
 			// FIXME With this there's the problem that Back gets passed on to the next menu
 			// (e.g. route mode asking). See http://developer.android.com/sdk/android-2.0.html
 			// for Native Android workaround; not sure how to do this with J2MEPolish
-			if (keyCode == KeyEvent.KEYCODE_BACK && !isCursorValid()) {
+			if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == 10) {
 				destroy();
 				parent.show();
-			}
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
-				commandAction( ROUTE1_CMD, (Displayable) null);
 			} else {
-				commandAction( OK1_CMD, (Displayable) null);				
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
+					commandAction( ROUTE1_CMD, (Displayable) null);
+				} else {
+					commandAction( OK1_CMD, (Displayable) null);
+				}
 			}
 			return;
 //#else
@@ -1605,7 +1634,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 					keyPressed('1');
 				} else if (touchedElementId == GuiSearchLayout.KEY_2) {
 					if (cursorKeypad) {
+						//#if polish.android
+						keyPressed(19);
+						//#else
 						keyPressed(getKeyCode(UP));
+						//#endif
 					} else {
 						keyPressed('2');
 					}
@@ -1618,7 +1651,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 					}
 				} else if (touchedElementId == GuiSearchLayout.KEY_4) {
 					if (cursorKeypad) {
+						//#if polish.android
+						keyPressed(21);
+						//#else
 						keyPressed(getKeyCode(LEFT));
+						//#endif
 					} else {
 						keyPressed('4');
 					}
@@ -1630,7 +1667,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 					}
 				} else if (touchedElementId == GuiSearchLayout.KEY_6) {
 					if (cursorKeypad) {
+						//#if polish.android
+						keyPressed(22);
+						//#else
 						keyPressed(getKeyCode(RIGHT));
+						//#endif
 					} else {
 						keyPressed('6');
 					}
@@ -1643,7 +1684,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 					}
 				} else if (touchedElementId == GuiSearchLayout.KEY_8) {
 					if (cursorKeypad) {
+						//#if polish.android
+						keyPressed(20);
+						//#else
 						keyPressed(getKeyCode(DOWN));
+						//#endif
 					} else {
 						keyPressed('8');
 					}
@@ -1652,7 +1697,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 				} else if (touchedElementId == GuiSearchLayout.KEY_0) {
 					keyPressed('0');
 				} else if (touchedElementId == GuiSearchLayout.KEY_STAR) {
-					keyPressed(KEY_STAR);
+					if (cursorKeypad) {
+						keyPressed(KEY_STAR);
+					} else {
+						commandAction(FULLT_CMD, (Displayable) null);
+					}
 				} else if (touchedElementId == GuiSearchLayout.KEY_POUND || (cursorKeypad && touchedElementId == GuiSearchLayout.KEY_9)) {
 					keyPressed(KEY_POUND);
 				} else if (touchedElementId == GuiSearchLayout.KEY_BACKSPACE) {
@@ -1693,6 +1742,17 @@ public class GuiSearch extends Canvas implements CommandListener,
 		//#debug debug
 		logger.debug("PointerReleased: " + x + "," + y);
 		pointerActionDone = true;
+
+		//#if polish.android
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)
+		    && gsl.getElementIdAtPointer(x, y) >= 0 && gsl.isAnyActionIdAtPointer(x, y)) {
+			if (tapAutoReleaseTimerTask != null) {
+				tapAutoReleaseTimerTask.cancel();
+			}
+			tapAutoReleaseTimerTask = null;
+			autoPointerRelease(x, y);
+		}
+		//#endif
 
 		// If this could be a double click
 		if (potentialDoubleClick

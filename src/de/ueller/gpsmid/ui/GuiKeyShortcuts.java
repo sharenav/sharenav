@@ -17,9 +17,9 @@ public class GuiKeyShortcuts extends List implements CommandListener,
 		GpsMidDisplayable {
 
 	private static final Command CMD_BACK = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 3);
-	private GuiDiscover parent;
+	private GpsMidDisplayable parent;
 
-	public GuiKeyShortcuts(GuiDiscover parent) {
+	public GuiKeyShortcuts(GpsMidDisplayable parent) {
 		super(Locale.get("guikeyshortcuts.KeyShortcutsInMap")/*Key shortcuts in Map*/, List.IMPLICIT);
 		addCommand(CMD_BACK);
 

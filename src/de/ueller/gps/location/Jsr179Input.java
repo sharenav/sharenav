@@ -22,12 +22,12 @@ import java.io.OutputStream;
 import java.util.Vector;
 
 //#if polish.api.locationapi
-import javax.microedition.location.Coordinates;
 import javax.microedition.location.Criteria;
 import javax.microedition.location.Location;
 import javax.microedition.location.LocationException;
 import javax.microedition.location.LocationListener;
 import javax.microedition.location.LocationProvider;
+import javax.microedition.location.QualifiedCoordinates;
 //#endif
 import de.ueller.gpsmid.data.Position;
 import de.ueller.util.Logger;
@@ -164,6 +164,7 @@ public class Jsr179Input
 		//#debug info
 		logger.info("Using extra NMEA info in JSR179: " + nmeaString);
 		
+		// FIXME combine to one, duplicated in Jsr179Input and AndroidLocationInput
 		if (nmeaString != null) {
 			if (rawDataLogger != null) {
 				try {
@@ -201,9 +202,11 @@ public class Jsr179Input
 					//#debug info
 					logger.info("Decoding: " + nmeaMessage);
 					if ((nmeaMessage != null) && (nmeaMessage.length() > 5)) {
-						smsg.decodeMessage(nmeaMessage, false);
-						// get PDOP from the message
+						smsg.decodeMessage(nmeaMessage, false, true);
+						// get *DOP from the message
 						pos.pdop = smsg.getPosition().pdop;
+						pos.hdop = smsg.getPosition().hdop;
+						pos.vdop = smsg.getPosition().vdop;
 						numSatellites = smsg.getMAllSatellites();
 					}
 				}
@@ -217,13 +220,14 @@ public class Jsr179Input
 			if (receiverList.getCurrentStatus() == LocationMsgReceiver.STATUS_NOFIX) {
 				receiverList.receiveStatus(LocationMsgReceiver.STATUS_ON, 0);				
 			}
-			Coordinates coordinates = location.getQualifiedCoordinates();
+			QualifiedCoordinates coordinates = location.getQualifiedCoordinates();
 			pos.latitude = (float) coordinates.getLatitude();
 			pos.longitude = (float) coordinates.getLongitude();
 			pos.altitude = coordinates.getAltitude();
 			pos.course = location.getCourse();
 			pos.speed = location.getSpeed();
 			pos.timeMillis = location.getTimestamp();
+			pos.accuracy = coordinates.getHorizontalAccuracy();
 			if (lastKnown) {
 				pos.type = Position.TYPE_GPS_LASTKNOWN;
 			} else {

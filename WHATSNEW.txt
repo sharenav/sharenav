@@ -1,3 +1,56 @@
+    *** Android Support ***
+    - many stability / usability improvements
+    - huge icon menu images are used by default which makes the icons look much better
+    - new option for backlight setting: Android WindowManager (KEEP_SCREEN_ON)
+    - new Android native location provider which can be used instead of JSR179
+    - reduced the number of build targets to simplify builds & distribution; different
+      targets (2.1, 2.2, 2.3 etc.) can be uncommented in build.xml if needed
+    - some minor adjustments due to upgrading to J2MEPolish 2.3, related to file dialogue
+    - various UI improvements and fixes with back key handling
+    - audio recording now works (n.b.: the location is currently always /sdcard directory)
+    *** Touchscreen / User Interface ***
+    - On the map screen long tap * to toggle track recording
+    - During track recording long tap recorded trackpoints on the map screen to suspend/resume track recording
+    - On the map screen long tap _ to manage track list, double tap _ to manage waypoints
+    - On the map screen long tap on compass dir to turn map North up and invalidate course for routing
+    - In routing choice, added buttons for selection of route mode - no need to go through menu
+    - More icon sizes are included, you can now choose from "useIcons = small|true|big|large|huge" in the .properties file.
+      useIcons=large and useIcons=huge make sense for devices with high resolution displays
+    - Links to online help for touchscreen and GpsMid wiki in Online menu
+    - Help tab added to icon menu
+    - Favorites can be optionally shown as routing targets in route icon menu
+    *** Map display ***
+    - The map screen now updated more often during panning when dragging the touch screen.
+      (not only after the ImageCollector class has finished drawing the map but every 1/3 s)
+      This improves zooming out very large maps. (thx walter9)
+    - Zooming far out and then zooming far in again works now faster because as soon as all tiles
+      for the map display are loaded remaining tile loading requests will be dropped (thx walter9)
+    - The number of not loaded tiles are displayed in the left upper corner,
+      and a * sign after the number if the map is actually being rendered (thx walter9)
+    - experimental support for dashed areas
+      add e.g. <lineStyle dashed = "true" /> for landuse/industrial in style-file)
+    - The width of the line to the destination is now configurable in Display Options,
+      default value is 2. (thx pos_ei_don for drawWideLine())
+    - If backlight method is known for the phone model backlight is turned on by default in new midlets.
+    - Additional backlight level 10% for Nokia and Android mobiles, so now there is 1%, 10%, 25%, 50%, 75%, 100%
+    - Time to change backlight level with keys 1 and 3 or zoom buttons on touch screens
+      after toggling backlight has been increased to 5 seconds.
+    - Some workarounds (mainly useful for sea rendering) for map data overflows which can
+      appear due to shortcomings of Osm2GpsMid
+    - option to use the GPS clock as clock source for on-map display
+      (currently only NMEA-transmitting GPS devices give clock information)
+    - option to set a time difference in minutes between device time and display time
+      (to work around platforms which for some reason give incorrect time
+      e.g. due to deficiencies in JVM time zone code)
+    - Bug fix: The ImageCollector thread no more is started twice
+      when a saved destination is restored at GpsMid startup (thx walter9)
+    - Map switch can now be done without restarting GpsMid
+    - Accuracy of fix can be shown with GPS status
+    - Number of satellites is show in some more cases also in NoFix situations.
+    - Optional travel mode display (& setting on touch screen phones) on map
+    - On new GpsMid installations on devices with a display height or width > 400
+      the base zoom level is now 24 instead of 23 (map is zoomed once in).
+    - There's now a setting for altitude correction.
     *** Sea generation ***
     - greatly faster sea generation algorithm with option useSeaTiles = true
       in .properties file. It divides the map into roughly 20km * 20km areas
@@ -12,21 +65,27 @@
     - bug fix to prevent POI search crashes which appeared more often on slow
       devices and less often on faster devices
     - heed max search count for POI search, bugfix for name search fencepost error
+    - allow to save result as a favorite
+    - fulltext search now easily accessible on touch screen phones;
+      the "*" key function moved to the cursor keyboard
     *** Routing ***
     - add support for toll rules for each travel mode to routemodes.inc.
       Ways will still be rendered with toll decoration only if toll=yes or toll=true is set
       regardless of toll rules or current travel mode
-    *** Map display ***
-    - some workarounds (mainly useful for sea rendering) for map data overflows which can
-      appear due to shortcomings of Osm2GpsMid
-    - The width of the line to the destination is now configurable in Display Options, default value is 2.
-    *** Touchscreen support ***
-    - On the map screen long tap * to toggle track recording
-    - During track recording long tap recorded trackpoints on the map screen to suspend/resume track recording
-    - On the map screen long tap _ to manage track list, double tap _ to manage waypoints
-    *** Platforms ***
-    - Android: cut down on the number of targets to simplify builds & distribution; different
-      targets (2.1, 2.2, 2.3 etc.) can be uncommented in build.xml if needed
+    - when turn restriction checking is on, take account also the driving direction
+      in route calculation - in other words, when driving with car, don't assume we
+      can start driving backwards without a u-turn or can just take a u-turn with no costs
+    - optionally stop routing when we arrive at destination
+    - big navigation arrows for next two instructions in uppper left corner;
+      options to show or not show the big arrows or the small in-map arrows.
+    - On new GpsMid installations on devices with a display height or width > 400
+      the minimum route line width is now 5 instead of 3.
+    *** Predefined waypoints ***
+    - An option for predefined waypoints (entered via the icon menu) is now available.
+    *** Tacho ***
+    - HDOP is shown in tachometer
+    *** Phone models ***
+    - make photos work on Samsung Xcover B271 (and probably some other Samsungs too)
 
 GpsMid 0.7.7
     *** Map display ***

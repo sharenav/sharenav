@@ -332,7 +332,7 @@ public class BundleGpsMid implements Runnable {
 
 				if (compressed && dontCompress != null) {
 					for (String extension : dontCompress) {
-						if (files[i].getName().endsWith(extension)) {
+						if (files[i].getName().toLowerCase().endsWith(extension)) {
 							ze.setMethod(ZipOutputStream.STORED);
 							storethis = true;
 						}
@@ -425,6 +425,10 @@ public class BundleGpsMid implements Runnable {
 	}
 	
 	static private void validateConfig(Configuration config) {
+		if (config == null) {
+			System.out.println("ERROR: can't find config, exiting");
+			System.exit(1);
+		}
 		if ((config.enableEditingSupport) && (!(config.getAppParam().equalsIgnoreCase("GpsMid-Generic-editing")) && !(config.getAppParam().equalsIgnoreCase("GpsMid-Generic-newfeatures")))) {
 			System.out.println("ERROR: You are creating a map with editing support, but use a app version that does not support editing\n"
 					+ "     please fix your .properties file");
@@ -579,6 +583,7 @@ public class BundleGpsMid implements Runnable {
 				System.out.println("===================");
 				rd.create(config);
 				rd.optimise();
+				OsmParser.printMemoryUsage(1);
 			}
 			CreateGpsMidData cd = new CreateGpsMidData(parser, target.getCanonicalPath());
 			//				rd.write(target.getCanonicalPath());

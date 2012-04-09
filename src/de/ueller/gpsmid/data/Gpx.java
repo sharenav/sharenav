@@ -956,6 +956,15 @@ public class Gpx extends Tile implements Runnable, InputListener {
 	 * @return Vector of waypoints
 	 */
 	public Vector listWayPoints() {
+		return listWayPoints(false);
+	}
+
+	/** Returns a list of all way points, sorted by the current search criterion.
+	 * 
+	 * @param favorites flag if only favorites wanted
+	 * @return Vector of waypoints
+	 */
+	public Vector listWayPoints(boolean favorites) {
 		int sortmode = Configuration.getWaypointSortMode();
 		Node centerPos = Trace.getInstance().center;
 		Vector source = wayPtTile.listWayPt();
@@ -963,6 +972,13 @@ public class Gpx extends Tile implements Runnable, InputListener {
 		PositionMark insert;
 		PositionMark compare;
 		for (int i = 0; i < source.size(); i++) {
+			if (favorites) {
+				PositionMark waypt = (PositionMark)source.elementAt(i);
+				if (! waypt.displayName.endsWith("*") ) {
+					continue;
+				}
+
+			}
 			// We want to insert source[i] at the right position into sorted
 			insert = (PositionMark)source.elementAt(i);
 			float distInsert = ProjMath.getDistance(centerPos.radlat, centerPos.radlon,
@@ -1455,9 +1471,9 @@ public class Gpx extends Tile implements Runnable, InputListener {
 		StringBuffer sb = new StringBuffer(128);
 		//if (wayPt.lat > 90) wayPt.lat = wayPt.lat * MoreMath.FAC_DECTORAD * MoreMath.FAC_DECTORAD;
 		//if (wayPt.lon > 180) wayPt.lon = wayPt.lon * MoreMath.FAC_DECTORAD * MoreMath.FAC_DECTORAD;
-		sb.append("<wpt lat='").append(wayPt.lat * MoreMath.FAC_RADTODEC);
-		sb.append("' lon='").append(wayPt.lon * MoreMath.FAC_RADTODEC).append("'>\r\n");
-		sb.append("<name>").append(HelperRoutines.utf2xml(wayPt.displayName)).append("</name>\r\n");
+		sb.append("<wpt lat='").append(wayPt.lat * MoreMath.FAC_RADTODEC)
+		  .append("' lon='").append(wayPt.lon * MoreMath.FAC_RADTODEC).append("'>\r\n")
+		  .append("<name>").append(HelperRoutines.utf2xml(wayPt.displayName)).append("</name>\r\n");
 		if (wayPt.ele != PositionMark.INVALID_ELEVATION)
 		{
 			sb.append("<ele>").append(wayPt.ele).append("</ele>\r\n");

@@ -25,6 +25,10 @@ import de.ueller.util.Logger;
 
 import de.enough.polish.util.Locale;
 
+//#if polish.android
+import android.view.KeyEvent;
+//#endif
+
 /** 
  * Implements the "Tacho" screen which displays numbers such as speed, height etc.
  */
@@ -136,7 +140,8 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 				.append(HelperRoutines.formatInt2(cal.get(Calendar.YEAR) % 100));
 		g.drawString(timeString.toString(), 3, y, Graphics.TOP | Graphics.LEFT);
 		
-		g.drawString(parent.solutionStr, (w >> 1) + 3, y, Graphics.TOP
+		g.drawString("HDOP: " + pos.hdop
+			     + " " + parent.solutionStr, (w >> 1) + 3, y, Graphics.TOP
 				| Graphics.LEFT);
 		
 		timeString.setLength(0);
@@ -271,4 +276,15 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 		repaint();
 	}
 
+	//#if polish.android
+	// not in keyPressed() to solve the problem that Back gets passed on
+	// to the next menu
+	// See http://developer.android.com/sdk/android-2.0.html
+	// for a possible Native Android workaround
+	protected void keyReleased(int keyCode) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			commandAction(BACK_CMD, (Displayable) null);
+		}
+	}
+	//#endif
 }

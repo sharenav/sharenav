@@ -179,6 +179,14 @@ public class LayoutManager extends Vector {
 		return getActionIdShiftedAtPointer(x, y, 0);
 	}
 	
+	public String getChoiceNameAtPointer(int x, int y) {
+		int i = getElementIdAtPointer(x, y);
+		if (i != -1) {
+			return this.getElementAt(i).getText();
+		}
+		return null;
+	}
+
 	public int getActionIdDoubleAtPointer(int x, int y) {
 		return getActionIdShiftedAtPointer(x, y, 8);
 	}

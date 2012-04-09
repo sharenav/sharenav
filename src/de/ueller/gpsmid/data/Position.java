@@ -26,9 +26,9 @@ public class Position {
 	public static final byte TYPE_SAVED = 4;
 	public static final byte TYPE_UNKNOWN = 120;
 
-	/** Latitude in degrees, Western values are negative */
+	/** Latitude in radians, Western values are negative */
 	public float latitude;
-	/** Longitude in degrees, Southern values are negative */
+	/** Longitude in radians, Southern values are negative */
 	public float longitude;
 	/** Altitude above mean sea level or WGS84 geoid in meters */
 	public float altitude;
@@ -46,8 +46,16 @@ public class Position {
 	public float course;
 	/** Positional dilution of precision */
 	public float pdop = 0.0f;
+	/** Horizontal dilution of precision */
+	public float hdop = 0.0f;
+	/** Vertical dilution of precision */
+	public float vdop = 0.0f;
+	/** Accuracy */
+	public float accuracy = 0.0f;
 	/** currentTimeMillis() of this position. */
 	public long timeMillis;
+	/** GPS time of this position if available. */
+	public long gpsTimeMillis;
 	/** type of this position. */
 	public byte type;
 
@@ -85,11 +93,11 @@ public class Position {
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer("Position: ");
-		sb.append(latitude).append("/").append(longitude).append("  ");
-		sb.append("height: ").append(altitude).append("m   ");
-		sb.append("Speed: ").append((speed * 3.6f)).append("km/h  ");
-		sb.append("Course: ").append(course);
-		sb.append("type: ").append(type);
+		sb.append(latitude).append("/").append(longitude).append("  ")
+		  .append("height: ").append(altitude).append("m   ")
+		  .append("Speed: ").append((speed * 3.6f)).append("km/h  ")
+		  .append("Course: ").append(course)
+		  .append("type: ").append(type);
 		return sb.toString();
 	}
 }

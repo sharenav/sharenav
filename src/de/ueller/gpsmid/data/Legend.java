@@ -260,6 +260,14 @@ public class Legend {
 	}
 	
 	public static void readLegend() throws IOException {
+		COLOR_COUNT = 89;
+		enableEdits = false;
+		enableBigStyles = false;
+		enableMap66Search = false;
+		enableMap67Sounds = false;
+		enableMap68Filenames = false;
+		enableMap69Precision = false;
+		enableMap70ConnTravelModes_Additional_Byte = false;
 		isValid = false;
 		/* Set some essential default colors in case legend.dat can not be opened/read.
 		 * Without this, it wouldn't be possible to configure external map usage 

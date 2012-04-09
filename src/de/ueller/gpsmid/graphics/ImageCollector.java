@@ -15,17 +15,23 @@ import de.ueller.gps.Node;
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.PaintContext;
+import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.gpsmid.data.ScreenContext;
 import de.ueller.gpsmid.mapdata.Way;
 import de.ueller.gpsmid.mapdata.WayDescription;
 import de.ueller.gpsmid.routing.RouteInstructions;
+import de.ueller.gpsmid.routing.RouteLineProducer;
 import de.ueller.gpsmid.tile.Tile;
 import de.ueller.gpsmid.ui.Trace;
 import de.ueller.gpsmid.ui.TraceLayout;
 import de.ueller.midlet.iconmenu.LayoutElement;
+//#if polish.api.finland
+import de.ueller.util.ETRSTM35FINconvert;
+//#endif
 import de.ueller.util.IntPoint;
 import de.ueller.util.Logger;
 import de.ueller.util.MoreMath;
+import java.util.Enumeration;
 
 /* This class collects all visible objects to an offline image for later painting.
  * It is run in a low priority to avoid interrupting the GUI.
@@ -33,7 +39,10 @@ import de.ueller.util.MoreMath;
 public class ImageCollector implements Runnable {
 	private final static Logger logger = Logger.getInstance(ImageCollector.class, 
 			Logger.TRACE);
-
+	
+	/** hashtable of not painted single tiles */
+	public static java.util.Hashtable htNotPaintedSingleTiles = new java.util.Hashtable();
+	
 	private volatile boolean shutdown = false;
 	private volatile boolean suspended = true;
 	private final Tile t[];
@@ -69,6 +78,8 @@ public class ImageCollector implements Runnable {
 	public static float overviewTileScaleBoost = 1.0f;
 	boolean collectorReady=false;
 	
+	public int iDrawState = 0;
+	
 	public ImageCollector(Tile[] t, int x, int y, Trace tr, Images i) {
 		super();
 		this.t = t;
@@ -79,6 +90,9 @@ public class ImageCollector implements Runnable {
 			// with overscan
 			xScreenOverscan = x*12/100;
 			yScreenOverscan = y*12/100;
+			if (tr.getLayoutMode() == Trace.LAYOUTMODE_HALF_MAP) {
+				yScreenOverscan = 0;
+			}
 			xSize = x+2*xScreenOverscan;
 			ySize = y+2*yScreenOverscan;
 		} else {
@@ -88,8 +102,13 @@ public class ImageCollector implements Runnable {
 			xScreenOverscan = 0;
 			yScreenOverscan = 0;
 		}
-		img[0] = Image.createImage(xSize, ySize);
-		img[1] = Image.createImage(xSize, ySize);
+		if (tr.getLayoutMode() == Trace.LAYOUTMODE_HALF_MAP) {
+			img[0] = Image.createImage(xSize, ySize / 2);
+			img[1] = Image.createImage(xSize, ySize / 2);
+		} else {
+			img[0] = Image.createImage(xSize, ySize);
+			img[1] = Image.createImage(xSize, ySize);
+		}
 		try {
 			pc[0] = new PaintContext(tr, i);
 			pc[0].setP(p1);
@@ -145,6 +164,8 @@ public class ImageCollector implements Runnable {
 				//#debug debug
 				logger.debug("Redrawing Map");
 				
+				iDrawState = 1;
+				
 				synchronized (this) {
 					while (pc[nextCreate].state != PaintContext.STATE_READY && !shutdown) {
 						try {
@@ -158,7 +179,11 @@ public class ImageCollector implements Runnable {
 					}
 					pc[nextCreate].state = PaintContext.STATE_IN_CREATE;
 				}
-				createPC = pc[nextCreate];				
+				
+				iDrawState = 2;
+				tr.requestRedraw();
+
+				createPC = pc[nextCreate];
 
 				long startTime = System.currentTimeMillis();
 
@@ -180,6 +205,9 @@ public class ImageCollector implements Runnable {
 				createPC.g = img[nextCreate].getGraphics();
 				createPC.g.setColor(Legend.COLORS[Legend.COLOR_MAP_BACKGROUND]);
 				createPC.g.fillRect(0, 0, xSize, ySize);
+				
+				htNotPaintedSingleTiles.clear();
+				
 //				createPC.g.setColor(0x00FF0000);
 //				createPC.g.drawRect(0, 0, xSize - 1, ySize - 1);
 //				createPC.g.drawRect(20, 20, xSize - 41, ySize - 41);
@@ -281,7 +309,8 @@ public class ImageCollector implements Runnable {
 								//System.out.println("waysPainted: " + createPC.waysPainted);
 							} else {
 								// FIXME: Sometimes there are ImageCollector loop with no way pained even when ways would be there and tile data is fully loaded
-								// Update 2011-06-11: Might be fixed with the patch from gojkos at [ gpsmid-Bugs-3310178 ] Delayed map draw on LG cookie phone 
+								// Update 2011-06-11: Might be fixed with the patch from gojkos at [ gpsmid-Bugs-3310178 ] Delayed map draw on LG cookie phone
+								// Update 2012-03-17 (patch from walter9): The image collector has been started twice. This seems to be fixed now in Trace.java.startImageCollector()
 								System.out.println("No ways painted in this ImageCollector loop");
 							}
 						}
@@ -327,6 +356,22 @@ public class ImageCollector implements Runnable {
 								|| Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS))) {
 					t[4].paint(createPC, (byte) 0);
 				}
+
+				if ( htNotPaintedSingleTiles.isEmpty() ) {
+					// No not displayed tile.
+					// The  request queue can be cleared.
+					// This can happen when zooming far out and then zooming in again.
+					// Then many tiles will be queued which are not needed.
+					if ( Trace.getInstance().getDataReader() != null
+							&&
+					// do not clear the request queue while the route line is created, as this also requests single tiles
+						!RouteLineProducer.isRunning()
+					) {
+						Trace.getInstance().getDataReader().clearRequestQueue();
+					}
+				}
+				
+				iDrawState = 0;
 
 				icDuration = System.currentTimeMillis() - startTime;
 				//#mdebug
@@ -415,11 +460,12 @@ public class ImageCollector implements Runnable {
 		nextSc.dest = screenPc.dest;
 		nextSc.xSize = screenPc.xSize;
 		nextSc.ySize = screenPc.ySize;
-		Projection p = ProjFactory.getInstance(nextSc.center, nextSc.course,
-				nextSc.scale, xSize, ySize);
+		Projection p = ProjFactory.getInstance(nextSc.center, nextSc.course, nextSc.scale, xSize,
+						       (screenPc.trace.getLayoutMode() == Trace.LAYOUTMODE_HALF_MAP) ? (int) (ySize / 2) : ySize);
 //		System.out.println("p  =" + p);
 		Projection p1 = ProjFactory.getInstance(nextSc.center,
-				pc[nextPaint].course, pc[nextPaint].scale, xSize, ySize);
+				pc[nextPaint].course, pc[nextPaint].scale, xSize,
+							(screenPc.trace.getLayoutMode() == Trace.LAYOUTMODE_HALF_MAP) ? (int) (ySize / 2) : ySize);
 //		System.out.println("p  =" + p1);
 		nextSc.setP(p);
 		screenPc.setP(p);
@@ -436,6 +482,9 @@ public class ImageCollector implements Runnable {
 		}
 		int screenXCenter = xSize / 2 - xScreenOverscan;
 		int screenYCenter = ySize / 2 - yScreenOverscan;
+		if (paintPC.trace.getLayoutMode() == Trace.LAYOUTMODE_HALF_MAP) {
+			screenYCenter = ySize / 4 - yScreenOverscan;
+		}
 		int newXCenter = screenXCenter;
 		int newYCenter = screenYCenter;
 
@@ -617,12 +666,26 @@ public class ImageCollector implements Runnable {
 
 		LayoutElement e = Trace.tl.ele[TraceLayout.WAYNAME];
 		if (showLatLon) {
+//#if polish.api.finland
+			// show Finnish ETRS-TM35FIN coordinates
+			// FIXME: add a config option for selection of coordinates
+			if (true) {
+				PositionMark pmETRS = ETRSTM35FINconvert.latlonToEtrs(paintPC.center.radlat, paintPC.center.radlon);
+				e.setText(Locale.get("imagecollector.lat")/* lat: */
+					  + Float.toString(pmETRS.lat)
+					  + " " + Locale.get("imagecollector.lon")/* lon: */
+					  + Float.toString(pmETRS.lon));
+			} else {
+//#endif
 			e.setText(Locale.get("imagecollector.lat")/* lat: */
 				  + Float.toString(paintPC.center.radlat
 						   * MoreMath.FAC_RADTODEC)
-				  + Locale.get("imagecollector.lon")/* lon: */
+				  + " " + Locale.get("imagecollector.lon")/* lon: */
 				  + Float.toString(paintPC.center.radlon
 						   * MoreMath.FAC_RADTODEC));
+//#if polish.api.finland
+			}
+//#endif
 		} else {
 			if (name != null && name.length() > 0) {
 				e.setText(name);

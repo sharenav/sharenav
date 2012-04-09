@@ -29,6 +29,10 @@ import de.ueller.util.Logger;
 
 import de.enough.polish.util.Locale;
 
+//#if polish.android
+import android.view.KeyEvent;
+//#endif
+
 public class KeySelectMenu extends Canvas implements
 		GpsMidDisplayable, CommandListener {
 
@@ -404,6 +408,13 @@ public class KeySelectMenu extends Canvas implements
 			if (carret > 0) {
 				searchCanon.deleteCharAt(--carret);
 			}
+		//#if polish.android
+		} else if (keyCode == KeyEvent.KEYCODE_BACK) {
+			// FIXME With this there's the problem that Back gets passed on to the next menu
+			// (e.g. route mode asking). See http://developer.android.com/sdk/android-2.0.html
+			// for Native Android workaround; not sure how to do this with J2MEPolish
+			commandAction(BACK_CMD, (Displayable) null);
+		//#endif
 		} else {
 			// filter out special keys such as shift key (-50), volume keys,
 			// camera keys...

@@ -212,8 +212,11 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			throwError(e, "Reading nodes", tt);
 		}
 		logger.info("read nodes");
-		readVerify((byte) 0x55,"start of ways " ,ds,tt);
+		readVerify((byte) 0x55,"start of ways " ,ds);
 		int wayCount = ds.readShort();
+		if (wayCount < 0) {
+			wayCount += 65536;
+		}
 //		logger.trace("reading " + wayCount + " ways");
 		int lastread = 0;
 		try {
@@ -283,9 +286,10 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			throwError(e, "Ways (last ok index " + lastread + " out of " + 
 					wayCount + ")", tt);
 		}
-		readVerify((byte) 0x56,"read final magic value",ds,tt);
+		readVerify((byte) 0x56,"read final magic value",ds);
 	}
-	private void readVerify(byte expect,String msg,DataInputStream is, Tile tt){
+	
+	private void readVerify(byte expect,String msg,DataInputStream is){
 		try {
 			byte next=is.readByte();
 			if (next == expect) {
@@ -324,14 +328,14 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		ret.append("\nliving ");
 		for (loop = 0; loop < livingQueue.size(); loop++) {
 			tt = (SingleTile) livingQueue.elementAt(loop);
-			ret.append(tt.toString());
-			ret.append(" ");
+			ret.append(tt.toString())
+			   .append(" ");
 		}
 		ret.append("\nrequest ");
 		for (loop = 0; loop < requestQueue.size(); loop++) {
 			tt = (SingleTile) requestQueue.elementAt(loop);
-			ret.append(tt.toString());
-			ret.append(" ");
+			ret.append(tt.toString())
+			   .append(" ");
 		}
 		return ret.toString();
 	}

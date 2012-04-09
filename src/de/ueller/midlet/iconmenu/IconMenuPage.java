@@ -5,6 +5,7 @@
 
 package de.ueller.midlet.iconmenu;
 
+import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.ui.GpsMid;
 
@@ -71,12 +72,12 @@ public class IconMenuPage extends LayoutManager {
 	
 	public void loadIconBackgroundImage() {
 		// load icon background image
-		this.bgImage = loadIconImage("i_bg.png");
+		this.bgImage = loadIconImage(Configuration.getIconPrefix() + "i_bg.png");
 	}
 
 	public void loadIconHighlighterImage() {
 		// load icon highlighter image
-		this.hlImage = loadIconImage("i_hl.png");
+		this.hlImage = loadIconImage(Configuration.getIconPrefix() + "i_hl.png");
 	}
 
 	public void setCursor(int eleId) {
@@ -151,6 +152,9 @@ public class IconMenuPage extends LayoutManager {
 		if (currentRow + offsRow < 0) { // bottom boundary
 			return false;
 		}
+		if (currentRow + offsRow >= numRows) { // Bottom boundary coming from top
+			return false;
+		}
 //		if (currentY + offsY >= numRows) { // Bottom boundary coming from top
 //			return false;
 //		}
@@ -167,7 +171,7 @@ public class IconMenuPage extends LayoutManager {
 	}
 	
 	private int getEleId(int col, int row) {
-		if (numCols == 3) {
+		if (numCols != 4) { // 3 or more than 4
 			return col + row * numCols;
 		} else { // numCols == 4 - arrange elements similarly as they are arranged in the 3-column setup
 			if (col == 3) {
@@ -180,6 +184,10 @@ public class IconMenuPage extends LayoutManager {
 	
 	protected int getActiveEleActionId() {
 		return this.getElementAt(rememberEleId).actionID;
+	}
+
+	protected String getActiveEleChoiceName() {
+		return this.getElementAt(rememberEleId).getText();
 	}
 	
 	

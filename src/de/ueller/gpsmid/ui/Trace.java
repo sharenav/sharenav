@@ -27,8 +27,11 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
+import javax.microedition.lcdui.TextField;
 //#if polish.android
+import android.os.Looper;
 import android.view.WindowManager;
 //#else
 import javax.microedition.lcdui.game.GameCanvas;
@@ -89,6 +92,7 @@ import de.ueller.gpsmid.tile.Tile;
 import de.ueller.midlet.iconmenu.IconActionPerformer;
 import de.ueller.midlet.iconmenu.LayoutElement;
 import de.ueller.midlet.ui.CompletionListener;
+import de.ueller.midlet.util.ImageTools;
 import de.ueller.util.CancelMonitorInterface;
 import de.ueller.util.DateTimeTools;
 import de.ueller.util.HelperRoutines;
@@ -169,8 +173,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	protected static final int CELLID_LOCATION_CMD = 59;
 	protected static final int MANUAL_LOCATION_CMD = 60;
 	protected static final int EDIT_ENTITY = 61;
+	protected static final int NORTH_UP_CMD = 62;
+	protected static final int HELP_ONLINE_TOUCH_CMD = 63;
+	protected static final int HELP_ONLINE_WIKI_CMD = 64;
+	protected static final int KEYS_HELP_CMD = 65;
+	protected static final int ROUTE_TO_FAVORITE_CMD = 66;
+	protected static final int ROTATE_TRAVEL_MODE_CMD = 67;
 
-	private final Command [] CMDS = new Command[62];
+	private final Command [] CMDS = new Command[68];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -182,6 +192,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public final static int DISTANCE_ROAD = 3;
 	public final static int DISTANCE_AIR = 4;
 	public final static int DISTANCE_UNKNOWN = 5;
+
+	public final static int LAYOUTMODE_MAP_WITH_OVERLAYS = 1;
+	public final static int LAYOUTMODE_HALF_MAP = 2;
 
 //	private SirfInput si;
 	private LocationMsgProducer locationProducer;
@@ -369,6 +382,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	 */
 	private int course = 0;
 	private int coursegps = 0;
+	// is current course valid for deciding on how to route
+	private boolean courseValid = false;
 
 	public boolean atDest = false;
 	public boolean movedAwayFromDest = true;
@@ -385,6 +400,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	private final Runtime runtime = Runtime.getRuntime();
 
+	private StringBuffer sbTemp = new StringBuffer();
+	private long lLastDragTime = 0;
+	
 	private RoutePositionMark dest = null;
 	
 	WaySegment waySegment = new WaySegment();
@@ -400,7 +418,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	
 	private static volatile Trace traceInstance = null;
 
-	private Routing	routeEngine;
+	private volatile Routing	routeEngine;
 
 	/*
 	private static Font smallBoldFont;
@@ -411,8 +429,17 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	
 	public Vector locationUpdateListeners;
 	private Projection panProjection;
-	
-	
+
+	// FIXME add UI switch for this; perhaps a flag named
+	// "show half-size map in icon menu", then
+	// icon menu with predefined waypoints can be used
+	// to enter waypoints without switching all the
+	// time between map & icon menu
+	//private int layoutMode = LAYOUTMODE_HALF_MAP;
+	private int layoutMode = LAYOUTMODE_MAP_WITH_OVERLAYS;
+
+	private GuiWaypointPredefinedForm mForm;
+
 	private Trace() throws Exception {
 		//#debug
 		logger.info("init Trace");
@@ -482,6 +509,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		CMDS[EDIT_ADDR_CMD] = new Command(Locale.get("trace.AddAddrNode")/*Add Addr node*/,Command.ITEM,100);
 		CMDS[CELLID_LOCATION_CMD] = new Command(Locale.get("trace.CellidLocation")/*Set location from CellID*/,Command.ITEM,100);
 		CMDS[MANUAL_LOCATION_CMD] = new Command(Locale.get("trace.ManualLocation")/*Set location manually*/,Command.ITEM,100);
+		CMDS[HELP_ONLINE_TOUCH_CMD] = new Command(Locale.get("guidiscovericonmenu.Touch")/**/,Command.ITEM,100);
+		CMDS[HELP_ONLINE_WIKI_CMD] = new Command(Locale.get("guidiscovericonmenu.Wiki")/**/,Command.ITEM,100);
+		CMDS[KEYS_HELP_CMD] = new Command(Locale.get("guidiscover.KeyShortcuts")/**/,Command.ITEM,100);
+		CMDS[ROUTE_TO_FAVORITE_CMD] = new Command(Locale.get("guidiscover.KeyShortcuts")/**/,Command.ITEM,100);
+		CMDS[ROTATE_TRAVEL_MODE_CMD] = new Command(Locale.get("guiroute.TravelBy")/**/,Command.ITEM,100);
 
 		addAllCommands();
 		
@@ -495,6 +527,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP, true);
 				// if the map display is wide enough, use big tab buttons by default
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS, true);
+			}
+			if (Math.max(getWidth(), getHeight()) > 400) {
+				Configuration.setBaseScale(24);				
+				Configuration.setMinRouteLineWidth(5);								
 			}
 			if (hasPointerEvents()) {
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_LARGE_FONT, true);
@@ -645,6 +681,26 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					}
 					//#endif
 					break;
+				case Configuration.LOCATIONPROVIDER_ANDROID:
+					//#if polish.android
+					try {
+						Class AndroidLocationInputClass = Class.forName("de.ueller.gps.location.AndroidLocationInput");
+						locationProducer = (LocationMsgProducer) AndroidLocationInputClass.newInstance();
+					} catch (ClassNotFoundException cnfe) {
+						locationDecoderEnd();
+						logger.exception(Locale.get("trace.NoAndroidSupport")/*Your phone does not support Android location API, please use a different location provider*/, cnfe);
+						running = false;
+						return;
+					}
+					//#else
+					// keep Eclipse happy
+					if (true) {
+						logger.error(Locale.get("trace.AndroidNotCompiledIn")/*Location API for Android is not compiled in this version of GpsMid*/);
+						running = false;
+						return;
+					}
+					//#endif
+					break;
 
 			}
 			
@@ -730,6 +786,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		} catch (Exception e) {
 			logger.fatal(Locale.get("trace.TraceThreadCrashWith")/*Trace thread crashed unexpectedly with error */ +  e.getMessage());
 			e.printStackTrace();
+		} catch (Throwable t) {
+			running = false;
 		} finally {
 			running = false;
 		}
@@ -954,7 +1012,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					|| (c == CMDS[PAN_UP2_CMD]) || (c == CMDS[PAN_DOWN2_CMD])) {
 				int panX = 0; int panY = 0;
 				int courseDiff = 0;
-				int backLightLevelDiff = 0;
+				int backLightLevelIndexDiff = 0;
 				if (c == CMDS[PAN_LEFT25_CMD]) {
 					panX = -25;
 				} else if (c == CMDS[PAN_RIGHT25_CMD]) {
@@ -971,7 +1029,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					} else {
 						panX = -2;
 					}
-					backLightLevelDiff = -25;
+					backLightLevelIndexDiff = -1;
 				} else if (c == CMDS[PAN_RIGHT2_CMD]) {
 					if (TrackPlayer.isPlaying) {
 						TrackPlayer.faster();
@@ -980,7 +1038,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					} else {
 						panX = 2;
 					}
-					backLightLevelDiff = 25;
+					backLightLevelIndexDiff = 1;
 				} else if (c == CMDS[PAN_UP2_CMD]) {
 					if (route!=null && Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_BROWSING)) {
 						RouteInstructions.toNextInstruction(1);
@@ -995,11 +1053,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					}
 				}
 				
-				if (backLightLevelDiff !=0  &&  System.currentTimeMillis() < (lastBackLightOnTime + 2500)) {
+				if (backLightLevelIndexDiff !=0  &&  System.currentTimeMillis() < (lastBackLightOnTime + 5000)) {
 					// turn backlight always on when dimming
 					Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, true, false);
 					lastBackLightOnTime = System.currentTimeMillis();
-					Configuration.addToBackLightLevel(backLightLevelDiff);
+					Configuration.addToBackLightLevel(backLightLevelIndexDiff);
 					parent.showBackLightLevel();
 				} else if (imageCollector != null) {
 					if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
@@ -1019,6 +1077,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 							course = 0; //N
 						} else {
 							course += courseDiff;
+							validateCourse();
 							course %= 360;
 							if (course < 0) {
 								course += 360;
@@ -1254,37 +1313,21 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				if (gpx.isLoadingWaypoints()) {
 					showAlertLoadingWpt();
 				} else {
-					PositionMark posMark = null;
-					if (gpsRecenter) {
-						// TODO: If we lose the fix the old position and height
-						// will be used silently -> we should inform the user
-						// here that we have no fix - he may not know what's going on.
-						posMark = new PositionMark(center.radlat, center.radlon,
-								(int)pos.altitude, pos.timeMillis,
-								/* fix */ (byte)-1, /* sats */ (byte)-1,
-								/* sym */ (byte)-1, /* type */ (byte)-1);
-					} else {
-						// Cursor does not point to current position
-						// -> it does not make sense to add elevation and GPS fix info.
-						posMark = new PositionMark(center.radlat, center.radlon,
-								PositionMark.INVALID_ELEVATION,
-								pos.timeMillis, /* fix */ (byte)-1,
-								/* sats */ (byte)-1, /* sym */ (byte)-1,
-								/* type */ (byte)-1);
-					}
+					PositionMark posMark = getPosMark();
 					/*
-					if (Configuration.getCfgBitState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF)) {
-        				if (guiWaypointPredefined == null) {
-        					guiWaypointPredefined = new GuiWaypointPredefined(this);
-        				}
-        				if (guiWaypointPredefined != null) {
-        					guiWaypointPredefined.setData(posMark);
-        					guiWaypointPredefined.show();
-        				}
-					} else {
+					  if (Configuration.getCfgBitState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF)) {
+					  if (guiWaypointPredefined == null) {
+					  guiWaypointPredefined = new GuiWaypointPredefined(this);
+					  }
+					  if (guiWaypointPredefined != null) {
+					  guiWaypointPredefined.setData(posMark);
+					  guiWaypointPredefined.show();
+					  }
+					  } else {
+					  showGuiWaypointSave(posMark);
+					  }
 					*/
-						showGuiWaypointSave(posMark);
-					//}
+					showGuiWaypointSave(posMark);
 				}
 				return;
 			}
@@ -1481,12 +1524,41 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				setFullScreenMode(fullScreen);
 				return;
 			}
+			if (c == CMDS[HELP_ONLINE_TOUCH_CMD]) {
+				GuiWebInfo.openUrl(GuiWebInfo.getStaticUrlForSite(Locale.get("guiwebinfo.helptouch")));
+				return;
+			}
+			if (c == CMDS[HELP_ONLINE_WIKI_CMD]) {
+				GuiWebInfo.openUrl(GuiWebInfo.getStaticUrlForSite(Locale.get("guiwebinfo.helpwiki")));
+				return;
+			}
+			if (c == CMDS[KEYS_HELP_CMD]) {
+				GuiKeyShortcuts gks = new GuiKeyShortcuts(this);
+				gks.show();
+				return;
+			}
+			if (c == CMDS[ROTATE_TRAVEL_MODE_CMD]) {
+				int mode = Configuration.getTravelModeNr();
+				mode++;
+				if (mode >= Legend.getTravelModes().length) {
+					mode = 0;
+				}
+				Configuration.setTravelMode(mode);
+				return;
+			}
+			if (c == CMDS[NORTH_UP_CMD]) {
+				course = 0;
+				invalidateCourse();
+				alert(Locale.get("trace.ManualRotation"), Locale.get("trace.ManualToNorth"), 750);
+				return;
+			}
 			if (c == CMDS[TOGGLE_MAP_PROJ_CMD]) {
 				if (manualRotationMode) {
 					if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
 						compassDeviation = 0;
 					} else {
 						course = 0;
+						invalidateCourse();
 					}
 					alert(Locale.get("trace.ManualRotation"), Locale.get("trace.ManualToNorth"), 750);
 				} else {
@@ -1611,7 +1683,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				Position setpos = new Position(center.radlat / MoreMath.FAC_DECTORAD,
     								center.radlon / MoreMath.FAC_DECTORAD,
 								    PositionMark.INVALID_ELEVATION, 0.0f, 0.0f, 1,
-							            System.currentTimeMillis(), Position.TYPE_MANUAL);
+							       	    System.currentTimeMillis(), Position.TYPE_MANUAL);
 				// implies center to gps, to give feedback as the gps rectangle
 				gpsRecenter = true;
 				// gpsRecenterInvalid = true;
@@ -1716,6 +1788,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		int w = (this.getWidth() * 125) / 100;
 		int h = (this.getHeight() * 125) / 100;
 		*/
+		
+		// Ensure that only one image collector runs at the same time.
+		if ( imageCollector != null ) {
+			imageCollector.stop();
+			// alert("FIXME", "Avoided duplicate ImageCollector", 1500);
+		}
+		
 		imageCollector = new ImageCollector(tiles, this.getWidth(), this.getHeight(), this, images);
 //		projection = ProjFactory.getInstance(center,course, scale, getWidth(), getHeight());
 //		pc.setP(projection);
@@ -1752,6 +1831,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					// nothing to do in that case						
 				}
 			}
+		} else {
+			logger.fatal(Locale.get("legend.bigstyleserrtitle")/*Map format error*/ + " " + Configuration.getMapUrl());
+			commandAction(SETUP_CMD);
 		}
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTO_START_GPS)) {
 			Thread thread = new Thread(this, "Trace");
@@ -1813,10 +1895,24 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 	}
 	
+	public void restart() {
+		shutdown();
+		setBaseTilesRead(false);
+		tiles = new Tile[6];
+		try {
+			startup();
+		} catch (Exception e) {
+			logger.fatal(Locale.get("trace.GotExceptionDuringStartup")/*Got an exception during startup: */ + e.getMessage());
+			e.printStackTrace();
+			return;
+		}
+	}
+
 	public void sizeChanged(int w, int h) {
 		updateLastUserActionTime();
 		if (imageCollector != null) {
 			logger.info("Size of Canvas changed to " + w + "|" + h);
+			System.out.println("Size of Canvas changed to " + w + "|" + h);
 			stopImageCollector();
 			try {
 				startImageCollector();
@@ -1831,7 +1927,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			updatePosition();
 		}
 
-		tl = new TraceLayout(0, 0, w, h);
+		if (layoutMode == LAYOUTMODE_HALF_MAP) {
+			tl = new TraceLayout(0, 0, w, h / 2);
+		} else {
+			tl = new TraceLayout(0, 0, w, h);
+		}
 	}
 
 
@@ -1839,6 +1939,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		//#debug debug
 		logger.debug("Drawing Map screen");
 		
+		if (!Legend.isValid) {
+			commandAction(SETUP_CMD);
+		}
 		try {
 			int yc = 1;
 			int la = 18;
@@ -1883,6 +1986,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				// show the way bar even if ImageCollector is not running because it's necessary on touch screens to get to the icon menu
 				tl.ele[TraceLayout.WAYNAME].setText(" ");
 			}
+
+			lLastDragTime = System.currentTimeMillis();
 			
 			/* Beginning of voice instructions started from overlay code (besides showRoute above)
 			 */
@@ -1893,6 +1998,22 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				if (atDest) {
 					if (movedAwayFromDest && Configuration.getCfgBitState(Configuration.CFGBIT_SND_DESTREACHED)) {
 						GpsMid.mNoiseMaker.playSound(RouteSyntax.getInstance().getDestReachedSound(), (byte) 7, (byte) 1);
+					}
+					if (movedAwayFromDest
+					    && Configuration.getCfgBitState(Configuration.CFGBIT_STOP_ROUTING_AT_DESTINATION)) {
+						// stop routing
+						if (routeCalc) {
+							if (routeEngine != null) {
+								routeEngine.cancelRouting();
+							}
+						}
+						endRouting();
+						// redraw immediately
+						synchronized (this) {
+							if (imageCollector != null) {
+								imageCollector.newDataReady();
+							}
+						}
 					}
 				} else if (!movedAwayFromDest) {
 					movedAwayFromDest = true;
@@ -1967,7 +2088,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 										  solution == LocationMsgReceiver.STATUS_MANUAL)) {
 					eSolution.setText(Locale.get("solution.Off")/*Off*/);
 				} else {
-					eSolution.setText(solutionStr);
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ACCURACY) && pos.accuracy != Float.NaN && pos.accuracy > 0) {
+						eSolution.setText(solutionStr + "/" + (int) pos.accuracy);
+					} else {
+						eSolution.setText(solutionStr);
+					}
 				}
 			}
 
@@ -1983,6 +2108,29 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				e.setText(Locale.get("trace.cellIDs")/*cellIDs*/);
 			}
 
+			// Display tile and paint state
+			if ( true ) {
+				sbTemp.setLength(0);
+				e = tl.ele[TraceLayout.REQUESTED_TILES];
+				if (tileReader.getRequestQueueSize() != 0) {
+					// Display the number of not yet loaded tiles.
+					sbTemp.append("T ");
+					sbTemp.append( tileReader.getRequestQueueSize());
+				}
+				if (imageCollector != null && imageCollector.iDrawState != 0 ) {
+					// Display a + if the image collector prepares the image.
+					if ( imageCollector.iDrawState == 1 )
+						sbTemp.append("+");
+					// Display a * if the image collector is drawing.
+					else if ( imageCollector.iDrawState == 2 )
+						sbTemp.append("*");
+				}
+				if (sbTemp.length() != 0 )	{
+					e.setText(sbTemp.toString());
+				}
+			}
+
+			
 			// show audio recording status
 			e = tl.ele[TraceLayout.AUDIOREC];
 			if (audioRec.isRecording()) {
@@ -2018,9 +2166,24 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				e.setText(Locale.get("trace.Air")/*Air:*/ + showDistance((int) distLine, DISTANCE_AIR));
 			}
 			
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_TRAVEL_MODE_IN_MAP)) {
+				e = tl.ele[TraceLayout.TRAVEL_MODE];
+				e.setText(Configuration.getTravelMode().getName());
+			}
+
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP)) {
 				e = tl.ele[TraceLayout.CURRENT_TIME]; // e is used *twice* below (also as vRelative)
-				e.setText(DateTimeTools.getClock(System.currentTimeMillis(), true));
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_GPS_TIME)) {
+					if (pos.gpsTimeMillis != 0) {
+						e.setText(DateTimeTools.getClock(pos.gpsTimeMillis + Configuration.getTimeDiff()*1000*60, true));
+					} else if (Configuration.getCfgBitState(Configuration.CFGBIT_GPS_TIME_FALLBACK)) {
+						e.setText(DateTimeTools.getClock(System.currentTimeMillis() + Configuration.getTimeDiff()*1000*60, true));
+					} else {
+						e.setText(" ");
+					}
+				} else {
+					e.setText(DateTimeTools.getClock(System.currentTimeMillis() + Configuration.getTimeDiff()*1000*60, true));
+				}
 
  				/*
 				don't use new Date() - it is very slow on some Nokia devices
@@ -2296,20 +2459,22 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 	
 	private void setPointOfTheCompass() {
-		String c = "";
+		StringBuffer c = new StringBuffer(5);
 		if (ProjFactory.getProj() != ProjFactory.NORTH_UP
 				&& Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS)) {
-			c = Configuration.getCompassDirection(course);
+			c.append(Configuration.getCompassDirection(course));
 		}
-		// if tl shows big onscreen buttons add spaces to compass directions consisting of only one char or not shown
-		if (tl.bigOnScreenButtons && c.length() <= 1) {
+		// if tl shows big onscreen buttons add spaces to short compass directions
+		if (tl.bigOnScreenButtons) {
 			if (ProjFactory.getProj() == ProjFactory.NORTH_UP) {
-				c = "(" + Configuration.getCompassDirection(0) + ")";
-			} else {
-				c = " " + c + " ";
+				c.setLength(0);
+				c.append('(').append(Configuration.getCompassDirection(0)).append(')');
+			}
+			while (c.length() <= 3) {
+				c.insert(0,' ').append(' ');
 			}
 		}
-		tl.ele[TraceLayout.POINT_OF_COMPASS].setText(c);
+		tl.ele[TraceLayout.POINT_OF_COMPASS].setText(c.toString());
 	}
 	
 	private int showConnectStatistics(Graphics g, int yc, int la) {
@@ -2386,11 +2551,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					Graphics.TOP | Graphics.HCENTER);
 			}
 			pc.g.setStrokeStyle(Graphics.SOLID);
-			waySegment.drawWideLine(
+			waySegment.drawWideLineSimple(
 				Legend.COLORS[Legend.COLOR_DEST_LINE],
 				new IntPoint(pc.getP().getImageCenter().x - imageCollector.xScreenOverscan, pc.getP().getImageCenter().y - imageCollector.yScreenOverscan),
 				new IntPoint(x, y),
-				Configuration.getDestLineWidth(), 0, pc
+				Configuration.getDestLineWidth(), pc
 			);
 			
 		}
@@ -2600,6 +2765,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		return System.currentTimeMillis() - lastUserActionTime;
 	}
 	
+	public int getCourse() {
+		return course;
+	}
+	
 	public void updateCourse(int newcourse) {
 		coursegps = newcourse;
 		/*  don't rotate too fast
@@ -2633,6 +2802,18 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		while (course > 360) {
 			course -= 360;
 		}
+		validateCourse();
+	}
+
+	public boolean isCourseValid() {
+		return courseValid;
+	}
+	private void invalidateCourse() {
+		courseValid = false;
+	}
+
+	private void validateCourse() {
+		courseValid = true;
 	}
 
 	public synchronized void receivePosition(Position pos) {
@@ -2741,6 +2922,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				}
 			}
 		}
+		pos.altitude += Configuration.getAltitudeCorrection();
+		altitude = (int) (pos.altitude);
 		if (gpx.isRecordingTrk()) {
 			try {
 				// don't tracklog manual cellid position or gps start/stop last known position
@@ -2753,7 +2936,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				receiveMessage(e.getMessage());
 			}
 		}
-		altitude = (int) (pos.altitude);
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTOZOOM)
 				&& gpsRecenter
 				&& (isGpsConnected() || TrackPlayer.isPlaying)
@@ -3062,6 +3244,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 //			System.out.println("diff " + diffX + "/" + diffY + "  " + (pickPointEnd.radlat-pickPointStart.radlat) + "/" + (pickPointEnd.radlon-pickPointStart.radlon) ); 
 			imageCollector.newDataReady();
 			gpsRecenter = false;
+
+			long lCurrentTime = System.currentTimeMillis();
+			if ( lCurrentTime - lLastDragTime > 333) {
+				lLastDragTime = lCurrentTime;
+				repaint();
+			}
 		}
 	}
 	
@@ -3107,7 +3295,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			if (actionId > 0) {
 				// #debug debug
 				logger.debug("single tap button: " + actionId + " x: " + touchX + " y: " + touchY);
-				if (System.currentTimeMillis() < (lastBackLightOnTime + 2500)) {
+				if (System.currentTimeMillis() < (lastBackLightOnTime + 5000)) {
 					if (actionId == ZOOM_IN_CMD) {
 						actionId = PAN_RIGHT2_CMD;
 					} else if (actionId == ZOOM_OUT_CMD) {
@@ -3276,6 +3464,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				GpsMid.mNoiseMaker.playSound("DISCONNECT");
 			}
 		}
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_GPS_TIME)) {
+			pos.gpsTimeMillis = 0;
+		}
 		//if (gpx != null) {
 		//	/**
 		//	 * Close and Save the gpx recording, to ensure we don't loose data
@@ -3301,10 +3492,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		    && status != LocationMsgReceiver.STATUS_2D
 		    && status != LocationMsgReceiver.STATUS_3D
 		    && status != LocationMsgReceiver.STATUS_DGPS) {
-			// no fix, invalidate speed heuristic
+			// no fix, invalidate speed heuristic and GPS time
 			prevCourse = -1;
 			secondPrevCourse = -1;
 			thirdPrevCourse = -1;
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_GPS_TIME)) {
+				pos.gpsTimeMillis = 0;
+			}
 		}
 		// FIXME signal a sound on location gained or lost
 		solution = status;
@@ -3359,7 +3553,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 	
 	public void recreateTraceLayout() {
-		tl = new TraceLayout(0, 0, getWidth(), getHeight());
+		if (layoutMode == LAYOUTMODE_HALF_MAP) {
+			tl = new TraceLayout(0, 0, getWidth(), getHeight()/2);
+		} else {
+			tl = new TraceLayout(0, 0, getWidth(), getHeight());
+		}
 	}
 
 	public void resetSize() {
@@ -3375,6 +3573,27 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		return dest;
 	}
 
+	public PositionMark getPosMark() {
+		PositionMark posMark = null;
+		if (gpsRecenter) {
+			// TODO: If we lose the fix the old position and height
+			// will be used silently -> we should inform the user
+			// here that we have no fix - he may not know what's going on.
+			posMark = new PositionMark(center.radlat, center.radlon,
+						   (int)pos.altitude, pos.timeMillis,
+						   /* fix */ (byte)-1, /* sats */ (byte)-1,
+						   /* sym */ (byte)-1, /* type */ (byte)-1);
+		} else {
+			// Cursor does not point to current position
+			// -> it does not make sense to add elevation and GPS fix info.
+			posMark = new PositionMark(center.radlat, center.radlon,
+						   PositionMark.INVALID_ELEVATION,
+						   pos.timeMillis, /* fix */ (byte)-1,
+						   /* sats */ (byte)-1, /* sym */ (byte)-1,
+						   /* type */ (byte)-1);
+		}
+		return posMark;
+	}
 	public void setDestination(RoutePositionMark dest) {
 		endRouting();
 		this.dest = dest;
@@ -3428,6 +3647,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				resumeImageCollectorAfterRouteCalc();
 			}
 			ri.newRoute(this.route);
+
+			if (routeEngine != null) {
+				if (routeEngine.routeStartsAgainstMovingDirection) {
+					ri.forceAgainstDirection();
+				}
+			} else {
+				alert("Warning", "routeEngine==null", 3000);
+			}
 			oldRecalculationTime = System.currentTimeMillis();
 		}
 		// show map always after route calculation
@@ -3534,6 +3761,22 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		traceIconMenu = null;
 	}
 	
+	/** paint big direction arrows for navigation */
+	public void setRouteIcon(PaintContext pc, int iconNumber, Image origIcon) {
+		// FIXME would it be better for this to be an element in TraceLayout?
+		// Probably at least if the distance and optionally streetname
+		// are added to information shown
+		if (origIcon != null) {
+			int height = getHeight() / 7;
+			int width = height;
+			Image icon = ImageTools.scaleImage(origIcon, width, height);
+			pc.g.drawImage(icon, (getHeight() >= 320 ? 5 : 30),
+				       15 + getHeight()/40
+				       + iconNumber * (height + getHeight()/40),
+				       Graphics.TOP|Graphics.LEFT);
+		}
+	}
+
 	/** interface for IconMenuWithPages: recreate the icon menu from scratch and show it (introduced for reflecting size change of the Canvas) */
 	public void recreateAndShowIconMenu() {
 		uncacheIconMenu();
@@ -3542,7 +3785,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	
 		
 	/** interface for received actions from the IconMenu GUI */
-	public void performIconAction(int actionId) {
+	public void performIconAction(int actionId, String choiceName) {
+		System.out.println("choiceName: " + choiceName);
 		show();
 		updateLastUserActionTime();
 		// when we are low on memory or during route calculation do not cache the icon menu (including scaled images)
@@ -3551,7 +3795,44 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			logger.info("low mem: Uncaching traceIconMenu");
 			uncacheIconMenu();
 		}
-		if (actionId != IconActionPerformer.BACK_ACTIONID) {
+		if (actionId == SAVE_WAYP_CMD && gpx != null && choiceName != null) {
+			if (gpx.isLoadingWaypoints()) {
+				showAlertLoadingWpt();
+			} else {
+				PositionMark posMark = getPosMark();
+				if (choiceName.indexOf("%s") != -1) {
+					mForm = new GuiWaypointPredefinedForm(this, this);
+					mForm.setData(choiceName, choiceName, TextField.ANY, posMark);
+					mForm.show();
+				} else if (choiceName.indexOf("%f") != -1) {
+					mForm = new GuiWaypointPredefinedForm(this, this);
+					mForm.setData(choiceName, choiceName, TextField.DECIMAL, posMark);
+					mForm.show();
+				} else {
+					posMark.displayName = choiceName;
+				}
+				gpx.addWayPt(posMark);
+				newDataReady();
+			}
+			return;
+		} else if (actionId == ROUTE_TO_FAVORITE_CMD && gpx != null && choiceName != null) {
+			// set destination from choiceName
+			choiceName += "*";
+			Vector wpt = gpx.listWayPoints();
+			PositionMark[] wayPts = new PositionMark[wpt.size()];
+			wpt.copyInto(wayPts);
+			PositionMark result = null;
+			for (int i = 0; i < wayPts.length; i++ ) {
+				if (choiceName.equals(wayPts[i].displayName)) {
+					result = wayPts[i];
+				}
+			}
+			if (result != null) {
+				RoutePositionMark pm1 = new RoutePositionMark(result.lat, result.lon);
+				setDestination(pm1);
+				commandAction(ROUTING_START_CMD);
+			}
+		} else if (actionId != IconActionPerformer.BACK_ACTIONID) {
 			commandAction(actionId);
 		}
 	}
@@ -3611,5 +3892,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return Integer.toString((int)(meters / 0.9144 + 0.5f)) + Locale.get("guitacho.yd");
 			}
 		}
+	}
+	public int getLayoutMode() {
+		return layoutMode;
 	}
 }

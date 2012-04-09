@@ -88,6 +88,8 @@ public class NmeaMessage {
 	private final LocationMsgReceiver receiver;
 	/** The number of satellites received (field 6 from message GGA) */
 	private int mAllSatellites;
+	/** The number of satellites received (from GSV) */
+	private int gsvSatellites;
 	/** Quality of data, 0 = no fix, 1 = GPS, 2 = DGPS */
 	private int qual;
 	/** Flag if last received message was GSV */
@@ -100,7 +102,8 @@ public class NmeaMessage {
 	private final Position pos = new Position(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1, 0);
 	/** Needed to turn GPS time and date (which are in UTC) into timeMillis */
 	private final Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-
+	/** Count exceptions and stop giving them when there's a bunch */
+	private int exceptionCount;
 
 	public NmeaMessage(LocationMsgReceiver receiver) {
 		this.receiver = receiver;
@@ -111,7 +114,7 @@ public class NmeaMessage {
 	}
 	
 	public void decodeMessage() {
-		decodeMessage(buffer.toString(), true);
+		decodeMessage(buffer.toString(), true, true);
 	}
 
 	public Position getPosition() {
@@ -128,15 +131,20 @@ public class NmeaMessage {
 	 * @param nmea_sentence The NMEA sentence to be decoded
 	 * @param receivePositionIsAllowed Set to true if it is allowed to forward 
 	 * 		a new position from the NMEA sentence to the LocationMsgReceiver.
+	 * @param receiveSatellitesIsAllowed Set to true if it is allowed to forward 
+	 * 		satellite info from the NMEA sentence to the LocationMsgReceiver.
 	 */
-	public void decodeMessage(String nmea_sentence, boolean receivePositionIsAllowed) {
+	public void decodeMessage(String nmea_sentence, boolean receivePositionIsAllowed,
+				  boolean receiveSatellitesIsAllowed) {
 		
         Vector param = StringTokenizer.getVector(nmea_sentence, spChar);
 		String sentence = (String)param.elementAt(0);
 		try {
 //			receiver.receiveMessage("got " + buffer.toString() );
 			if (lastMsgGSV && ! "GSV".equals(sentence)) {
-	            receiver.receiveSatellites(satellites);
+				if (receiveSatellitesIsAllowed) {
+					receiver.receiveSatellites(satellites);
+				}
 	            lastMsgGSV = false;
 			}
 			if ("GGA".equals(sentence)) {
@@ -164,7 +172,8 @@ public class NmeaMessage {
 				mAllSatellites = getIntegerToken((String)param.elementAt(7));
 				
 				// Relative accuracy of horizontal position
-				
+				pos.hdop = getFloatToken((String)param.elementAt(8));
+
 				// meters above mean sea level
 				alt = getFloatToken((String)param.elementAt(9));
 				// Height of geoid above WGS84 ellipsoid
@@ -220,7 +229,11 @@ public class NmeaMessage {
 				// Get Date from Calendar
 				dateDecode = cal.getTime();
 				// Get milliSecs since 01-Jan-1970 from Date
-				pos.timeMillis = dateDecode.getTime();
+				pos.gpsTimeMillis = dateDecode.getTime();
+				// FIXME? does this make sense? Not to me, elsewhere pos.timeMillis is from system time, not GPS time.
+				// in practice, this creates confusion at least in GuiTacho, which can show either system time or GPS
+				// time on the tacho display
+				pos.timeMillis = pos.gpsTimeMillis;
 				
 				if (receivePositionIsAllowed) {
 					receiver.receivePosition(pos);
@@ -270,9 +283,11 @@ public class NmeaMessage {
 					}
 				}
 				/**
-				 * PDOP (dilution of precision)
+				 * PDOP & HDOP (dilution of precision)
 				 */
 				pos.pdop = getFloatToken((String)param.elementAt(15));
+				pos.hdop = getFloatToken((String)param.elementAt(16));
+				pos.vdop = getFloatToken((String)param.elementAt(17));
 				/**
 			     *  Horizontal dilution of precision (HDOP)
 			     *  Vertical dilution of precision (VDOP)
@@ -285,6 +300,9 @@ public class NmeaMessage {
 	            int j;
 	            // Calculate which satellites are in this message (message number * 4)
 	            j = (getIntegerToken((String)param.elementAt(2)) - 1) * 4;
+		    if (getIntegerToken((String)param.elementAt(2)) == 1) {
+			    gsvSatellites = 0;
+		    }
 	            int noSatInView =(getIntegerToken((String)param.elementAt(3)));
 	            for (int i = 4; i < param.size() && j < 12; i += 4, j++) {
 	            	if (satellites[j] == null) {
@@ -294,18 +312,39 @@ public class NmeaMessage {
 	            	satellites[j].elev = getIntegerToken((String)param.elementAt(i + 1));
 	            	satellites[j].azimut = getIntegerToken((String)param.elementAt(i + 2));
 	            	satellites[j].snr = getIntegerToken((String)param.elementAt(i + 3));
+			/** The number of satellites received (from GSV) */
+			if (satellites[j].snr != 0) {
+				gsvSatellites++;
+			}
 	            }
 	            lastMsgGSV = true;
 	            for (int i = noSatInView; i < 12; i++) {
 	            	satellites[i] = null;
 	            }
 	            if (getIntegerToken((String)param.elementAt(2)) == getIntegerToken((String)param.elementAt(1))) {
-	            	receiver.receiveSatellites(satellites);
+			    mAllSatellites = gsvSatellites;
+			    if (receiveSatellitesIsAllowed) {
+				    receiver.receiveSatellites(satellites);
+			    }
 		            lastMsgGSV = false;
 	            }
 			}
 		} catch (RuntimeException e) {
-			logger.exception(Locale.get("nmeamessage.ErrorDecoding")/*Error while decoding */ + sentence, e);
+			if (checkExceptionCount()) {
+				logger.exception(Locale.get("nmeamessage.ErrorDecoding")/*Error while decoding */ + sentence, e);
+			}
+		}
+	}
+
+	private boolean checkExceptionCount() {
+		exceptionCount++;
+		if (exceptionCount < 3) {
+			return true;
+		} else if (exceptionCount == 3) {
+			logger.error(Locale.get("nmeamessage.TooManyErrors")/*Too many exceptions, stoppping reporting them*/);
+			return false;
+		} else {
+			return false;
 		}
 	}
 

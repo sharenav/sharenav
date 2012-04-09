@@ -61,6 +61,7 @@ import de.enough.polish.util.Locale;
 //#if polish.android
 import de.enough.polish.android.midlet.MidletBridge;
 import android.os.PowerManager;
+import android.view.WindowManager;
 import android.os.PowerManager.WakeLock;
 import android.content.Context;
 //#endif
@@ -293,6 +294,10 @@ public class GpsMid extends MIDlet implements CommandListener {
 			    .getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)) {
 				stopBackLightTimer();
 			}
+			if (Configuration
+			    .getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WINDOW_MANAGER)) {
+				stopBackLightTimer();
+			}
 //#endif
 			destroyApp(true);
 		} catch (MIDletStateChangeException e) {
@@ -331,6 +336,12 @@ public class GpsMid extends MIDlet implements CommandListener {
 			trace.alert(title, message, timeout);
 		} else {
 			Alert alert = new Alert(title);
+			// FIXME when back key works, 
+			//#if polish.android
+			if (timeout == Alert.FOREVER) {
+				timeout = 10000;
+			}
+			//#endif
 			alert.setTimeout(timeout);
 			alert.setString(message);
 			alert.setCommandListener(this);
@@ -493,7 +504,8 @@ public class GpsMid extends MIDlet implements CommandListener {
 				|| Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH)
 				|| Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS)
 				|| Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SAMSUNG)
-			      || Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)))
+				|| Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)
+				|| Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WINDOW_MANAGER)))
 			{
 				log.error("Backlight cannot be kept on when no 'with'-method is specified in Setup");
 				// turn backlight off to avoid repeating the warning above
@@ -548,8 +560,10 @@ public class GpsMid extends MIDlet implements CommandListener {
 												"GpsMid");
 											wl.acquire();
 										}
-										// Method to keep the backlight on
-										// on those phones that support the
+										// with Android WindowManager
+									} else if (Configuration
+											.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WINDOW_MANAGER)) {
+										MidletBridge.instance.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 										//#endif
 										//#if polish.api.min-siemapi
 									} else if (Configuration
@@ -609,8 +623,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 	}
 
 	public void showBackLightLevel() {
-		if ( Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON,
-				false) ) {
+		if ( Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON) ) {
 			if ( Configuration.getCfgBitState(
 					Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED) ) {
 				String level = Integer.toString(Configuration.getBackLightLevel());
@@ -641,6 +654,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 			wl.release();
 			wl = null;
 		}
+		MidletBridge.instance.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 //#endif
 		if (lightTimer != null) {
 			lightTimer.interrupt();

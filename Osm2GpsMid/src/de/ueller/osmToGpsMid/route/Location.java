@@ -102,6 +102,9 @@ public class Location {
 		this.street=str;
 	}
 
-
+	public String toPropertyString(int locationNr) {
+		return	"routeDest." + locationNr + ".lat = " + node.lat + "\r\n" +
+				"routeDest." + locationNr + ".lon = " + node.lon + "\r\n";
+	}
 
 }

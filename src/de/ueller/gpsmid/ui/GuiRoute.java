@@ -6,20 +6,28 @@ package de.ueller.gpsmid.ui;
 
 import javax.microedition.lcdui.*;
 
+import java.io.IOException;
+
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
+import de.ueller.midlet.util.ImageTools;
 import de.ueller.util.Logger;
 import de.enough.polish.util.Locale;
 
 
-public class GuiRoute extends Form implements CommandListener {
+public class GuiRoute extends Form implements CommandListener, ItemCommandListener {
 	private final static Logger logger = Logger.getInstance(GuiRoute.class,Logger.DEBUG);
 
-	// commands
-	private static final Command CMD_OK = new Command(Locale.get("generic.OK")/*Ok*/, GpsMidMenu.OK, 2);
-	private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.BACK, 3);
+	private static final Command CMD_SETUP_OK = new Command(Locale.get("generic.OK")/*Ok*/, GpsMidMenu.OK, 2);
+	private static final Command CMD_SETUP_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.BACK, 3);
+
+	// for route settings popup; want the back key on Android to cancel
+	private static final Command CMD_OK = new Command(Locale.get("generic.OK")/*Ok*/, Command.OK, 2);
+	private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, Command.BACK, 3);
 	
 	private ChoiceGroup routingTravelModesGroup;
+	private StringItem[] travelModeItems;
+	private ImageItem[] travelModeImages;
 	private Gauge gaugeRoutingEsatimationFac; 
 	private ChoiceGroup routingTurnRestrictionsGroup;
 	private ChoiceGroup continueMapWhileRouteing;
@@ -42,21 +50,76 @@ public class GuiRoute extends Form implements CommandListener {
 		this.parent = parent;
 
 		setCommandListener(this);
-		addCommand(CMD_OK);
-		addCommand(CMD_CANCEL);
 
 		this.useAsSetupDialog = useAsSetupDialog;
 		if (useAsSetupDialog) {
+			addCommand(CMD_SETUP_OK);
+			addCommand(CMD_SETUP_CANCEL);
 			setTitle(Locale.get("guiroute.RoutingOptions")/*Routing Options*/);
+		} else {
+			addCommand(CMD_OK);
+			addCommand(CMD_CANCEL);
 		}
 
 		String travelModes[] = new String[Legend.getTravelModes().length];
 		for (int i=0; i<travelModes.length; i++) {
 			travelModes[i]=Legend.getTravelModes()[i].travelModeName;
 		}
-		routingTravelModesGroup = new ChoiceGroup(Locale.get("guiroute.TravelBy")/*Travel by*/, Choice.EXCLUSIVE, travelModes, null);
-		routingTravelModesGroup.setSelectedIndex(Configuration.getTravelModeNr(), true);
-		append(routingTravelModesGroup);
+		if (useAsSetupDialog
+		    // FIXME consider if someone might want to use routing icons on other platforms too
+		    //#if polish.android
+		    //#else
+		    || true
+		    //#endif
+			) {
+			routingTravelModesGroup = new ChoiceGroup(Locale.get("guiroute.TravelBy")/*Travel by*/, Choice.EXCLUSIVE, travelModes, null);
+			routingTravelModesGroup.setSelectedIndex(Configuration.getTravelModeNr(), true);
+			append(routingTravelModesGroup);
+		} else {
+			travelModeItems = new StringItem[Legend.getTravelModes().length];
+			travelModeImages = new ImageItem[Legend.getTravelModes().length];
+			for (int i = 0; i < travelModes.length; i++) {
+				travelModeItems[i] = new StringItem(i == 0 ? Locale.get("guiroute.TravelBy")/*Travel by*/ : "", travelModes[i], StringItem.BUTTON);
+				// FIXME consider if someone might want to use routing icons on other platforms too
+				//#if polish.android
+				try {
+					Image image = Image.createImage("/" + Configuration.getIconPrefix() + "r_" + travelModes[i] + ".png");
+
+					float scale = image.getWidth() / this.getWidth() * 4;
+					if (scale < 1.0f) {
+						scale = 1;
+					}
+
+					travelModeImages[i] = new ImageItem(travelModes[i], 
+									    ImageTools.scaleImage(image, (int) (image.getWidth() / scale), (int) (image.getHeight() / scale)),
+									    ImageItem.LAYOUT_RIGHT, travelModes[i]);
+				} catch (IOException ioe) {
+				}
+				//#endif
+				if (useAsSetupDialog) {
+					travelModeItems[i].addCommand(CMD_SETUP_OK);
+					travelModeItems[i].setDefaultCommand(CMD_SETUP_OK);
+				} else {
+					travelModeItems[i].addCommand(CMD_OK);
+					travelModeItems[i].setDefaultCommand(CMD_OK);
+				}
+				travelModeItems[i].setItemCommandListener(this);
+				//#style formItem
+				append(travelModeItems[i]);
+				if (travelModeImages[i] != null) {
+					if (useAsSetupDialog) {
+						travelModeImages[i].addCommand(CMD_SETUP_OK);
+						travelModeImages[i].setDefaultCommand(CMD_SETUP_OK);
+					} else {
+						travelModeImages[i].addCommand(CMD_OK);
+						travelModeImages[i].setDefaultCommand(CMD_OK);
+					}
+					travelModeImages[i].setItemCommandListener(this);
+					//#style formItem
+					append(travelModeImages[i]);
+				}
+			}
+		}
 
 		gaugeRoutingEsatimationFac=new Gauge(Locale.get("guiroute.AllowPoorRoutes") + "/" + Locale.get("guiroute.CalculationSpeed")/*Calculation speed*/, true, 10, Configuration.getRouteEstimationFac());
 		append(gaugeRoutingEsatimationFac);
@@ -84,7 +147,7 @@ public class GuiRoute extends Form implements CommandListener {
 
 		tfMainStreetNetDistanceKm = new TextField(Locale.get("guiroute.DistanceToMainStreet")/*Distance in km to main street net (used for large route distances):*/, Integer.toString(Configuration.getMainStreetDistanceKm()), 5, TextField.DECIMAL);
 		append(tfMainStreetNetDistanceKm);
-		
+
 		String [] routingStrategyOpts = new String[3];
 		boolean[] selRoutingStrategy = new boolean[3];
 		routingStrategyOpts[0] = Locale.get("guiroute.LookForMotorways")/*Look for motorways*/; selRoutingStrategy[0]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_TRY_FIND_MOTORWAY);
@@ -117,12 +180,16 @@ public class GuiRoute extends Form implements CommandListener {
 			tfMinRouteLineWidth = new TextField(Locale.get("guiroute.MinimumWidth")/*Minimum width of route line*/, Integer.toString(Configuration.getMinRouteLineWidth()), 1, TextField.DECIMAL);
 			append(tfMinRouteLineWidth);
 			
-			String [] routingOpts = new String[4];
-			boolean[] selRouting = new boolean[4];
+			String [] routingOpts = new String[7];
+			boolean[] selRouting = new boolean[7];
 			routingOpts[0] = Locale.get("guiroute.AutoRecalculation")/*Auto recalculation*/; selRouting[0]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_AUTO_RECALC);
 			routingOpts[1] = Locale.get("guiroute.RouteBrowsing")/*Route browsing with up/down keys*/; selRouting[1]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_BROWSING);
 			routingOpts[2] = Locale.get("guiroute.HideQuietArrows")/*Hide quiet arrows*/; selRouting[2]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_HIDE_QUIET_ARROWS);
 			routingOpts[3] = Locale.get("guiroute.AskForRoutingOptions")/*Ask for Routing Options*/; selRouting[3]=!Configuration.getCfgBitSavedState(Configuration.CFGBIT_DONT_ASK_FOR_ROUTING_OPTIONS);
+			routingOpts[4] = Locale.get("guiroute.stopAtDest")/*Stop routing when at destination*/; selRouting[4]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_STOP_ROUTING_AT_DESTINATION);
+			routingOpts[5] = Locale.get("guiroute.maparrows")/*Show in-map arrows*/; selRouting[5]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_NAVI_ARROWS_IN_MAP);
+			routingOpts[6] = Locale.get("guiroute.bigarrows")/*Show big navigation arrows*/; selRouting[6]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_NAVI_ARROWS_BIG);
+
 			routingOptsGroup = new ChoiceGroup(Locale.get("guiroute.Other")/*Other*/, Choice.MULTIPLE, routingOpts ,null);
 			routingOptsGroup.setSelectedFlags(selRouting);
 			append(routingOptsGroup);
@@ -133,22 +200,50 @@ public class GuiRoute extends Form implements CommandListener {
 
 	}
 
+	public void commandAction(Command c, Item item) {
+		// set travel mode
+		// default to 0
+		int match = 0;
+		if (item != null) {
+			for (int i = 0; i < Legend.getTravelModes().length; i++) {
+				if (travelModeItems[i] == item) {
+					match = i;
+				}
+				if (travelModeImages[i] == item) {
+					match = i;
+				}
+				Configuration.setTravelMode(match);
+			}
+		}
+		// forward item command action to form
+		commandAction(c, (Displayable) null);
+	}
+
 	public void commandAction(Command c, Displayable d) {
 
-		if (c == CMD_CANCEL) {			
+		if (c == CMD_CANCEL || c == CMD_SETUP_CANCEL) {
 			parent.show();
 			return;
 		}
 
-		if (c == CMD_OK) {			
-			Configuration.setTravelMode(routingTravelModesGroup.getSelectedIndex());
+		if (c == CMD_OK || c == CMD_SETUP_OK) {
+			if (useAsSetupDialog
+			    // FIXME consider if someone might want to use routing icons on other platforms too
+			    //#if polish.android
+			    //#else
+			    || true
+			    //#endif
+				) {
+				Configuration.setTravelMode(routingTravelModesGroup.getSelectedIndex());
+			}
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION, (routingTurnRestrictionsGroup.getSelectedIndex() == 0) );			
 			Configuration.setRouteEstimationFac(gaugeRoutingEsatimationFac.getValue());
 
 			String km=tfMainStreetNetDistanceKm.getString(); 
-			Configuration.setMainStreetDistanceKm(
-					(int) (Float.parseFloat(km)) 
-			);
+			try {
+				Configuration.setMainStreetDistanceKm((int) (Float.parseFloat(km)));
+			} catch (NumberFormatException e) {
+			}
 
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_SUPPRESS_ROUTE_WARNING, routingWarningOptsGroup.isSelected(0));
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_USE_MOTORWAYS, routingAllowOptsGroup.isSelected(0));
@@ -174,12 +269,15 @@ public class GuiRoute extends Form implements CommandListener {
 						(int) (Float.parseFloat(w)) 
 				); 
 				
-				boolean[] selRouting = new boolean[4];
+				boolean[] selRouting = new boolean[7];
 				routingOptsGroup.getSelectedFlags(selRouting);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_AUTO_RECALC, selRouting[0]);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_BROWSING, selRouting[1]);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_HIDE_QUIET_ARROWS, selRouting[2]);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_DONT_ASK_FOR_ROUTING_OPTIONS, !selRouting[3]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_STOP_ROUTING_AT_DESTINATION, selRouting[4]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_NAVI_ARROWS_IN_MAP, selRouting[5]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_NAVI_ARROWS_BIG, selRouting[6]);
 
 				String s=tfTrafficSignalCalcDelay.getString(); 
 				Configuration.setTrafficSignalCalcDelay( 
@@ -187,7 +285,7 @@ public class GuiRoute extends Form implements CommandListener {
 				); 
 			
 			} else {
-				Trace.getInstance().performIconAction(Trace.ROUTING_START_CMD);
+				Trace.getInstance().performIconAction(Trace.ROUTING_START_CMD, null);
 			}
 			parent.show();
 			return;

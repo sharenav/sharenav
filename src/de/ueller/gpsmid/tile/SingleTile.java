@@ -18,6 +18,7 @@ import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.PaintContext;
 import de.ueller.gpsmid.data.SearchResult;
+import de.ueller.gpsmid.graphics.ImageCollector;
 import de.ueller.gpsmid.graphics.Proj3D;
 import de.ueller.gpsmid.graphics.Projection;
 import de.ueller.gpsmid.mapdata.Way;
@@ -151,6 +152,7 @@ public class SingleTile extends Tile implements QueueableTile {
 					 */
 					//#debug debug
 					logger.debug("Walk don't wait for TileData");
+					ImageCollector.htNotPaintedSingleTiles.put(this, this);
 					return;
 				} else {
 					synchronized (this) {
@@ -256,7 +258,10 @@ public class SingleTile extends Tile implements QueueableTile {
 								short destLat = (short)((pc.dest.lat - centerLat) * MoreMath.FIXPT_MULT);
 								short destLon = (short)((pc.dest.lon - centerLon) * MoreMath.FIXPT_MULT);
 								for (int i1 = 0; i1 < w.path.length; i1++) {
-									short s = w.path[i1];
+									int s = w.path[i1];
+									if (s < 0) {
+										s += 65536;
+									}
 									if ((Math.abs(nodeLat[s] - destLat) < 2) && 
 											(Math.abs(nodeLon[s] - destLon) < 2)) {
 										// logger.debug("found dest way");
@@ -325,7 +330,9 @@ public class SingleTile extends Tile implements QueueableTile {
 	public boolean cleanup(int level) {
 		if (state != STATE_NOTLOAD ) {
 			// logger.info("test tile unused fid:" + fileId + "c:"+lastUse);
-			if (lastUse > level) {
+			// Changed to >= because cleanup(0) to make it possible to clean
+			// lastUse 0 tiles.
+			if (lastUse >= level) { // previously: if (lastUse > level) {
 				abortPainting = true;
 				synchronized(this) {
 				// nodes = null;

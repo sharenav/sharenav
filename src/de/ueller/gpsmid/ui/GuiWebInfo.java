@@ -32,6 +32,13 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 	private Way actualWay;
 	private Trace trace;
 
+//#if polish.api.finland
+	// FIXME handle the API key some other way
+	private final static String reittiopasAuth = "";
+	private final static String reittiopasCoordSpec = "&epsg_in=wgs84&epsg_out=wgs84";
+	private final static String reittiopasUrl = "http://api.reittiopas.fi/hsl/prod/?" + reittiopasAuth + reittiopasCoordSpec;
+//#endif
+
 	public GuiWebInfo(GpsMidDisplayable parent, Position pos, PaintContext pc) {
 		super(Locale.get("guiwebinfo.ContactWebOrPhone")/*Contact by web or phone*/, List.IMPLICIT);
 		actualWay = pc.actualWay;
@@ -49,9 +56,13 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_GEOHACK)) {
 			this.append(Locale.get("guiwebinfo.GeoHack")/*GeoHack*/, null);
 		}
+//#if polish.api.finland
 		if (Legend.enableUrlTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_TOPOMAP)) {
 			this.append(Locale.get("guiwebinfo.TopoMapFi")/*Topographic Map (Finland)*/, null);
 		}
+		this.append(Locale.get("guiwebinfo.ReittiopasAddress"), null);
+		this.append(Locale.get("guiwebinfo.ReittiopasStop"), null);
+//#endif
 		//#endif
 		if (Legend.enableUrlTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITE)) {
 			this.append(Locale.get("guiwebinfo.Website")/*Website*/, null);
@@ -76,106 +87,141 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		}
 		if (c == SELECT_CMD) {
 			String site = getString(getSelectedIndex());
-			String url = null;
-			// checked url at 2010-01-09; free servers overloaded, can't test what's the difference
-			// between full and non-full
-			// http://ws.geonames.org/findNearbyWikipediaRSS?lat=47&lng=9&style=full
-			if (site.equalsIgnoreCase(Locale.get("guiwebinfo.WikipediaRSS")/*Wikipedia (RSS)*/)) {
-				String lang = "";
-				if (! Configuration.getOnlineLangString().equals("en")) {
-				    lang = "lang=" + Configuration.getOnlineLangString() + "&";
-				}
-				url = "http://ws.geonames.org/findNearbyWikipediaRSS?" + lang + "lat="
-						+ mPos.latitude * MoreMath.FAC_RADTODEC + "&lng="
-						+ mPos.longitude * MoreMath.FAC_RADTODEC;
-			}
-			/*
-			 * rss2html.com public service has closed down, 2010-08-01
-                         *
-			if (site.equalsIgnoreCase("Wikipedia (Web)")) {
-				url = "http://www.rss2html.com/public/rss2html.php?TEMPLATE=template-1-2-1.htm&XMLFILE=http://ws.geonames.org/findNearbyWikipediaRSS?lat="
-						+ mPos.latitude * MoreMath.FAC_RADTODEC + "%26lng="
-						+ mPos.longitude * MoreMath.FAC_RADTODEC;
-			}
-			*/
-
-			if (site.equalsIgnoreCase(Locale.get("guiwebinfo.Weather")/*Weather*/)) {
-				// weather underground doesn't seem to have a language switch
-				// url working at 2010-01-09
-				url = "http://m.wund.com/cgi-bin/findweather/getForecast?brand=mobile&query="
-						+ (mPos.latitude * MoreMath.FAC_RADTODEC)
-						+ "%2C"
-						+ (mPos.longitude * MoreMath.FAC_RADTODEC);
-			}
-			if (site.equalsIgnoreCase(Locale.get("guiwebinfo.TopoMapFi")/*Topographic Map*/)) {
-				// url working at 2011-07-29
-				url = "http://kansalaisen.karttapaikka.fi/kartanhaku/koordinaattihaku.html?feature=ktjraja&y="
-				    + (mPos.latitude * MoreMath.FAC_RADTODEC)
-				    + "&x="
-				    + (mPos.longitude * MoreMath.FAC_RADTODEC)
-				    + "&scale=10000&srsName=EPSG%3A4258&lang=fi";
-			}
-			if (site.equalsIgnoreCase(Locale.get("guiwebinfo.GeoHack")/*GeoHack*/)) {
-				int deglat, minlat;
-				float deglatf, seclat;
-				int deglon, minlon;
-				float deglonf, seclon;
-				deglatf = Math.abs((mPos.latitude * MoreMath.FAC_RADTODEC));
-				deglat = (int)deglatf;
-				minlat = (int) ((deglatf - deglat) * 60);
-				seclat = ((deglatf - deglat-minlat/60)*60);
-				deglonf = Math.abs((mPos.longitude * MoreMath.FAC_RADTODEC));
-				deglon = (int)deglonf;
-				minlon = (int) ((deglonf - deglon) * 60);
-				seclon = ((deglonf - deglon-minlon/60)*60);
-				String lang = "";
-				// checked on 2010-01-09: url syntax has changed to:
-				// fi: http://toolserver.org/~geohack/fi/60_12_12.185211_N_24_39_39.566917_E_
-				// en: http://toolserver.org/~geohack/en/60_12_12.185211_N_24_39_39.566917_E_
-
-				url = "http://toolserver.org/~geohack/" + Configuration.getOnlineLangString() + "/"
-						+ deglat
-						+ "_"
-						+ minlat
-						+ "_"
-						+ seclat
-						+ ((mPos.latitude < 0)?"_S_":"_N_")
-						+ deglon
-						+ "_"
-						+ minlon
-						+ "_"
-						+ seclon
-						+ ((mPos.longitude < 0)?"_W_":"_E_");
-			}
-			if (site.equalsIgnoreCase(Locale.get("guiwebinfo.Website")/*Website*/)) {
-				// FIXME way urls are quite rare, should add support for POI urls
-				if ((actualWay != null)) {
-					url = trace.getUrl(actualWay.urlIdx);
-				}
-			}
-			if (site.equalsIgnoreCase(Locale.get("guiwebinfo.Phone")/*Phone*/)) {
-				String phone;
-				if ((actualWay != null) && ((phone = trace.getUrl(actualWay.phoneIdx)) != null)) {
-					url = "tel:" + phone;
-				}
-			}
-			try {
-				if (url != null) {
-					// #debug info
-					mLogger.info("Platform request for " + url);
-					//#if polish.api.online
-					GpsMid.getInstance().platformRequest(url);
-					//#else
-					GpsMid.getInstance().alert (Locale.get("guisearch.OpenUrlTitle"),
-								    Locale.get("guisearch.OpenUrl") +  " " + url, Alert.FOREVER);
-					//#endif
-				}
-			} catch (Exception e) {
-				mLogger.exception("Could not open url " + url, e);
-			}
+			String url = getUrlForSite(site);
+			openUrl(url);
 			mParent.show();
 		}
-
 	}
 
+	public String getUrlForSite(String site) {
+		String url = null;
+		// checked url at 2010-01-09; free servers overloaded, can't test what's the difference
+		// between full and non-full
+		// http://ws.geonames.org/findNearbyWikipediaRSS?lat=47&lng=9&style=full
+		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.WikipediaRSS")/*Wikipedia (RSS)*/)) {
+			String lang = "";
+			if (! Configuration.getOnlineLangString().equals("en")) {
+				lang = "lang=" + Configuration.getOnlineLangString() + "&";
+			}
+			url = "http://ws.geonames.org/findNearbyWikipediaRSS?" + lang + "lat="
+				+ mPos.latitude * MoreMath.FAC_RADTODEC + "&lng="
+				+ mPos.longitude * MoreMath.FAC_RADTODEC;
+		}
+		/*
+		 * rss2html.com public service has closed down, 2010-08-01
+		 *
+		 if (site.equalsIgnoreCase("Wikipedia (Web)")) {
+		 url = "http://www.rss2html.com/public/rss2html.php?TEMPLATE=template-1-2-1.htm&XMLFILE=http://ws.geonames.org/findNearbyWikipediaRSS?lat="
+		 + mPos.latitude * MoreMath.FAC_RADTODEC + "%26lng="
+		 + mPos.longitude * MoreMath.FAC_RADTODEC;
+		 }
+		*/
+
+		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.Weather")/*Weather*/)) {
+			// weather underground doesn't seem to have a language switch
+			// url working at 2010-01-09
+			url = "http://m.wund.com/cgi-bin/findweather/getForecast?brand=mobile&query="
+				+ (mPos.latitude * MoreMath.FAC_RADTODEC)
+				+ "%2C"
+				+ (mPos.longitude * MoreMath.FAC_RADTODEC);
+		}
+//#if polish.api.finland
+		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.TopoMapFi")/*Topographic Map*/)) {
+			// url working at 2011-07-29
+			url = "http://kansalaisen.karttapaikka.fi/kartanhaku/koordinaattihaku.html?feature=ktjraja&y="
+				+ (mPos.latitude * MoreMath.FAC_RADTODEC)
+				+ "&x="
+				+ (mPos.longitude * MoreMath.FAC_RADTODEC)
+				+ "&scale=10000&srsName=EPSG%3A4258&lang=fi";
+		}
+		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.ReittiopasAddress"))) {
+			url = reittiopasUrl
+				+ "&request=reverse_geocode&coordinate="
+				+ (mPos.longitude * MoreMath.FAC_RADTODEC) + ","
+				+ (mPos.latitude * MoreMath.FAC_RADTODEC)
+				+ "&format=txt";
+		}
+		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.ReittiopasStop"))) {
+			url = reittiopasUrl
+				+ "&request=reverse_geocode&coordinate="
+				+ (mPos.longitude * MoreMath.FAC_RADTODEC) + ","
+				+ (mPos.latitude * MoreMath.FAC_RADTODEC)
+				+ "&result_contains=stop" + "&format=txt";
+		}
+//#endif
+		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.GeoHack")/*GeoHack*/)) {
+			int deglat, minlat;
+			float deglatf, seclat;
+			int deglon, minlon;
+			float deglonf, seclon;
+			deglatf = Math.abs((mPos.latitude * MoreMath.FAC_RADTODEC));
+			deglat = (int)deglatf;
+			minlat = (int) ((deglatf - deglat) * 60);
+			seclat = ((deglatf - deglat-minlat/60)*60);
+			deglonf = Math.abs((mPos.longitude * MoreMath.FAC_RADTODEC));
+			deglon = (int)deglonf;
+			minlon = (int) ((deglonf - deglon) * 60);
+			seclon = ((deglonf - deglon-minlon/60)*60);
+			String lang = "";
+			// checked on 2010-01-09: url syntax has changed to:
+			// fi: http://toolserver.org/~geohack/fi/60_12_12.185211_N_24_39_39.566917_E_
+			// en: http://toolserver.org/~geohack/en/60_12_12.185211_N_24_39_39.566917_E_
+
+			url = "http://toolserver.org/~geohack/" + Configuration.getOnlineLangString() + "/"
+				+ deglat
+				+ "_"
+				+ minlat
+				+ "_"
+				+ seclat
+				+ ((mPos.latitude < 0)?"_S_":"_N_")
+				+ deglon
+				+ "_"
+				+ minlon
+				+ "_"
+				+ seclon
+				+ ((mPos.longitude < 0)?"_W_":"_E_");
+		}
+		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.Website")/*Website*/)) {
+			// FIXME way urls are quite rare, should add support for POI urls
+			if ((actualWay != null)) {
+				url = trace.getUrl(actualWay.urlIdx);
+			}
+		}
+		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.Phone")/*Phone*/)) {
+			String phone;
+			if ((actualWay != null) && ((phone = trace.getUrl(actualWay.phoneIdx)) != null)) {
+				url = "tel:" + phone;
+			}
+		}
+		return url;
+	}
+
+	public static String getStaticUrlForSite(String site) {
+		String url = null;
+		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.helptouch")/*Online help (touchscreen)*/)) {
+			url = "https://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Touchscreen_Layout";
+		}
+
+		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.helpwiki")/*Online help (Gpsmid wiki)*/)) {
+			url = "https://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Main_Page";				
+		}
+		return url;
+	}
+
+	public static void openUrl(String url) {
+		try {
+			if (url != null) {
+				// #debug info
+				mLogger.info("Platform request for " + url);
+				//#if polish.api.online
+				GpsMid.getInstance().platformRequest(url);
+				//#else
+				GpsMid.getInstance().alert (Locale.get("guisearch.OpenUrlTitle"),
+							    Locale.get("guisearch.OpenUrl") +  " " + url, Alert.FOREVER);
+				//#endif
+			}
+		} catch (Exception e) {
+			mLogger.exception("Could not open url " + url, e);
+		}
+	}
 }
