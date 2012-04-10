@@ -54,6 +54,7 @@ public class Legend {
 	public final static byte LEGEND_FLAG_TEXT_COLOR = 0x08;
 	public final static byte LEGEND_FLAG_NON_HIDEABLE = 0x10;
 	// public final static byte LEGEND_FLAG_NON_ROUTABLE = 0x20;
+	public final static byte LEGEND_FLAG_ALERT = 0x20;
 	public final static byte LEGEND_FLAG_MIN_DESCRIPTION_SCALE = 0x40;
 	
 	public final static short ROUTE_FLAG_MOTORWAY = 0x01;  // used in ConnectionWithNode AND WayDescription
@@ -525,6 +526,10 @@ public class Legend {
 			pois[i].imageCenteredOnNode = ds.readBoolean();
 			pois[i].maxImageScale = ds.readInt();
 			pois[i].hideable = ((flags & LEGEND_FLAG_NON_HIDEABLE) == 0);	
+			pois[i].alert = ((flags & LEGEND_FLAG_ALERT) != 0);	
+			if (pois[i].alert) {
+			System.out.println("pois[i].alert: " + pois[i].alert);
+			}
 			if ((flags & LEGEND_FLAG_IMAGE) > 0) {
 				String imageName = ds.readUTF();
 				//logger.debug("Trying to open image " + imageName);
@@ -723,6 +728,10 @@ public class Legend {
 	
 	public static final boolean isNodeHideable(short type) {
 		return pois[type].hideable;
+	}
+	
+	public static final boolean isNodeAlert(short type) {
+		return pois[type].alert;
 	}
 	
 	public static final byte getNodeOverviewMode(short type) {

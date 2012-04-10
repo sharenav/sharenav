@@ -95,6 +95,14 @@
       and in the track if track is recording.
     *** Tacho ***
     - HDOP is shown in tachometer
+    *** Alerts ***
+    - alerts can now be defined in style file for visual & audible alerts
+      on selected POI types. Alerts are currently on when speed alerts are on,
+      and alert is triggered whenever a POI with alert is drawn on the canvas
+      (which is a bit bigger than the screen, meaning alert can happen before
+      POI is visible). Alerts are switched on in style file, by adding
+		<alert alert="true"/>
+      after hideable flag (currently the last place in a POI entry).
     *** Phone models ***
     - make photos work on Samsung Xcover B271 (and probably some other Samsungs too)
 

@@ -78,6 +78,7 @@ public class CreateGpsMidData implements FilenameFilter {
 	public final static byte LEGEND_FLAG_TEXT_COLOR = 0x08;
 	public final static byte LEGEND_FLAG_NON_HIDEABLE = 0x10;
 	// public final static byte LEGEND_FLAG_NON_ROUTABLE = 0x20; routable flag has been  moved to Way
+	public final static byte LEGEND_FLAG_ALERT = 0x20;
 	public final static byte LEGEND_FLAG_MIN_DESCRIPTION_SCALE = 0x40;
 
 	public final static byte ROUTE_FLAG_MOTORWAY = 0x01;
@@ -370,6 +371,9 @@ public class CreateGpsMidData implements FilenameFilter {
 				if (!poi.hideable) {
 					flags |= LEGEND_FLAG_NON_HIDEABLE;
 				}
+				if (poi.alert) {
+					flags |= LEGEND_FLAG_ALERT;
+				}
 				// polish.api.bigstyles
 				if (config.bigStyles) {
 					dsi.writeShort(poi.typeNum);
@@ -439,6 +443,10 @@ public class CreateGpsMidData implements FilenameFilter {
 				if (!way.hideable) {
 					flags |= LEGEND_FLAG_NON_HIDEABLE;
 				}				
+				// FIXME requires map format change, one more byte
+				//if (way.alert) {
+				//	flags |= LEGEND_FLAG4_ALERT;
+				//}				
 				if (way.image != null && !way.image.equals("")) {
 					flags |= LEGEND_FLAG_IMAGE;
 				}

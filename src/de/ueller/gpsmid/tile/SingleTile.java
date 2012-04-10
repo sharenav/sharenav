@@ -23,6 +23,7 @@ import de.ueller.gpsmid.graphics.Proj3D;
 import de.ueller.gpsmid.graphics.Projection;
 import de.ueller.gpsmid.mapdata.Way;
 import de.ueller.gpsmid.ui.Trace;
+import de.ueller.midlet.util.ImageTools;
 import de.ueller.util.CancelMonitorInterface;
 import de.ueller.util.Logger;
 import de.ueller.util.MoreMath;
@@ -367,6 +368,13 @@ public class SingleTile extends Tile implements QueueableTile {
 		short t=(short) (type[i] & 0xff);
 		//#endif
 		boolean hideable = Legend.isNodeHideable(t);
+
+		boolean alert = Legend.isNodeAlert(t);
+		if (alert) {
+			// FIXME: get and pass coordinates to keep track of distance
+			// to alert POI
+			pc.trace.setNodeAlert(t);
+		}
 		
 		// addition by sk750 until "byte om ="
 		Projection projection = pc.getP();
@@ -435,6 +443,10 @@ public class SingleTile extends Tile implements QueueableTile {
 		//pc.getP().forward(nodeLat[i], nodeLon[i], pc.swapLineP, this);
 		
 		if (img != null ) {
+			//FIXME make optional if alert by growing image on map happens
+			if (alert) {
+				img = ImageTools.scaleImage(img, img.getWidth() * 2, img.getHeight() * 2);
+			}
 			// FIXME check and cleanup after the functionality is in good enough condition
 			// logger.debug("draw img " + img);
 			// orig by Harald

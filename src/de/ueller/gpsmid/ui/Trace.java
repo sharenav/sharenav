@@ -378,6 +378,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private long startTimeOfSpeedingSign = 0;
 	private int speedingSpeedLimit = 0;
 
+	private volatile boolean nodeAlert = false;
+	private volatile int alertNodeType = 0;
+	private long startTimeOfAlertSign = 0;
+
 	/**
 	 * Current course from GPS in compass degrees, 0..359.
 	 */
@@ -2200,6 +2204,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			
 			setSpeedingSign(maxSpeed);
 			
+			setAlertSign(Legend.getNodeTypeDesc((short) alertNodeType));
+			
 			if (hasPointerEvents()) {
 				tl.ele[TraceLayout.ZOOM_IN].setText("+");
 				tl.ele[TraceLayout.ZOOM_OUT].setText("-");
@@ -2393,6 +2399,33 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 	}
 
+	private void setAlertSign(String alert) {
+		//FIXME use alert sign visual instead, get from legend after
+		// map format change
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL)
+		    &&
+		    (
+			    nodeAlert
+			    ||
+			    (System.currentTimeMillis() - startTimeOfAlertSign) < 8000) 
+			) {
+			if (nodeAlert && startTimeOfAlertSign == 0) {
+				startTimeOfAlertSign = System.currentTimeMillis();
+				//FIXME get sound from config file, requires
+				// map format change to pass in legend
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_SND)) {
+					GpsMid.mNoiseMaker.immediateSound("ALERT");
+				}
+			}
+			tl.ele[TraceLayout.SPEEDING_SIGN].setText(alert.substring(0,7));
+			if ((System.currentTimeMillis() - startTimeOfAlertSign) >= 8000) {
+				nodeAlert = false;
+				startTimeOfAlertSign = 0;
+			}
+		} else {
+			startTimeOfAlertSign = 0;
+		}
+	}
 	/**
 	 * 
 	 */
@@ -3896,5 +3929,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 	public int getLayoutMode() {
 		return layoutMode;
+	}
+	// FIXME: get and remember coordinates to keep track of distance
+	// to alert POI. Handle multiple alert POIs.
+	public void setNodeAlert(int type) {
+		if (!nodeAlert) {
+			nodeAlert = true;
+			alertNodeType = type;
+		}
 	}
 }

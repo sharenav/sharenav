@@ -465,6 +465,9 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			if (qName.equals("hideable")) {
 				currentPoi.hideable = atts.getValue("hideable").equalsIgnoreCase("true");
 			}
+			if (qName.equals("alert")) {
+				currentPoi.alert = atts.getValue("alert").equalsIgnoreCase("true");
+			}
 			break;
 		case READING_WAYS:
 			if (qName.equals("keyW")) {
@@ -727,6 +730,9 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			}
 			if (qName.equals("hideable")) {
 				currentWay.hideable = atts.getValue("hideable").equalsIgnoreCase("true");
+			}
+			if (qName.equals("alert")) {
+				currentWay.alert = atts.getValue("alert").equalsIgnoreCase("true");
 			}
 			break;
 		case READING_COLORS:
