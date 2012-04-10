@@ -21,8 +21,6 @@ import de.enough.polish.util.Locale;
 public class LayoutElement {
 	private final static Logger logger = Logger.getInstance(LayoutElement.class,Logger.DEBUG);
 
-	public static int[] iaTransparentPainting = { 0x700000 };
-
 	/** align element at minX of LayoutManager area */
 	public static final int FLAG_HALIGN_LEFT = (1<<0);
 	/** align element right at maxX of LayoutManager area */
@@ -649,37 +647,11 @@ public class LayoutElement {
 				g.setStrokeStyle(Graphics.SOLID);
 				g.drawRect(left, top, right-left, bottom - top);
 			}
-			if ( (flags & FLAG_TRANSPARENT_BACKGROUND_BOX) > 0 ) {
-				//g.setColor(bgColor);
-				int iLeft = left + 1;
-				int iTop = top + 1;
-				int iWidth = right -left - 1;
-				int iHeight = bottom - top - 1;
-
-				if ( iaTransparentPainting.length < iWidth)
-				{
-					// The array contains int values for blending one line.
-					// The array size is increased here so it holds at minimum
-					// the requested number of pixels width.
-					iaTransparentPainting = new int[iWidth];
-
-					for ( int i = 0; i < iWidth;)
-						iaTransparentPainting[i++] = 0x80FFFFFF;
-						//iaTransparentPaintingBlack[i++] = 0x80000000;
+			if ( (flags & FLAG_TRANSPARENT_BACKGROUND_BOX) > 0 ) {				
+				Image imgBackground = ImageTools.oneColorImage(right -left - 1, bottom - top - 1, 0x80FFFFFF);
+				if (imgBackground != null) {
+					g.drawImage(imgBackground, left + 1, top + 1, Graphics.TOP | Graphics.LEFT);
 				}
-
-				// Blend transparent pixels line by line.
-				// The loop is neccessary for some mobiles (e.g. Samsung Wave) because
-				// a scan with of 0 is not working there.
-				for ( int i = 0; i < iHeight; i++)
-					g.drawRGB(iaTransparentPainting,
-						0,
-						iWidth,
-						iLeft,
-						iTop + i,
-						iWidth,
-						1,
-					   true);
 			}
 			if ( (flags & FLAG_ICONMENU_ICON) > 0 ) {
 				IconMenuPage imp = (IconMenuPage) lm;
