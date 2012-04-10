@@ -527,9 +527,6 @@ public class Legend {
 			pois[i].maxImageScale = ds.readInt();
 			pois[i].hideable = ((flags & LEGEND_FLAG_NON_HIDEABLE) == 0);	
 			pois[i].alert = ((flags & LEGEND_FLAG_ALERT) != 0);	
-			if (pois[i].alert) {
-			System.out.println("pois[i].alert: " + pois[i].alert);
-			}
 			if ((flags & LEGEND_FLAG_IMAGE) > 0) {
 				String imageName = ds.readUTF();
 				//logger.debug("Trying to open image " + imageName);
