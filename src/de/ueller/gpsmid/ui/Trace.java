@@ -997,7 +997,19 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (actionId == RETRIEVE_XML || actionId == EDIT_ADDR_CMD) {
 			repaint();
 		}
+		//#if polish.android
+		final int actionToRun = actionId;
+		// FIXME would be better to use AsyncTask,
+		// see http://developer.android.com/resources/articles/painless-threading.html
+		MidletBridge.instance.runOnUiThread(
+			new Runnable() {
+				public void run() {
+					commandAction(CMDS[actionToRun], null);
+				}
+			});
+		//#else
 		commandAction(CMDS[actionId], null);
+		//#endif
 	}
 
 	
