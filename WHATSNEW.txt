@@ -8,6 +8,9 @@
     - some minor adjustments due to upgrading to J2MEPolish 2.3, related to file dialogue
     - various UI improvements and fixes with back key handling
     - audio recording now works (n.b.: the location is currently always /sdcard directory)
+    - first incomplete try at taking photos - the preview doesn't work yet, so user has to aim blind,
+      and apparently the default preferences for picture quality are always not so good.
+      Works only for target android-online.
     - For easier support of sounds for routing by default WAV and AMR files
       are stored uncompressed in the map data as required for Android
       (.properties parameter default dontCompress = wav,amr)

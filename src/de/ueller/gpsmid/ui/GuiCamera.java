@@ -49,7 +49,17 @@ import de.ueller.util.StringTokenizer;
 import de.enough.polish.util.Locale;
 
 //#if polish.android
+import android.content.Context;
+import android.graphics.Color;
+import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
+import android.hardware.Camera.PictureCallback;
 import android.view.KeyEvent;
+import android.view.Surface;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.View;
+import de.enough.polish.android.midlet.MidletBridge;
 //#endif
 
 /**
@@ -62,7 +72,11 @@ import android.view.KeyEvent;
  * for example when survaying for OSM.
  *
  */
-public class GuiCamera extends Canvas implements CommandListener, ItemCommandListener, GuiCameraInterface, SelectionListener, GpsMidDisplayable {
+public class GuiCamera extends Canvas implements CommandListener, ItemCommandListener, GuiCameraInterface, SelectionListener, GpsMidDisplayable
+//#if polish.android
+, Camera.PictureCallback
+//#endif
+ {
 
 	private final Command CANCEL_CMD = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.BACK, 5);
 	private final Command OK_CMD = new Command(Locale.get("generic.OK")/*Ok*/, GpsMidMenu.OK, 5);
@@ -75,8 +89,14 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 	private final static Logger logger = Logger.getInstance(GuiCamera.class,
 			Logger.DEBUG);
 	//#if polish.api.mmapi	
+	//#if polish.android
+	private Camera camera;
 	private Player mPlayer;
 	private VideoControl video;
+	//#else
+	private Player mPlayer;
+	private VideoControl video;
+	//#endif
 	//#if polish.api.advancedmultimedia
 	private FocusControl focus;	
 	//#endif
@@ -94,6 +114,13 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 	private TextField   encodingTF;
 	private ChoiceGroup encodingCG;
 
+	private byte[] photo;
+
+        //#if polish.android
+	private SurfaceHolder surfaceHolder;
+	private SurfaceView surfaceView = null;
+	//#endif
+
 	public void init(Trace parent) {
 		this.parent = parent;
 		addCommand(CANCEL_CMD);
@@ -110,6 +137,32 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		return instance;
 	}
 
+	//#if polish.android
+	SurfaceHolder.Callback surfaceCallback=new SurfaceHolder.Callback() {
+		public void surfaceCreated(SurfaceHolder holder) {
+		}
+    
+		public void surfaceChanged(SurfaceHolder holder,
+					   int format, int width,
+					   int height) {
+			startPreview();
+		}
+    
+		public void surfaceDestroyed(SurfaceHolder holder) {
+		}
+	};
+	public void initPreview(int width, int height) {
+	}
+	public void startPreview() {
+		try {
+			camera.setPreviewDisplay(surfaceHolder);
+		} catch (IOException ioe) {
+			//
+		}
+		surfaceView.requestFocus();
+		camera.startPreview();
+	}
+	//#endif
 	/*
 	 * This sets up the basic parameters of the camera and initialises
 	 * the view finder of the camera
@@ -120,6 +173,22 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 			basedirectory = Configuration.getPhotoUrl();
 			//#debug debug
 			logger.debug("Storing photos at " + basedirectory);
+			//#if polish.android
+			// open the first camera
+			// between 0 and getNumberOfCameras()-1.
+			try {
+				camera = Camera.open(0);
+			} catch (RuntimeException re) {
+				logger.error(Locale.get("guicamera.CouldntInitializeCameraPlayer")/*Could not initialize camera player*/);
+				return;
+			}
+			// FIXME preview isn't shown on the screen
+			surfaceView = new SurfaceView(MidletBridge.instance.getWindow().getContext());
+
+			Camera.Parameters params = camera.getParameters();
+			surfaceHolder = surfaceView.getHolder();
+			surfaceHolder.addCallback(surfaceCallback);
+			//#else
 			try {
 				/**
 				 * Nokia seems to have used a non standard locator to specify
@@ -170,6 +239,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 				return;
 			}
 
+			//#endif
 			//#if polish.api.advancedmultimedia
 			CameraControl camera = (CameraControl) mPlayer
 					.getControl("CameraControl");
@@ -220,31 +290,79 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 			
 		} catch (SecurityException se) {
 			logger.exception(Locale.get("guicamera.SecurityException")/*Security Exception: */, se);
+			//#if polish.android
+			//#else
 			mPlayer = null;
 			video = null;
+			//#endif
+		//#if polish.android
+		//#else
 		} catch (IOException e) {
 			logger.exception(Locale.get("guicamera.IOexception")/*IOexception*/, e);
+			//#if polish.android
+			//#else
 			mPlayer = null;
 			video = null;
+			//#endif
 		} catch (MediaException e) {
 			logger.exception(Locale.get("guicamera.MediaException")/*MediaException*/, e);
+			//#if polish.android
+			//#else
 			mPlayer = null;
 			video = null;
-		}
-		//#else
+			//#endif
 		logger.error(Locale.get("guicamera.CameraControlNotSupported")/*Camera control is not supported by this device*/);
+		//#endif polish.android
+		}
 		//#endif
 	}
 	
+	//#if polish.android
+	public void onPictureTaken(byte[] data, Camera camera) {
+		photo = data;
+		try {
+			int idx = 0; 
+			//repaint();
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_ADD_EXIF)) {
+				photo = addExifEncoding(photo);
+			}
+			//#debug debug
+			logger.debug("Captured photo of size : " + photo.length);
+			
+			FileConnection fc = (FileConnection)Connector.open(basedirectory + "GpsMid-" + HelperRoutines.formatInt2(idx) + "-" + HelperRoutines.formatSimpleDateSecondNow() + ".jpg");
+			while (fc.exists()) {
+				fc = (FileConnection)Connector.open(basedirectory + "GpsMid-" + HelperRoutines.formatInt2(idx) + "-" + HelperRoutines.formatSimpleDateSecondNow() + ".jpg");
+				idx++;
+			}
+			fc.create();
+			OutputStream fos = fc.openOutputStream();
+			fos.write(photo, 0, photo.length);
+			fos.close();
+			//video.setVisible(true);
+		} catch (IOException e) {
+			logger.exception(Locale.get("guicamera.IOExceptionCapturingPhoto")/*IOException capturing the photo*/, e);
+		} catch (NullPointerException npe) {
+			logger.exception(Locale.get("guicamera.FailedToTakePicture")/*Failed to take a picture*/, npe);
+		}
+	}
+	//#endif
 	private void takePicture135() throws SecurityException {
 		logger.info("Captureing photo with jsr 135");
 		//#if polish.api.mmapi
+		//#if polish.android
+		//#else
 		if (mPlayer == null || video == null) {
 			logger.error(Locale.get("guicamera.mPlayerNotInitedCaptureFail")/*mPlayer is not initialised, could not capture photo*/);
 			return;
 		}
+		//#endif
 		
 		try {
+			//#if polish.android
+			camera.takePicture(null, null, null, this);
+		} finally {
+		}
+			//#else
 			int idx = 0; 
 			byte [] photo = video.getSnapshot(Configuration.getPhotoEncoding());
 			repaint();
@@ -271,6 +389,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		} catch (NullPointerException npe) {
 			logger.exception(Locale.get("guicamera.FailedToTakePicture")/*Failed to take a picture*/, npe);
 		}
+			//#endif
 		//#endif
  
 	}
@@ -707,6 +826,13 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 				logger.exception(Locale.get("guicamera.CouldNotShowCameraViewer")/*Could not show camera viewer*/, e);
 			}
 		}
+		//#if polish.android
+		if (surfaceView != null) {
+			surfaceView.setFocusable(true);
+			surfaceView.requestFocus();
+			surfaceView.setFocusable(true);
+		}
+		//#endif
 		//#endif
 		//Display.getDisplay(parent.getParent()).setCurrent(this);
 	}
