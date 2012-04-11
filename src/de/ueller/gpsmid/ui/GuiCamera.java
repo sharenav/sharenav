@@ -59,6 +59,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import de.enough.polish.android.midlet.MidletBridge;
 //#endif
 
@@ -80,6 +81,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 
 	private final Command CANCEL_CMD = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.BACK, 5);
 	private final Command OK_CMD = new Command(Locale.get("generic.OK")/*Ok*/, GpsMidMenu.OK, 5);
+	private final Command OK2_CMD = new Command(Locale.get("generic.OK")/*Ok*/, GpsMidMenu.OK, 5);
 	private final Command CAPTURE_CMD = new Command(Locale.get("guicamera.Capture")/*Capture*/, Command.OK, 5);
 	private final Command STORE_CMD = new Command(Locale.get("guicamera.SelectDir")/*Select directory*/, Command.ITEM, 5);
 	public final Command SETUP_CMD = new Command(Locale.get("guicamera.Setup")/*Setup*/, Command.ITEM, 6);
@@ -119,6 +121,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
         //#if polish.android
 	private SurfaceHolder surfaceHolder;
 	private SurfaceView surfaceView = null;
+	private View uiView = null;
 	//#endif
 
 	public void init(Trace parent) {
@@ -151,8 +154,6 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		public void surfaceDestroyed(SurfaceHolder holder) {
 		}
 	};
-	public void initPreview(int width, int height) {
-	}
 	public void startPreview() {
 		try {
 			camera.setPreviewDisplay(surfaceHolder);
@@ -182,12 +183,14 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 				logger.error(Locale.get("guicamera.CouldntInitializeCameraPlayer")/*Could not initialize camera player*/);
 				return;
 			}
-			// FIXME preview isn't shown on the screen
+			uiView = MidletBridge.instance.getWindow().getCurrentFocus();
 			surfaceView = new SurfaceView(MidletBridge.instance.getWindow().getContext());
 
 			Camera.Parameters params = camera.getParameters();
 			surfaceHolder = surfaceView.getHolder();
+			surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 			surfaceHolder.addCallback(surfaceCallback);
+			MidletBridge.instance.getWindow().setContentView(surfaceView);
 			//#else
 			try {
 				/**
@@ -318,8 +321,26 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 	}
 	
 	//#if polish.android
+	private void exitPreview() {
+		if (uiView != null) {
+			surfaceView.setVisibility(View.GONE);
+			if (uiView.getParent() != null) {
+				((ViewGroup)uiView.getParent()).removeView(uiView);
+			}
+			if (surfaceView != null && surfaceView.getParent() != null) {
+				((ViewGroup)surfaceView.getParent()).removeView(surfaceView);
+			}
+			MidletBridge.instance.getWindow().setContentView(uiView);
+			uiView = null;
+		}
+
+	}
+
 	public void onPictureTaken(byte[] data, Camera camera) {
 		photo = data;
+		exitPreview();
+		addCommand(OK2_CMD);
+		//GpsMid.getInstance().show(this);
 		try {
 			int idx = 0; 
 			//repaint();
@@ -513,7 +534,11 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		g.drawRect(6, 6, getWidth() - 12, getHeight() - 12);
 		g.drawRect(7, 7, getWidth() - 14, getHeight() - 14);
 		g.setColor(0,255,0);
+		//#if polish.android
+		g.drawString(Locale.get("guicamera.SavingPhotoAndroid")/*Saving photo...OK to continue*/, getWidth()/2, getHeight()/2, Graphics.BASELINE | Graphics.HCENTER);
+		//#else
 		g.drawString(Locale.get("guicamera.SavingPhoto")/*Saving photo...*/, getWidth()/2, getHeight()/2, Graphics.BASELINE | Graphics.HCENTER);
+		//#endif
 	}
 
 	public void keyPressed(int keyCode) {
@@ -556,7 +581,15 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 	}
 	
 	public void commandAction(Command c, Displayable disp) {
-		if (c == CANCEL_CMD) {
+		if (c == CANCEL_CMD || c == OK2_CMD) {
+			//#if polish.android
+			exitPreview();
+			if (camera != null) {
+				camera.stopPreview();
+				camera.release();
+				camera = null;
+			}
+			//#endif
 			if (disp == this) {
 				//#if polish.api.mmapi
 				if (mPlayer != null) {
@@ -826,13 +859,6 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 				logger.exception(Locale.get("guicamera.CouldNotShowCameraViewer")/*Could not show camera viewer*/, e);
 			}
 		}
-		//#if polish.android
-		if (surfaceView != null) {
-			surfaceView.setFocusable(true);
-			surfaceView.requestFocus();
-			surfaceView.setFocusable(true);
-		}
-		//#endif
 		//#endif
 		//Display.getDisplay(parent.getParent()).setCurrent(this);
 	}
