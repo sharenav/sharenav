@@ -1351,13 +1351,19 @@ public class Configuration {
 				uiLangUse = "en";
 			}
 			
+			//#if polish.android
 			LOCATIONPROVIDER = new String[6];
-			LOCATIONPROVIDER[0] = Locale.get("configuration.LPNone")/*None*/;
-			LOCATIONPROVIDER[1] = Locale.get("configuration.LPBluetoothSirf")/*Bluetooth (Sirf)*/;
-			LOCATIONPROVIDER[2] = Locale.get("configuration.LPBluetoothNMEA")/*Bluetooth (NMEA)*/;
-			LOCATIONPROVIDER[3] = Locale.get("configuration.LPInternalJSR179")/*Internal (JSR179)*/;
-			LOCATIONPROVIDER[4] = Locale.get("configuration.LPCellID")/*Cell-ID (OpenCellId.org)*/;
-			LOCATIONPROVIDER[5] = Locale.get("configuration.Android")/*Android*/;
+			//#else
+			LOCATIONPROVIDER = new String[5];
+			//#endif
+			LOCATIONPROVIDER[LOCATIONPROVIDER_NONE] = Locale.get("configuration.LPNone")/*None*/;
+			LOCATIONPROVIDER[LOCATIONPROVIDER_SIRF] = Locale.get("configuration.LPBluetoothSirf")/*Bluetooth (Sirf)*/;
+			LOCATIONPROVIDER[LOCATIONPROVIDER_NMEA] = Locale.get("configuration.LPBluetoothNMEA")/*Bluetooth (NMEA)*/;
+			LOCATIONPROVIDER[LOCATIONPROVIDER_JSR179] = Locale.get("configuration.LPInternalJSR179")/*Internal (JSR179)*/;
+			LOCATIONPROVIDER[LOCATIONPROVIDER_SECELL] = Locale.get("configuration.LPCellID")/*Cell-ID (OpenCellId.org)*/;
+			//#if polish.android
+			LOCATIONPROVIDER[LOCATIONPROVIDER_ANDROID] = Locale.get("configuration.Android")/*Android*/;
+			//#endif
 
 			projectionsString = new String[ProjFactory.COUNT];
 			projectionsString[ProjFactory.NORTH_UP] = Locale.get("projfactory.NorthUp")/*North Up*/;

@@ -900,7 +900,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_AUTO_START_GPS, selraw[0]);
 				cellIDStartup.getSelectedFlags(selraw);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_CELLID_STARTUP, selraw[0]);
-				if (Configuration.getLocationProvider() == 1 || Configuration.getLocationProvider() == 2) {
+				if (Configuration.getLocationProvider() == Configuration.LOCATIONPROVIDER_SIRF || Configuration.getLocationProvider() == Configuration.LOCATIONPROVIDER_NMEA) {
 					// show further NMEA/bluetooth options
 					state = STATE_BT_OPT;
 				} else {
