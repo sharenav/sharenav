@@ -598,6 +598,7 @@ public class ImageCollector implements Runnable {
 			int nummaxspeed;
 			String maxspeed = "";
 			String winter = "";
+			// store for OSM editing
 			if (wayForName.getMaxSpeed() != 0) {
 				nummaxspeed = wayForName.getMaxSpeed();
 				if (Configuration
@@ -669,7 +670,7 @@ public class ImageCollector implements Runnable {
 //#if polish.api.finland
 			// show Finnish ETRS-TM35FIN coordinates
 			// FIXME: add a config option for selection of coordinates
-			if (true) {
+			if (false) {
 				PositionMark pmETRS = ETRSTM35FINconvert.latlonToEtrs(paintPC.center.radlat, paintPC.center.radlon);
 				e.setText(Locale.get("imagecollector.lat")/* lat: */
 					  + Float.toString(pmETRS.lat)
