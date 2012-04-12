@@ -89,6 +89,7 @@ import de.ueller.gpsmid.routing.RouteNode;
 import de.ueller.gpsmid.routing.RouteSyntax;
 import de.ueller.gpsmid.routing.Routing;
 import de.ueller.gpsmid.tile.Tile;
+import de.ueller.gpsmid.tile.SingleTile;
 import de.ueller.midlet.iconmenu.IconActionPerformer;
 import de.ueller.midlet.iconmenu.LayoutElement;
 import de.ueller.midlet.ui.CompletionListener;
@@ -311,6 +312,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public volatile boolean baseTilesRead = false;
 	
 	public Way actualSpeedLimitWay;
+	public volatile Way actualWay;
+	public volatile SingleTile actualSingleTile;
 
 	// this is only for visual debugging of the routing engine
 	Vector routeNodes = new Vector();
@@ -1721,9 +1724,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 							parent.alert ("Url", "Url: " + getUrl(pc.actualWay.urlIdx), Alert.FOREVER);
 						}
 
-						if ((pc.actualWay != null) && (pc.actualWay instanceof EditableWay)) {
-							EditableWay eway = (EditableWay)pc.actualWay;
-							GuiOsmWayDisplay guiWay = new GuiOsmWayDisplay(eway, pc.actualSingleTile, this);
+						if ((actualWay != null) && (actualWay instanceof EditableWay)) {
+							EditableWay eway = (EditableWay)actualWay;
+							GuiOsmWayDisplay guiWay = new GuiOsmWayDisplay(eway, actualSingleTile, this);
 							guiWay.show();
 							guiWay.refresh();
 						}
@@ -1760,8 +1763,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				if (c == CMDS[EDIT_ADDR_CMD]) {
 					if (Legend.enableEdits) {
 						String streetName = "";
-						if ((pc != null) && (pc.actualWay != null)) {
-							streetName = getName(pc.actualWay.nameIdx);
+						//if ((pc != null) && (pc.actualWay != null)) {
+						//	streetName = getName(pc.actualWay.nameIdx);
+						//}
+						if (actualWay != null) {
+							streetName = getName(actualWay.nameIdx);
 						}
 						GuiOsmAddrDisplay guiAddr = new GuiOsmAddrDisplay(-1, streetName, null,
 								center.radlat, center.radlon, this);
