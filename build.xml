@@ -365,6 +365,7 @@
 				-->
 				<variable name="update-url" value="http://www.enough.de/update" />
 				<variable name="title" value="GpsMid" />
+				<variable name="polish.useNativeAlerts" value="true" if="polish.android || polish.blackberry" />
 			</variables>
 			<!-- Here you can set the dir attribute to "resources2" for an alternative design. -->
 			<resources dir="resources" defaultexcludes="yes" excludes="readme.txt">
