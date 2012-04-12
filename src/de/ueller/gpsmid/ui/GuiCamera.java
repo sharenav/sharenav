@@ -129,7 +129,10 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		addCommand(CANCEL_CMD);
 		addCommand(CAPTURE_CMD);
 		//addCommand(STORE_CMD);
+		//#if polish.android
+		//#else
 		addCommand(SETUP_CMD);
+		//#endif
 		setCommandListener(this);
 		setUpCamera();
 		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN));
