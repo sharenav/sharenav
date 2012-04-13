@@ -25,6 +25,9 @@ import javax.microedition.lcdui.ChoiceGroup;
 //#if polish.android
 import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.View.OnKeyListener;
 import android.view.WindowManager;
 import android.widget.AnalogClock;
 import android.widget.Button;
@@ -102,6 +105,22 @@ public class GuiWaypointSave extends Form implements CommandListener, ItemComman
 		this.append(fldEle);		
 		this.append(cg);
 		//#if polish.android
+		fldNameText.setOnKeyListener(new OnKeyListener()
+		{
+			public boolean onKey(View v, int keyCode, KeyEvent event)
+			{
+				if (event.getAction() == KeyEvent.ACTION_DOWN)
+				{
+					//check if the right key was pressed
+					if (keyCode == KeyEvent.KEYCODE_BACK)
+					{
+						parent.show();
+						return true;
+					}
+				}
+				return false;
+			}
+		});
 		Display.getDisplay(GpsMid.getInstance()).setCurrentItem(fldName);
 		// perhaps this should be optional
 		InputMethodManager imm = (InputMethodManager) MidletBridge.instance.getSystemService(Context.INPUT_METHOD_SERVICE);
