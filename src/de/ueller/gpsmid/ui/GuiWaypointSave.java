@@ -22,13 +22,23 @@ import de.ueller.util.Logger;
 
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.ChoiceGroup;
-
+//#if polish.android
+import android.widget.AnalogClock;
+import android.widget.TextView;
+import android.widget.EditText;
+import de.enough.polish.android.lcdui.ViewItem;
+import de.enough.polish.android.midlet.MidletBridge;
+//#endif
 
 public class GuiWaypointSave extends Form implements CommandListener, ItemCommandListener {
 	//#if polish.android
 	private StringItem OKField;
-	//#endif
+	private ViewItem fldName;
+	private TextView fldNameLabel;
+	private EditText fldNameText;
+	//#else
 	private TextField fldName;
+	//#endif
 	private TextField fldEle;
 	private ChoiceGroup cg;
 	private static final Command saveCmd = new Command(Locale.get("guiwaypointsave.Save")/*Save*/, Command.OK, 1);
@@ -52,8 +62,16 @@ public class GuiWaypointSave extends Form implements CommandListener, ItemComman
 	}
 
 	private void jbInit() throws Exception {
+		//#if polish.android
+		fldNameLabel = new TextView(MidletBridge.getInstance());
+		fldNameLabel.setText(Locale.get("guiwaypointsave.Name")/*Name:*/);
+		ViewItem fldNameTitle = new ViewItem(fldNameLabel);
+		fldNameText = new EditText(MidletBridge.getInstance());
+		fldName = new ViewItem(fldNameText);
+		//#else
 		fldName = new TextField(Locale.get("guiwaypointsave.Name")/*Name:*/, "", 
 				Configuration.MAX_WAYPOINTNAME_LENGTH, TextField.ANY);
+		//#endif
 		fldEle = new TextField(Locale.get("guiwaypointsave.AltitudeInM")/*Altitude (in m):*/, 
 				"", 5, TextField.NUMERIC);
 		cg = new ChoiceGroup(Locale.get("guiwaypointsave.Settings")/*Settings*/, Choice.MULTIPLE);
@@ -70,6 +88,7 @@ public class GuiWaypointSave extends Form implements CommandListener, ItemComman
 		OKField.addCommand(saveCmd);
 		OKField.setDefaultCommand(saveCmd);
 		OKField.setItemCommandListener(this);
+		this.append(fldNameTitle);
 		//#endif
 		this.append(fldName);
 		this.append(Locale.get("guiwaypointsave.OptionalData")/*Optional data*/);
@@ -85,7 +104,11 @@ public class GuiWaypointSave extends Form implements CommandListener, ItemComman
 	{
 		this.waypt = posMark;
 		this.name = "";
+		//#if polish.android
+		fldNameText.setText(name);
+		//#else
 		fldName.setString(name);
+		//#endif
 		
 		//only set default altitude if gps.ele is valid. 
 		if (waypt.ele != PositionMark.INVALID_ELEVATION) {
@@ -112,7 +135,11 @@ public class GuiWaypointSave extends Form implements CommandListener, ItemComman
 
 	public void commandAction(Command cmd, Displayable displayable) {
 		if (cmd == saveCmd) {
+			//#if polish.android
+			name = fldNameText.getText().toString();
+			//#else
 			name = fldName.getString();
+			//#endif
 			if (cg.isSelected(0) && !name.endsWith("*")) {
 				name += "*";
 			}
