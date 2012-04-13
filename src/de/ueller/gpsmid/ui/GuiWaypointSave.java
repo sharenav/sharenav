@@ -23,7 +23,11 @@ import de.ueller.util.Logger;
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.ChoiceGroup;
 //#if polish.android
+import android.content.Context;
+import android.view.inputmethod.InputMethodManager;
+import android.view.WindowManager;
 import android.widget.AnalogClock;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.EditText;
 import de.enough.polish.android.lcdui.ViewItem;
@@ -33,7 +37,7 @@ import javax.microedition.lcdui.Display;
 
 public class GuiWaypointSave extends Form implements CommandListener, ItemCommandListener {
 	//#if polish.android
-	private StringItem OKField;
+	private ViewItem OKField;
 	private ViewItem fldName;
 	private TextView fldNameLabel;
 	private EditText fldNameText;
@@ -85,7 +89,9 @@ public class GuiWaypointSave extends Form implements CommandListener, ItemComman
 		addCommand(backCmd);
 		addCommand(saveCmd);
 		//#if polish.android
-		OKField = new StringItem(Locale.get("traceiconmenu.SaveWpt"), Locale.get("generic.Save"), StringItem.BUTTON);
+		Button saveButton = new Button(MidletBridge.getInstance());
+		OKField = new ViewItem(saveButton);
+		saveButton.setText(Locale.get("traceiconmenu.SaveWpt"));
 		OKField.addCommand(saveCmd);
 		OKField.setDefaultCommand(saveCmd);
 		OKField.setItemCommandListener(this);
@@ -97,6 +103,9 @@ public class GuiWaypointSave extends Form implements CommandListener, ItemComman
 		this.append(cg);
 		//#if polish.android
 		Display.getDisplay(GpsMid.getInstance()).setCurrentItem(fldName);
+		// perhaps this should be optional
+		InputMethodManager imm = (InputMethodManager) MidletBridge.instance.getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
 		//#style formItem
 		this.append(OKField);
 		//#endif
