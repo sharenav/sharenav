@@ -40,7 +40,7 @@ import javax.microedition.lcdui.Display;
 
 public class GuiWaypointSave extends Form implements CommandListener, ItemCommandListener {
 	//#if polish.android
-	private StringItem OKField;
+	private ViewItem OKField;
 	private ViewItem fldName;
 	private TextView fldNameLabel;
 	private EditText fldNameText;
@@ -92,10 +92,14 @@ public class GuiWaypointSave extends Form implements CommandListener, ItemComman
 		addCommand(backCmd);
 		addCommand(saveCmd);
 		//#if polish.android
-		OKField = new StringItem(Locale.get("traceiconmenu.SaveWpt"), Locale.get("generic.Save"), StringItem.BUTTON);
-		OKField.addCommand(saveCmd);
-		OKField.setDefaultCommand(saveCmd);
-		OKField.setItemCommandListener(this);
+		Button saveButton = new Button(MidletBridge.getInstance());
+		OKField = new ViewItem(saveButton);
+		saveButton.setText(Locale.get("traceiconmenu.SaveWpt"));
+		saveButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+			    commandAction(saveCmd, (Displayable) parent);
+			}
+		    });
 		this.append(fldNameTitle);
 		//#endif
 		this.append(fldName);
