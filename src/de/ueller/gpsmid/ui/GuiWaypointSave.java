@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.EditText;
 import de.enough.polish.android.lcdui.ViewItem;
 import de.enough.polish.android.midlet.MidletBridge;
+import javax.microedition.lcdui.Display;
 //#endif
 
 public class GuiWaypointSave extends Form implements CommandListener, ItemCommandListener {
@@ -95,6 +96,7 @@ public class GuiWaypointSave extends Form implements CommandListener, ItemComman
 		this.append(fldEle);		
 		this.append(cg);
 		//#if polish.android
+		Display.getDisplay(GpsMid.getInstance()).setCurrentItem(fldName);
 		//#style formItem
 		this.append(OKField);
 		//#endif
