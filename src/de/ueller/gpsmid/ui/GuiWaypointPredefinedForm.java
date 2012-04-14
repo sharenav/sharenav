@@ -11,7 +11,6 @@ import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Item;
-import javax.microedition.lcdui.ItemCommandListener;
 import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
 
@@ -20,11 +19,13 @@ import de.enough.polish.util.Locale;
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.util.Logger;
+//#if polish.android
+import de.enough.polish.android.lcdui.ViewItem;
+//#endif
 
-
-public class GuiWaypointPredefinedForm extends Form implements CommandListener, ItemCommandListener {
+public class GuiWaypointPredefinedForm extends Form implements CommandListener, SaveButtonListener {
 	//#if polish.android
-	private StringItem OKField;
+	private ViewItem OKField;
 	//#endif
 	private TextField mFldInput;
 	private static final Command mSaveCmd = new Command(Locale.get("generic.Save"), Command.OK, 1);
@@ -59,10 +60,9 @@ public class GuiWaypointPredefinedForm extends Form implements CommandListener, 
 		addCommand(mBackCmd);
 		addCommand(mSaveCmd);
 		//#if polish.android
-		OKField = new StringItem(Locale.get("traceiconmenu.SaveWpt"), Locale.get("generic.Save"), StringItem.BUTTON);
-		OKField.addCommand(mSaveCmd);
-		OKField.setDefaultCommand(mSaveCmd);
-		OKField.setItemCommandListener(this);
+		OKField = new SaveButton(Locale.get("traceiconmenu.SaveWpt"),
+					 this, (Displayable) mTrace,
+					 mSaveCmd);
 		//#endif
 
 		this.append(mFldInput);
@@ -88,10 +88,6 @@ public class GuiWaypointPredefinedForm extends Form implements CommandListener, 
 		} else {
 			mFldInput.setConstraints(TextField.ANY);
 		}
-	}
-
-	public void commandAction(Command cmd, Item item) {
-		commandAction(cmd, (Displayable) mTrace);
 	}
 
 	public void commandAction(Command cmd, Displayable displayable) {
