@@ -12,12 +12,12 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Item;
-import javax.microedition.lcdui.ItemCommandListener;
 import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
 
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.PositionMark;
+import de.ueller.gpsmid.ui.SaveButtonListener;
 import de.ueller.util.Logger;
 
 import javax.microedition.lcdui.Choice;
@@ -38,7 +38,7 @@ import de.enough.polish.android.midlet.MidletBridge;
 import javax.microedition.lcdui.Display;
 //#endif
 
-public class GuiWaypointSave extends Form implements CommandListener, ItemCommandListener {
+public class GuiWaypointSave extends Form implements CommandListener, SaveButtonListener {
 	//#if polish.android
 	private ViewItem OKField;
 	private ViewItem fldName;
@@ -92,14 +92,9 @@ public class GuiWaypointSave extends Form implements CommandListener, ItemComman
 		addCommand(backCmd);
 		addCommand(saveCmd);
 		//#if polish.android
-		Button saveButton = new Button(MidletBridge.getInstance());
-		OKField = new ViewItem(saveButton);
-		saveButton.setText(Locale.get("traceiconmenu.SaveWpt"));
-		saveButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-			    commandAction(saveCmd, (Displayable) parent);
-			}
-		    });
+		OKField = new SaveButton(Locale.get("traceiconmenu.SaveWpt"),
+					 this, (Displayable) parent,
+					 saveCmd);
 		this.append(fldNameTitle);
 		//#endif
 		this.append(fldName);
@@ -159,10 +154,6 @@ public class GuiWaypointSave extends Form implements CommandListener, ItemComman
 			Thread.sleep(1000);
 		} catch (InterruptedException ie) {
 		}
-	}
-
-	public void commandAction(Command cmd, Item item) {
-		commandAction(cmd, (Displayable) parent);
 	}
 
 	public void commandAction(Command cmd, Displayable displayable) {
