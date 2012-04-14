@@ -23,6 +23,9 @@ import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.ItemCommandListener;
 import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
+//#if polish.android
+import de.enough.polish.android.lcdui.ViewItem;
+//#endif
 
 import de.ueller.gpsmid.data.OsmDataEntity;
 import de.ueller.gpsmid.ui.GuiOsmChangeset;
@@ -31,7 +34,7 @@ import de.ueller.util.Logger;
 
 import de.enough.polish.util.Locale;
 
-public abstract class GuiOsmEntityDisplay extends Form implements GpsMidDisplayable, CommandListener, UploadListener, ItemCommandListener {
+public abstract class GuiOsmEntityDisplay extends Form implements GpsMidDisplayable, CommandListener, UploadListener, ItemCommandListener, SaveButtonListener {
 	
 	private final static Logger logger = Logger.getInstance(GuiOsmEntityDisplay.class,Logger.DEBUG);
 
@@ -102,7 +105,16 @@ public abstract class GuiOsmEntityDisplay extends Form implements GpsMidDisplaya
 				this.append(new StringItem(Locale.get("guiosmentitydisplay.by")/*    by:*/, osmentity.getEditor()));
 				this.append(new StringItem(Locale.get("guiosmentitydisplay.ver")/*    ver:*/, Integer.toString(osmentity.getVersion())));
 			}
-
+			//#if polish.android
+			ViewItem createButton = new SaveButton(Locale.get("guiosmentitydisplay.CreateChangeset")/*Create changeset*/,
+					 this, (Displayable) this,
+					 CREATE_CHANGE_CMD);
+			ViewItem closeButton = new SaveButton(Locale.get("guiosmentitydisplay.CloseChangeset")/*Close changeset*/,
+					 this, (Displayable) this,
+					 CLOSE_CHANGE_CMD);
+			this.append(createButton);
+			this.append(closeButton);
+			//#endif
 		} catch (Exception e) { 
 			logger.exception(Locale.get("guiosmentitydisplay.InitialisingEntityTagScreenFailed")/*Initialising entity tag screen failed: */ , e);
 		}
