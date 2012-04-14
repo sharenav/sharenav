@@ -23,8 +23,7 @@ import de.ueller.gpsmid.ui.SaveButtonListener;
 //#endif
 
 //#if polish.android
-public class SaveButton
-			extends ViewItem {
+public class SaveButton extends ViewItem {
 	public SaveButton (final String text, final SaveButtonListener listener, final Displayable parent, final Command saveCommand) {
 		super(new Button(MidletBridge.getInstance()));
 		Button saveButton = (Button) this._androidView;
