@@ -29,11 +29,9 @@ public class SaveButton
 		super(new Button(MidletBridge.getInstance()));
 		Button saveButton = (Button) this._androidView;
 		saveButton.setText(text);
-//		SaveButtonListener listener = (SaveButtonListener) caller;
 		saveButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				listener.commandAction(saveCommand, parent);
-				//listener.x();
 			}
 		    });
 	}
