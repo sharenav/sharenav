@@ -16,6 +16,7 @@ import java.util.Hashtable;
 //#endif
 //#if polish.android
 import android.view.KeyEvent;
+import de.enough.polish.android.lcdui.ViewItem;
 //#endif
 
 import javax.microedition.lcdui.Alert;
@@ -30,7 +31,6 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Item;
-import javax.microedition.lcdui.ItemCommandListener;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
@@ -61,7 +61,7 @@ import de.ueller.util.ProjMath;
 import de.enough.polish.util.Locale;
 
 public class GuiSearch extends Canvas implements CommandListener,
-		      GpsMidDisplayable, InputListener, KeySelectMenuReducedListener, CancelMonitorInterface, ItemCommandListener  {
+		      GpsMidDisplayable, InputListener, KeySelectMenuReducedListener, CancelMonitorInterface, SaveButtonListener  {
 
 	protected static final int VIRTUALKEY_PRESSED = 1;
 
@@ -156,7 +156,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private TextField poiSelectionMaxDistance;
 	private TextField fulltextSearchField;
 	//#if polish.android
-	private StringItem OKField;
+	private ViewItem OKField;
 	//#endif
 	
 	
@@ -328,10 +328,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 		return (cursor < result.size() && cursor >= 0 && result.size() != 0);
 	}
 	
-	public void commandAction(Command cmd, Item item) {
-		commandAction(cmd, (Displayable) parent);
-	}
-
 	public void commandAction(Command c, Displayable d) {
 //		System.out.println("got Command " + c);
 		if (state == STATE_MAIN || state == STATE_FAVORITES) {
@@ -609,10 +605,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 			fulltextForm.addCommand(OK_CMD);
 			fulltextForm.setCommandListener(this);
 			//#if polish.android
-			OKField = new StringItem("", Locale.get("generic.OK"), StringItem.BUTTON);
-			OKField.addCommand(OK_CMD);
-			OKField.setDefaultCommand(OK_CMD);
-			OKField.setItemCommandListener(this);
+			OKField = new SaveButton(Locale.get("generic.OK"),
+						 this, (Displayable) parent,
+						 OK_CMD);
 			//#style formItem
 			fulltextForm.append(OKField);
 			Display.getDisplay(GpsMid.getInstance()).setCurrentItem(fulltextSearchField);
