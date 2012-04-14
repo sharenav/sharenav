@@ -25,25 +25,16 @@ import javax.microedition.lcdui.ChoiceGroup;
 //#if polish.android
 import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.View.OnKeyListener;
 import android.view.WindowManager;
-import android.widget.AnalogClock;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.EditText;
 import de.enough.polish.android.lcdui.ViewItem;
 import de.enough.polish.android.midlet.MidletBridge;
 import javax.microedition.lcdui.Display;
 //#endif
 
-public class GuiWaypointSave extends Form implements CommandListener, SaveButtonListener {
+public class GuiWaypointSave extends Form implements CommandListener, SaveButtonListener, BackKeyListener {
 	//#if polish.android
 	private ViewItem OKField;
-	private ViewItem fldName;
-	private TextView fldNameLabel;
-	private EditText fldNameText;
+	private TextEditField fldName;
 	//#else
 	private TextField fldName;
 	//#endif
@@ -69,13 +60,15 @@ public class GuiWaypointSave extends Form implements CommandListener, SaveButton
 		}
 	}
 
+	public void backPressed() {
+		parent.show();
+	}
+
 	private void jbInit() throws Exception {
 		//#if polish.android
-		fldNameLabel = new TextView(MidletBridge.getInstance());
-		fldNameLabel.setText(Locale.get("guiwaypointsave.Name")/*Name:*/);
-		ViewItem fldNameTitle = new ViewItem(fldNameLabel);
-		fldNameText = new EditText(MidletBridge.getInstance());
-		fldName = new ViewItem(fldNameText);
+		fldName = new TextEditField(Locale.get("guiwaypointsave.Name")/*Name:*/, "", 
+					    Configuration.MAX_WAYPOINTNAME_LENGTH,
+					    TextField.ANY, this);
 		//#else
 		fldName = new TextField(Locale.get("guiwaypointsave.Name")/*Name:*/, "", 
 				Configuration.MAX_WAYPOINTNAME_LENGTH, TextField.ANY);
@@ -95,29 +88,13 @@ public class GuiWaypointSave extends Form implements CommandListener, SaveButton
 		OKField = new SaveButton(Locale.get("traceiconmenu.SaveWpt"),
 					 this, (Displayable) parent,
 					 saveCmd);
-		this.append(fldNameTitle);
+		this.append(fldName.getTitle());
 		//#endif
 		this.append(fldName);
 		this.append(Locale.get("guiwaypointsave.OptionalData")/*Optional data*/);
 		this.append(fldEle);		
 		this.append(cg);
 		//#if polish.android
-		fldNameText.setOnKeyListener(new OnKeyListener()
-		{
-			public boolean onKey(View v, int keyCode, KeyEvent event)
-			{
-				if (event.getAction() == KeyEvent.ACTION_DOWN)
-				{
-					//check if the right key was pressed
-					if (keyCode == KeyEvent.KEYCODE_BACK)
-					{
-						parent.show();
-						return true;
-					}
-				}
-				return false;
-			}
-		});
 		Display.getDisplay(GpsMid.getInstance()).setCurrentItem(fldName);
 		// perhaps this should be optional
 		InputMethodManager imm = (InputMethodManager) MidletBridge.instance.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -131,11 +108,7 @@ public class GuiWaypointSave extends Form implements CommandListener, SaveButton
 	{
 		this.waypt = posMark;
 		this.name = "";
-		//#if polish.android
-		fldNameText.setText(name);
-		//#else
 		fldName.setString(name);
-		//#endif
 		
 		//only set default altitude if gps.ele is valid. 
 		if (waypt.ele != PositionMark.INVALID_ELEVATION) {
@@ -158,11 +131,7 @@ public class GuiWaypointSave extends Form implements CommandListener, SaveButton
 
 	public void commandAction(Command cmd, Displayable displayable) {
 		if (cmd == saveCmd) {
-			//#if polish.android
-			name = fldNameText.getText().toString();
-			//#else
 			name = fldName.getString();
-			//#endif
 			if (cg.isSelected(0) && !name.endsWith("*")) {
 				name += "*";
 			}
