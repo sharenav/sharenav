@@ -42,6 +42,10 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 	public PositionMark[] wayPts;
 	
 	// FIXME read from config file and/or add a UI to change these
+	//#if polish.api.finland
+	private final static String[] predefs = 
+	{ "N30", "N40", "N50", "N60", "N70", "N80", "N100", "N120", "Nvaiht", "Tievalot", "Tievalotpois", "2kaist", "1kaist", "aita", "aitapois", "b", "bvas", "kam", "N %f", "b %s", "tie %s", "tieoik", "tievas" };
+	//#else
 	private final static String[] predefs = {
 		"City limit",
 		"Speed %f",
@@ -55,6 +59,7 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 		"Phone",
 		"Path %s",
 		"Back" };
+	//#endif
 	private String[] predefsToShow = { };
 
 	public TraceIconMenu(GpsMidDisplayable parent, IconActionPerformer actionPerformer) {
