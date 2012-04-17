@@ -2073,7 +2073,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	public void keySelectMenuItemSelected(final short poiType) {
 		setTitle();
-		
+		cursorKeypad = true;            
 		clearList();
 		searchCanon.setLength(0);
 		searchAlpha = false;
