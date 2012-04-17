@@ -446,6 +446,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			if (c == OK_CMD) {
 				clearList();
 				setTitle();
+				cursorKeypad = true;
 				searchCanon.setLength(0);
 				final CancelMonitorInterface cmi = this;
 				isSearchCanceled = false;
