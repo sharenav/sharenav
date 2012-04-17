@@ -677,7 +677,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	public void show() {
 		hideKeypad = false;
-		cursorKeypad = false;
 		height = getHeight();
 		width = getWidth();
 		gsl = new GuiSearchLayout(0, 0, width, height);
