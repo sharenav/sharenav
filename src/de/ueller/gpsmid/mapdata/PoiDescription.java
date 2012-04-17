@@ -17,5 +17,8 @@ public class PoiDescription {
 	//#if polish.api.osm-editing
 	public String[]	osmTags;
 	//#endif
-}
 
+	public String toString() {
+		return description;
+	}
+}

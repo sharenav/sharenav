@@ -522,6 +522,10 @@ public class Legend {
 			}
 			byte flags = ds.readByte();
 			pois[i].description = ds.readUTF();
+			// for POI type searches
+			if (i == 0) {
+				pois[i].description = Locale.get("guipoitypeselectmenu.Everything")/*Everything*/;
+			}
 			//logger.debug("POI: " +  pois[i].description);
 			pois[i].imageCenteredOnNode = ds.readBoolean();
 			pois[i].maxImageScale = ds.readInt();
@@ -579,6 +583,10 @@ public class Legend {
 			}
 			//#endif
 		}
+	}
+
+	public static final PoiDescription[] getPoiDescriptions() {
+		return pois;
 	}
 
 	private static int readDayOrNightColor(DataInputStream ds) throws IOException {

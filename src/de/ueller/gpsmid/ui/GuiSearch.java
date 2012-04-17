@@ -15,8 +15,12 @@ import java.util.Hashtable;
 //import java.util.Enumeration;
 //#endif
 //#if polish.android
+import android.content.Context;
+import android.view.inputmethod.InputMethodManager;
 import android.view.KeyEvent;
 import de.enough.polish.android.lcdui.ViewItem;
+import de.enough.polish.android.midlet.MidletBridge;
+import javax.microedition.lcdui.Display;
 //#endif
 
 import javax.microedition.lcdui.Alert;
@@ -42,6 +46,7 @@ import de.ueller.gpsmid.data.RoutePositionMark;
 import de.ueller.gpsmid.data.SearchResult;
 import de.ueller.gpsmid.names.NumberCanon;
 import de.ueller.gpsmid.names.SearchNames;
+import de.ueller.gpsmid.ui.GuiPoiTypeSelectMenu.PoiTypeSelectMenuItem;
 //#if polish.api.bigsearch
 //#if polish.api.osm-editing
 import de.ueller.gpsmid.ui.GuiOsmPoiDisplay;
@@ -155,6 +160,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private TextField poiSelectionMaxDistance;
 	private TextField fulltextSearchField;
 	//#if polish.android
+	private ViewItem poiSelectField;
 	private ViewItem OKField;
 	//#endif
 	
@@ -537,8 +543,19 @@ public class GuiSearch extends Canvas implements CommandListener,
 			state = STATE_POI;
 			filter = 0;
 			try{
+				//#if polish.android
+				Form poiSelectForm = new Form(Locale.get("guisearch.NearestPoi")/*Nearest POI*/);
+				poiSelectField = new PoiTypeMenu(this);
+				poiSelectForm.append(poiSelectField);
+				// FIXME perhaps this should be optional
+				InputMethodManager imm = (InputMethodManager) MidletBridge.instance.getSystemService(Context.INPUT_METHOD_SERVICE);
+				Display.getDisplay(GpsMid.getInstance()).setCurrentItem(poiSelectField);
+				imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+				GpsMid.getInstance().show(poiSelectForm);
+				//#else
 				poiTypeForm = new GuiPoiTypeSelectMenu(this, this);
 				poiTypeForm.show();
+				//#endif
 			} catch (Exception e) {
 				logger.exception(Locale.get("guisearch.FailedToSelectPOIType")/*Failed to select POI type*/, e);
 				state = STATE_MAIN;
