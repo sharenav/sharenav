@@ -6,4 +6,5 @@ import javax.microedition.lcdui.Displayable;
 
 public interface SaveButtonListener {
 	public void commandAction(Command c, Displayable d);
+	public void backPressed();
 }

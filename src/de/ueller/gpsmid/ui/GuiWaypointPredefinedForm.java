@@ -137,6 +137,10 @@ public class GuiWaypointPredefinedForm extends Form implements CommandListener, 
 		}
 	}
 	
+	public void backPressed() {
+		mParent.show();
+	}
+
 	public void show() {
 		GpsMid.getInstance().show(this);
 	}

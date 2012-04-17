@@ -2161,6 +2161,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 		state = STATE_SEARCH_PROGRESS;
 		t.start();
 	}
+	public void backPressed() {
+		parent.show();
+	}
 	public boolean monitorIsCanceled() {
 		return isSearchCanceled;
 	}

@@ -32,6 +32,14 @@ import de.ueller.midlet.ui.KeySelectMenuItem;
 import de.ueller.util.HttpHelper;
 import de.ueller.util.Logger;
 import de.ueller.util.MoreMath;
+//#if polish.android
+import android.content.Context;
+import android.view.inputmethod.InputMethodManager;
+import android.view.KeyEvent;
+import de.enough.polish.android.lcdui.ViewItem;
+import de.enough.polish.android.midlet.MidletBridge;
+import javax.microedition.lcdui.Display;
+//#endif
 
 import de.enough.polish.util.Locale;
 
@@ -44,11 +52,18 @@ public class GuiOsmPoiDisplay extends GuiOsmEntityDisplay implements KeySelectMe
 	
 	//private int loadPOIxmlState;
 	
+	//#if polish.android
+	private Form poiTypeForm;
+	//#else
 	private GuiPoiTypeSelectMenu poiTypeForm;
+	//#endif
 	private ChoiceGroup poiSelectionCG;
 	private boolean showPoiTypeForm;
 	private boolean showParent;
 	private short poiType;
+	//#if polish.android
+	private ViewItem poiSelectField;
+	//#endif
 	
 	public GuiOsmPoiDisplay(int nodeID, SingleTile t, float lat, float lon, GpsMidDisplayable parent) {
 		super(Locale.get("guiosmpoidisplay.Node")/*Node*/, parent);
@@ -68,8 +83,19 @@ public class GuiOsmPoiDisplay extends GuiOsmEntityDisplay implements KeySelectMe
 	
 	private void setupPoiTypeForm() {
 		try { 
+			//#if polish.android
+			poiTypeForm = new Form(Locale.get("traceiconmenu.AddPOI")/*Add POI*/);
+			poiSelectField = new PoiTypeMenu(this);
+			poiTypeForm.append(poiSelectField);
+			// FIXME perhaps this should be optional
+			InputMethodManager imm = (InputMethodManager) MidletBridge.instance.getSystemService(Context.INPUT_METHOD_SERVICE);
+			Display.getDisplay(GpsMid.getInstance()).setCurrentItem(poiSelectField);
+			imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+			GpsMid.getInstance().show(poiTypeForm);
+			//#else
 			poiTypeForm = new GuiPoiTypeSelectMenu(this, this);
 			poiTypeForm.show();
+			//#endif
 		} catch (Exception e) {
 			logger.exception(Locale.get("guiosmpoidisplay.POItypeFormInvalid")/*POI type form invalid*/, e);
 		}
@@ -175,7 +201,11 @@ public class GuiOsmPoiDisplay extends GuiOsmEntityDisplay implements KeySelectMe
 			return;
 		}
 		if (showPoiTypeForm) {
+			//#if polish.android
+			GpsMid.getInstance().show(poiTypeForm);
+			//#else
 			poiTypeForm.show();
+			//#endif
 			showParent = true;
 		} else {
 			setupScreen();
@@ -229,6 +259,9 @@ public class GuiOsmPoiDisplay extends GuiOsmEntityDisplay implements KeySelectMe
 
 	public void keySelectMenuCancel() {
 		showPoiTypeForm = false;
+		//#if polish.android
+		this.show();
+		//#endif
 	}
 
 	public void keySelectMenuItemSelected(short poiType) {
@@ -241,7 +274,9 @@ public class GuiOsmPoiDisplay extends GuiOsmEntityDisplay implements KeySelectMe
 		}
 		showPoiTypeForm = false;
 		showParent = false;
-		
+		//#if polish.android
+		this.show();
+		//#endif
 	}
 
 

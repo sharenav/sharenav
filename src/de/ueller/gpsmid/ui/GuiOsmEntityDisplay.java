@@ -24,7 +24,11 @@ import javax.microedition.lcdui.ItemCommandListener;
 import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
 //#if polish.android
+import de.enough.polish.android.lcdui.AndroidDisplay;
 import de.enough.polish.android.lcdui.ViewItem;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.View.OnKeyListener;
 //#endif
 
 import de.ueller.gpsmid.data.OsmDataEntity;
@@ -114,6 +118,23 @@ public abstract class GuiOsmEntityDisplay extends Form implements GpsMidDisplaya
 					 CLOSE_CHANGE_CMD);
 			this.append(createButton);
 			this.append(closeButton);
+			AndroidDisplay ad = AndroidDisplay.getDisplay(GpsMid.getInstance());
+			ad.setOnKeyListener(new OnKeyListener()
+			    {
+				public boolean onKey(View v, int keyCode, KeyEvent event)
+				{
+				    if (event.getAction() == KeyEvent.ACTION_DOWN)
+					{
+					    //check if the right key was pressed
+					    if (keyCode == KeyEvent.KEYCODE_BACK)
+						{
+						    backPressed();
+						    return true;
+						}
+					}
+				    return false;
+				}
+			    });
 			//#endif
 		} catch (Exception e) { 
 			logger.exception(Locale.get("guiosmentitydisplay.InitialisingEntityTagScreenFailed")/*Initialising entity tag screen failed: */ , e);
@@ -231,6 +252,9 @@ public abstract class GuiOsmEntityDisplay extends Form implements GpsMidDisplaya
 		
 	}
 
+	public void backPressed() {
+		parent.show();
+	}
 
 
 }
