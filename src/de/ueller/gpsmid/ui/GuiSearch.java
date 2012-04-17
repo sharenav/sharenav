@@ -42,7 +42,6 @@ import de.ueller.gpsmid.data.RoutePositionMark;
 import de.ueller.gpsmid.data.SearchResult;
 import de.ueller.gpsmid.names.NumberCanon;
 import de.ueller.gpsmid.names.SearchNames;
-import de.ueller.gpsmid.ui.GuiPoiTypeSelectMenu.PoiTypeSelectMenuItem;
 //#if polish.api.bigsearch
 //#if polish.api.osm-editing
 import de.ueller.gpsmid.ui.GuiOsmPoiDisplay;
@@ -2072,13 +2071,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 		show();
 	}
 
-	public void keySelectMenuItemSelected(final KeySelectMenuItem item) {
+	public void keySelectMenuItemSelected(final short poiType) {
 		setTitle();
 		
 		clearList();
 		searchCanon.setLength(0);
 		searchAlpha = false;
-		final short poiType = ((PoiTypeSelectMenuItem)item).getIdx();
 		final CancelMonitorInterface cmi = this;
 		isSearchCanceled = false;
 		Thread t = new Thread(new Runnable() {
@@ -2090,7 +2088,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					int maxScale = Legend.getNodeMaxScale(poiType);
 					// index 0 is all POI types
 					Vector res = parent.tiles[Legend.scaleToTile(maxScale)].getNearestPoi(
-						(((PoiTypeSelectMenuItem)item).getIdx() == 0) ? true : false, poiType, 
+						(poiType == 0) ? true : false, poiType, 
 						parent.center.radlat, parent.center.radlon,
 						Configuration.getPoiSearchDistance()*1000.0f, cmi);
 					for (int i = 0; i < res.size(); i++) {

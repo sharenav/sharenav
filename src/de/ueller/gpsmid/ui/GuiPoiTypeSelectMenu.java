@@ -107,8 +107,8 @@ class GuiPoiTypeSelectMenu extends KeySelectMenu implements KeySelectMenuListene
 		callbackReduced.keySelectMenuCancel();
 	}
 
-	public void keySelectMenuItemSelected(KeySelectMenuItem item) {
-		callbackReduced.keySelectMenuItemSelected(item);
+	public void keySelectMenuItemSelected(short poiType) {
+		callbackReduced.keySelectMenuItemSelected(poiType);
 		
 	}
 

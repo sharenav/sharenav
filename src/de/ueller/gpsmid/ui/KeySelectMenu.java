@@ -184,7 +184,7 @@ public class KeySelectMenu extends Canvas implements
 			Object o = result.elementAt(cursor);
 			if (o instanceof KeySelectMenuItem) {
 				KeySelectMenuItem menuItem = (KeySelectMenuItem) o;
-				callback.keySelectMenuItemSelected(menuItem);
+				callback.keySelectMenuItemSelected((short) cursor);
 			} else {
 				logger.error(Locale.get("keyselectmenu.SelectedBogusItem")/*Selected an item that should not have been there*/);
 			}

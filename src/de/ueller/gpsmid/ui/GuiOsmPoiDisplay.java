@@ -231,11 +231,9 @@ public class GuiOsmPoiDisplay extends GuiOsmEntityDisplay implements KeySelectMe
 		showPoiTypeForm = false;
 	}
 
-	public void keySelectMenuItemSelected(KeySelectMenuItem item) {
-		PoiTypeSelectMenuItem poiTypeIt = (PoiTypeSelectMenuItem)item;
-		poiType = poiTypeIt.getIdx();
+	public void keySelectMenuItemSelected(short poiType) {
 		String [] tags = Legend.getNodeOsmTags(poiType);
-		System.out.println("poiType: " + poiTypeIt + "  tags " + tags + " ed: " + osmentity);
+		System.out.println("poiType: " + poiType + "  tags " + tags + " ed: " + osmentity);
 		if ((tags != null) && (osmentity != null)) {
 			for (int i = 0; i < tags.length/2; i++) {
 				osmentity.getTags().put(tags[i*2], tags[i*2 + 1]);
