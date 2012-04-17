@@ -75,7 +75,7 @@ public class PoiTypeMenu extends ViewItem {
 						int position, long id) {
 				System.out.println("Position: " + position);
 				caller.keySelectMenuItemSelected((short) position);
-				Toast.makeText(MidletBridge.getInstance(), Locale.get("guisearch.SearchingdotsForm")/*Searching...*/, Toast.LENGTH_LONG).show();				
+				Toast.makeText(MidletBridge.getInstance(), Locale.get("poitypemenu.selected")/*POI type selected*/, Toast.LENGTH_LONG).show();				
 			}
 		});
 		listView.setTextFilterEnabled(true);
