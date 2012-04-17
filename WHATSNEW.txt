@@ -86,6 +86,7 @@
       options to show or not show the big arrows or the small in-map arrows.
     - On new GpsMid installations on devices with a display height or width > 400
       the minimum route line width is now 5 instead of 3.
+    - don't pause GpsMid (& close location producer) if we're routing 
     *** Osm2GpsMid GUI ***
     - Route destinations for the route corridor are saved in last.properties. After loading
       a .properties file with route destinations you can press "Calculate Route Corridor"
