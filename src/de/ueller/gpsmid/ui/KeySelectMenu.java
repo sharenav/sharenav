@@ -23,6 +23,7 @@ import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.gpsmid.data.SearchResult;
 import de.ueller.gpsmid.names.SearchNames;
+import de.ueller.gpsmid.ui.GuiPoiTypeSelectMenu.PoiTypeSelectMenuItem;
 import de.ueller.midlet.iconmenu.LayoutElement;
 import de.ueller.midlet.ui.KeySelectMenuItem;
 import de.ueller.util.Logger;
@@ -183,8 +184,9 @@ public class KeySelectMenu extends Canvas implements
 			try {
 			Object o = result.elementAt(cursor);
 			if (o instanceof KeySelectMenuItem) {
-				KeySelectMenuItem menuItem = (KeySelectMenuItem) o;
-				callback.keySelectMenuItemSelected((short) cursor);
+				PoiTypeSelectMenuItem menuItem = (PoiTypeSelectMenuItem) o;
+				final short poiType = menuItem.getIdx();
+				callback.keySelectMenuItemSelected(poiType);
 			} else {
 				logger.error(Locale.get("keyselectmenu.SelectedBogusItem")/*Selected an item that should not have been there*/);
 			}
