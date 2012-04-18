@@ -15,9 +15,12 @@ import java.util.Hashtable;
 //import java.util.Enumeration;
 //#endif
 //#if polish.android
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.View.OnKeyListener;
 import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
-import android.view.KeyEvent;
+import de.enough.polish.android.lcdui.AndroidDisplay;
 import de.enough.polish.android.lcdui.ViewItem;
 import de.enough.polish.android.midlet.MidletBridge;
 import javax.microedition.lcdui.Display;
@@ -250,6 +253,26 @@ public class GuiSearch extends Canvas implements CommandListener,
 		this.parent = parent;
 		setCommandListener(this);
 		
+		//#if polish.android
+		AndroidDisplay ad = AndroidDisplay.getDisplay(GpsMid.getInstance());
+		ad.setOnKeyListener(new OnKeyListener()
+		{
+			public boolean onKey(View v, int keyCode, KeyEvent event)
+			{
+				if (event.getAction() == KeyEvent.ACTION_DOWN)
+				{
+					//check if the right key was pressed
+					if (keyCode == KeyEvent.KEYCODE_BACK)
+					{
+						backPressed();
+						return true;
+					}
+				}
+				return false;
+			}
+		});
+
+		//#endif
 		searchThread = new SearchNames(this);
 		if (defaultAction == ACTION_EDIT_ENTITY) {
 			//#if polish.api.bigsearch
