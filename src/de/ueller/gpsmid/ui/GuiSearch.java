@@ -567,53 +567,17 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (c == POI_CMD) {
 			state = STATE_POI;
 			filter = 0;
-			try{
-				//#if polish.android
-				Form poiSelectForm = new Form(Locale.get("guisearch.NearestPoi")/*Nearest POI*/);
-				poiSelectField = new PoiTypeMenu(this);
-				poiSelectForm.append(poiSelectField);
-				// FIXME perhaps this should be optional
-				//InputMethodManager imm = (InputMethodManager) MidletBridge.instance.getSystemService(Context.INPUT_METHOD_SERVICE);
-				//Display.getDisplay(GpsMid.getInstance()).setCurrentItem(poiSelectField);
-				//imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
-				GpsMid.getInstance().show(poiSelectForm);
-				//#else
-				System.out.println("new GuiPoiType..");
-				poiTypeForm = new GuiPoiTypeSelectMenu(this, this);
-				System.out.println("showing GuiPoiType..");
-				poiTypeForm.show();
-				System.out.println("past showing GuiPoiType..");
-				//#endif
-			} catch (Exception e) {
-				logger.exception(Locale.get("guisearch.FailedToSelectPOIType")/*Failed to select POI type*/, e);
-				state = STATE_MAIN;
-				show();
-			}
-			
+			showPoiTypeForm();
 		}
 		if (c == POI_URL_SEARCH_CMD) {
 			filter = 1 << FILTER_BIT_URLS;
 			state = STATE_POI_URLS;
-			try{
-				poiTypeForm = new GuiPoiTypeSelectMenu(this, this);
-				poiTypeForm.show();
-			} catch (Exception e) {
-				logger.exception(Locale.get("guisearch.FailedToSelectPOIType")/*Failed to select POI type*/, e);
-				state = STATE_MAIN;
-				show();
-			}
+			showPoiTypeForm();
 		}
 		if (c == POI_PHONE_SEARCH_CMD) {
 			filter = 1 << FILTER_BIT_PHONES;
 			state = STATE_POI_URLS;
-			try{
-				poiTypeForm = new GuiPoiTypeSelectMenu(this, this);
-				poiTypeForm.show();
-			} catch (Exception e) {
-				logger.exception(Locale.get("guisearch.FailedToSelectPOIType")/*Failed to select POI type*/, e);
-				state = STATE_MAIN;
-				show();
-			}
+			showPoiTypeForm();
 		}
 		if (c == SORT_CMD) {
 				sortByDist = !sortByDist;
@@ -657,6 +621,28 @@ public class GuiSearch extends Canvas implements CommandListener,
 			Display.getDisplay(GpsMid.getInstance()).setCurrentItem(fulltextSearchField);
 			//#endif
 			GpsMid.getInstance().show(fulltextForm);			
+		}
+	}
+
+	private void showPoiTypeForm() {
+		try{
+			//#if polish.android
+			Form poiSelectForm = new Form(Locale.get("guisearch.NearestPoi")/*Nearest POI*/);
+			poiSelectField = new PoiTypeMenu(this);
+			poiSelectForm.append(poiSelectField);
+			// FIXME perhaps this should be optional
+			//InputMethodManager imm = (InputMethodManager) MidletBridge.instance.getSystemService(Context.INPUT_METHOD_SERVICE);
+			//Display.getDisplay(GpsMid.getInstance()).setCurrentItem(poiSelectField);
+			//imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+			GpsMid.getInstance().show(poiSelectForm);
+			//#else
+			poiTypeForm = new GuiPoiTypeSelectMenu(this, this);
+			poiTypeForm.show();
+			//#endif
+		} catch (Exception e) {
+			logger.exception(Locale.get("guisearch.FailedToSelectPOIType")/*Failed to select POI type*/, e);
+			state = STATE_MAIN;
+			show();
 		}
 	}
 
@@ -714,14 +700,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			System.out.println("Starting POI search");
 			state = STATE_POI;
 			filter = 0;
-			try{
-				poiTypeForm = new GuiPoiTypeSelectMenu(this, this);
-				poiTypeForm.show();
-			} catch (Exception e) {
-				logger.exception(Locale.get("guisearch.FailedToSelectPOIType")/*Failed to select POI type*/, e);
-				state = STATE_MAIN;
-				show();
-			}
+			showPoiTypeForm();
 			poisSearched = true;
 		} else {
 		if (state == STATE_SEARCH_PROGRESS) {
