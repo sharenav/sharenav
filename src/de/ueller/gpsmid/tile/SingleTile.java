@@ -370,6 +370,14 @@ public class SingleTile extends Tile implements QueueableTile {
 		boolean hideable = Legend.isNodeHideable(t);
 
 		boolean alert = Legend.isNodeAlert(t);
+		//#if polish.api.finland
+		boolean cameraAlert = Legend.isCamera(t);
+		if (cameraAlert) {
+			// FIXME: get and pass coordinates to keep track of distance
+			// to camera
+			pc.trace.setCameraAlert(t);
+		}
+		//#endif
 		if (alert) {
 			// FIXME: get and pass coordinates to keep track of distance
 			// to alert POI

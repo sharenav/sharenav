@@ -316,6 +316,10 @@ public class Configuration {
 	public final static byte CFGBIT_FAVORITES_IN_ROUTE_ICON_MENU = 124;
 	/** bit 125: show travel mode in map */
 	public final static byte CFGBIT_SHOW_TRAVEL_MODE_IN_MAP = 125;
+	//#if polish.api.finland
+	/** bit 126: alert for speed camera */
+	public final static byte CFGBIT_SPEEDCAMERA_ALERT = 126;
+	//#endif
 	
 	/**
 	 * These are the database record IDs for each configuration option

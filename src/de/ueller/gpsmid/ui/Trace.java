@@ -381,6 +381,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private long startTimeOfSpeedingSign = 0;
 	private int speedingSpeedLimit = 0;
 
+	//#if polish.api.finland
+	private volatile boolean cameraAlert = false;
+	private long startTimeOfCameraAlert = 0;
+	//#endif
 	private volatile boolean nodeAlert = false;
 	private volatile int alertNodeType = 0;
 	private long startTimeOfAlertSign = 0;
@@ -2395,7 +2399,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 
 	private void setSpeedingSign(int maxSpeed) {
-//		speeding = true;
+		//speeding = true;
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL)
 			&&
 			(
@@ -2404,17 +2408,47 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				(System.currentTimeMillis() - startTimeOfSpeedingSign) < 3000
 			)
 		) {
+			//#if polish.api.finland
+			String cameraString = "";
+			if (cameraAlert && startTimeOfCameraAlert == 0) {
+				startTimeOfCameraAlert = System.currentTimeMillis();
+				// FIXME get camera sound from config file, requires
+				// map format change to pass in legend
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_SND)) {
+					GpsMid.mNoiseMaker.immediateSound("CAMERA_ALERT");
+				}
+			}
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDCAMERA_ALERT)
+				&& cameraAlert) {
+				cameraString = Locale.get("trace.cameraText");
+			}
+			//#endif
 			if (speeding) {
 				speedingSpeedLimit = maxSpeed;
 				startTimeOfSpeedingSign = System.currentTimeMillis();
 			}
+			//#if polish.api.finland
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
+				tl.ele[TraceLayout.SPEEDING_SIGN].setText(cameraString + Integer.toString(speedingSpeedLimit));
+			} else {
+				tl.ele[TraceLayout.SPEEDING_SIGN].setText(cameraString + Integer.toString((int)(speedingSpeedLimit / 1.609344f + 0.5f)));
+			}
+			if ((System.currentTimeMillis() - startTimeOfCameraAlert) >= 8000) {
+				cameraAlert = false;
+				startTimeOfCameraAlert = 0;
+			}
+			//#else
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
 				tl.ele[TraceLayout.SPEEDING_SIGN].setText(Integer.toString(speedingSpeedLimit));
 			} else {
 				tl.ele[TraceLayout.SPEEDING_SIGN].setText(Integer.toString((int)(speedingSpeedLimit / 1.609344f + 0.5f)));
 			}
+			//#endif
 		} else {
 			startTimeOfSpeedingSign = 0;
+			//#if polish.api.finland
+			startTimeOfCameraAlert = 0;
+			//#endif
 		}
 	}
 
@@ -3957,4 +3991,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			alertNodeType = type;
 		}
 	}
+	//#if polish.api.finland
+	public void setCameraAlert(int type) {
+		if (!cameraAlert) {
+			cameraAlert = true;
+		}
+	}
+	//#endif
 }

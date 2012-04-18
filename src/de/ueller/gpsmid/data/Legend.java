@@ -252,6 +252,10 @@ public class Legend {
 
 	private final static Logger logger = Logger.getInstance(Legend.class, Logger.TRACE);
 	
+	//#if polish.api.finland
+	private static int cameraType = 0;
+	//#endif
+
 	public static void reReadLegend() {
 		try {
 			Legend.readLegend();
@@ -541,6 +545,12 @@ public class Legend {
 					logger.error(Locale.get("legend.CouldNotOpenPOI")/*Could not open POI icon */ + imageName + Locale.get("legend.for")/* for */ + pois[i].description);
 					pois[i].image = generic;
 				}				
+				//#if polish.api.finland
+				// FIXME perhaps make this style-file-configurable with a field "camera"
+				if ("/speed_trap.png".equals(imageName)) {
+					cameraType = i;
+				}
+				//#endif
 			}
 			if ((flags & LEGEND_FLAG_SEARCH_IMAGE) > 0) {
 				String imageName = ds.readUTF();
@@ -584,6 +594,12 @@ public class Legend {
 			//#endif
 		}
 	}
+
+	//#if polish.api.finland
+	public static boolean isCamera(short type) {
+		return type == cameraType;
+	}
+	//#endif
 
 	public static final PoiDescription[] getPoiDescriptions() {
 		return pois;

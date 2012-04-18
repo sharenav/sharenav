@@ -1,5 +1,6 @@
 /*
  * GpsMid - Copyright (c) 2008 sk750 at users dot sourceforge dot net 
+ * - Copyright (c) 2012 Jyrki Kuoppala jkpj at users dot sourceforge dot net 
  * See COPYING
  */
 
@@ -27,8 +28,13 @@ public class GuiSetupSound extends Form implements CommandListener {
 	private final	boolean[] selSndRouting = new boolean[2];
 
 	private ChoiceGroup spdAlertGroup=null;
+	//#if polish.api.finland
+	private final	String [] spdAlert = new String[4];
+	private final	boolean[] selSpdAlert = new boolean[4];
+	//#else
 	private final	String [] spdAlert = new String[3];
 	private final	boolean[] selSpdAlert = new boolean[3];
+	//#endif
 
         private TextField spdAlertTolerance=null;
 
@@ -74,6 +80,10 @@ public class GuiSetupSound extends Form implements CommandListener {
 			selSpdAlert[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL);
 			spdAlert[2] = Locale.get("guisetupsound.WinterLimitsCctive")/*Winter limits active*/;
 			selSpdAlert[2]=Configuration.getCfgBitState(Configuration.CFGBIT_MAXSPEED_WINTER);
+			//#if polish.api.finland
+			spdAlert[3] = Locale.get("guisetupsound.cameraAlert")/*Speed camera alert*/;
+			selSpdAlert[3]=Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDCAMERA_ALERT);
+			//#endif
 			spdAlertGroup = new ChoiceGroup(Locale.get("guisetupsound.SpeedingAlert")/*Speeding alert*/, Choice.MULTIPLE, spdAlert ,null);
 			spdAlertGroup.setSelectedFlags(selSpdAlert);
 			append(spdAlertGroup);
@@ -127,6 +137,9 @@ public class GuiSetupSound extends Form implements CommandListener {
 			Configuration.setCfgBitState(Configuration.CFGBIT_SPEEDALERT_SND, selSpdAlert[0], true);
 			Configuration.setCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL, selSpdAlert[1], true);
 			Configuration.setCfgBitState(Configuration.CFGBIT_MAXSPEED_WINTER, selSpdAlert[2], true);
+			//#if polish.api.finland
+			Configuration.setCfgBitState(Configuration.CFGBIT_SPEEDCAMERA_ALERT, selSpdAlert[3], true);
+			//#endif
 
 			parent.show();
 			return;

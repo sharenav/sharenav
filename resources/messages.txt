@@ -1264,3 +1264,6 @@ guisearch.fulltextshort=fulltext
 guidiscover.AltitudeCorrection=Altitude correction
 guicamera.SavingPhotoAndroid=Saving photo...OK to continue
 poitypemenu.selected=POI type selected
+guisetupsound.cameraAlert=Speed camera alert (works only when speed alert on)
+trace.cameraText=C
+
