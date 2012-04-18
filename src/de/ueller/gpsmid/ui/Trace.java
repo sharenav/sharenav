@@ -3459,8 +3459,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				// use the place of touch instead of old center as position,
 				// set as new center
 				pickPointEnd=panProjection.inverse(touchX,touchY, pickPointEnd);
-				center.radlat=centerPointerPressedN.radlat-(pickPointEnd.radlat-pickPointStart.radlat);
-				center.radlon=centerPointerPressedN.radlon-(pickPointEnd.radlon-pickPointStart.radlon);
+				center.radlat=pickPointEnd.radlat;
+				center.radlon=pickPointEnd.radlon;
 				Position oPos = new Position(center.radlat, center.radlon,
 							     0.0f, 0.0f, 0.0f, 0, 0);
 				imageCollector.newDataReady();
