@@ -73,12 +73,14 @@ public class PoiTypeMenu extends ViewItem {
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 						int position, long id) {
-				System.out.println("Position: " + position);
+				//System.out.println("Position: " + position);
 				caller.keySelectMenuItemSelected((short) position);
 				Toast.makeText(MidletBridge.getInstance(), Locale.get("poitypemenu.selected")/*POI type selected*/, Toast.LENGTH_LONG).show();				
 			}
 		});
-		listView.setTextFilterEnabled(true);
+		// FIXME make this work, using position or id doesn't work (only gives the position counted from the visible items,
+		// not poitype which should be counted from all items)
+		//listView.setTextFilterEnabled(true);
 		listView.setAdapter(new ArrayAdapter<String>(MidletBridge.getInstance(), android.R.layout.simple_list_item_1, Legend.getPoiDescriptions()));
 	}
 }

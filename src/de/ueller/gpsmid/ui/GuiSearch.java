@@ -572,9 +572,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 				poiSelectField = new PoiTypeMenu(this);
 				poiSelectForm.append(poiSelectField);
 				// FIXME perhaps this should be optional
-				InputMethodManager imm = (InputMethodManager) MidletBridge.instance.getSystemService(Context.INPUT_METHOD_SERVICE);
-				Display.getDisplay(GpsMid.getInstance()).setCurrentItem(poiSelectField);
-				imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+				//InputMethodManager imm = (InputMethodManager) MidletBridge.instance.getSystemService(Context.INPUT_METHOD_SERVICE);
+				//Display.getDisplay(GpsMid.getInstance()).setCurrentItem(poiSelectField);
+				//imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
 				GpsMid.getInstance().show(poiSelectForm);
 				//#else
 				poiTypeForm = new GuiPoiTypeSelectMenu(this, this);
