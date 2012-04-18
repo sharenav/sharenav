@@ -176,6 +176,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	
 	public final static byte ACTION_DEFAULT = 0;
 	public final static byte ACTION_EDIT_ENTITY = 1;
+	public final static byte ACTION_NEARBY_POI = 2;
 	
 	public final static byte STATE_MAIN = 0;
 	public final static byte STATE_POI = 1;
@@ -577,8 +578,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 				//imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
 				GpsMid.getInstance().show(poiSelectForm);
 				//#else
+				System.out.println("new GuiPoiType..");
 				poiTypeForm = new GuiPoiTypeSelectMenu(this, this);
+				System.out.println("showing GuiPoiType..");
 				poiTypeForm.show();
+				System.out.println("past showing GuiPoiType..");
 				//#endif
 			} catch (Exception e) {
 				logger.exception(Locale.get("guisearch.FailedToSelectPOIType")/*Failed to select POI type*/, e);
@@ -706,7 +710,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		gsl = new GuiSearchLayout(0, 0, width, height);
 		potentialDoubleClick = false;
 		pointerDragged = false;
-		if (defaultAction == ACTION_EDIT_ENTITY && !poisSearched) {
+		if ((defaultAction == ACTION_EDIT_ENTITY || defaultAction == ACTION_NEARBY_POI) && !poisSearched) {
 			System.out.println("Starting POI search");
 			state = STATE_POI;
 			filter = 0;

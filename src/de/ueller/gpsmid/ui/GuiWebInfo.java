@@ -39,17 +39,19 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 	private final static String reittiopasUrl = "http://api.reittiopas.fi/hsl/prod/?" + reittiopasAuth + reittiopasCoordSpec;
 //#endif
 
-	public GuiWebInfo(GpsMidDisplayable parent, Position pos, PaintContext pc) {
+	// if longtap is true, instantiate as context menu which also has nearby POI search
+	public GuiWebInfo(GpsMidDisplayable parent, Position pos, PaintContext pc, boolean longtap) {
 		super(Locale.get("guiwebinfo.ContactWebOrPhone")/*Contact by web or phone*/, List.IMPLICIT);
 		actualWay = pc.actualWay;
 		trace = pc.trace;
 		mParent = parent;
 		mPos = pos;
 		//#if polish.api.online
+		this.append(Locale.get("guisearch.nearestpois")/*Nearest POIs*/, null);
+		//this.append("Wikipedia (Web)", null);
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WIKIPEDIA_RSS)) {
 			this.append(Locale.get("guiwebinfo.WikipediaRSS")/*Wikipedia (RSS)*/, null);
 		}
-		//this.append("Wikipedia (Web)", null);
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEATHER)) {
 			this.append(Locale.get("guiwebinfo.Weather")/*Weather*/, null);
 		}
@@ -87,9 +89,18 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		}
 		if (c == SELECT_CMD) {
 			String site = getString(getSelectedIndex());
-			String url = getUrlForSite(site);
-			openUrl(url);
-			mParent.show();
+			if (site.equals(Locale.get("guisearch.nearestpois")/*Nearest POIs*/)) {
+				try {
+					GuiSearch guiSearch = new GuiSearch(trace, GuiSearch.ACTION_NEARBY_POI);
+					guiSearch.show();
+				} catch (Exception e) {
+					mLogger.exception("Could not open GuiSearch for nearby POI search", e);
+				}
+			} else {
+				String url = getUrlForSite(site);
+				openUrl(url);
+				mParent.show();
+			}
 		}
 	}
 

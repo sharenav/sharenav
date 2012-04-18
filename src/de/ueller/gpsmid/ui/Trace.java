@@ -1360,7 +1360,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				//#if polish.api.online
 					Position oPos = new Position(center.radlat, center.radlon,
 							0.0f, 0.0f, 0.0f, 0, 0);
-					GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc);
+					GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, false);
 					gWeb.show();
 				//#else
 					alert(Locale.get("trace.NoOnlineCapa")/*No online capabilites*/,
@@ -3465,7 +3465,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 							     0.0f, 0.0f, 0.0f, 0, 0);
 				imageCollector.newDataReady();
 				gpsRecenter = false;
-				commandAction(ONLINE_INFO_CMD);
+
+				GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, true);
+				gWeb.show();
 				//#endif
 			}
 			return;

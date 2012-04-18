@@ -25,6 +25,8 @@
     - Links to online help for touchscreen and GpsMid wiki in Online menu
     - Help tab added to icon menu
     - Favorites can be optionally shown as routing targets in route icon menu
+    - Long tap on map now opens a context menu which now has nearby POI search in addition to the
+      previously-existing online functions
     *** Map display ***
     - The map screen now updated more often during panning when dragging the touch screen.
       (not only after the ImageCollector class has finished drawing the map but every 1/3 s)
