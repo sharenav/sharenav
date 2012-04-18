@@ -29,11 +29,11 @@ public class GuiSetupSound extends Form implements CommandListener {
 
 	private ChoiceGroup spdAlertGroup=null;
 	//#if polish.api.finland
-	private final	String [] spdAlert = new String[4];
-	private final	boolean[] selSpdAlert = new boolean[4];
+	private final	String [] spdAlert = new String[6];
+	private final	boolean[] selSpdAlert = new boolean[6];
 	//#else
-	private final	String [] spdAlert = new String[3];
-	private final	boolean[] selSpdAlert = new boolean[3];
+	private final	String [] spdAlert = new String[5];
+	private final	boolean[] selSpdAlert = new boolean[6];
 	//#endif
 
         private TextField spdAlertTolerance=null;
@@ -78,11 +78,15 @@ public class GuiSetupSound extends Form implements CommandListener {
 			selSpdAlert[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_SND);
 			spdAlert[1] = Locale.get("guisetupsound.VisualSpeedingAlert")/*Visual speeding alert*/;
 			selSpdAlert[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL);
-			spdAlert[2] = Locale.get("guisetupsound.WinterLimitsCctive")/*Winter limits active*/;
-			selSpdAlert[2]=Configuration.getCfgBitState(Configuration.CFGBIT_MAXSPEED_WINTER);
+			spdAlert[2] = Locale.get("guisetupsound.AudioNodeAlert")/*Audio node alert*/;
+			selSpdAlert[2]=Configuration.getCfgBitState(Configuration.CFGBIT_NODEALERT_SND);
+			spdAlert[3] = Locale.get("guisetupsound.VisualNodeAlert")/*Visual node alert*/;
+			selSpdAlert[3]=Configuration.getCfgBitState(Configuration.CFGBIT_NODEALERT_VISUAL);
+			spdAlert[4] = Locale.get("guisetupsound.WinterLimitsCctive")/*Winter limits active*/;
+			selSpdAlert[4]=Configuration.getCfgBitState(Configuration.CFGBIT_MAXSPEED_WINTER);
 			//#if polish.api.finland
-			spdAlert[3] = Locale.get("guisetupsound.cameraAlert")/*Speed camera alert*/;
-			selSpdAlert[3]=Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDCAMERA_ALERT);
+			spdAlert[5] = Locale.get("guisetupsound.cameraAlert")/*Speed camera alert*/;
+			selSpdAlert[5]=Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDCAMERA_ALERT);
 			//#endif
 			spdAlertGroup = new ChoiceGroup(Locale.get("guisetupsound.SpeedingAlert")/*Speeding alert*/, Choice.MULTIPLE, spdAlert ,null);
 			spdAlertGroup.setSelectedFlags(selSpdAlert);
@@ -137,8 +141,10 @@ public class GuiSetupSound extends Form implements CommandListener {
 			Configuration.setCfgBitState(Configuration.CFGBIT_SPEEDALERT_SND, selSpdAlert[0], true);
 			Configuration.setCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL, selSpdAlert[1], true);
 			Configuration.setCfgBitState(Configuration.CFGBIT_MAXSPEED_WINTER, selSpdAlert[2], true);
+			Configuration.setCfgBitState(Configuration.CFGBIT_NODEALERT_SND, selSpdAlert[3], true);
+			Configuration.setCfgBitState(Configuration.CFGBIT_NODEALERT_VISUAL, selSpdAlert[4], true);
 			//#if polish.api.finland
-			Configuration.setCfgBitState(Configuration.CFGBIT_SPEEDCAMERA_ALERT, selSpdAlert[3], true);
+			Configuration.setCfgBitState(Configuration.CFGBIT_SPEEDCAMERA_ALERT, selSpdAlert[5], true);
 			//#endif
 
 			parent.show();

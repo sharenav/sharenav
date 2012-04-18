@@ -2225,9 +2225,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				tl.ele[TraceLayout.ROUTE_OFFROUTE].setVRelative(e);
 			}
 			
-			setSpeedingSign(maxSpeed);
-			
 			setAlertSign(Legend.getNodeTypeDesc((short) alertNodeType));
+			
+			setSpeedingSign(maxSpeed);
 			
 			if (hasPointerEvents()) {
 				tl.ele[TraceLayout.ZOOM_IN].setText("+");
@@ -2455,7 +2455,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private void setAlertSign(String alert) {
 		//FIXME use alert sign visual instead, get from legend after
 		// map format change
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL)
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_NODEALERT_VISUAL)
 		    &&
 		    (
 			    nodeAlert
@@ -2466,7 +2466,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				startTimeOfAlertSign = System.currentTimeMillis();
 				//FIXME get sound from config file, requires
 				// map format change to pass in legend
-				if (Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_SND)) {
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_NODEALERT_SND)) {
 					GpsMid.mNoiseMaker.immediateSound("ALERT");
 				}
 			}

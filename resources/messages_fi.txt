@@ -801,3 +801,5 @@ guidiscover.AltitudeCorrection=Korkeuden korjaus
 poitypemenu.selected=Kohteen tyyppi valittu
 guisetupsound.cameraAlert=Nopeuskameravaroitus (toimii vain ylinopeusvaroituksen kanssa)
 trace.cameraText=K
+guisetupsound.NodeAlert=Kohdevaroitus äänellä
+guisetupsound.VisualNodeAlert=Kohdevaroitus kuvalla

@@ -66,260 +66,264 @@ public class Configuration {
 	public final static int LOCATIONPROVIDER_ANDROID = 5;
 	
 	// bit 0: render as street
-	public final static byte CFGBIT_STREETRENDERMODE = 0;
+	public final static short CFGBIT_STREETRENDERMODE = 0;
 //	// bit 1 have default values been once applied?
-//	public final static byte CFGBIT_DEFAULTVALUESAPPLIED = 1;
+//	public final static short CFGBIT_DEFAULTVALUESAPPLIED = 1;
 	// bit 2: show POITEXT
-	public final static byte CFGBIT_POITEXTS = 2;
+	public final static short CFGBIT_POITEXTS = 2;
 	// bit 3: show WAYTEXT
-	public final static byte CFGBIT_WAYTEXTS = 3;
+	public final static short CFGBIT_WAYTEXTS = 3;
 	// bit 4: show AREATEXT
-	public final static byte CFGBIT_AREATEXTS = 4;
+	public final static short CFGBIT_AREATEXTS = 4;
 	// bit 5: show POIS
-	public final static byte CFGBIT_POIS = 5;
+	public final static short CFGBIT_POIS = 5;
 	// bit 6: show WPTTTEXT
-	public final static byte CFGBIT_WPTTEXTS = 6;
+	public final static short CFGBIT_WPTTEXTS = 6;
 	// bit 7: show descriptions
-	public final static byte CFGBIT_SHOWWAYPOITYPE = 7;
+	public final static short CFGBIT_SHOWWAYPOITYPE = 7;
 	// bit 8: show latlon
-	public final static byte CFGBIT_SHOWLATLON = 8;
+	public final static short CFGBIT_SHOWLATLON = 8;
 	// bit 9: full screen
-	public final static byte CFGBIT_FULLSCREEN = 9;
+	public final static short CFGBIT_FULLSCREEN = 9;
 	// bit 10: keep backlight on
-	public final static byte CFGBIT_BACKLIGHT_ON = 10;
+	public final static short CFGBIT_BACKLIGHT_ON = 10;
 	// bit 11: backlight on map screen as keep-alive (every 60 s) only
-	public final static byte CFGBIT_BACKLIGHT_ONLY_KEEPALIVE = 11;
+	public final static short CFGBIT_BACKLIGHT_ONLY_KEEPALIVE = 11;
 	// bit 12: backlight method MIDP2
-	public final static byte CFGBIT_BACKLIGHT_MIDP2 = 12;
+	public final static short CFGBIT_BACKLIGHT_MIDP2 = 12;
 	// bit 13: backlight method NOKIA
-	public final static byte CFGBIT_BACKLIGHT_NOKIA = 13;
+	public final static short CFGBIT_BACKLIGHT_NOKIA = 13;
 	// bit 14: backlight method NOKIA/FLASH
-	public final static byte CFGBIT_BACKLIGHT_NOKIAFLASH = 14;
+	public final static short CFGBIT_BACKLIGHT_NOKIAFLASH = 14;
 	// bit 15: backlight only on while GPS is started
-	public final static byte CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED = 15;
+	public final static short CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED = 15;
 	// bit 16: save map position on exit
-	public final static byte CFGBIT_AUTOSAVE_MAPPOS = 16;
+	public final static short CFGBIT_AUTOSAVE_MAPPOS = 16;
 	// bit 17: Sound on Connect
-	public final static byte CFGBIT_SND_CONNECT = 17;
+	public final static short CFGBIT_SND_CONNECT = 17;
 	// bit 18: Sound on Disconnect
-	public final static byte CFGBIT_SND_DISCONNECT = 18;
+	public final static short CFGBIT_SND_DISCONNECT = 18;
 	// bit 19: Routing Instructions
-	public final static byte CFGBIT_SND_ROUTINGINSTRUCTIONS = 19;
+	public final static short CFGBIT_SND_ROUTINGINSTRUCTIONS = 19;
 	// bit 20: Gps Auto Reconnect
-	public final static byte CFGBIT_GPS_AUTORECONNECT = 20;
+	public final static short CFGBIT_GPS_AUTORECONNECT = 20;
 	// bit 21: Sound when destination reached
-	public final static byte CFGBIT_SND_DESTREACHED = 21;
+	public final static short CFGBIT_SND_DESTREACHED = 21;
 	// bit 22: auto recalculate route
-	public final static byte CFGBIT_ROUTE_AUTO_RECALC = 22;
+	public final static short CFGBIT_ROUTE_AUTO_RECALC = 22;
 	// bit 23: use JSR135 or JSR 234 for taking pictures;
-	public final static byte CFGBIT_USE_JSR_234 = 23;
+	public final static short CFGBIT_USE_JSR_234 = 23;
 	// bit 25: show point of compass in rotated map
-	public final static byte CFGBIT_SHOW_POINT_OF_COMPASS = 25;
+	public final static short CFGBIT_SHOW_POINT_OF_COMPASS = 25;
 	// bit 26: add geo reference into the exif of a photo;
-	public final static byte CFGBIT_ADD_EXIF = 26;
+	public final static short CFGBIT_ADD_EXIF = 26;
 	// bit 27: show AREAS
-	public final static byte CFGBIT_AREAS = 27;
+	public final static short CFGBIT_AREAS = 27;
 	// bit 28: big poi labels
-	public final static byte CFGBIT_POI_LABELS_LARGER = 28;
+	public final static short CFGBIT_POI_LABELS_LARGER = 28;
 	// bit 29: big wpt labels
-	public final static byte CFGBIT_WPT_LABELS_LARGER = 29;
+	public final static short CFGBIT_WPT_LABELS_LARGER = 29;
 	// bit 30: show oneway arrows
-	public final static byte CFGBIT_ONEWAY_ARROWS = 30;
+	public final static short CFGBIT_ONEWAY_ARROWS = 30;
 	// bit 31: Debug Option: show route connections
-	public final static byte CFGBIT_ROUTE_CONNECTIONS = 31;
+	public final static short CFGBIT_ROUTE_CONNECTIONS = 31;
 	// bit 32: backlight method SIEMENS
-	public final static byte CFGBIT_BACKLIGHT_SIEMENS = 32;
+	public final static short CFGBIT_BACKLIGHT_SIEMENS = 32;
 	// bit 33: Skip initial splash screen
-	public final static byte CFGBIT_SKIPP_SPLASHSCREEN = 33;
+	public final static short CFGBIT_SKIPP_SPLASHSCREEN = 33;
 	// bit 34: show place labels
-	public final static byte CFGBIT_PLACETEXTS = 34;
+	public final static short CFGBIT_PLACETEXTS = 34;
 	// bit 35: Sound alert for speeding
-	public final static byte CFGBIT_SPEEDALERT_SND = 35;
+	public final static short CFGBIT_SPEEDALERT_SND = 35;
 	// bit 36: Visual alert for speeding
-	public final static byte CFGBIT_SPEEDALERT_VISUAL = 36;
+	public final static short CFGBIT_SPEEDALERT_VISUAL = 36;
 	// bit 37: Debug Option: show route bearings
-	public final static byte CFGBIT_ROUTE_BEARINGS = 37;
+	public final static short CFGBIT_ROUTE_BEARINGS = 37;
 	// bit 38: Debug Option: hide quiet arrows
-	public final static byte CFGBIT_ROUTE_HIDE_QUIET_ARROWS = 38;
+	public final static short CFGBIT_ROUTE_HIDE_QUIET_ARROWS = 38;
 	// bit 39: in route mode up/down keys are for route browsing
-	public final static byte CFGBIT_ROUTE_BROWSING = 39;
+	public final static short CFGBIT_ROUTE_BROWSING = 39;
 	// bit 40: Show scale bar on map
-	public final static byte CFGBIT_SHOW_SCALE_BAR = 40;
+	public final static short CFGBIT_SHOW_SCALE_BAR = 40;
 	// bit 41: Log cell-ids to directory
-	public final static byte CFGBIT_CELLID_LOGGING = 41;
+	public final static short CFGBIT_CELLID_LOGGING = 41;
 	// bit 42: Flag whether to also put waypoints in GPX track
-	public final static byte CFGBIT_WPTS_IN_TRACK = 42;
+	public final static short CFGBIT_WPTS_IN_TRACK = 42;
 	// bit 43: Ask for GPX track name when starting recording
-	public final static byte CFGBIT_GPX_ASK_TRACKNAME_START = 43;
+	public final static short CFGBIT_GPX_ASK_TRACKNAME_START = 43;
 	// bit 44: Ask for GPX track name when starting recording
-	public final static byte CFGBIT_GPX_ASK_TRACKNAME_STOP = 44;
+	public final static short CFGBIT_GPX_ASK_TRACKNAME_STOP = 44;
 	// bit 45: Flag whether to always upload cellid log to opencellid
-	public final static byte CFGBIT_CELLID_ALWAYS = 45;
+	public final static short CFGBIT_CELLID_ALWAYS = 45;
 	// bit 46: Flag whether to upload cellid log to opencellid after confirm
-	public final static byte CFGBIT_CELLID_CONFIRM = 46;
+	public final static short CFGBIT_CELLID_CONFIRM = 46;
 	// bit 47: Flag whether to fall back to cellid location when GPS fix not available
-	public final static byte CFGBIT_CELLID_FALLBACK = 47;
+	public final static short CFGBIT_CELLID_FALLBACK = 47;
 	// bit 48: Flag whether to cache cellid locations
-	public final static byte CFGBIT_CELLID_OFFLINEONLY = 48;
+	public final static short CFGBIT_CELLID_OFFLINEONLY = 48;
 	// bit 49: Flag whether to cache cellid locations
-	public final static byte CFGBIT_CELLID_ONLINEONLY = 49;
+	public final static short CFGBIT_CELLID_ONLINEONLY = 49;
 	// bit 50: Flag whether to also put waypoints in waypoint store when recording GPX
-	public final static byte CFGBIT_WPTS_IN_WPSTORE = 50;
+	public final static short CFGBIT_WPTS_IN_WPSTORE = 50;
 	// bit 51: Flag whether to show turn restrictions for debugging
-	public final static byte CFGBIT_SHOW_TURN_RESTRICTIONS = 51;
+	public final static short CFGBIT_SHOW_TURN_RESTRICTIONS = 51;
 	// bit 52: Flag whether turn restrictions should be used for route calculation
-	public final static byte CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION = 52;
+	public final static short CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION = 52;
 	// bit 53: Flag whether iconMenus should be used
-	public final static byte CFGBIT_ICONMENUS = 53;
+	public final static short CFGBIT_ICONMENUS = 53;
 	// bit 54: Flag whether iconMenus should be fullscreen
-	public final static byte CFGBIT_ICONMENUS_FULLSCREEN = 54;
+	public final static short CFGBIT_ICONMENUS_FULLSCREEN = 54;
 	// bit 55: Flag whether iconMenus should be optimized for routing
-	public final static byte CFGBIT_ICONMENUS_ROUTING_OPTIMIZED = 55;
+	public final static short CFGBIT_ICONMENUS_ROUTING_OPTIMIZED = 55;
 	// bit 56: Flag whether night style should be applied
-	public final static byte CFGBIT_NIGHT_MODE = 56;
+	public final static short CFGBIT_NIGHT_MODE = 56;
 	// bit 57: Flag whether turbo route calc should be used
-	public final static byte CFGBIT_TURBO_ROUTE_CALC = 57;
+	public final static short CFGBIT_TURBO_ROUTE_CALC = 57;
 	// bit 58: Flag whether speed should be displayed in map screen
-	public final static byte CFGBIT_SHOW_SPEED_IN_MAP = 58;
+	public final static short CFGBIT_SHOW_SPEED_IN_MAP = 58;
 	// bit 59: Flag whether to start GPS reception when entering map
-	public final static byte CFGBIT_AUTO_START_GPS = 59;
+	public final static short CFGBIT_AUTO_START_GPS = 59;
 	// bit 60: Flag whether to display in metric or imperial units
-	public final static byte CFGBIT_METRIC = 60;
+	public final static short CFGBIT_METRIC = 60;
 	// bit 61: Flag whether air distance to destination should be displayed in map screen
-	public final static byte CFGBIT_SHOW_AIR_DISTANCE_IN_MAP = 61;
+	public final static short CFGBIT_SHOW_AIR_DISTANCE_IN_MAP = 61;
 	// bit 62: Flag whether offset to route should be displayed in map screen
-	public final static byte CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP = 62;
+	public final static short CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP = 62;
 	// bit 63: Flag whether route duration should be displayed in map screen
-	public final static byte CFGBIT_SHOW_ROUTE_DURATION_IN_MAP = 63;
+	public final static short CFGBIT_SHOW_ROUTE_DURATION_IN_MAP = 63;
 	// bit 64: Flag whether altitude should be displayed in map screen
-	public final static byte CFGBIT_SHOW_ALTITUDE_IN_MAP = 64;
+	public final static short CFGBIT_SHOW_ALTITUDE_IN_MAP = 64;
 	// bit 65: Flag whether to show buildings in map
-	public final static byte CFGBIT_BUILDINGS = 65;
+	public final static short CFGBIT_BUILDINGS = 65;
 	// bit 66: Flag whether to show building labels in map
-	public final static byte CFGBIT_BUILDING_LABELS = 66;
+	public final static short CFGBIT_BUILDING_LABELS = 66;
 	// bit 67: Flag if current time is shown on map
-	public final static byte CFGBIT_SHOW_CLOCK_IN_MAP = 67;
+	public final static short CFGBIT_SHOW_CLOCK_IN_MAP = 67;
 	// bit 68: Flag if ETA is shown on map
-	public final static byte CFGBIT_SHOW_ETA_IN_MAP = 68;
+	public final static short CFGBIT_SHOW_ETA_IN_MAP = 68;
 	// bit 69: Flag if seasonal (winter) speed limits are applied
-	public final static byte CFGBIT_MAXSPEED_WINTER = 69;
+	public final static short CFGBIT_MAXSPEED_WINTER = 69;
 	// bit 70: Flag whether iconMenus should have icons mapped on keys
-	public final static byte CFGBIT_ICONMENUS_MAPPED_ICONS = 70;
+	public final static short CFGBIT_ICONMENUS_MAPPED_ICONS = 70;
 	/** bit 71: Flag whether canvas specific defaults are set
 	(we need a canvas to determine display size and hasPointerEvents(),
 	 so we can't determine appropriate defaults in Configuration) */
-	public final static byte CFGBIT_CANVAS_SPECIFIC_DEFAULTS_DONE = 71;
+	public final static short CFGBIT_CANVAS_SPECIFIC_DEFAULTS_DONE = 71;
 	/** bit 72: Flag whether initial Setup Forms were shown to the user */
-	public final static byte CFGBIT_INITIAL_SETUP_DONE = 72;
+	public final static short CFGBIT_INITIAL_SETUP_DONE = 72;
 	/** bit 73: Flag whether to add a Back command in fullscreen menu */
-	public final static byte CFGBIT_ICONMENUS_BACK_CMD = 73;
+	public final static short CFGBIT_ICONMENUS_BACK_CMD = 73;
 	/** bit 74: Flag whether the route algorithm should try to find a motorway within 20 km */
-	public final static byte CFGBIT_ROUTE_TRY_FIND_MOTORWAY = 74;
+	public final static short CFGBIT_ROUTE_TRY_FIND_MOTORWAY = 74;
 	/** bit 75: Flag whether the route algorithm deeply examines motorways */
-	public final static byte CFGBIT_ROUTE_BOOST_MOTORWAYS = 75;
+	public final static short CFGBIT_ROUTE_BOOST_MOTORWAYS = 75;
 	/** bit 76: Flag whether the route algorithm deeply examines trunks and primarys */
-	public final static byte CFGBIT_ROUTE_BOOST_TRUNKS_PRIMARYS = 76;
+	public final static short CFGBIT_ROUTE_BOOST_TRUNKS_PRIMARYS = 76;
 	/** bit 77: Flag whether iconMenus should have bigger tabs */
-	public final static byte CFGBIT_ICONMENUS_BIG_TAB_BUTTONS = 77;
+	public final static short CFGBIT_ICONMENUS_BIG_TAB_BUTTONS = 77;
 	/** bit 78: Flag whether the map should be auto scaled to speed */
-	public final static byte CFGBIT_AUTOZOOM = 78;
+	public final static short CFGBIT_AUTOZOOM = 78;
 	/** bit 79: Flag whether, if available, tone sequences should be played instead of sound samples */
-	public final static byte CFGBIT_SND_TONE_SEQUENCES_PREFERRED = 79;
+	public final static short CFGBIT_SND_TONE_SEQUENCES_PREFERRED = 79;
 	/** bit 80: Flag whether internal PNG files should be preferred when using an external map (faster on some Nokias) */
-	public final static byte CFGBIT_PREFER_INTERNAL_PNGS = 80;
+	public final static short CFGBIT_PREFER_INTERNAL_PNGS = 80;
 	/** bit 81: Flag whether the menu with predefined way points is shown. */
-	public final static byte CFGBIT_WAYPT_OFFER_PREDEF = 81;
+	public final static short CFGBIT_WAYPT_OFFER_PREDEF = 81;
 	/** bit 82: Flag whether street borders are shown. */
-	public final static byte CFGBIT_NOSTREETBORDERS = 82;
+	public final static short CFGBIT_NOSTREETBORDERS = 82;
 	/** bit 83: Flag whether to show distances variably as km/m instead of just m. */
-	public final static byte CFGBIT_DISTANCE_VIEW = 83;
+	public final static short CFGBIT_DISTANCE_VIEW = 83;
 	/** bit 84: Flag whether to show round way (segment) ends. */
-	public final static byte CFGBIT_ROUND_WAY_ENDS = 84;
+	public final static short CFGBIT_ROUND_WAY_ENDS = 84;
 	/** bit 85: backlight method ANDROID_WAKELOCK */
-	public final static byte CFGBIT_BACKLIGHT_ANDROID_WAKELOCK = 85;
+	public final static short CFGBIT_BACKLIGHT_ANDROID_WAKELOCK = 85;
 	/** bit 86: Flag whether the route algorithm uses motorways */
-	public final static byte CFGBIT_ROUTE_USE_MOTORWAYS = 86;
+	public final static short CFGBIT_ROUTE_USE_MOTORWAYS = 86;
 	/** bit 87: Flag whether the route algorithm uses toll roads */
-	public final static byte CFGBIT_ROUTE_USE_TOLLROADS = 87;
+	public final static short CFGBIT_ROUTE_USE_TOLLROADS = 87;
 	/** bit 88: free from 2011-01-08, was Flag whether the touch zones for zoom & center & destination are symmetric */
 
 	/** bit 89: Flag whether air distance to destination should be displayed even when routing */
-	public final static byte CFGBIT_SHOW_AIR_DISTANCE_WHEN_ROUTING = 89;
+	public final static short CFGBIT_SHOW_AIR_DISTANCE_WHEN_ROUTING = 89;
 	/** bit 90: Flag whether ask for routing options before starting routing */
-	public final static byte CFGBIT_DONT_ASK_FOR_ROUTING_OPTIONS = 90;
+	public final static short CFGBIT_DONT_ASK_FOR_ROUTING_OPTIONS = 90;
 	/** bit 91: Flag whether to use digital compass for map direction (rotation) */
-	public final static byte CFGBIT_COMPASS_DIRECTION = 91;
+	public final static short CFGBIT_COMPASS_DIRECTION = 91;
 	/** bit 92: Flag whether cellid location is to be performed at startup */
-	public final static byte CFGBIT_CELLID_STARTUP = 92;
+	public final static short CFGBIT_CELLID_STARTUP = 92;
 	/** bit 93: backlight method SAMSUNG */
-	public final static byte CFGBIT_BACKLIGHT_SAMSUNG = 93;
+	public final static short CFGBIT_BACKLIGHT_SAMSUNG = 93;
 	/** bit 94: Flag whether internal sound files should be used instead of ones with external map */
-	public final static byte CFGBIT_PREFER_INTERNAL_SOUNDS = 94;
+	public final static short CFGBIT_PREFER_INTERNAL_SOUNDS = 94;
 	/** bit 95: Flag whether to use a virtual on-screen number keypad in the incremental search screen */
-	public final static byte CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD = 95;
+	public final static short CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD = 95;
 	/** bit 96: save destination position for next start */
-	public final static byte CFGBIT_AUTOSAVE_DESTPOS = 96;
+	public final static short CFGBIT_AUTOSAVE_DESTPOS = 96;
 	/** bit 97: indicate whether saved destination position is valid */
-	public final static byte CFGBIT_SAVED_DESTPOS_VALID = 97;
+	public final static short CFGBIT_SAVED_DESTPOS_VALID = 97;
 	/** bit 98: indicate whether to show online option */
-	public final static byte CFGBIT_ONLINE_GEOHACK = 98;
+	public final static short CFGBIT_ONLINE_GEOHACK = 98;
 	/** bit 99: indicate whether to show online option */
-	public final static byte CFGBIT_ONLINE_WEATHER = 99;
+	public final static short CFGBIT_ONLINE_WEATHER = 99;
 	/** bit 100: indicate whether to show online option */
-	public final static byte CFGBIT_ONLINE_PHONE = 100;
+	public final static short CFGBIT_ONLINE_PHONE = 100;
 	/** bit 101: indicate whether to show topographic map entry */
-	public final static byte CFGBIT_ONLINE_TOPOMAP = 101;
+	public final static short CFGBIT_ONLINE_TOPOMAP = 101;
 	/** bit 102: indicate whether to show online option */
-	public final static byte CFGBIT_ONLINE_WEBSITE = 102;
+	public final static short CFGBIT_ONLINE_WEBSITE = 102;
 	/** bit 103: unused */
 	/** bit 104: indicate whether to show online option */
-	public final static byte CFGBIT_ONLINE_WIKIPEDIA_RSS = 104;
+	public final static short CFGBIT_ONLINE_WIKIPEDIA_RSS = 104;
 	/** bit 105: indicate whether long map tap feature is enabled */
-	public final static byte CFGBIT_MAPTAP_LONG = 105;
+	public final static short CFGBIT_MAPTAP_LONG = 105;
 	/** bit 106:  indicate whether double map tap feature is enabled */
-	public final static byte CFGBIT_MAPTAP_DOUBLE = 106;
+	public final static short CFGBIT_MAPTAP_DOUBLE = 106;
 	/** bit 107: indicate whether single map tap feature is enabled*/
-	public final static byte CFGBIT_MAPTAP_SINGLE = 107;
+	public final static short CFGBIT_MAPTAP_SINGLE = 107;
 	/** bit 108: indicate whether gpsmid is running (for android which can kill the process and restart it)*/
-	public final static byte CFGBIT_RUNNING = 108;
+	public final static short CFGBIT_RUNNING = 108;
 	/** bit 109: Flag whether to use word search (in contrast to whole name search) in incremental search */
-	public final static byte CFGBIT_WORD_ISEARCH = 109;
+	public final static short CFGBIT_WORD_ISEARCH = 109;
 	/** bit 110: Flag whether to scroll the search result under cursor horizontally */
-	public final static byte CFGBIT_TICKER_ISEARCH = 110;
+	public final static short CFGBIT_TICKER_ISEARCH = 110;
 	/** bit 111: Flag whether to scroll all search results horizontally */
-	public final static byte CFGBIT_TICKER_ISEARCH_ALL = 111;
+	public final static short CFGBIT_TICKER_ISEARCH_ALL = 111;
 	/** bit 112: Flag whether to have a large font for UI */
-	public final static byte CFGBIT_LARGE_FONT = 112;
+	public final static short CFGBIT_LARGE_FONT = 112;
 	/** bit 113: Flag whether to suppress the warning about hitting the search max limit */
-	public final static byte CFGBIT_SUPPRESS_SEARCH_WARNING = 113;
+	public final static short CFGBIT_SUPPRESS_SEARCH_WARNING = 113;
 	/** bit 114: Flag whether to suppress the warning about poor routes */
-	public final static byte CFGBIT_SUPPRESS_ROUTE_WARNING = 114;
+	public final static short CFGBIT_SUPPRESS_ROUTE_WARNING = 114;
 	/** bit 115: Flag whether to simplify map drawing when busy */
-	public final static byte CFGBIT_SIMPLIFY_MAP_WHEN_BUSY = 115;
+	public final static short CFGBIT_SIMPLIFY_MAP_WHEN_BUSY = 115;
 	/** bit 116: Flag whether to use movement for direction when moving (compass otherwise) */
-	public final static byte CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION = 116;
+	public final static short CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION = 116;
 	/** bit 117: backlight method ANDROID_WINDOW_MANAGER */
-	public final static byte CFGBIT_BACKLIGHT_ANDROID_WINDOW_MANAGER = 117;
+	public final static short CFGBIT_BACKLIGHT_ANDROID_WINDOW_MANAGER = 117;
 	/** bit 118: use GPS time for on-screen time */
-	public final static byte CFGBIT_GPS_TIME = 118;
+	public final static short CFGBIT_GPS_TIME = 118;
 	/** bit 119: fallback to device time when GPS time not available */
-	public final static byte CFGBIT_GPS_TIME_FALLBACK = 119;
+	public final static short CFGBIT_GPS_TIME_FALLBACK = 119;
 	/** bit 120: stop routing when arriving at destination */
-	public final static byte CFGBIT_STOP_ROUTING_AT_DESTINATION = 120;
+	public final static short CFGBIT_STOP_ROUTING_AT_DESTINATION = 120;
 	/** bit 121: show accuracy wit solution string */
-	public final static byte CFGBIT_SHOW_ACCURACY = 121;
+	public final static short CFGBIT_SHOW_ACCURACY = 121;
 	/** bit 122: show big on-left-corner navigation icons */
-	public final static byte CFGBIT_NAVI_ARROWS_BIG = 122;
+	public final static short CFGBIT_NAVI_ARROWS_BIG = 122;
 	/** bit 123: show in-map small navigation icons */
-	public final static byte CFGBIT_NAVI_ARROWS_IN_MAP = 123;
+	public final static short CFGBIT_NAVI_ARROWS_IN_MAP = 123;
 	/** bit 124: show favorite destinations in route icon menu */
-	public final static byte CFGBIT_FAVORITES_IN_ROUTE_ICON_MENU = 124;
+	public final static short CFGBIT_FAVORITES_IN_ROUTE_ICON_MENU = 124;
 	/** bit 125: show travel mode in map */
-	public final static byte CFGBIT_SHOW_TRAVEL_MODE_IN_MAP = 125;
+	public final static short CFGBIT_SHOW_TRAVEL_MODE_IN_MAP = 125;
 	//#if polish.api.finland
 	/** bit 126: alert for speed camera */
-	public final static byte CFGBIT_SPEEDCAMERA_ALERT = 126;
+	public final static short CFGBIT_SPEEDCAMERA_ALERT = 126;
 	//#endif
+	// bit 127: Audio alert for alert node nearby
+	public final static short CFGBIT_NODEALERT_SND = 127;
+	// bit 128: Visual alert for alert node nearby
+	public final static short CFGBIT_NODEALERT_VISUAL = 128;
 	
 	/**
 	 * These are the database record IDs for each configuration option
@@ -1149,7 +1153,7 @@ public class Configuration {
 		write(poiSearchDist, RECORD_ID_POI_SEARCH_DIST);
 	}
 
-	public static boolean getCfgBitState(byte bit, boolean getDefault) {
+	public static boolean getCfgBitState(short bit, boolean getDefault) {
 		if (bit < 64) {
 			if (getDefault) {
 				return ((cfgBitsDefault_0_to_63 & (1L << bit)) != 0);
@@ -1171,19 +1175,19 @@ public class Configuration {
 		}
 	}
 
-	public static boolean getCfgBitState(byte bit) {
+	public static boolean getCfgBitState(short bit) {
 		return getCfgBitState(bit, false);
 	}
 	
-	public static boolean getCfgBitSavedState(byte bit) {
+	public static boolean getCfgBitSavedState(short bit) {
 		return getCfgBitState(bit, true);
 	}
 
-	public static void toggleCfgBitState(byte bit, boolean savePermanent) {
+	public static void toggleCfgBitState(short bit, boolean savePermanent) {
 		setCfgBitState(bit, !getCfgBitState(bit), savePermanent);
 	}
 	
-	public static void setCfgBitState(byte bit, boolean state, boolean savePermanent) {
+	public static void setCfgBitState(short bit, boolean state, boolean savePermanent) {
 		if (bit < 64) {
 			// set bit
 			Configuration.cfgBits_0_to_63 |= (1L << bit);
@@ -1234,7 +1238,7 @@ public class Configuration {
 		}
 	}
 
-	public static void setCfgBitSavedState(byte bit, boolean state) {
+	public static void setCfgBitSavedState(short bit, boolean state) {
 		setCfgBitState(bit, state, true);
 	}
 	
