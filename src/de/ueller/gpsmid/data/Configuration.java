@@ -324,6 +324,8 @@ public class Configuration {
 	public final static short CFGBIT_NODEALERT_SND = 127;
 	// bit 128: Visual alert for alert node nearby
 	public final static short CFGBIT_NODEALERT_VISUAL = 128;
+	// bit 129: Enable clickable map objects
+	public final static short CFGBIT_CLICKABLE_MAPOBJECTS = 129;
 	
 	/**
 	 * These are the database record IDs for each configuration option

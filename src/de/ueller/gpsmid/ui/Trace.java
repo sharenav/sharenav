@@ -452,6 +452,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	private GuiWaypointPredefinedForm mForm;
 
+	private Vector clickableMarkers;
+
+	public class ClickableCoords {
+		int x;
+		int y;
+	}
+
 	private Trace() throws Exception {
 		//#debug
 		logger.info("init Trace");
@@ -3352,6 +3359,18 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				// #debug debug
 				logger.debug("single tap map");
 	
+				// check for clickable markers
+				System.out.println("Checking for clickable markers");
+				if (clickableMarkers != null) {
+					//System.out.println("Click coords: " + x + " " + y);
+					for (int i = 0; i < clickableMarkers.size(); i++) {
+						ClickableCoords coords = (ClickableCoords)clickableMarkers.elementAt(i);
+						//System.out.println("Marker coords: " + coords.x + " " + coords.y);
+						if (Math.abs(coords.x - x) <= 15 && Math.abs(coords.y - y) <= 15) {
+							System.out.println("Marker clicked");
+						}
+					}
+				}
 				if (!tl.bigOnScreenButtons) {
 					tl.setOnScreenButtonSize(true);
 		
@@ -4001,4 +4020,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 	}
 	//#endif
+	public void resetClickableMarkers() {
+		clickableMarkers = new Vector();
+	}
+
+	public void addClickableMarker(int x, int y) {
+		ClickableCoords coords = new ClickableCoords();
+		coords.x = x - imageCollector.xScreenOverscan;
+		coords.y = y - imageCollector.yScreenOverscan;
+		clickableMarkers.addElement(coords);
+	}
 }

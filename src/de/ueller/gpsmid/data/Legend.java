@@ -771,6 +771,10 @@ public class Legend {
 		return pois[type].alert;
 	}
 	
+	public static final boolean isNodeClickable(short type) {
+		return pois[type].clickable;
+	}
+
 	public static final byte getNodeOverviewMode(short type) {
 		return pois[type].overviewMode;
 	}

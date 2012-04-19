@@ -803,3 +803,4 @@ guisetupsound.cameraAlert=Nopeuskameravaroitus (toimii vain ylinopeusvaroituksen
 trace.cameraText=K
 guisetupsound.AudioNodeAlert=Kohdevaroitus äänellä
 guisetupsound.VisualNodeAlert=Kohdevaroitus kuvalla
+guidiscover.clickMarkers=Kohteiden kosketus kartalla

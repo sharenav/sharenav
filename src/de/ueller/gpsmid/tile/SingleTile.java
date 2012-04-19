@@ -460,6 +460,13 @@ public class SingleTile extends Tile implements QueueableTile {
 			if (alert && Configuration.getCfgBitState(Configuration.CFGBIT_NODEALERT_VISUAL)) {
 				img = ImageTools.scaleImage(img, img.getWidth() * 2, img.getHeight() * 2);
 			}
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS)
+			    && Legend.isNodeClickable(t)) {
+				// FIXME set own color (transparent would be good) for this
+				pc.g.setColor(Legend.COLORS[Legend.COLOR_SPEEDING_SIGN_BORDER]);
+				pc.g.fillArc(pc.swapLineP.x - 15, pc.swapLineP.y - 15, 30, 30, 0, 360);
+				pc.trace.addClickableMarker(pc.swapLineP.x, pc.swapLineP.y);
+			}
 			// FIXME check and cleanup after the functionality is in good enough condition
 			// logger.debug("draw img " + img);
 			// orig by Harald

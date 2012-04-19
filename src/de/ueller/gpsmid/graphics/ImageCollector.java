@@ -180,6 +180,8 @@ public class ImageCollector implements Runnable {
 					pc[nextCreate].state = PaintContext.STATE_IN_CREATE;
 				}
 				
+				tr.resetClickableMarkers();
+
 				iDrawState = 2;
 				tr.requestRedraw();
 
