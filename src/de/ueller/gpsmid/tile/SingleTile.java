@@ -378,7 +378,7 @@ public class SingleTile extends Tile implements QueueableTile {
 			pc.trace.setCameraAlert(t);
 		}
 		//#endif
-		if (alert) {
+		if (alert && Configuration.getCfgBitState(Configuration.CFGBIT_NODEALERT_VISUAL)) {
 			// FIXME: get and pass coordinates to keep track of distance
 			// to alert POI
 			pc.trace.setNodeAlert(t);
@@ -453,11 +453,11 @@ public class SingleTile extends Tile implements QueueableTile {
 		if (img != null ) {
 			//FIXME make optional if alert by growing image on map happens
 			//#if polish.api.finland
-			if (cameraAlert) {
+			if (cameraAlert && Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDCAMERA_ALERT)) {
 				img = ImageTools.scaleImage(img, img.getWidth() * 2, img.getHeight() * 2);
 			}
 			//#endif
-			if (alert) {
+			if (alert && Configuration.getCfgBitState(Configuration.CFGBIT_NODEALERT_VISUAL)) {
 				img = ImageTools.scaleImage(img, img.getWidth() * 2, img.getHeight() * 2);
 			}
 			// FIXME check and cleanup after the functionality is in good enough condition
