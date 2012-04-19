@@ -3508,6 +3508,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				pointerActionDone = true;
 				//#debug debug
 				logger.debug("long tap map");										
+				// if we clicked a clickable marker, get coords from the marker instead of tap
+				ClickableCoords coords = getClickableMarker(touchX, touchY);
+				if (coords != null) {
+					touchX = coords.x;
+					touchY = coords.y;
+				}
+
 				//#if polish.api.online
 				// long tap map to open a place-related menu
 				// use the place of touch instead of old center as position,
