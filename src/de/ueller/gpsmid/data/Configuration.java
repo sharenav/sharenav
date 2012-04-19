@@ -2469,4 +2469,8 @@ public class Configuration {
 		}
 	}
 	
+	public static int getTouchMarkerDiameter() {
+		// FIXME switch this based on pixels-per-inch value and/or make user-configurable
+		return 40;
+	}
 }

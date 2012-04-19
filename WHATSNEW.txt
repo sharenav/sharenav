@@ -27,6 +27,7 @@
     - Favorites can be optionally shown as routing targets in route icon menu
     - Long tap on map now opens a context menu which now has nearby POI search in addition to the
       previously-existing online functions
+    - Clickable markers: URLs on map are now optionally touchable links which open the URL in a web browser
     *** Map display ***
     - The map screen now updated more often during panning when dragging the touch screen.
       (not only after the ImageCollector class has finished drawing the map but every 1/3 s)

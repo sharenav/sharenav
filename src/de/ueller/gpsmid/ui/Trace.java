@@ -195,6 +195,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public final static int DISTANCE_AIR = 4;
 	public final static int DISTANCE_UNKNOWN = 5;
 
+	//#if polish.android
+	// FIXME should be set based on something like pixels per inch value
+	private final static int DRAGGEDMUCH_THRESHOLD = 24;
+	//#else
+	private final static int DRAGGEDMUCH_THRESHOLD = 8;
+	//#endif
+
 	public final static int LAYOUTMODE_MAP_WITH_OVERLAYS = 1;
 	public final static int LAYOUTMODE_HALF_MAP = 2;
 
@@ -457,6 +464,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public class ClickableCoords {
 		int x;
 		int y;
+		String url;
 	}
 
 	private Trace() throws Exception {
@@ -3297,9 +3305,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}		
 		// check if there's been much movement, do this before the slide lock/unlock
 		// to avoid a single tap action when not sliding enough
-		if (Math.abs(x - Trace.touchX) > 8
+		if (Math.abs(x - Trace.touchX) > DRAGGEDMUCH_THRESHOLD
 				|| 
-			Math.abs(y - Trace.touchY) > 8
+			Math.abs(y - Trace.touchY) > DRAGGEDMUCH_THRESHOLD
 		) {
 			pointerDraggedMuch = true;
 			// avoid double tap triggering on fast consecutive drag actions starting at almost the same position
@@ -3364,20 +3372,32 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				logger.debug("single tap map");
 	
 				// check for clickable markers
-				System.out.println("Checking for clickable markers");
+				// System.out.println("Checking for clickable markers");
+				boolean markerClicked = false;
 				if (clickableMarkers != null) {
 					//System.out.println("Click coords: " + x + " " + y);
 					for (int i = 0; i < clickableMarkers.size(); i++) {
 						ClickableCoords coords = (ClickableCoords)clickableMarkers.elementAt(i);
 						//System.out.println("Marker coords: " + coords.x + " " + coords.y);
-						if (Math.abs(coords.x - x) <= 15 && Math.abs(coords.y - y) <= 15) {
+						if (Math.abs(coords.x - x) <= Configuration.getTouchMarkerDiameter() / 2
+						    && Math.abs(coords.y - y) <= Configuration.getTouchMarkerDiameter() / 2) {
 							System.out.println("Marker clicked");
+							if (coords.url != null) {
+								markerClicked = true;
+								GuiWebInfo.openUrl(coords.url);
+								return;
+							}
 						}
 					}
 				}
-				if (!tl.bigOnScreenButtons) {
+				if (!markerClicked && !tl.bigOnScreenButtons) {
 					tl.setOnScreenButtonSize(true);
 		
+					// to enable clickable markers only when single-tapped
+					//if (Configuration.getCfgBitState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS)) {
+					//	newDataReady();
+					//}
+
 					// set timer to continuously check if the last user interaction is old enough to make the buttons small again
 					final long BIGBUTTON_DURATION = 5000;
 					bigButtonTimerTask = new TimerTask() {
@@ -3386,6 +3406,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 								// make the on screen touch buttons small again
 								tl.setOnScreenButtonSize(false);
 								requestRedraw();						
+								// to enable clickable markers only when single-tapped
+								//if (Configuration.getCfgBitState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS)) {
+								//	newDataReady();
+								//}
 								bigButtonTimerTask.cancel();
 							}
 						}
@@ -4028,10 +4052,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		clickableMarkers = new Vector();
 	}
 
-	public void addClickableMarker(int x, int y) {
+	public void addClickableMarker(int x, int y, String url) {
 		ClickableCoords coords = new ClickableCoords();
 		coords.x = x - imageCollector.xScreenOverscan;
 		coords.y = y - imageCollector.yScreenOverscan;
+		coords.url = url;
 		clickableMarkers.addElement(coords);
 	}
 }

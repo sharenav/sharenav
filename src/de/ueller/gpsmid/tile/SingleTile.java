@@ -460,12 +460,21 @@ public class SingleTile extends Tile implements QueueableTile {
 			if (alert && Configuration.getCfgBitState(Configuration.CFGBIT_NODEALERT_VISUAL)) {
 				img = ImageTools.scaleImage(img, img.getWidth() * 2, img.getHeight() * 2);
 			}
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS)
-			    && Legend.isNodeClickable(t)) {
-				// FIXME set own color (transparent would be good) for this
-				pc.g.setColor(Legend.COLORS[Legend.COLOR_SPEEDING_SIGN_BORDER]);
-				pc.g.fillArc(pc.swapLineP.x - 15, pc.swapLineP.y - 15, 30, 30, 0, 360);
-				pc.trace.addClickableMarker(pc.swapLineP.x, pc.swapLineP.y);
+			// && Legend.isNodeClickable(t)) would limit to only those specified in style file
+			// && pc.trace.tl.bigOnScreenButtons would limit activity to only when single-clicked
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS)) {
+				String url = null;
+				if (Legend.enableUrlTags && urlIdx[i] != -1) {
+						url = pc.trace.getUrl(urlIdx[i]);
+				}
+				if (url != null || Legend.isNodeClickable(t)) {
+					int dia = Configuration.getTouchMarkerDiameter();
+					// FIXME create a specific color (semi-transparent would be good) for this
+					pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE]);
+					pc.g.fillArc(pc.swapLineP.x - dia / 2, pc.swapLineP.y -
+						     (Legend.isNodeImageCentered(t) ? dia : dia / 2), dia, dia, 0, 360);
+					pc.trace.addClickableMarker(pc.swapLineP.x, pc.swapLineP.y, url);
+				}
 			}
 			// FIXME check and cleanup after the functionality is in good enough condition
 			// logger.debug("draw img " + img);
