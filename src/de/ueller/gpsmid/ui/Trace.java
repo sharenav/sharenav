@@ -832,12 +832,16 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 
 	public synchronized void pause() {
-		logger.debug("Pausing application");
+		logger.debug("Pause application called");
 		if (imageCollector != null) {
-			imageCollector.suspend();
+			if (! (routeCalc || route != null)) {
+				logger.debug("Suspending imageCollector");
+				imageCollector.suspend();
+			}
 		}
 		// don't pause if we're logging GPX or routing
 		if (locationProducer != null && !gpx.isRecordingTrk() && ! (routeCalc || route != null)) {
+			logger.debug("Closing locationProducer");
 			locationProducer.close();
 			// wait for locationProducer to close
 			int polling = 0;
