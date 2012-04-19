@@ -11,8 +11,8 @@
 <!ELEMENT tileScaleLevels (tileScaleLevel*)>
 <!ELEMENT key (value+)>
 <!ELEMENT keyW (Wvalue+)>
-<!ELEMENT value (specialisation*, description , image? , searchIcon? , namekey , namefallback? , housenumberindex?, helpertag? , AreaPOI?, scale , textscale? , imageCentered?, hideable?, alert?)>
-<!ELEMENT Wvalue (specialisation*, description, asRelation?, image? , searchIcon? , namekey, namefallback?, housenumberindex?, helpertag?, showName?, isArea, ignoreOsmAreaTag?, scale, textscale?, arrowscale?, descriptionscale?, lineColor, borderColor?, lineStyle?, wayWidth?, searchIcon?, routing*, force_to?, hideable?, alert?)>
+<!ELEMENT value (specialisation*, description , image? , searchIcon? , namekey , namefallback? , housenumberindex?, helpertag? , AreaPOI?, scale , textscale? , imageCentered?, hideable?, alert?, clickable?)>
+<!ELEMENT Wvalue (specialisation*, description, asRelation?, image? , searchIcon? , namekey, namefallback?, housenumberindex?, helpertag?, showName?, isArea, ignoreOsmAreaTag?, scale, textscale?, arrowscale?, descriptionscale?, lineColor, borderColor?, lineStyle?, wayWidth?, searchIcon?, routing*, force_to?, hideable?, alert?, clickable?)>
 <!ELEMENT damage EMPTY>
 <!ELEMENT routeAccessRestriction EMPTY>
 <!ELEMENT restrictionKey EMPTY>
@@ -46,6 +46,7 @@
 <!ELEMENT maxSpeedTemplate EMPTY>
 <!ELEMENT tileScaleLevel EMPTY>
 <!ELEMENT alert EMPTY>
+<!ELEMENT clickable EMPTY>
 <!ATTLIST version release CDATA #REQUIRED>
 <!ATTLIST key tag CDATA #REQUIRED>
 <!ATTLIST keyW tag CDATA #REQUIRED>
@@ -89,6 +90,7 @@
 <!ATTLIST force_to layer CDATA #REQUIRED>
 <!ATTLIST hideable hideable CDATA #REQUIRED>
 <!ATTLIST alert alert CDATA #REQUIRED>
+<!ATTLIST clickable clickable CDATA #REQUIRED>
 <!ATTLIST AreaPOI createForAreas CDATA #REQUIRED>
 <!ATTLIST specialisation condition CDATA "match">
 <!ATTLIST specialisation key CDATA #REQUIRED>

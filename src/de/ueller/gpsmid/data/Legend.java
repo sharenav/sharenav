@@ -28,7 +28,7 @@ public class Legend {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 70;
+	public final static short MAP_FORMAT_VERSION = 71;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -56,6 +56,9 @@ public class Legend {
 	// public final static byte LEGEND_FLAG_NON_ROUTABLE = 0x20;
 	public final static byte LEGEND_FLAG_ALERT = 0x20;
 	public final static byte LEGEND_FLAG_MIN_DESCRIPTION_SCALE = 0x40;
+	public final static int LEGEND_FLAG_ADDITIONALFLAG = 0x80;
+
+	public final static int LEGEND_FLAG2_CLICKABLE = 0x01;
 	
 	public final static short ROUTE_FLAG_MOTORWAY = 0x01;  // used in ConnectionWithNode AND WayDescription
 	public final static short ROUTE_FLAG_MOTORWAY_LINK = 0x02; // used in ConnectionWithNode AND WayDescription
@@ -273,6 +276,7 @@ public class Legend {
 		enableMap68Filenames = false;
 		enableMap69Precision = false;
 		enableMap70ConnTravelModes_Additional_Byte = false;
+		// map 71: added optional additional bytes for way & POI type flags for alert & clickable
 		isValid = false;
 		/* Set some essential default colors in case legend.dat can not be opened/read.
 		 * Without this, it wouldn't be possible to configure external map usage 
@@ -317,12 +321,13 @@ public class Legend {
 		if (mapFormatVersion >= 70) {
 			enableMap70ConnTravelModes_Additional_Byte = true;
 		}
-		// we can read versions 67, 66 and 65
+		// we can read old versions
 		if (mapFormatVersion != MAP_FORMAT_VERSION && mapFormatVersion != 65
 		    && mapFormatVersion != 66
 		    && mapFormatVersion != 67
 		    && mapFormatVersion != 68
 		    && mapFormatVersion != 69
+		    && mapFormatVersion != 70
 		) {
 		        Trace.getInstance().alert(Locale.get("legend.wrongmapvertitle"),
 				     Locale.get("legend.wrongmapvermsg1") + " " + MAP_FORMAT_VERSION
@@ -525,6 +530,10 @@ public class Legend {
 				}
 			}
 			byte flags = ds.readByte();
+			byte flags2 = 0;
+			if ((flags & LEGEND_FLAG_ADDITIONALFLAG) > 0) {
+				flags2 = ds.readByte();
+			}
 			pois[i].description = ds.readUTF();
 			// for POI type searches
 			if (i == 0) {
@@ -535,6 +544,7 @@ public class Legend {
 			pois[i].maxImageScale = ds.readInt();
 			pois[i].hideable = ((flags & LEGEND_FLAG_NON_HIDEABLE) == 0);	
 			pois[i].alert = ((flags & LEGEND_FLAG_ALERT) != 0);	
+			pois[i].clickable = ((flags2 & LEGEND_FLAG2_CLICKABLE) != 0);
 			if ((flags & LEGEND_FLAG_IMAGE) > 0) {
 				String imageName = ds.readUTF();
 				//logger.debug("Trying to open image " + imageName);
@@ -649,11 +659,17 @@ public class Legend {
 				}
 			}
 			byte flags = ds.readByte();
+			byte flags2 = 0;
+			if ((flags & LEGEND_FLAG_ADDITIONALFLAG) > 0) {
+				flags2 = ds.readByte();
+			}
 			ways[i].hideable = ((flags & LEGEND_FLAG_NON_HIDEABLE) == 0);
 			ways[i].routeFlags = ds.readByte();			
 			ways[i].description = ds.readUTF();
 			ways[i].maxScale = ds.readInt();
 			ways[i].maxTextScale = ds.readInt();
+			ways[i].alert = ((flags & LEGEND_FLAG_ALERT) != 0);
+			ways[i].clickable = ((flags2 & LEGEND_FLAG2_CLICKABLE) != 0);
 			if ((flags & LEGEND_FLAG_IMAGE) > 0) {
 				String imageName = ds.readUTF();
 				//logger.debug("Trying to open image " + imageName);

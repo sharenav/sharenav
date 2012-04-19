@@ -28,6 +28,7 @@ public class EntityDescription {
 	public int		minTextScale;
 	public boolean	hideable;
 	public boolean	alert;
+	public boolean	clickable;
 	public boolean	houseNumberIndex;
 	
 	public String toString() {
