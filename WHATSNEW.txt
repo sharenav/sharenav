@@ -26,7 +26,7 @@
     - Help tab added to icon menu
     - Favorites can be optionally shown as routing targets in route icon menu
     - Long tap on map now opens a context menu which now has nearby POI search in addition to the
-      previously-existing online functions
+      previously-existing online functions; also has options to route to and set as destination.
     - Clickable markers: URLs on map are now optionally touchable links which open the URL in a web browser
     *** Map display ***
     - The map screen now updated more often during panning when dragging the touch screen.

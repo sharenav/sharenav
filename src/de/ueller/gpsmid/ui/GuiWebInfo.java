@@ -14,6 +14,7 @@ import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.PaintContext;
 import de.ueller.gpsmid.data.Position;
+import de.ueller.gpsmid.data.RoutePositionMark;
 import de.ueller.gpsmid.mapdata.Way;
 import de.ueller.util.Logger;
 import de.ueller.util.MoreMath;
@@ -48,6 +49,8 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		mPos = pos;
 		if (longtap) {
 			this.append(Locale.get("guisearch.nearestpois")/*Nearest POIs*/, null);
+			this.append(Locale.get("guiwaypoint.AsDestination")/*As destination*/, null);
+			this.append(Locale.get("trace.CalculateRoute")/*Calculate route*/, null);
 		}
 		//#if polish.api.online
 		//this.append("Wikipedia (Web)", null);
@@ -98,6 +101,15 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 				} catch (Exception e) {
 					mLogger.exception("Could not open GuiSearch for nearby POI search", e);
 				}
+			} else if (site.equals(Locale.get("guiwaypoint.AsDestination")/*As destination*/)) {
+				RoutePositionMark pm1 = new RoutePositionMark(mPos.latitude, mPos.longitude);
+				trace.setDestination(pm1);
+				mParent.show();
+			} else if (site.equals(Locale.get("trace.CalculateRoute")/*Calculate route*/)) {
+				RoutePositionMark pm1 = new RoutePositionMark(mPos.latitude, mPos.longitude);
+				trace.setDestination(pm1);
+				trace.commandAction(Trace.ROUTING_START_CMD);
+				mParent.show();
 			} else {
 				String url = getUrlForSite(site);
 				openUrl(url);
