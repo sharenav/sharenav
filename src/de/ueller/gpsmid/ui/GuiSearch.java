@@ -813,60 +813,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 		int reducedName=0;
 		gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BACKGROUND]);
 		gc.fillRect(0, 0, getWidth(), getHeight());
-		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)) {
-			gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
-			if (hasPointerEvents() && ! hideKeypad) {
-				if (gsl == null) {
-					gsl = new GuiSearchLayout(0, 0, width, height);
-				}
-			
-				String letters[] = {  Locale.get("guisearch.cursor")/*cursor*/, "  X  ", "  <- ", 
-						      Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
-						      Locale.get("guisearch.label1wordSearch")/* 1*- */ :
-						      Locale.get("guisearch.label1")/*_1*- */,
-						      Locale.get("guisearch.label2")/* abc2*/,
-						      Locale.get("guisearch.label3")/* def3*/, Locale.get("guisearch.label4")/* ghi4*/,
-						      Locale.get("guisearch.label5")/* jkl5*/, Locale.get("guisearch.label6")/* mno6*/,
-						      Locale.get("guisearch.label7")/*pqrs7*/, Locale.get("guisearch.label8")/* tuv8*/,
-						      Locale.get("guisearch.label9")/*wxyz9*/, 
-						      Locale.get("guisearch.fulltextshort")/*fulltext*/, "  0  ", 
-						      Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
-						      Locale.get("guisearch.pound")/*_#end*/ :
-						      Locale.get("guisearch.poundNameSearch")/*#end*/};
-				if (cursorKeypad) {
-					String keypadLetters[] = {  Locale.get("guisearch.abc")/*abc*/, "  X  ", "  <- ", 
-						       Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
-						       Locale.get("guisearch.label1wordSearch")/* 1*- */ :
-						       Locale.get("guisearch.label1")/*_1*- */,
-						       Locale.get("guisearch.clabel2")/* abc2*/,
-						       Locale.get("guisearch.clabel3")/* def3*/, Locale.get("guisearch.clabel4")/* ghi4*/,
-						       Locale.get("guisearch.clabel5")/* jkl5*/, Locale.get("guisearch.clabel6")/* mno6*/,
-						       Locale.get("guisearch.clabel7")/*pqrs7*/, Locale.get("guisearch.clabel8")/* tuv8*/,
-						       Locale.get("guisearch.sort")/*sort*/, 
-						       Locale.get("guisearch.more")/*more*/, "  0  ", 
-						       Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
-						       Locale.get("guisearch.pound")/*_#end*/ :
-						       Locale.get("guisearch.poundNameSearch")/*#end*/};
-					letters = keypadLetters;
-				}
-				if (hideKeypad) {
-					String hideLetters[] = { " ", "  X  " };
-					letters = hideLetters;
-				}
-				for (int i = 0; i < 15 ; i++) {
-					if (!hideKeypad || i == 1) {
-						// hide sort when more than 2 chars typed
-						if (i == GuiSearchLayout.KEY_9 /* sort */
-						    && cursorKeypad && carret > 2) {
-							gsl.ele[i].setText(" ");
-						} else {
-							gsl.ele[i].setText(letters[i]);
-						}
-					}
-				}
-				gsl.paint(gc);
-			}
-		}
 		if (yc < 0) {
 			gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_ARROWS]);
 			gc.drawString("^", getWidth(), 0, Graphics.TOP | Graphics.RIGHT);
@@ -1066,6 +1012,60 @@ public class GuiSearch extends Canvas implements CommandListener,
 				gc.drawString("..." + sr.nameIdx,17, yc, Graphics.TOP | Graphics.LEFT);
 			}
 			yc+=fontSize;
+		}
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)) {
+			gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
+			if (hasPointerEvents() && ! hideKeypad) {
+				if (gsl == null) {
+					gsl = new GuiSearchLayout(0, 0, width, height);
+				}
+			
+				String letters[] = {  Locale.get("guisearch.cursor")/*cursor*/, "  X  ", "  <- ", 
+						      Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+						      Locale.get("guisearch.label1wordSearch")/* 1*- */ :
+						      Locale.get("guisearch.label1")/*_1*- */,
+						      Locale.get("guisearch.label2")/* abc2*/,
+						      Locale.get("guisearch.label3")/* def3*/, Locale.get("guisearch.label4")/* ghi4*/,
+						      Locale.get("guisearch.label5")/* jkl5*/, Locale.get("guisearch.label6")/* mno6*/,
+						      Locale.get("guisearch.label7")/*pqrs7*/, Locale.get("guisearch.label8")/* tuv8*/,
+						      Locale.get("guisearch.label9")/*wxyz9*/, 
+						      Locale.get("guisearch.fulltextshort")/*fulltext*/, "  0  ", 
+						      Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+						      Locale.get("guisearch.pound")/*_#end*/ :
+						      Locale.get("guisearch.poundNameSearch")/*#end*/};
+				if (cursorKeypad) {
+					String keypadLetters[] = {  Locale.get("guisearch.abc")/*abc*/, "  X  ", "  <- ", 
+						       Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+						       Locale.get("guisearch.label1wordSearch")/* 1*- */ :
+						       Locale.get("guisearch.label1")/*_1*- */,
+						       Locale.get("guisearch.clabel2")/* abc2*/,
+						       Locale.get("guisearch.clabel3")/* def3*/, Locale.get("guisearch.clabel4")/* ghi4*/,
+						       Locale.get("guisearch.clabel5")/* jkl5*/, Locale.get("guisearch.clabel6")/* mno6*/,
+						       Locale.get("guisearch.clabel7")/*pqrs7*/, Locale.get("guisearch.clabel8")/* tuv8*/,
+						       Locale.get("guisearch.sort")/*sort*/, 
+						       Locale.get("guisearch.more")/*more*/, "  0  ", 
+						       Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+						       Locale.get("guisearch.pound")/*_#end*/ :
+						       Locale.get("guisearch.poundNameSearch")/*#end*/};
+					letters = keypadLetters;
+				}
+				if (hideKeypad) {
+					String hideLetters[] = { " ", "  X  " };
+					letters = hideLetters;
+				}
+				for (int i = 0; i < 15 ; i++) {
+					if (!hideKeypad || i == 1) {
+						// hide sort when more than 2 chars typed
+						if (i == GuiSearchLayout.KEY_9 /* sort */
+						    && cursorKeypad && carret > 2) {
+							gsl.ele[i].setText(" ");
+						} else {
+							gsl.ele[i].setText(letters[i]);
+						}
+					}
+				}
+				gsl.paint(gc);
+			}
 		}
 	}
 	

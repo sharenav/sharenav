@@ -85,6 +85,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_TOP |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+			LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
 			LayoutElement.FLAG_FONT_MEDIUM
 		);
 		e.setAdditionalOffsX(xdiff);
@@ -97,6 +98,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_TOP |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+			LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
 			LayoutElement.FLAG_FONT_MEDIUM
 		);
 		e.setAdditionalOffsY(ydiff);
@@ -109,6 +111,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_TOP |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+			LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
 			LayoutElement.FLAG_FONT_MEDIUM
 		);
 		e.setHRelative(ele[KEY_CLOSE]);
@@ -121,6 +124,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+			LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
 			LayoutElement.FLAG_FONT_MEDIUM
 		);
 		e.setVRelative(ele[KEY_KEYPAD]);
@@ -133,6 +137,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+			LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
 			LayoutElement.FLAG_FONT_MEDIUM
 		);
 		e.setVRelative(ele[KEY_CLOSE]);
@@ -145,6 +150,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+			LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
 			LayoutElement.FLAG_FONT_MEDIUM
 		);
 		e.setVRelative(ele[KEY_BACKSPACE]);
@@ -157,6 +163,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+			LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
 			LayoutElement.FLAG_FONT_MEDIUM
 		);
 		e.setAdditionalOffsX(xdiff);
@@ -169,6 +176,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+			LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
 			LayoutElement.FLAG_FONT_MEDIUM
 		);
 		e.setVRelative(ele[KEY_2]);
@@ -181,6 +189,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+			LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
 			LayoutElement.FLAG_FONT_MEDIUM
 		);
 		e.setVRelative(ele[KEY_3]);
@@ -193,6 +202,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+			LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
 			LayoutElement.FLAG_FONT_MEDIUM
 		);
 		e.setAdditionalOffsX(xdiff);
@@ -205,6 +215,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+			LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
 			LayoutElement.FLAG_FONT_MEDIUM
 		);
 		e.setVRelative(ele[KEY_5]);
@@ -217,6 +228,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+			LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
 			LayoutElement.FLAG_FONT_MEDIUM
 		);
 		e.setVRelative(ele[KEY_6]);
@@ -229,6 +241,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+			LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
 			LayoutElement.FLAG_FONT_MEDIUM
 		);
 		e.setAdditionalOffsX(xdiff);
@@ -241,6 +254,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+			LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
 			LayoutElement.FLAG_FONT_MEDIUM
 		);
 		e.setVRelative(ele[KEY_8]);
@@ -253,6 +267,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+			LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
 			LayoutElement.FLAG_FONT_MEDIUM
 		);
 		e.setVRelative(ele[KEY_9]);
