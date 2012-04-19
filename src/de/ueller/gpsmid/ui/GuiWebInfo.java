@@ -43,7 +43,7 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 	// if longtap is true, instantiate as context menu which also has nearby POI search
 	public GuiWebInfo(GpsMidDisplayable parent, Position pos, PaintContext pc, boolean longtap) {
 		super(Locale.get("guiwebinfo.ContactWebOrPhone")/*Contact by web or phone*/, List.IMPLICIT);
-		actualWay = pc.actualWay;
+		actualWay = pc.trace.actualWay;
 		trace = pc.trace;
 		mParent = parent;
 		mPos = pos;
@@ -72,10 +72,18 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 //#endif
 		//#endif
 		if (Legend.enableUrlTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITE)) {
-			this.append(Locale.get("guiwebinfo.Website")/*Website*/, null);
+			//System.out.println("actualWay: " + actualWay + " urlIdx: " + actualWay.urlIdx + " url: " + trace.getUrl(actualWay.urlIdx));
+			String url;
+			if ((actualWay != null) && ((url = trace.getUrl(actualWay.urlIdx)) != null)) {
+				this.append(Locale.get("guiwebinfo.Website")/*Website*/, null);
+			}
 		}
 		if (Legend.enablePhoneTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_PHONE)) {
-			this.append(Locale.get("guiwebinfo.Phone")/*Phone*/, null);
+			//System.out.println("actualWay: " + actualWay + " phoneIdx: " + actualWay.phoneIdx + " phone: " + trace.getUrl(actualWay.phoneIdx));
+			String phone;
+			if ((actualWay != null) && ((phone = trace.getUrl(actualWay.phoneIdx)) != null)) {
+				this.append(Locale.get("guiwebinfo.Phone")/*Phone*/, null);
+			}
 		}
 		// FIXME add "search for name on the web" for POI names once the code to select POIS is in place
 		this.addCommand(BACK_CMD);
