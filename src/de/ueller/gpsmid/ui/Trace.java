@@ -3458,7 +3458,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				// long tap map to open a place-related menu
 				// use the place of touch instead of old center as position,
 				// set as new center
-				pickPointEnd=panProjection.inverse(touchX,touchY, pickPointEnd);
+				pickPointEnd=panProjection.inverse(touchX + imageCollector.xScreenOverscan,
+								   touchY + imageCollector.yScreenOverscan, pickPointEnd);
 				center.radlat=pickPointEnd.radlat;
 				center.radlon=pickPointEnd.radlon;
 				Position oPos = new Position(center.radlat, center.radlon,
