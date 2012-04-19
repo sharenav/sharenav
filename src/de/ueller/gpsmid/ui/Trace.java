@@ -3524,7 +3524,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 								   touchY + imageCollector.yScreenOverscan, pickPointEnd);
 				Position oPos = new Position(pickPointEnd.radlat, pickPointEnd.radlon,
 							     0.0f, 0.0f, 0.0f, 0, 0);
-				GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, true, coords.url, coords.phone);
+				GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, true, coords != null ? coords.url : null,
+								 coords != null ? coords.phone : null);
 				gWeb.show();
 				//#endif
 			}
