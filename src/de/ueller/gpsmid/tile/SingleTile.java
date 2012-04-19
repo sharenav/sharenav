@@ -372,7 +372,7 @@ public class SingleTile extends Tile implements QueueableTile {
 		boolean alert = Legend.isNodeAlert(t);
 		//#if polish.api.finland
 		boolean cameraAlert = Legend.isCamera(t);
-		if (cameraAlert) {
+		if (cameraAlert && Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDCAMERA_ALERT)) {
 			// FIXME: get and pass coordinates to keep track of distance
 			// to camera
 			pc.trace.setCameraAlert(t);
@@ -452,6 +452,11 @@ public class SingleTile extends Tile implements QueueableTile {
 		
 		if (img != null ) {
 			//FIXME make optional if alert by growing image on map happens
+			//#if polish.api.finland
+			if (cameraAlert) {
+				img = ImageTools.scaleImage(img, img.getWidth() * 2, img.getHeight() * 2);
+			}
+			//#endif
 			if (alert) {
 				img = ImageTools.scaleImage(img, img.getWidth() * 2, img.getHeight() * 2);
 			}
