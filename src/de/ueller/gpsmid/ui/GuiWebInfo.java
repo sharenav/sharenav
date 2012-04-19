@@ -46,8 +46,10 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		trace = pc.trace;
 		mParent = parent;
 		mPos = pos;
+		if (longtap) {
+			this.append(Locale.get("guisearch.nearestpois")/*Nearest POIs*/, null);
+		}
 		//#if polish.api.online
-		this.append(Locale.get("guisearch.nearestpois")/*Nearest POIs*/, null);
 		//this.append("Wikipedia (Web)", null);
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WIKIPEDIA_RSS)) {
 			this.append(Locale.get("guiwebinfo.WikipediaRSS")/*Wikipedia (RSS)*/, null);
