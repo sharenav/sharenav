@@ -3521,13 +3521,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				// set as new center
 				pickPointEnd=panProjection.inverse(touchX + imageCollector.xScreenOverscan,
 								   touchY + imageCollector.yScreenOverscan, pickPointEnd);
-				center.radlat=pickPointEnd.radlat;
-				center.radlon=pickPointEnd.radlon;
-				Position oPos = new Position(center.radlat, center.radlon,
+				Position oPos = new Position(pickPointEnd.radlat, pickPointEnd.radlon,
 							     0.0f, 0.0f, 0.0f, 0, 0);
-				imageCollector.newDataReady();
-				gpsRecenter = false;
-
 				GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, true);
 				gWeb.show();
 				//#endif
