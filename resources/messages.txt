@@ -1269,3 +1269,4 @@ trace.cameraText=C
 guisetupsound.AudioNodeAlert=Audio POI alert
 guisetupsound.VisualNodeAlert=Visual POI alert
 guidiscover.clickMarkers=Clickable markers
+guiwebinfo.EditPOI=Edit POI in OSM

@@ -804,3 +804,4 @@ trace.cameraText=K
 guisetupsound.AudioNodeAlert=Kohdevaroitus äänellä
 guisetupsound.VisualNodeAlert=Kohdevaroitus kuvalla
 guidiscover.clickMarkers=Kohteiden kosketus kartalla
+guiwebinfo.EditPOI=Muokkaa kohdetta OSM:ssä

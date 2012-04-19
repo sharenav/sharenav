@@ -466,6 +466,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		int y;
 		String url;
 		String phone;
+		int nodeID;
 	}
 
 	private Trace() throws Exception {
@@ -1380,7 +1381,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				//#if polish.api.online
 					Position oPos = new Position(center.radlat, center.radlon,
 							0.0f, 0.0f, 0.0f, 0, 0);
-					GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, false, null, null);
+					GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, false, null, null, -1);
 					gWeb.show();
 				//#else
 					alert(Locale.get("trace.NoOnlineCapa")/*No online capabilites*/,
@@ -1775,7 +1776,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				}
 				if (c == CMDS[RETRIEVE_NODE]) {
 					// FIXME add support for accessing a node
-					// under cursor
+					// under cursor if clickable markers are on (so it'll work also on non-touch phones)
 					if (Legend.enableEdits) {
 						GuiOsmPoiDisplay guiNode = new GuiOsmPoiDisplay(-1, null,
 								center.radlat, center.radlon, this);
@@ -3525,7 +3526,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				Position oPos = new Position(pickPointEnd.radlat, pickPointEnd.radlon,
 							     0.0f, 0.0f, 0.0f, 0, 0);
 				GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, true, coords != null ? coords.url : null,
-								 coords != null ? coords.phone : null);
+								 coords != null ? coords.phone : null,
+								 coords != null ? coords.nodeID : -1);
 				gWeb.show();
 				//#endif
 			}
@@ -4063,12 +4065,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		clickableMarkers = new Vector();
 	}
 
-	public void addClickableMarker(int x, int y, String url, String phone) {
+    public void addClickableMarker(int x, int y, String url, String phone, int nodeID) {
 		ClickableCoords coords = new ClickableCoords();
 		coords.x = x - imageCollector.xScreenOverscan;
 		coords.y = y - imageCollector.yScreenOverscan;
 		coords.url = url;
 		coords.phone = phone;
+		coords.nodeID = nodeID;
 		clickableMarkers.addElement(coords);
 	}
 }

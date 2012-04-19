@@ -471,6 +471,14 @@ public class SingleTile extends Tile implements QueueableTile {
 				if (Legend.enablePhoneTags && phoneIdx[i] != -1) {
 						phone = pc.trace.getUrl(phoneIdx[i]);
 				}
+				int nodeID = -1;
+				//#if polish.api.bigsearch
+				//#if polish.api.osm-editing
+				if (Legend.enableEdits) {
+					nodeID = osmID[i];
+				}
+				//#endif
+				//#endif
 				if (url != null || Legend.isNodeClickable(t)) {
 					int dia = Configuration.getTouchMarkerDiameter();
 					// FIXME create a specific color (semi-transparent would be good) for this
@@ -478,7 +486,7 @@ public class SingleTile extends Tile implements QueueableTile {
 					pc.g.drawArc(pc.swapLineP.x - dia / 2, pc.swapLineP.y -
 						     (Legend.isNodeImageCentered(t) ? dia / 2 : dia / 2 + img.getHeight() / 2 ), dia, dia, 0, 360);
 					//System.out.println("url: " + url + " phone: " + phone);
-					pc.trace.addClickableMarker(pc.swapLineP.x, pc.swapLineP.y, url, phone);
+					pc.trace.addClickableMarker(pc.swapLineP.x, pc.swapLineP.y, url, phone, nodeID);
 				}
 			}
 			// FIXME check and cleanup after the functionality is in good enough condition

@@ -32,6 +32,7 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 	private Position mPos;
 	private String mPoiUrl;
 	private String mPoiPhone;
+	private int mNodeID;
 	private Way actualWay;
 	private Trace trace;
 
@@ -43,7 +44,8 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 //#endif
 
 	// if longtap is true, instantiate as context menu which also has nearby POI search
-	public GuiWebInfo(GpsMidDisplayable parent, Position pos, PaintContext pc, boolean longtap, String poiUrl, String poiPhone) {
+	public GuiWebInfo(GpsMidDisplayable parent, Position pos, PaintContext pc, boolean longtap, String poiUrl, String poiPhone,
+		int nodeID) {
 		super(Locale.get("guiwebinfo.ContactWebOrPhone")/*Contact by web or phone*/, List.IMPLICIT);
 		actualWay = pc.trace.actualWay;
 		trace = pc.trace;
@@ -51,6 +53,7 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		mPoiPhone = poiPhone;
 		mParent = parent;
 		mPos = pos;
+		mNodeID = nodeID;
 		if (longtap) {
 			this.append(Locale.get("guisearch.nearestpois")/*Nearest POIs*/, null);
 			this.append(Locale.get("guiwaypoint.AsDestination")/*As destination*/, null);
@@ -89,6 +92,13 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 				this.append(Locale.get("guiwebinfo.Phone")/*Phone*/, null);
 			}
 		}
+		//#if polish.api.bigsearch
+		//#if polish.api.osm-editing
+		if (mNodeID != -1 && Legend.enableEdits) {
+			this.append(Locale.get("guiwebinfo.EditPOI")/*Edit POI*/, null);
+		}		
+		//#endif 
+		//#endif 
 		// FIXME add "search for name on the web" for POI names once the code to select POIS is in place
 		this.addCommand(BACK_CMD);
 		this.setCommandListener(this);
@@ -122,6 +132,16 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 				trace.setDestination(pm1);
 				trace.commandAction(Trace.ROUTING_START_CMD);
 				mParent.show();
+			//#if polish.api.bigsearch
+			//#if polish.api.osm-editing
+			} else if (site.equalsIgnoreCase(Locale.get("guiwebinfo.EditPOI")/*Edit POI*/)) {
+					//System.out.println("Calling GuiOsmPoiDisplay: nodeID " + mNodeID);
+					GuiOsmPoiDisplay guiNode = new GuiOsmPoiDisplay((int) mNodeID, null,
+											mPos.latitude, mPos.longitude, mParent);
+					guiNode.show();
+					guiNode.refresh();
+			//#endif 
+			//#endif 
 			} else {
 				String url = getUrlForSite(site);
 				openUrl(url);
