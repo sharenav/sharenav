@@ -3374,20 +3374,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				// check for clickable markers
 				// System.out.println("Checking for clickable markers");
 				boolean markerClicked = false;
-				if (clickableMarkers != null) {
-					//System.out.println("Click coords: " + x + " " + y);
-					for (int i = 0; i < clickableMarkers.size(); i++) {
-						ClickableCoords coords = (ClickableCoords)clickableMarkers.elementAt(i);
-						//System.out.println("Marker coords: " + coords.x + " " + coords.y);
-						if (Math.abs(coords.x - x) <= Configuration.getTouchMarkerDiameter() / 2
-						    && Math.abs(coords.y - y) <= Configuration.getTouchMarkerDiameter() / 2) {
-							System.out.println("Marker clicked");
-							if (coords.url != null) {
-								markerClicked = true;
-								GuiWebInfo.openUrl(coords.url);
-								return;
-							}
-						}
+				ClickableCoords coords = getClickableMarker(x, y);
+				if (coords != null) {
+					markerClicked = true;
+					if (coords.url != null) {
+						GuiWebInfo.openUrl(coords.url);
+						return;
 					}
 				}
 				if (!markerClicked && !tl.bigOnScreenButtons) {
@@ -3494,6 +3486,21 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 	}
 	
+	private ClickableCoords getClickableMarker(int x, int y) {
+		//System.out.println("Click coords: " + x + " " + y);
+		if (clickableMarkers != null) {
+			for (int i = 0; i < clickableMarkers.size(); i++) {
+				ClickableCoords coords = (ClickableCoords)clickableMarkers.elementAt(i);
+				//System.out.println("Marker coords: " + coords.x + " " + coords.y);
+				if (Math.abs(coords.x - x) <= Configuration.getTouchMarkerDiameter() / 2
+				    && Math.abs(coords.y - y) <= Configuration.getTouchMarkerDiameter() / 2) {
+					return coords;
+				}
+			}
+		}
+		return null;
+	}
+
 	private void longTap() {
 		// if not tapping a control, then the map area must be tapped so we do the long tap action for the map area
 		if (tl.getElementIdAtPointer(touchX, touchY) < 0 && panProjection != null) {							
