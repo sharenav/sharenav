@@ -629,6 +629,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			//#if polish.android
 			Form poiSelectForm = new Form(Locale.get("guisearch.NearestPoi")/*Nearest POI*/);
 			poiSelectField = new PoiTypeMenu(this);
+			//#style formItem
 			poiSelectForm.append(poiSelectField);
 			// FIXME perhaps this should be optional
 			//InputMethodManager imm = (InputMethodManager) MidletBridge.instance.getSystemService(Context.INPUT_METHOD_SERVICE);
