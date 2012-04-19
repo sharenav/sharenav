@@ -465,6 +465,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		int x;
 		int y;
 		String url;
+		String phone;
 	}
 
 	private Trace() throws Exception {
@@ -1379,7 +1380,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				//#if polish.api.online
 					Position oPos = new Position(center.radlat, center.radlon,
 							0.0f, 0.0f, 0.0f, 0, 0);
-					GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, false);
+					GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, false, null, null);
 					gWeb.show();
 				//#else
 					alert(Locale.get("trace.NoOnlineCapa")/*No online capabilites*/,
@@ -3523,7 +3524,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 								   touchY + imageCollector.yScreenOverscan, pickPointEnd);
 				Position oPos = new Position(pickPointEnd.radlat, pickPointEnd.radlon,
 							     0.0f, 0.0f, 0.0f, 0, 0);
-				GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, true);
+				GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, true, coords.url, coords.phone);
 				gWeb.show();
 				//#endif
 			}
@@ -4061,11 +4062,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		clickableMarkers = new Vector();
 	}
 
-	public void addClickableMarker(int x, int y, String url) {
+	public void addClickableMarker(int x, int y, String url, String phone) {
 		ClickableCoords coords = new ClickableCoords();
 		coords.x = x - imageCollector.xScreenOverscan;
 		coords.y = y - imageCollector.yScreenOverscan;
 		coords.url = url;
+		coords.phone = phone;
 		clickableMarkers.addElement(coords);
 	}
 }

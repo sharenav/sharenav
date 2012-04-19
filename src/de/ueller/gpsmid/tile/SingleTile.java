@@ -467,13 +467,18 @@ public class SingleTile extends Tile implements QueueableTile {
 				if (Legend.enableUrlTags && urlIdx[i] != -1) {
 						url = pc.trace.getUrl(urlIdx[i]);
 				}
+				String phone = null;
+				if (Legend.enablePhoneTags && phoneIdx[i] != -1) {
+						phone = pc.trace.getUrl(phoneIdx[i]);
+				}
 				if (url != null || Legend.isNodeClickable(t)) {
 					int dia = Configuration.getTouchMarkerDiameter();
 					// FIXME create a specific color (semi-transparent would be good) for this
 					pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE]);
 					pc.g.drawArc(pc.swapLineP.x - dia / 2, pc.swapLineP.y -
 						     (Legend.isNodeImageCentered(t) ? dia / 2 : dia / 2 + img.getHeight() / 2 ), dia, dia, 0, 360);
-					pc.trace.addClickableMarker(pc.swapLineP.x, pc.swapLineP.y, url);
+					//System.out.println("url: " + url + " phone: " + phone);
+					pc.trace.addClickableMarker(pc.swapLineP.x, pc.swapLineP.y, url, phone);
 				}
 			}
 			// FIXME check and cleanup after the functionality is in good enough condition

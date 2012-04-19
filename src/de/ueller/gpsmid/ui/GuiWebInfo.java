@@ -30,6 +30,8 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 	private final Command SELECT_CMD = new Command(Locale.get("guiwebinfo.Select")/*Select*/, Command.OK, 2);
 	private GpsMidDisplayable mParent;
 	private Position mPos;
+	private String mPoiUrl;
+	private String mPoiPhone;
 	private Way actualWay;
 	private Trace trace;
 
@@ -41,10 +43,12 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 //#endif
 
 	// if longtap is true, instantiate as context menu which also has nearby POI search
-	public GuiWebInfo(GpsMidDisplayable parent, Position pos, PaintContext pc, boolean longtap) {
+	public GuiWebInfo(GpsMidDisplayable parent, Position pos, PaintContext pc, boolean longtap, String poiUrl, String poiPhone) {
 		super(Locale.get("guiwebinfo.ContactWebOrPhone")/*Contact by web or phone*/, List.IMPLICIT);
 		actualWay = pc.trace.actualWay;
 		trace = pc.trace;
+		mPoiUrl = poiUrl;
+		mPoiPhone = poiPhone;
 		mParent = parent;
 		mPos = pos;
 		if (longtap) {
@@ -74,14 +78,14 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		if (Legend.enableUrlTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITE)) {
 			//System.out.println("actualWay: " + actualWay + " urlIdx: " + actualWay.urlIdx + " url: " + trace.getUrl(actualWay.urlIdx));
 			String url;
-			if ((actualWay != null) && ((url = trace.getUrl(actualWay.urlIdx)) != null)) {
+			if (mPoiUrl != null || ((actualWay != null) && ((url = trace.getUrl(actualWay.urlIdx)) != null))) {
 				this.append(Locale.get("guiwebinfo.Website")/*Website*/, null);
 			}
 		}
 		if (Legend.enablePhoneTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_PHONE)) {
 			//System.out.println("actualWay: " + actualWay + " phoneIdx: " + actualWay.phoneIdx + " phone: " + trace.getUrl(actualWay.phoneIdx));
 			String phone;
-			if ((actualWay != null) && ((phone = trace.getUrl(actualWay.phoneIdx)) != null)) {
+			if (mPoiPhone != null || ((actualWay != null) && ((phone = trace.getUrl(actualWay.phoneIdx)) != null))) {
 				this.append(Locale.get("guiwebinfo.Phone")/*Phone*/, null);
 			}
 		}
@@ -215,14 +219,17 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 				+ ((mPos.longitude < 0)?"_W_":"_E_");
 		}
 		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.Website")/*Website*/)) {
-			// FIXME way urls are quite rare, should add support for POI urls
-			if ((actualWay != null)) {
+			if (mPoiUrl != null) {
+				url = mPoiUrl;
+			} else if (actualWay != null) {
 				url = trace.getUrl(actualWay.urlIdx);
 			}
 		}
 		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.Phone")/*Phone*/)) {
 			String phone;
-			if ((actualWay != null) && ((phone = trace.getUrl(actualWay.phoneIdx)) != null)) {
+			if (mPoiPhone != null) {
+				url = "tel:" + mPoiPhone;
+			} else if ((actualWay != null) && ((phone = trace.getUrl(actualWay.phoneIdx)) != null)) {
 				url = "tel:" + phone;
 			}
 		}
