@@ -472,9 +472,9 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		touchX = x;
 		touchY = y;
 		LayoutElement e = getActiveMenuPage().getElementAtPointer(x, y);
-		getActiveMenuPage().setCursor(getActiveMenuPage().getElementIdAtPointer(x, y));
 		if (e != null && e.actionID >= 0) {
 			getActiveMenuPage().setTouchedElement(e);
+			getActiveMenuPage().setCursor(getActiveMenuPage().getElementIdAtPointer(x, y));
 		} else {
 			e = tabButtonManager.getElementAtPointer(x, y);
 			if (e != null) {
