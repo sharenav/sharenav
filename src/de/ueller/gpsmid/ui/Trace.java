@@ -462,6 +462,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	private Vector clickableMarkers;
 
+	private IntPoint centerP;
+
 	public class ClickableCoords {
 		int x;
 		int y;
@@ -1380,8 +1382,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			if (c == CMDS[ONLINE_INFO_CMD]) {
 				// if we clicked a clickable marker, get coords from the marker instead of tap
-				int x = pc.getP().getImageCenter().x;
-				int y = pc.getP().getImageCenter().y;
+				int x = centerP.x;
+				int y = centerP.y;
 				int xOverScan = 0;
 				int yOverScan = 0;
 				if (imageCollector != null) {
@@ -2709,7 +2711,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		// Avoid exception after route calculation
 		if ( pc.getP() == null )
 			return;
-		IntPoint centerP = null;
+		centerP = null;
 		try {
 			if (imageCollector != null) {
 			g.setColor(Legend.COLORS[Legend.COLOR_MAP_CURSOR]);
