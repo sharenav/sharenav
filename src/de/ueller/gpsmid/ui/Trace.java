@@ -284,6 +284,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private static Node	centerPointerPressedN = new Node();
 	private static Node	pickPointStart = new Node();
 	private static Node	pickPointEnd = new Node();
+	private static Node	centerNode = new Node();
 	/**
 	 * time at which a pointer press occured to determine
 	 * single / double / long taps 
@@ -1378,12 +1379,35 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return;
 			}
 			if (c == CMDS[ONLINE_INFO_CMD]) {
-				//#if polish.api.online
-					Position oPos = new Position(center.radlat, center.radlon,
-							0.0f, 0.0f, 0.0f, 0, 0);
-					GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, false, null, null, -1);
-					gWeb.show();
-				//#else
+				// if we clicked a clickable marker, get coords from the marker instead of tap
+				int x = pc.getP().getImageCenter().x;
+				int y = pc.getP().getImageCenter().y;
+				int xOverScan = 0;
+				int yOverScan = 0;
+				if (imageCollector != null) {
+					xOverScan = imageCollector.xScreenOverscan;
+					yOverScan = imageCollector.yScreenOverscan;
+					panProjection=imageCollector.getCurrentProjection();
+				} else {
+					panProjection = null;
+				}
+
+				ClickableCoords coords = getClickableMarker(x - xOverScan, y - yOverScan);
+				if (coords != null) {
+					x = coords.x;
+					y = coords.y;
+				}
+				// long tap map to open a place-related menu
+				// use the place of touch instead of old center as position,
+				centerNode=panProjection.inverse(x,
+								   y, centerNode);
+				Position oPos = new Position(centerNode.radlat, centerNode.radlon,
+							     0.0f, 0.0f, 0.0f, 0, 0);
+				GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, true, coords != null ? coords.url : null,
+								 coords != null ? coords.phone : null,
+								 coords != null ? coords.nodeID : -1);
+				gWeb.show();
+				//#if 0
 					alert(Locale.get("trace.NoOnlineCapa")/*No online capabilites*/,
 					      Locale.get("trace.SetAppGeneric")/*Set app=GpsMid-Generic-editing and enableEditing=true in*/ +
 					      Locale.get("trace.PropertiesFile")/*.properties file and recreate GpsMid with Osm2GpsMid.*/,
@@ -3489,11 +3513,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 	
 	private ClickableCoords getClickableMarker(int x, int y) {
-		//System.out.println("Click coords: " + x + " " + y);
+		System.out.println("Click coords: " + x + " " + y);
 		if (clickableMarkers != null) {
 			for (int i = 0; i < clickableMarkers.size(); i++) {
 				ClickableCoords coords = (ClickableCoords)clickableMarkers.elementAt(i);
-				//System.out.println("Marker coords: " + coords.x + " " + coords.y);
+				System.out.println("Marker coords: " + coords.x + " " + coords.y);
 				if (Math.abs(coords.x - x) <= Configuration.getTouchMarkerDiameter() / 2
 				    && Math.abs(coords.y - y) <= Configuration.getTouchMarkerDiameter() / 2) {
 					return coords;
@@ -3517,10 +3541,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					touchY = coords.y;
 				}
 
-				//#if polish.api.online
 				// long tap map to open a place-related menu
 				// use the place of touch instead of old center as position,
-				// set as new center
 				pickPointEnd=panProjection.inverse(touchX + imageCollector.xScreenOverscan,
 								   touchY + imageCollector.yScreenOverscan, pickPointEnd);
 				Position oPos = new Position(pickPointEnd.radlat, pickPointEnd.radlon,
@@ -3529,7 +3551,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 								 coords != null ? coords.phone : null,
 								 coords != null ? coords.nodeID : -1);
 				gWeb.show();
-				//#endif
 			}
 			return;
 		// long tapping a control											
