@@ -99,8 +99,8 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 		iconAddAddr =		mp.createAndAddIcon(Locale.get("traceiconmenu.AddAddr")/*Add Address*/, "i_addpoi", Trace.EDIT_ADDR_CMD);
 		mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
 
-		//#if not polish.api.online
 		iconOnlineInfo.makeImageGreyed();
+		//#if not polish.api.online
 		iconAddPOI.makeImageGreyed();
 		iconEditWay.makeImageGreyed();
 		iconAddAddr.makeImageGreyed();
