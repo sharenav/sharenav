@@ -438,15 +438,27 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 			} else if (directionId == 1) {
 				nextTab();
 			} else {
-				int newTab = tabButtonManager.getElementIdAtPointer(x, y);
-				if (newTab >= 0) {
-					setActiveTab(newTab);
+				if (tabDirectionButtonManager.getElementAtPointer(x, y) == eStatusBar) {
+						int actionId = getActiveMenuPage().getActiveEleActionId();
+						String choiceName = getActiveMenuPage().getActiveEleChoiceName();
+						if (actionId >= 0) {
+							performIconAction(actionId, choiceName);
+							return;
+						}
 				} else {
-					int actionId = getActiveMenuPage().getActionIdAtPointer(x, y);
-					String choiceName = getActiveMenuPage().getChoiceNameAtPointer(x, y);
-					if (actionId >= 0) {
-						performIconAction(actionId, choiceName);
-						return;
+					int newTab = tabButtonManager.getElementIdAtPointer(x, y);
+					if (newTab >= 0) {
+						setActiveTab(newTab);
+					} else {
+						if (getActiveMenuPage().getElementAtPointer(x, y) == eStatusBar) {
+						} else {
+							int actionId = getActiveMenuPage().getActionIdAtPointer(x, y);
+							String choiceName = getActiveMenuPage().getChoiceNameAtPointer(x, y);
+							if (actionId >= 0) {
+								performIconAction(actionId, choiceName);
+								return;
+							}
+						}					
 					}
 				}
 			}
