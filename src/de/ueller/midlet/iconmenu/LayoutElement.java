@@ -86,6 +86,7 @@ public class LayoutElement {
 	protected boolean textIsValid = false;
 	protected boolean oldTextIsValid = false;
 	protected boolean isOnScreen = false;
+	protected boolean touched = false;
 	
 	/** make the element width a percentage of the LayoutManager width or font height*/
 	private int widthPercent = 100;
@@ -157,6 +158,14 @@ public class LayoutElement {
 	protected void calcSizeAndPosition() {
 		calcSize();
 		calcPosition();
+	}
+
+	public void setTouched(boolean b) {
+		this.touched = b;
+	}
+
+	public boolean isTouched() {
+		return this.touched;
 	}
 
 	protected void calcSize() {
@@ -668,7 +677,7 @@ public class LayoutElement {
 				} else {
 					g.drawImage(image, left, top, Graphics.TOP|Graphics.LEFT);
 				}
-				if (imp.touchedElement == this) {
+				if (this.touched || imp.touchedElement == this) {
 					g.drawImage(imp.hlImage, left - 1, top - 1, Graphics.TOP|Graphics.LEFT);					
 				}
 			}

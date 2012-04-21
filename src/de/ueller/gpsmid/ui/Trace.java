@@ -181,8 +181,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	protected static final int ROUTE_TO_FAVORITE_CMD = 66;
 	protected static final int ROTATE_TRAVEL_MODE_CMD = 67;
 	protected static final int SAVE_PREDEF_WAYP_CMD = 68;
+	protected static final int TOUCH_HELP_CMD = 69;
 
-	private final Command [] CMDS = new Command[68];
+	private final Command [] CMDS = new Command[70];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -546,6 +547,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		CMDS[KEYS_HELP_CMD] = new Command(Locale.get("guidiscover.KeyShortcuts")/**/,Command.ITEM,100);
 		CMDS[ROUTE_TO_FAVORITE_CMD] = new Command(Locale.get("guidiscover.KeyShortcuts")/**/,Command.ITEM,100);
 		CMDS[ROTATE_TRAVEL_MODE_CMD] = new Command(Locale.get("guiroute.TravelBy")/**/,Command.ITEM,100);
+		CMDS[TOUCH_HELP_CMD] = new Command(Locale.get("trace.touchhelp")/*Touchscreen functions*/,Command.ITEM,100);
 
 		addAllCommands();
 		
@@ -1607,6 +1609,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			if (c == CMDS[KEYS_HELP_CMD]) {
 				GuiKeyShortcuts gks = new GuiKeyShortcuts(this);
 				gks.show();
+				return;
+			}
+			if (c == CMDS[TOUCH_HELP_CMD]) {
+				TouchHelper th = new TouchHelper(this);
+				th.show();
 				return;
 			}
 			if (c == CMDS[ROTATE_TRAVEL_MODE_CMD]) {

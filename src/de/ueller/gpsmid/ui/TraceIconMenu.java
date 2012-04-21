@@ -211,9 +211,16 @@ true ?
 		mp = createAndAddMenuPage(Locale.get("traceiconmenu.HelpPage")/* Help */, 3, 3);
 
 		mp.createAndAddIcon(Locale.get("generic.About")/*About*/, "i_about", Trace.ABOUT_CMD);
-		iconHelpOnlineTouch = mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Touch")/*Touch*/, "i_online", Trace.HELP_ONLINE_TOUCH_CMD);
-		iconHelpOnlineWiki = mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Wiki")/*Wiki*/, "i_online", Trace.HELP_ONLINE_WIKI_CMD);
+		if (hasPointerEvents()) {
+			mp.createAndAddIcon(Locale.get("trace.touchhelp")/*Touchscreen functions*/, "is_gui", Trace.TOUCH_HELP_CMD);
+		} else {
+			mp.createAndAddIcon(Locale.get("trace.displayhelp")/**/, "is_gui", Trace.TOUCH_HELP_CMD);
+
+		}
 		mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Keys")/*Keys*/, "is_keys", Trace.KEYS_HELP_CMD);
+		if (hasPointerEvents()) {
+			iconHelpOnlineTouch = mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Touch")/*Touch*/, "i_online", Trace.HELP_ONLINE_TOUCH_CMD);
+		}		iconHelpOnlineWiki = mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Wiki")/*Wiki*/, "i_online", Trace.HELP_ONLINE_WIKI_CMD);
 		mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
 	}
 

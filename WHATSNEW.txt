@@ -22,8 +22,9 @@
     - In routing choice, added buttons for selection of route mode - no need to go through menu
     - More icon sizes are included, you can now choose from "useIcons = small|true|big|large|huge" in the .properties file.
       useIcons=large and useIcons=huge make sense for devices with high resolution displays
-    - Links to online help for touchscreen and GpsMid wiki in Online menu
     - Help tab added to icon menu
+    - Links to online help for touchscreen and GpsMid wiki in Online menu
+    - Display & touch screen helper in help menu
     - Favorites can be optionally shown as routing targets in route icon menu
     - Long tap on map now opens a context menu which now has nearby POI search in addition to the
       previously-existing online functions; also has options to route to and set as destination.
