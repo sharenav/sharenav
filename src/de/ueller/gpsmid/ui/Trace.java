@@ -203,9 +203,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private final static int DRAGGEDMUCH_THRESHOLD = 8;
 	//#endif
 
-	public final static int LAYOUTMODE_MAP_WITH_OVERLAYS = 1;
-	public final static int LAYOUTMODE_HALF_MAP = 2;
-
 //	private SirfInput si;
 	private LocationMsgProducer locationProducer;
 	private LocationMsgProducer cellIDLocationProducer = null;
@@ -213,6 +210,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private volatile int compassDirection = 0;
 	private volatile int compassDeviation = 0;
 	private volatile int compassDeviated = 0;
+
+	private volatile int minX = 0;
+	private volatile int minY = 0;
+	private volatile int maxX = 0;
+	private volatile int maxY = 0;
+	private volatile int renderDiff = 0;
 
 	public byte solution = LocationMsgReceiver.STATUS_OFF;
 	public String solutionStr = Locale.get("solution.Off");
@@ -451,13 +454,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public Vector locationUpdateListeners;
 	private Projection panProjection;
 
-	// FIXME add UI switch for this; perhaps a flag named
-	// "show half-size map in icon menu", then
-	// icon menu with predefined waypoints can be used
-	// to enter waypoints without switching all the
-	// time between map & icon menu
-	//private int layoutMode = LAYOUTMODE_HALF_MAP;
-	private int layoutMode = LAYOUTMODE_MAP_WITH_OVERLAYS;
+	private boolean showingTraceIconMenu = false;
 
 	private GuiWaypointPredefinedForm mForm;
 
@@ -1877,6 +1874,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			// alert("FIXME", "Avoided duplicate ImageCollector", 1500);
 		}
 		
+		// FIXME pass layout params to imagecollector
+		//setDisplayCoords();
+		//tl = new TraceLayout(minX, minY, maxX, maxY);
 		imageCollector = new ImageCollector(tiles, this.getWidth(), this.getHeight(), this, images);
 //		projection = ProjFactory.getInstance(center,course, scale, getWidth(), getHeight());
 //		pc.setP(projection);
@@ -2009,13 +2009,32 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			updatePosition();
 		}
 
-		if (layoutMode == LAYOUTMODE_HALF_MAP) {
-			tl = new TraceLayout(0, 0, w, h / 2);
-		} else {
-			tl = new TraceLayout(0, 0, w, h);
+		setDisplayCoords(w, h);
+		tl = new TraceLayout(minX, minY, maxX, maxY);
+	}
+
+	private void setDisplayCoords(int w, int h) {
+		maxX = w;
+		maxY = h;
+		if (isShowingSplitIconMenu()) {
+			maxY = h / 2;
+			renderDiff = 0;
+			if (traceIconMenu != null) {
+				traceIconMenu.sizeChanged(w, h);
+			}
 		}
 	}
 
+	// check if pointer operation coordinates are for some other function than trace
+	private boolean coordsForOthers(int x, int y) {
+		boolean notForTrace = (x > maxX);
+		if (isShowingSplitIconMenu()) {
+			if (y > maxY + renderDiff) {
+				notForTrace = true;
+			}
+		}
+		return notForTrace;
+	}
 
 	protected void paint(Graphics g) {
 		//#debug debug
@@ -2331,6 +2350,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		} catch (Exception e) {
 			logger.silentexception("Unhandled exception in the paint code", e);
 		}
+		if (showingTraceIconMenu && traceIconMenu != null) {
+			traceIconMenu.paint(g);
+		}
+	}
+
+	public boolean isShowingSplitIconMenu() {
+		return showingTraceIconMenu;
 	}
 
 	public void showGuiWaypointSave(PositionMark posMark) {
@@ -3209,7 +3235,15 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		return parent;
 	}
 
-	protected void pointerPressed(int x, int y) {
+	public void pointerPressed(int x, int y) {
+		if (coordsForOthers(x, y)) {
+			// for icon menu
+			if (isShowingSplitIconMenu() && traceIconMenu != null) {
+				traceIconMenu.pointerPressed(x, y);
+				return;
+			}
+		}
+
 		updateLastUserActionTime();
 		long currTime = System.currentTimeMillis();
 		pointerDragged = false;
@@ -3281,7 +3315,15 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 	}
 	
-	protected void pointerReleased(int x, int y) {	
+	public void pointerReleased(int x, int y) {	
+		if (coordsForOthers(x, y)) {
+			// for icon menu
+			if (traceIconMenu != null) {
+				traceIconMenu.pointerReleased(x, y);
+				return;
+			}
+		}
+
 		// releasing the pointer cancels the check for long tap
 		if (longTapTimerTask != null) {
 			longTapTimerTask.cancel();
@@ -3318,7 +3360,15 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 	}
 	
-	protected void pointerDragged (int x, int y) {
+	public void pointerDragged (int x, int y) {
+		if (coordsForOthers(x, y)) {
+			// for icon menu
+			if (traceIconMenu != null) {
+				traceIconMenu.pointerDragged(x, y);
+				return;
+			}
+		}
+
 		updateLastUserActionTime();
 		LayoutElement e = tl.getElementAtPointer(x, y);
 		if (tl.getTouchedElement() != e) {
@@ -3733,11 +3783,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 	
 	public void recreateTraceLayout() {
-		if (layoutMode == LAYOUTMODE_HALF_MAP) {
-			tl = new TraceLayout(0, 0, getWidth(), getHeight()/2);
-		} else {
-			tl = new TraceLayout(0, 0, getWidth(), getHeight());
-		}
+		setDisplayCoords(getWidth(), getHeight());
+		tl = new TraceLayout(minX, minY, maxX, maxY);
 	}
 
 	public void resetSize() {
@@ -3928,7 +3975,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (traceIconMenu == null) {
 			traceIconMenu = new TraceIconMenu(this, this);
 		}
-		traceIconMenu.show();
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)) {
+			showingTraceIconMenu = true;
+			traceIconMenu.sizeChanged(getWidth(), getHeight());
+			// restarts imagecollector
+			resetSize();
+		} else {
+			traceIconMenu.show();
+		}
 	}
 	
 	/** uncache the icon menu to reflect changes in the setup or save memory */
@@ -3967,13 +4021,22 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	/** interface for received actions from the IconMenu GUI */
 	public void performIconAction(int actionId, String choiceName) {
 		System.out.println("choiceName: " + choiceName);
-		show();
+		if (!isShowingSplitIconMenu()) {
+			show();
+		}
 		updateLastUserActionTime();
 		// when we are low on memory or during route calculation do not cache the icon menu (including scaled images)
 		if (routeCalc || GpsMid.getInstance().needsFreeingMemory()) {
 			//#debug info
 			logger.info("low mem: Uncaching traceIconMenu");
 			uncacheIconMenu();
+		}
+		if (actionId == IconActionPerformer.BACK_ACTIONID) {
+			if (isShowingSplitIconMenu()) {
+				showingTraceIconMenu = false;
+				// restarts imagecollector
+				resetSize();
+			}
 		}
 		if (actionId == SAVE_PREDEF_WAYP_CMD && gpx != null && choiceName != null) {
 			if (gpx.isLoadingWaypoints()) {
@@ -4072,9 +4135,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return Integer.toString((int)(meters / 0.9144 + 0.5f)) + Locale.get("guitacho.yd");
 			}
 		}
-	}
-	public int getLayoutMode() {
-		return layoutMode;
 	}
 	// FIXME: get and remember coordinates to keep track of distance
 	// to alert POI. Handle multiple alert POIs.

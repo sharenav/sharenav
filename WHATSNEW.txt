@@ -34,6 +34,8 @@
     - Clickable markers for POIs: URLs on map are now optionally touchable links which open the URL in a web browser,
       and with a long tap open a context menu (Here&Online). On keyboard-only phones, the same is achieved by positioning
       the cursor marker inside a marker area and choosing Here&Online.
+    - Optional split-screen mode, where map is in upper half of screen and icon menu is in lower half of screen.
+      Useful for e.g. one-touch waypoint recording, routing etc. when the device screen size allows for it.
     *** Map display ***
     - The map screen now updated more often during panning when dragging the touch screen.
       (not only after the ImageCollector class has finished drawing the map but every 1/3 s)

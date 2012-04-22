@@ -326,6 +326,8 @@ public class Configuration {
 	public final static short CFGBIT_NODEALERT_VISUAL = 128;
 	// bit 129: Enable clickable map objects
 	public final static short CFGBIT_CLICKABLE_MAPOBJECTS = 129;
+	// bit 130: Open icon menu in split-screen mode
+	public final static short CFGBIT_ICONMENUS_SPLITSCREEN = 130;
 	
 	/**
 	 * These are the database record IDs for each configuration option

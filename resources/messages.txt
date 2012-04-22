@@ -1331,3 +1331,4 @@ displayhelp.Clock=Current clock
 displayhelp.StatusBar=Status
 displayhelp.WayName=Way name
 displayhelp.routeinst=Route instruction
+guisetupgui.SplitscreenIconMenu=Split screen icon menu
