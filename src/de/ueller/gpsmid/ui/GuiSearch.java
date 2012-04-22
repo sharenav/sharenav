@@ -1926,6 +1926,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	private void appendCompassDirection(StringBuffer sb, SearchResult sr) {
+		if (Trace.getInstance().isShowingSplitSearch()) {
+			sr.dist=ProjMath.getDistance(sr.lat, sr.lon, parent.center.radlat, parent.center.radlon);
+		}
 		if (sr.dist >= 0) {
 			int courseToGo;
 			courseToGo = (int) (MoreMath.bearing_int(
