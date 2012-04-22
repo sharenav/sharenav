@@ -171,6 +171,15 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	}
 
 	
+	public void doRepaint() {
+		if (Trace.getInstance().isShowingSplitIconMenu()) {
+			Trace.getInstance().repaint();
+			Trace.getInstance().newDataReady();
+		} else {
+			repaint();
+		}
+	}
+
 	/** recreates the tab buttons for all the iconMenuPages */
 	private void recreateTabButtons() {
 		createTabPrevNextButtons();
@@ -205,12 +214,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 
 	public void show() {
 		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
-		if (Trace.getInstance().isShowingSplitIconMenu()) {
-			Trace.getInstance().repaint();
-			Trace.getInstance().newDataReady();
-		} else {
-			repaint();
-		}
+		doRepaint();
 		GpsMid.getInstance().show(this);
 	}
 	
@@ -231,10 +235,11 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	
 	public void sizeChanged(int w, int h) {
 		this.maxX = w;
-		if (Trace.getInstance().isShowingSplitIconMenu()) {
+                if (Trace.getInstance().isShowingSplitIconMenu()) {
 			this.maxY = h;
 			this.renderDiff = h / 2;
 		} else {
+			this.renderDiff = h / 2;
 			setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
 			this.maxY = h;
 			this.renderDiff = 0;
@@ -329,12 +334,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		if (c == OK_CMD) {
 			if (inTabRow) {
 				inTabRow = false;
-				if (Trace.getInstance().isShowingSplitIconMenu()) {
-					Trace.getInstance().repaint();
-					Trace.getInstance().newDataReady();
-				} else {
-					repaint();
-				}
+				doRepaint();
 			} else {
 				performIconAction(getActiveMenuPage().getActiveEleActionId(),
 						  getActiveMenuPage().getActiveEleChoiceName());
@@ -408,12 +408,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 //				nextTab();
 //			}
 //		}
-		if (Trace.getInstance().isShowingSplitIconMenu()) {
-			Trace.getInstance().repaint();
-			Trace.getInstance().newDataReady();
-		} else {
-			repaint();
-		}
+		doRepaint();
 	}
 
 	protected void keyRepeated(int keyCode) {
@@ -442,11 +437,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 			if (iconFromKeyCode >= 0) {
 				if ((System.currentTimeMillis() - pressedKeyTime) >= 1000 && pressedKeyCode == keyCode) {
 						setActiveTab(iconFromKeyCode);
-						if (Trace.getInstance().isShowingSplitIconMenu()) {
-							Trace.getInstance().repaint();
-						} else {
-							repaint();
-						}
+						doRepaint();
 				} else {
 					if(iconFromKeyCode < getActiveMenuPage().size()){
 						performIconAction(getActiveMenuPage().getElementAt(iconFromKeyCode).actionID,
@@ -509,12 +500,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 			nextTab();
 		}
 
-		if (Trace.getInstance().isShowingSplitIconMenu()) {
-			Trace.getInstance().repaint();
-			Trace.getInstance().newDataReady();
-		} else {
-			repaint();
-		}
+		doRepaint();
 	}
 	
 	
@@ -538,12 +524,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 			}
 		}
 		if (e != null) {
-			if (Trace.getInstance().isShowingSplitIconMenu()) {
-				Trace.getInstance().repaint();
-				Trace.getInstance().newDataReady();
-			} else {
-				repaint();
-			}
+			doRepaint();
 		}
 	}
 	
@@ -561,12 +542,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 			getActiveMenuPage().clearTouchedElement();
 		}
 		getActiveMenuPage().dragOffsX = x - touchX;
-		if (Trace.getInstance().isShowingSplitIconMenu()) {
-			Trace.getInstance().repaint();
-			Trace.getInstance().newDataReady();
-		} else {
-			repaint();
-		}
+		doRepaint();
 	}
 	
 
