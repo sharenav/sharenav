@@ -1057,8 +1057,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 				if (cursorKeypad) {
 					String keypadLetters[] = {  Locale.get("guisearch.abc")/*abc*/, "  X  ", "  <- ", 
 						       Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
-						       Locale.get("guisearch.label1wordSearch")/* 1*- */ :
-						       Locale.get("guisearch.label1")/*_1*- */,
+						       Locale.get("guisearch.clabel1wordSearch")/*exit search*/ :
+						       Locale.get("guisearch.clabel1")/*exit search*/,
 						       Locale.get("guisearch.clabel2")/* abc2*/,
 						       Locale.get("guisearch.clabel3")/* def3*/, Locale.get("guisearch.clabel4")/* ghi4*/,
 						       Locale.get("guisearch.clabel5")/* jkl5*/, Locale.get("guisearch.clabel6")/* mno6*/,
@@ -1670,7 +1670,16 @@ public class GuiSearch extends Canvas implements CommandListener,
 				//gsl.setTouchedElement((LayoutElement) gsl.elementAt(touchedElementId));
 				//doRepaint();
 				if (touchedElementId == GuiSearchLayout.KEY_1) {
-					keyPressed('1');
+					if (cursorKeypad) {
+						destroy();
+						if (Trace.getInstance().isShowingSplitSearch()) {
+							Trace.getInstance().showIconMenu();
+						} else {
+							parent.show();
+						}
+					} else {
+						keyPressed('1');
+					}
 				} else if (touchedElementId == GuiSearchLayout.KEY_2) {
 					if (cursorKeypad) {
 						//#if polish.android

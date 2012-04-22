@@ -4013,6 +4013,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 	
 	public void showIconMenu() {
+		if (isShowingSplitSearch()) {
+			showingSplitSearch = false;
+		}
 		if (traceIconMenu == null) {
 			traceIconMenu = new TraceIconMenu(this, this);
 		}
