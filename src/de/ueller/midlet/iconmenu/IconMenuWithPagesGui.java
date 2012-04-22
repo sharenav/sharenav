@@ -174,7 +174,6 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	public void doRepaint() {
 		if (Trace.getInstance().isShowingSplitIconMenu()) {
 			Trace.getInstance().repaint();
-			Trace.getInstance().newDataReady();
 		} else {
 			repaint();
 		}
