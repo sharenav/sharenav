@@ -188,6 +188,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 	
 	private volatile int fontSize;
 	
+	private int minX;
+	private int maxX;
+	private int minY;
+	private int maxY;
+	private int renderDiff;
+
 	private volatile boolean isSearchCanceled;
 	
 	/**
@@ -254,6 +260,15 @@ public class GuiSearch extends Canvas implements CommandListener,
 		this.parent = parent;
 		setCommandListener(this);
 		
+		this.minX = 0;
+		this.minY = 0;
+		this.maxX = Trace.getInstance().getWidth();
+		this.maxY = Trace.getInstance().getHeight();
+
+		if (Trace.getInstance().isShowingSplitSearch()) {
+			this.renderDiff = Trace.getInstance().getHeight() / 2;
+		}
+
 		//#if polish.android
 		AndroidDisplay ad = AndroidDisplay.getDisplay(GpsMid.getInstance());
 		ad.setOnKeyListener(new OnKeyListener()
@@ -330,7 +345,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			public void run() {
 				tickerTick();
 				if (needsPainting) {
-					repaint();
+					doRepaint();
 				}
 			}			
 		};
@@ -541,7 +556,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			spacePressed = false;
 			setTitle();
 			carret=0;
-			repaint();
+			doRepaint();
 			return;
 		}
 		if (c == BOOKMARK_CMD || c == FAVORITE_CMD) {
@@ -692,9 +707,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	public void show() {
 		hideKeypad = false;
-		height = getHeight();
-		width = getWidth();
-		gsl = new GuiSearchLayout(0, 0, width, height);
+		gsl = new GuiSearchLayout(0, renderDiff, maxX, maxY);
 		potentialDoubleClick = false;
 		pointerDragged = false;
 		if ((defaultAction == ACTION_EDIT_ENTITY || defaultAction == ACTION_NEARBY_POI) && !poisSearched) {
@@ -713,15 +726,23 @@ public class GuiSearch extends Canvas implements CommandListener,
 			GpsMid.getInstance().show(this);
 			//Display.getDisplay(parent.getParent()).setCurrent(this);
 		}
-		repaint();
+		doRepaint();
+		}
+	}
+
+	public void doRepaint() {
+		if (Trace.getInstance().isShowingSplitSearch()) {
+			Trace.getInstance().repaint();
+		} else {
+			repaint();
 		}
 	}
 
 	public void sizeChanged(int w, int h) {
-		width = w;
-		height = h;
-		gsl = new GuiSearchLayout(0, 0, w, h);
-		repaint();
+		maxX = w;
+		maxY = h;
+		gsl = new GuiSearchLayout(0, renderDiff, w, h);
+		doRepaint();
 	}
 
 	//#if polish.api.bigsearch
@@ -809,10 +830,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (fontSize == 0) {
 			fontSize = gc.getFont().getHeight();
 		}		
-		int yc=scrollOffset;
+		int yc=scrollOffset + renderDiff;
 		int reducedName=0;
 		gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BACKGROUND]);
-		gc.fillRect(0, 0, getWidth(), getHeight());
+		gc.fillRect(0, renderDiff, maxX, maxY);
 		if (yc < 0) {
 			gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_ARROWS]);
 			gc.drawString("^", getWidth(), 0, Graphics.TOP | Graphics.RIGHT);
@@ -834,9 +855,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 				yc += fontSize;
 				continue;
 			}
-			if (yc > getHeight()) {
+			if (yc > maxY) {
 				gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_ARROWS]);
-				gc.drawString("v", getWidth(), getHeight() - 7,
+				gc.drawString("v", maxX, maxY - 7,
 						Graphics.BOTTOM | Graphics.RIGHT);				
 				break;
 			}
@@ -1017,7 +1038,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 			if (hasPointerEvents() && ! hideKeypad) {
 				if (gsl == null) {
-					gsl = new GuiSearchLayout(0, 0, width, height);
+					gsl = new GuiSearchLayout(0, renderDiff, width, height);
 				}
 			
 				String letters[] = {  Locale.get("guisearch.cursor")/*cursor*/, "  X  ", "  <- ", 
@@ -1165,7 +1186,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				if (displayReductionLevel > 4) {
 					displayReductionLevel = 0;
 				}
-				repaint(0, 0, getWidth(), getHeight());
+				repaint(0, renderDiff, maxX, maxY);
 				return;
 			}
 			// Unicode character 10 is LF
@@ -1210,7 +1231,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			if (scrollOffset > 0) {
 				scrollOffset = 0;
 			}
-			repaint(0, 0, getWidth(), getHeight());
+			repaint(0, renderDiff, maxX, maxY);
 			return;
 		} else if (action == DOWN) {
 			if (cursor < result.size() - 1) {
@@ -1224,7 +1245,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				scrollOffset = 0;
 			}
 
-			repaint(0, 0, getWidth(), getHeight());
+			repaint(0, renderDiff, maxX, maxY);
 			return;
 		} else if (action == LEFT) {
 			if (carret > 0) {
@@ -1254,7 +1275,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				result.removeAllElements();
 				reSearch();
 			}
-			repaint(0, 0, getWidth(), getHeight());
+			repaint(0, renderDiff, maxX, maxY);
 			return;
 		} else if (action == RIGHT) {
 			if (carret < searchCanon.length()) {
@@ -1298,7 +1319,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					return;
 				}
 			}
-			repaint(0, 0, getWidth(), getHeight());
+			repaint(0, renderDiff, maxX, maxY);
 			return;
 		} else if (keyCode == -8 || keyCode == 8 || keyCode == 127) { 
 			/** Non standard Key -8: hopefully is mapped to
@@ -1403,7 +1424,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			reSearch();
 		}
 		if (spacePressed) {
-			repaint(0, 0, getWidth(), getHeight());
+			repaint(0, renderDiff, maxX, maxY);
 		} else {
 			//System.out.println("zeroing spacePressed");
 			reSearch();
@@ -1429,7 +1450,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	//#endif
 
 	private boolean nameBiggerThanFits(Graphics gc, String name) {
-		return 17 + gc.getFont().stringWidth(name) > getWidth();
+		return 17 + gc.getFont().stringWidth(name) > maxX;
 	}
 
 	private void tickerTick() {
@@ -1606,7 +1627,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					) {
 					//System.out.println("setTouchedElement: " + touchedElementId);
 					gsl.setTouchedElement((LayoutElement) gsl.elementAt(touchedElementId));
-					repaint();
+					doRepaint();
 				}
 			}
 			tapAutoReleaseTimerTask = new TimerTask() {
@@ -1647,7 +1668,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			    gsl.isAnyActionIdAtPointer(x, y)
 				) {
 				//gsl.setTouchedElement((LayoutElement) gsl.elementAt(touchedElementId));
-				//repaint();
+				//doRepaint();
 				if (touchedElementId == GuiSearchLayout.KEY_1) {
 					keyPressed('1');
 				} else if (touchedElementId == GuiSearchLayout.KEY_2) {
@@ -1747,7 +1768,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (gsl != null) {
 		    gsl.clearTouchedElement();
 		}
-		repaint();
+		doRepaint();
 	}
 
 	public void pointerReleased(int x, int y) {
@@ -1802,7 +1823,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				} else if (xDist > fontSize ) {
 					logger.debug("Route slide");
 					cursor = clickIdxAtSlideStart;
-					repaint();
+					doRepaint();
 					commandAction( ROUTE1_CMD, (Displayable) null);					
 				// Search field slide: sliding left at least the fontHeight
 				} else if (xDist < -getWidth()/2 ) {
@@ -1814,7 +1835,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					logger.debug("Select entry slide");
 					cursor = clickIdxAtSlideStart;
 					resetTicker();
-					repaint();
+					doRepaint();
 				}
 			}
 			pointerDragged = false;
@@ -1825,7 +1846,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (gsl != null) {
 		    gsl.clearTouchedElement();
 		}		
-		repaint();
+		doRepaint();
 	}
 	
 	public void pointerDragged(int x, int y) {
@@ -1869,7 +1890,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			}
 			pointerXDragged = x;
 			pointerYDragged = y;
-			repaint();
+			doRepaint();
 		}
 	}
 
@@ -1881,7 +1902,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			searchThread.search(NumberCanon.canonial(searchCanon.toString()),
 					    Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ? 
 					    SearchNames.INDEX_WORD : SearchNames.INDEX_BIGNAME);
-			repaint(0, 0, getWidth(), getHeight());
+			repaint(0, renderDiff, maxX, maxY);
 			// title will be set by SearchName.doSearch when we need to determine first if we have favorites
 			//#if polish.api.bigsearch
 			if (searchCanon.length() > 0 || matchMode()) { 
@@ -2068,7 +2089,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 	
 	public void triggerRepaint(){
-		repaint(0, 0, getWidth(), getHeight());
+		repaint(0, renderDiff, maxX, maxY);
 	}
 
 	public synchronized void clearList() {
@@ -2153,7 +2174,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 							//This is an arbitrary value, but hopefully
 							//a reasonable compromise.
 							wait(500);
-							repaint();
+							doRepaint();
 						} catch (InterruptedException e) {
 							//Nothing to do
 						}

@@ -328,6 +328,9 @@ public class Configuration {
 	public final static short CFGBIT_CLICKABLE_MAPOBJECTS = 129;
 	// bit 130: Open icon menu in split-screen mode
 	public final static short CFGBIT_ICONMENUS_SPLITSCREEN = 130;
+	// bit 131: Open search in split-screen mode
+        // FIXME use the same as for iconmenus for now
+	public final static short CFGBIT_SEARCH_SPLITSCREEN = 130;
 	
 	/**
 	 * These are the database record IDs for each configuration option

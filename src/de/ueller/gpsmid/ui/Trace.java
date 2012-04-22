@@ -455,12 +455,15 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private Projection panProjection;
 
 	private boolean showingTraceIconMenu = false;
+	private boolean showingSplitSearch = false;
 
 	private GuiWaypointPredefinedForm mForm;
 
 	private Vector clickableMarkers;
 
 	private IntPoint centerP;
+
+	private GuiSearch guiSearch;
 
 	public class ClickableCoords {
 		int x;
@@ -1215,8 +1218,17 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 
 			if (c == CMDS[SEARCH_CMD]) {
-				GuiSearch guiSearch = new GuiSearch(this, GuiSearch.ACTION_DEFAULT);
-				guiSearch.show();
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)) {
+					showingTraceIconMenu = false;
+					showingSplitSearch = true;
+					guiSearch = new GuiSearch(this, GuiSearch.ACTION_DEFAULT);
+					guiSearch.sizeChanged(getWidth(), getHeight());
+					// restarts imagecollector
+					resetSize();
+				} else {
+					guiSearch = new GuiSearch(this, GuiSearch.ACTION_DEFAULT);
+					guiSearch.show();
+				}
 				return;
 			}
 			
@@ -2023,12 +2035,19 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				traceIconMenu.sizeChanged(w, h);
 			}
 		}
+		if (isShowingSplitSearch()) {
+			maxY = h / 2;
+			renderDiff = 0;
+			if (guiSearch != null) {
+				guiSearch.sizeChanged(w, h);
+			}
+		}
 	}
 
 	// check if pointer operation coordinates are for some other function than trace
 	private boolean coordsForOthers(int x, int y) {
 		boolean notForTrace = (x > maxX);
-		if (isShowingSplitIconMenu()) {
+		if (isShowingSplitScreen()) {
 			if (y > maxY + renderDiff) {
 				notForTrace = true;
 			}
@@ -2353,10 +2372,20 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (showingTraceIconMenu && traceIconMenu != null) {
 			traceIconMenu.paint(g);
 		}
+		if (showingSplitSearch && guiSearch != null) {
+			guiSearch.paint(g);
+		}
 	}
 
+	public boolean isShowingSplitScreen() {
+		return showingTraceIconMenu || showingSplitSearch;
+	}
 	public boolean isShowingSplitIconMenu() {
 		return showingTraceIconMenu;
+	}
+
+	public boolean isShowingSplitSearch() {
+		return showingSplitSearch;
 	}
 
 	public void showGuiWaypointSave(PositionMark posMark) {
@@ -3242,6 +3271,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				traceIconMenu.pointerPressed(x, y);
 				return;
 			}
+			if (isShowingSplitSearch() && guiSearch != null) {
+				guiSearch.pointerPressed(x, y);
+				return;
+			}
 		}
 
 		updateLastUserActionTime();
@@ -3318,8 +3351,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public void pointerReleased(int x, int y) {	
 		if (coordsForOthers(x, y)) {
 			// for icon menu
-			if (traceIconMenu != null) {
+			if (isShowingSplitIconMenu() && traceIconMenu != null) {
 				traceIconMenu.pointerReleased(x, y);
+				return;
+			}
+			if (isShowingSplitSearch() && guiSearch != null) {
+				guiSearch.pointerReleased(x, y);
 				return;
 			}
 		}
@@ -3363,8 +3400,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public void pointerDragged (int x, int y) {
 		if (coordsForOthers(x, y)) {
 			// for icon menu
-			if (traceIconMenu != null) {
+			if (isShowingSplitIconMenu() && traceIconMenu != null) {
 				traceIconMenu.pointerDragged(x, y);
+				return;
+			}
+			if (isShowingSplitSearch() && guiSearch != null) {
+				guiSearch.pointerDragged(x, y);
 				return;
 			}
 		}
@@ -4021,7 +4062,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	/** interface for received actions from the IconMenu GUI */
 	public void performIconAction(int actionId, String choiceName) {
 		System.out.println("choiceName: " + choiceName);
-		if (!isShowingSplitIconMenu()) {
+		if (!isShowingSplitScreen()) {
 			show();
 		}
 		updateLastUserActionTime();
@@ -4032,7 +4073,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			uncacheIconMenu();
 		}
 		if (actionId == IconActionPerformer.BACK_ACTIONID) {
-			if (isShowingSplitIconMenu()) {
+			if (isShowingSplitScreen()) {
 				showingTraceIconMenu = false;
 				// restarts imagecollector
 				resetSize();
