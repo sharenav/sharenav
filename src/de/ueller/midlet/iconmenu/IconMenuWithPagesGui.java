@@ -46,6 +46,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	private int maxX;
 	private int minY;
 	private int maxY;
+	private int renderDiff;
 	public volatile int tabNr = 0;
 	private volatile int leftMostTabNr = 0;
 	private boolean inTabRow = false;
@@ -88,14 +89,19 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	}
 
 	private void initIconMenuWithPagesGUI(GpsMidDisplayable parent, IconActionPerformer actionPerformer) {
-		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
+		if (Trace.getInstance().getLayoutMode() == Trace.LAYOUTMODE_HALF_MAP) {
+			this.maxY = getHeight();
+			this.renderDiff = getHeight() / 2;
+		} else {
+			setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
+			this.minY = renderDiff;
+		}
 		this.parent = parent;
 		// must be below setFullScreenMode() for not recreating this icon menu because of the size change
 		this.actionPerformer = actionPerformer;
 		this.minX = 0;
 		this.minY = 0;
 		this.maxX = getWidth();
-		this.maxY = getHeight();
 		recreateTabButtons();
 		setCommandListener(this);
 		addCommands();
@@ -119,7 +125,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 			numCols = numRows;
 			numRows = tmp;
 		}
-		IconMenuPage imp = new IconMenuPage( pageTitle, actionPerformer, numCols, numRows, minX, calcIconMenuMinY(), maxX, calcIconMenuMaxY());
+		IconMenuPage imp = new IconMenuPage( pageTitle, actionPerformer, numCols, numRows, minX, calcIconMenuMinY() + renderDiff, maxX, calcIconMenuMaxY() + renderDiff);
 		iconMenuPages.addElement(imp);
 		recreateTabButtonsRequired = true;
 		return imp;
@@ -134,7 +140,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	
 	/** create a layout manager with the direction buttons */
 	private void createTabPrevNextButtons() {
-		tabDirectionButtonManager = new LayoutManager(minX, minY, maxX, maxY, Legend.COLORS[Legend.COLOR_ICONMENU_TOUCHED_BUTTON_BACKGROUND_COLOR]);
+		tabDirectionButtonManager = new LayoutManager(minX, minY + renderDiff, maxX, maxY, Legend.COLORS[Legend.COLOR_ICONMENU_TOUCHED_BUTTON_BACKGROUND_COLOR]);
 		ePrevTab = tabDirectionButtonManager.createAndAddElement(
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_TOP |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
@@ -167,7 +173,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	/** recreates the tab buttons for all the iconMenuPages */
 	private void recreateTabButtons() {
 		createTabPrevNextButtons();
-		tabButtonManager = new LayoutManager(ePrevTab.right, minY, eNextTab.left, maxY, Legend.COLORS[Legend.COLOR_ICONMENU_TOUCHED_BUTTON_BACKGROUND_COLOR]);
+		tabButtonManager = new LayoutManager(ePrevTab.right, minY + renderDiff, eNextTab.left, maxY, Legend.COLORS[Legend.COLOR_ICONMENU_TOUCHED_BUTTON_BACKGROUND_COLOR]);
 		LayoutElement e = null;
 		IconMenuPage imp = null;
 		for (int i=0; i < iconMenuPages.size(); i++) {
@@ -219,7 +225,14 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	
 	public void sizeChanged(int w, int h) {
 		this.maxX = w;
-		this.maxY = h;
+		if (Trace.getInstance().getLayoutMode() == Trace.LAYOUTMODE_HALF_MAP) {
+			this.maxY = h;
+			this.renderDiff = h / 2;
+		} else {
+			setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
+			this.maxY = h;
+			this.renderDiff = 0;
+		}
 		recreateTabButtons();
 		IconMenuPage imp = null;
 		for (int i=0; i < iconMenuPages.size(); i++) {
@@ -538,8 +551,13 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		logger.debug("Painting IconMenu");
 		
 		// Clean the Canvas
-		g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_BACKGROUND]);
-		g.fillRect(0, 0, getWidth(), getHeight());
+		if (Trace.getInstance().getLayoutMode() == Trace.LAYOUTMODE_HALF_MAP) {
+			g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_BACKGROUND]);
+			g.fillRect(0, renderDiff, getWidth(), getHeight() / 2);
+		} else {
+			g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_BACKGROUND]);
+			g.fillRect(0, 0, getWidth(), getHeight());
+		}
 
 		if (recreateTabButtonsRequired) {
 			recreateTabButtons();
