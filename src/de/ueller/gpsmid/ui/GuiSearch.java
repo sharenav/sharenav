@@ -467,8 +467,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 				}
 				SearchResult sr = (SearchResult) result.elementAt(cursor);				
 				parent.receivePosition(sr.lat, sr.lon, Configuration.getRealBaseScale());				
-				parent.show();				
-				destroy();
+				if (!Trace.getInstance().isShowingSplitSearch()) {
+					parent.show();				
+					destroy();
+				}
 				return;
 			}
 			if (c == BACK_CMD) {
