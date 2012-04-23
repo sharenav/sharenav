@@ -1740,7 +1740,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 
 			if (c == CMDS[ICON_MENU] && Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
-				showIconMenu();
+				if (!isShowingSplitScreen()) {
+					showIconMenu();
+				}
 				return;
 			}
 			if (c == CMDS[SETUP_CMD]) {
