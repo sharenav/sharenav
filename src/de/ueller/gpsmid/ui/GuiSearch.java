@@ -840,7 +840,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		gc.fillRect(0, renderDiff, maxX, maxY);
 		if (yc < renderDiff) {
 			gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_ARROWS]);
-			gc.drawString("^", getWidth(), 0, Graphics.TOP | Graphics.RIGHT);
+			gc.drawString("^", maxX, 0, Graphics.TOP | Graphics.RIGHT);
 		}
 		// insert new results from search thread 
 		insertResults();
@@ -1242,7 +1242,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			if (cursor < result.size() - 1) {
 				cursor++;
 			}			
-			if (((cursor + 1) * fontSize + scrollOffset) > getHeight()) {
+			if (((cursor + 1) * fontSize + scrollOffset) > maxY) {
 				scrollOffset -= 3*fontSize;
 			}
 
@@ -1613,9 +1613,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 		pointerYPressed = y;
 
 		/** if clicking above or below the search results show a text field to enter the search string */
-		int clickIdx = (y - scrollOffset)/fontSize;
+		int clickIdx = (y - renderDiff - scrollOffset)/fontSize;
 		if ( (state == STATE_MAIN || state == STATE_FAVORITES)
-			&& (clickIdx < 0 || clickIdx >= result.size() || ((clickIdx + 1) * fontSize + scrollOffset) > getHeight())
+			&& (clickIdx < 0 || clickIdx >= result.size() || ((clickIdx + 1) * fontSize + scrollOffset) > maxY)
 		     && (hideKeypad || !Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD))
 
 		) {
@@ -1662,7 +1662,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	public void autoPointerRelease(int x, int y) {
-		int clickIdx = (y - scrollOffset)/fontSize;
+		int clickIdx = (y - renderDiff - scrollOffset)/fontSize;
 		long currTime = System.currentTimeMillis();
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)
 		    && !hideKeypad
@@ -1779,7 +1779,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		
 		} else {
 			// if touching the right side of the display (150% font height) this equals to the * key 
-			if (x > getWidth() - fontSize * 3 / 2) {
+			if (x > maxX - fontSize * 3 / 2) {
 				keyPressed(KEY_STAR);
 			} else {
 				// else position the cursor
@@ -1800,7 +1800,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			return;
 		}
 		long currTime = System.currentTimeMillis();
-		int clickIdx = (y - scrollOffset)/fontSize;
+		int clickIdx = (y - renderDiff - scrollOffset)/fontSize;
 		//#debug debug
 		logger.debug("PointerReleased: " + x + "," + y);
 		pointerActionDone = true;
@@ -1838,7 +1838,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				int xDist = x - pointerXPressed; 
 				logger.debug("Slide right " + xDist);
 				// Sort mode Slide: Sliding right at least half the screen width is the same as the # key
-				if (xDist > getWidth() / 2 ) {
+				if (xDist > maxX / 2 ) {
 					//#debug debug
 					logger.debug("Sort mode slide");
 					keyPressed(KEY_POUND);
@@ -1849,7 +1849,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					doRepaint();
 					commandAction( ROUTE1_CMD, (Displayable) null);					
 				// Search field slide: sliding left at least the fontHeight
-				} else if (xDist < -getWidth()/2 ) {
+				} else if (xDist < -maxX/2 ) {
 					logger.debug("Search field slide");
 					GuiNameEnter gne = new GuiNameEnter(this, null, Locale.get("guisearch.SearchForNamesStarting")/*Search for names starting with:*/, searchCanon.toString(), 20);
 					gne.show();
