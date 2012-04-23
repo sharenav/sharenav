@@ -293,7 +293,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		menuFileSel.addCommand(BACK_CMD);
 		menuFileSel.setCommandListener(this);
 
-		show();
+		if (!Trace.getInstance().isShowingSplitScreen()) {
+			show();
+		}
 	}
 
 	private void initBluetoothSelect() {
@@ -1789,11 +1791,19 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 
 	/** Interface for received actions from the IconMenu GUI */
 	public void performIconAction(int actionId, String choiceName) {
-		show();
+		if (!Trace.getInstance().isShowingSplitScreen()) {
+			show();
+		}
 		if (actionId == IconActionPerformer.BACK_ACTIONID) {
 			uncacheIconMenu();
 			System.gc();
-			commandAction(EXIT_CMD, (Displayable) null);
+			if (Trace.getInstance().isShowingSplitScreen()) {
+				Trace.getInstance().clearShowingSplitSetup();
+				Trace.getInstance().setShowingSplitTraceIconMenu();
+				Trace.getInstance().showIconMenu();
+			} else {
+				commandAction(EXIT_CMD, (Displayable) null);
+			}
 		} else {
 			showSetupDialog(actionId);
 		}

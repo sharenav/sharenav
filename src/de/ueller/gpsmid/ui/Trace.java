@@ -344,6 +344,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private GuiWaypointSave guiWaypointSave = null;
 	private final GuiWaypointPredefined guiWaypointPredefined = null;
 	private static TraceIconMenu traceIconMenu = null;
+	private static GuiDiscover guiDiscover = null;
+	private static GuiDiscoverIconMenu guiDiscoverIconMenu = null;
 	
 	private final static Logger logger = Logger.getInstance(Trace.class, Logger.DEBUG);
 
@@ -456,6 +458,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	private boolean showingTraceIconMenu = false;
 	private boolean showingSplitSearch = false;
+	private boolean showingSplitSetup = false;
 
 	private GuiWaypointPredefinedForm mForm;
 
@@ -1741,7 +1744,15 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return;
 			}
 			if (c == CMDS[SETUP_CMD]) {
-				new GuiDiscover(parent);
+				guiDiscover = new GuiDiscover(parent);
+				if (isShowingSplitIconMenu()) {
+					guiDiscoverIconMenu = new GuiDiscoverIconMenu(guiDiscover, guiDiscover);
+					showingTraceIconMenu = false;
+					showingSplitSetup = true;
+					guiDiscoverIconMenu.sizeChanged(getWidth(), getHeight());
+					// restarts imagecollector
+					resetSize();
+				}
 				return;
 			}
 			if (c == CMDS[ABOUT_CMD]) {
@@ -2369,18 +2380,39 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		} catch (Exception e) {
 			logger.silentexception("Unhandled exception in the paint code", e);
 		}
-		if (showingTraceIconMenu && traceIconMenu != null) {
+		if (isShowingSplitTraceIconMenu() && traceIconMenu != null) {
 			traceIconMenu.paint(g);
 		}
-		if (showingSplitSearch && guiSearch != null) {
+		if (isShowingSplitSearch() && guiSearch != null) {
 			guiSearch.paint(g);
+
+		}
+		if (isShowingSplitSetup() && guiDiscoverIconMenu != null) {
+			guiDiscoverIconMenu.paint(g);
 		}
 	}
 
 	public boolean isShowingSplitScreen() {
-		return showingTraceIconMenu || showingSplitSearch;
+		return showingTraceIconMenu || showingSplitSearch || showingSplitSetup;
 	}
+
+	public boolean isShowingSplitSetup() {
+		return showingSplitSetup;
+	}
+
+	public void clearShowingSplitSetup() {
+		showingSplitSetup = false;
+	}
+
+	public void setShowingSplitTraceIconMenu() {
+		showingTraceIconMenu = true;
+	}
+
 	public boolean isShowingSplitIconMenu() {
+		return showingTraceIconMenu || showingSplitSetup;
+	}
+
+	public boolean isShowingSplitTraceIconMenu() {
 		return showingTraceIconMenu;
 	}
 
@@ -3267,12 +3299,16 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public void pointerPressed(int x, int y) {
 		if (coordsForOthers(x, y)) {
 			// for icon menu
-			if (isShowingSplitIconMenu() && traceIconMenu != null) {
+			if (isShowingSplitTraceIconMenu() && traceIconMenu != null) {
 				traceIconMenu.pointerPressed(x, y);
 				return;
 			}
 			if (isShowingSplitSearch() && guiSearch != null) {
 				guiSearch.pointerPressed(x, y);
+				return;
+			}
+			if (isShowingSplitSetup() && guiDiscoverIconMenu != null) {
+				guiDiscoverIconMenu.pointerPressed(x, y);
 				return;
 			}
 		}
@@ -3351,12 +3387,16 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public void pointerReleased(int x, int y) {	
 		if (coordsForOthers(x, y)) {
 			// for icon menu
-			if (isShowingSplitIconMenu() && traceIconMenu != null) {
+			if (isShowingSplitTraceIconMenu() && traceIconMenu != null) {
 				traceIconMenu.pointerReleased(x, y);
 				return;
 			}
 			if (isShowingSplitSearch() && guiSearch != null) {
 				guiSearch.pointerReleased(x, y);
+				return;
+			}
+			if (isShowingSplitSetup() && guiDiscoverIconMenu != null) {
+				guiDiscoverIconMenu.pointerReleased(x, y);
 				return;
 			}
 		}
@@ -3400,12 +3440,16 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public void pointerDragged (int x, int y) {
 		if (coordsForOthers(x, y)) {
 			// for icon menu
-			if (isShowingSplitIconMenu() && traceIconMenu != null) {
+			if (isShowingSplitTraceIconMenu() && traceIconMenu != null) {
 				traceIconMenu.pointerDragged(x, y);
 				return;
 			}
 			if (isShowingSplitSearch() && guiSearch != null) {
 				guiSearch.pointerDragged(x, y);
+				return;
+			}
+			if (isShowingSplitSetup() && guiDiscoverIconMenu != null) {
+				guiDiscoverIconMenu.pointerDragged(x, y);
 				return;
 			}
 		}
