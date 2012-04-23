@@ -94,7 +94,6 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 			this.renderDiff = Trace.getInstance().getHeight() / 2;
 		} else {
 			setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
-			this.maxY = getHeight();
 			this.minY = renderDiff;
 		}
 		this.parent = parent;
@@ -102,7 +101,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		this.actionPerformer = actionPerformer;
 		this.minX = 0;
 		this.minY = 0;
-		this.maxX = getWidth();
+		this.maxX = Trace.getInstance().getWidth();
 		recreateTabButtons();
 		setCommandListener(this);
 		addCommands();
@@ -118,9 +117,9 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		   because the icons would then would be mapped wrongly to keys on 176*220 because
 		   of buttons and status bar)
 		*/
-		if (getWidth() > getHeight() && numRows > numCols
+	    if ((maxX - minX) > (minY + renderDiff) && numRows > numCols
 				||
-			getWidth() < getHeight() && numRows < numCols
+			(maxX - minX) > (minY + renderDiff) && numRows < numCols && numRows < numCols
 		) {
 			int tmp = numCols;
 			numCols = numRows;
@@ -234,11 +233,10 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	
 	public void sizeChanged(int w, int h) {
 		this.maxX = w;
+		this.maxY = h;
                 if (Trace.getInstance().isShowingSplitIconMenu()) {
-			this.maxY = h;
 			this.renderDiff = h / 2;
 		} else {
-			this.renderDiff = h / 2;
 			setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
 			this.maxY = h;
 			this.renderDiff = 0;
@@ -255,9 +253,9 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 			   because the icons would then would be mapped wrongly to keys on 176*220 because
 			   of buttons and status bar)
 			*/
-			if (getWidth() > getHeight() && imp.numRows > imp.numCols
+			if ((maxX - minX) > (minY + renderDiff) && imp.numRows > imp.numCols
 					||
-				getWidth() < getHeight() && imp.numRows < imp.numCols
+				(maxX - minX) > (minY + renderDiff) && imp.numRows < imp.numCols
 			) {
 				int tmp = imp.numCols;
 				imp.numCols = imp.numRows;
@@ -562,13 +560,8 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		logger.debug("Painting IconMenu");
 		
 		// Clean the Canvas
-		if (Trace.getInstance().isShowingSplitIconMenu()) {
-			g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_BACKGROUND]);
-			g.fillRect(0, renderDiff, getWidth(), getHeight() / 2);
-		} else {
-			g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_BACKGROUND]);
-			g.fillRect(0, 0, getWidth(), getHeight());
-		}
+		g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_BACKGROUND]);
+		g.fillRect(minX, minY + renderDiff, maxX, maxY);
 
 		if (recreateTabButtonsRequired) {
 			recreateTabButtons();
