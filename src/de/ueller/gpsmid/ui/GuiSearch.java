@@ -454,8 +454,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 				parent.setDestination(positionMark);
 				//#debug info
 				logger.info("Search selected: " + positionMark);
-				destroy();
-				parent.show();				
+				if (!Trace.getInstance().isShowingSplitSearch()) {
+					parent.show();				
+					destroy();
+				}
 				if (c == ROUTE1_CMD || c == ROUTE2_CMD) {
 					parent.performIconAction(Trace.ROUTING_START_WITH_MODE_SELECT_CMD, null);
 				}
