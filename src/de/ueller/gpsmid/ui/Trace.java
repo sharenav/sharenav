@@ -2064,6 +2064,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	// check if pointer operation coordinates are for some other function than trace
 	private boolean coordsForOthers(int x, int y) {
+		if (keyboardLocked) {
+			return false;
+		}
 		boolean notForTrace = (x > maxX);
 		if (isShowingSplitScreen()) {
 			if (y > maxY + renderDiff) {
