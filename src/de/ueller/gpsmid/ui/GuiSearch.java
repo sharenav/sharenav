@@ -853,7 +853,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	    StringBuffer nearNameb=new StringBuffer();
 
 	    for (int i=0;i<result.size();i++){	    	
-			if (yc < 0) {
+			if (yc < renderDiff) {
 				yc += fontSize;
 				continue;
 			}
