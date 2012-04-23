@@ -4133,7 +4133,15 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 		if (actionId == IconActionPerformer.BACK_ACTIONID) {
 			if (isShowingSplitScreen()) {
-				showingTraceIconMenu = false;
+				if (isShowingSplitSetup()) {
+					showingSplitSetup = false;
+					showingTraceIconMenu = true;
+				} else if (isShowingSplitSearch()) {
+					showingSplitSearch = false;
+					showingTraceIconMenu = true;
+				} else if (isShowingSplitTraceIconMenu()) {
+					showingTraceIconMenu = false;
+				}
 				// restarts imagecollector
 				resetSize();
 			}
