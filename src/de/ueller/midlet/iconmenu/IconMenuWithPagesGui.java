@@ -117,9 +117,9 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		   because the icons would then would be mapped wrongly to keys on 176*220 because
 		   of buttons and status bar)
 		*/
-	    if ((maxX - minX) > (minY + renderDiff) && numRows > numCols
+	    if ((maxX - minX) > maxY - (minY + renderDiff) && numRows > numCols
 				||
-			(maxX - minX) > (minY + renderDiff) && numRows < numCols && numRows < numCols
+			(maxX - minX) < maxY - (minY + renderDiff) && numRows < numCols
 		) {
 			int tmp = numCols;
 			numCols = numRows;
@@ -238,6 +238,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 			this.renderDiff = h / 2;
 		} else {
 			setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
+			this.maxX = w;
 			this.maxY = h;
 			this.renderDiff = 0;
 		}
@@ -253,9 +254,9 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 			   because the icons would then would be mapped wrongly to keys on 176*220 because
 			   of buttons and status bar)
 			*/
-			if ((maxX - minX) > (minY + renderDiff) && imp.numRows > imp.numCols
+			if ((maxX - minX) > maxY - (minY + renderDiff) && imp.numRows > imp.numCols
 					||
-				(maxX - minX) > (minY + renderDiff) && imp.numRows < imp.numCols
+				(maxX - minX) < maxY - (minY + renderDiff) && imp.numRows < imp.numCols
 			) {
 				int tmp = imp.numCols;
 				imp.numCols = imp.numRows;
