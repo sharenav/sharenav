@@ -836,7 +836,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		int reducedName=0;
 		gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BACKGROUND]);
 		gc.fillRect(0, renderDiff, maxX, maxY);
-		if (yc < 0) {
+		if (yc < renderDiff) {
 			gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_ARROWS]);
 			gc.drawString("^", getWidth(), 0, Graphics.TOP | Graphics.RIGHT);
 		}
@@ -1066,7 +1066,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 						       Locale.get("guisearch.clabel5")/* jkl5*/, Locale.get("guisearch.clabel6")/* mno6*/,
 						       Locale.get("guisearch.clabel7")/*pqrs7*/, Locale.get("guisearch.clabel8")/* tuv8*/,
 						       Locale.get("guisearch.sort")/*sort*/, 
-						       Locale.get("guisearch.more")/*more*/, "  0  ", 
+						       Locale.get("guisearch.more")/*more*/,
+           					    Locale.get("guisearch.clabel0")/*POIs*/,
 						       Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
 						       Locale.get("guisearch.pound")/*_#end*/ :
 						       Locale.get("guisearch.poundNameSearch")/*#end*/};
@@ -1745,7 +1746,16 @@ public class GuiSearch extends Canvas implements CommandListener,
 				} else if (touchedElementId == GuiSearchLayout.KEY_9) {
 					keyPressed('9');
 				} else if (touchedElementId == GuiSearchLayout.KEY_0) {
-					keyPressed('0');
+					if (cursorKeypad) {
+						defaultAction = ACTION_NEARBY_POI;
+						poisSearched = false;
+						state = STATE_POI;
+						filter = 0;
+						showPoiTypeForm();
+						poisSearched = true;
+					} else {
+						keyPressed('0');
+					}
 				} else if (touchedElementId == GuiSearchLayout.KEY_STAR) {
 					if (cursorKeypad) {
 						keyPressed(KEY_STAR);

@@ -1332,3 +1332,5 @@ displayhelp.routeinst=Route instruction
 guisetupgui.SplitscreenIconMenu=Split screen icon menu
 guisearch.clabel1=exit search
 guisearch.clabel1wordSearch=exit search
+guisearch.label0=0
+guisearch.clabel0=POIs
