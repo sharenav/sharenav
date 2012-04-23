@@ -154,7 +154,7 @@ public class LayoutManager extends Vector {
 	
 	public int getElementIdAtPointer(int x, int y) {
 		LayoutElement e;
-		for (int i = 0; i < this.size(); i++){
+		for (int i = this.size() - 1; i >= 0 ; i--){
 			e = getElementAt(i);
 			if (e.isInElement(x, y)) {
 				return i;
