@@ -745,6 +745,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 	public void sizeChanged(int w, int h) {
 		maxX = w;
 		maxY = h;
+		if (Trace.getInstance().isShowingSplitSearch()) {
+			renderDiff = Trace.getInstance().getHeight() / 2;
+		}
 		gsl = new GuiSearchLayout(0, renderDiff, w, h);
 		doRepaint();
 	}
