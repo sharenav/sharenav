@@ -1791,9 +1791,13 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 
 	/** Interface for received actions from the IconMenu GUI */
 	public void performIconAction(int actionId, String choiceName) {
-		if (!Trace.getInstance().isShowingSplitScreen()) {
-			show();
+		// exit split-screen modes
+		if (Trace.getInstance().isShowingSplitScreen()) {
+			Trace.getInstance().clearShowingSplitSetup();
+			Trace.getInstance().setShowingSplitTraceIconMenu();
+			Trace.getInstance().performIconAction(IconActionPerformer.BACK_ACTIONID, "Back");
 		}
+		show();
 		if (actionId == IconActionPerformer.BACK_ACTIONID) {
 			uncacheIconMenu();
 			System.gc();
