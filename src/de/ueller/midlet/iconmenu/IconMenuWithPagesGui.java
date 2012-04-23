@@ -42,11 +42,11 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	protected GpsMidDisplayable parent = null;
 	protected IconActionPerformer actionPerformer = null;
 
-	private int minX;
+	private int minX = 0;
 	private int maxX;
-	private int minY;
+	private int minY = 0;
 	private int maxY;
-	private int renderDiff;
+	private int renderDiff = 0;
 	public volatile int tabNr = 0;
 	private volatile int leftMostTabNr = 0;
 	private boolean inTabRow = false;
@@ -89,19 +89,20 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	}
 
 	private void initIconMenuWithPagesGUI(GpsMidDisplayable parent, IconActionPerformer actionPerformer) {
+		minX = 0;
+		minY = 0;
 		if (Trace.getInstance().isShowingSplitIconMenu()) {
-			this.maxY = Trace.getInstance().getHeight();
-			this.renderDiff = Trace.getInstance().getHeight() / 2;
+			maxY = Trace.getInstance().getHeight();
+			renderDiff = Trace.getInstance().getHeight() / 2;
 		} else {
 			setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
-			this.minY = renderDiff;
+			renderDiff = 0;
+			maxX = getWidth();
+			maxY = getHeight();
 		}
 		this.parent = parent;
 		// must be below setFullScreenMode() for not recreating this icon menu because of the size change
 		this.actionPerformer = actionPerformer;
-		this.minX = 0;
-		this.minY = 0;
-		this.maxX = Trace.getInstance().getWidth();
 		recreateTabButtons();
 		setCommandListener(this);
 		addCommands();
@@ -232,15 +233,13 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	}
 	
 	public void sizeChanged(int w, int h) {
-		this.maxX = w;
-		this.maxY = h;
+		maxX = w;
+		maxY = h;
                 if (Trace.getInstance().isShowingSplitIconMenu()) {
-			this.renderDiff = h / 2;
+			renderDiff = h / 2;
 		} else {
 			setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
-			this.maxX = w;
-			this.maxY = h;
-			this.renderDiff = 0;
+			renderDiff = 0;
 		}
 		recreateTabButtons();
 		IconMenuPage imp = null;
