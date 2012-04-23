@@ -36,6 +36,8 @@
       the cursor marker inside a marker area and choosing Here&Online.
     - Optional split-screen mode, where map is in upper half of screen and icon menu is in lower half of screen.
       Useful for e.g. one-touch waypoint recording, routing etc. when the device screen size allows for it.
+      Keyboard commands are current not handled for split-screen mode, so it's practically useful currently only
+      for touch screen device users.
     *** Map display ***
     - The map screen now updated more often during panning when dragging the touch screen.
       (not only after the ImageCollector class has finished drawing the map but every 1/3 s)
