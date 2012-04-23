@@ -2506,7 +2506,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			if (i == 0) {
 				alertWidth += extraWidth;
 				int alertHeight = y;
-				int alertTop = (getHeight() - alertHeight) /2;
+				int alertTop = ((maxY - minY) - alertHeight) /2;
 				//alertHeight += fontHeight/2;
 				int alertLeft = (getWidth() - alertWidth) / 2;
 				// alert background color
