@@ -93,8 +93,8 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 			this.maxY = Trace.getInstance().getHeight();
 			this.renderDiff = Trace.getInstance().getHeight() / 2;
 		} else {
-			this.maxY = Trace.getInstance().getHeight();
 			setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
+			this.maxY = getHeight();
 			this.minY = renderDiff;
 		}
 		this.parent = parent;
@@ -102,7 +102,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		this.actionPerformer = actionPerformer;
 		this.minX = 0;
 		this.minY = 0;
-		this.maxX = Trace.getInstance().getWidth();
+		this.maxX = getWidth();
 		recreateTabButtons();
 		setCommandListener(this);
 		addCommands();
@@ -118,9 +118,9 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		   because the icons would then would be mapped wrongly to keys on 176*220 because
 		   of buttons and status bar)
 		*/
-		if (Trace.getInstance().getWidth() > Trace.getInstance().getHeight() && numRows > numCols
+		if (getWidth() > getHeight() && numRows > numCols
 				||
-			Trace.getInstance().getWidth() < Trace.getInstance().getHeight() && numRows < numCols
+			getWidth() < getHeight() && numRows < numCols
 		) {
 			int tmp = numCols;
 			numCols = numRows;
@@ -255,9 +255,9 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 			   because the icons would then would be mapped wrongly to keys on 176*220 because
 			   of buttons and status bar)
 			*/
-			if (Trace.getInstance().getWidth() > Trace.getInstance().getHeight() && imp.numRows > imp.numCols
+			if (getWidth() > getHeight() && imp.numRows > imp.numCols
 					||
-				Trace.getInstance().getWidth() < Trace.getInstance().getHeight() && imp.numRows < imp.numCols
+				getWidth() < getHeight() && imp.numRows < imp.numCols
 			) {
 				int tmp = imp.numCols;
 				imp.numCols = imp.numRows;
@@ -564,10 +564,10 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		// Clean the Canvas
 		if (Trace.getInstance().isShowingSplitIconMenu()) {
 			g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_BACKGROUND]);
-			g.fillRect(0, renderDiff, Trace.getInstance().getWidth(), Trace.getInstance().getHeight() / 2);
+			g.fillRect(0, renderDiff, getWidth(), getHeight() / 2);
 		} else {
 			g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_BACKGROUND]);
-			g.fillRect(0, 0, Trace.getInstance().getWidth(), Trace.getInstance().getHeight());
+			g.fillRect(0, 0, getWidth(), getHeight());
 		}
 
 		if (recreateTabButtonsRequired) {
