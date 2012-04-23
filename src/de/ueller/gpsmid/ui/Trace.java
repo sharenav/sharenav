@@ -2053,6 +2053,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				guiSearch.sizeChanged(w, h);
 			}
 		}
+		if (isShowingSplitSetup()) {
+			maxY = h / 2;
+			renderDiff = 0;
+			if (guiDiscoverIconMenu != null) {
+				guiDiscoverIconMenu.sizeChanged(w, h);
+			}
+		}
 	}
 
 	// check if pointer operation coordinates are for some other function than trace
