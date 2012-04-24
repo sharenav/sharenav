@@ -22,8 +22,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Random;
 
+//#if polish.api.locationapi
 import javax.microedition.location.LocationException;
 import javax.microedition.location.Orientation;
+//#endif
 
 import de.ueller.gps.location.CellIdProvider;
 import de.ueller.gps.location.SocketGateway;
@@ -235,6 +237,7 @@ public class CompassProvider {
 	private Compass obtainOrientationCompass() {
 		Compass compass = new Compass();
 		
+		//#if polish.api.locationapi
 		Orientation orientation;
 		float azimuth;
 
@@ -242,20 +245,19 @@ public class CompassProvider {
 			Class.forName("javax.microedition.location.Orientation");
 			orientation = Orientation.getOrientation();
 			compass.direction = orientation.getCompassAzimuth();
+			return compass;
 		} catch (NoClassDefFoundError ncdfe) {
 			//#debug info
 			logger.info("JSR179 Orientation class for compass is not available");
-			return null;
                 } catch (LocationException le) {
 			//#debug info
 			logger.info("JSR179 Orientation class for compass is not available");
-			return null;
 		} catch (Exception e) {
 			//#debug info
 			logger.info("JSR179 Orientation class for compass is not available");
-			return null;
 		}
-		return compass;
+		//#endif
+		return null;
 	}
 	
 	private Compass obtainSocketCompass() {
