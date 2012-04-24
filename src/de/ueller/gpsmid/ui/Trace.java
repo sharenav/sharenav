@@ -2461,6 +2461,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	public void clearShowingSplitSetup() {
 		showingSplitSetup = false;
+		restartImageCollector();		
 	}
 
 	public void setShowingSplitTraceIconMenu() {
