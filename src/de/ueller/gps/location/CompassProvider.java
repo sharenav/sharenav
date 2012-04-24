@@ -22,6 +22,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Random;
 
+import javax.microedition.location.LocationException;
+import javax.microedition.location.Orientation;
+
 import de.ueller.gps.location.CellIdProvider;
 import de.ueller.gps.location.SocketGateway;
 import de.ueller.util.Logger;
@@ -47,6 +50,7 @@ public class CompassProvider {
 	private static final int COMPASSMETHOD_SOCKET = 4;
 	private static final int COMPASSMETHOD_DEBUG = 5;
 	private static final int COMPASSMETHOD_ANDROID = 6;
+	private static final int COMPASSMETHOD_ORIENTATION = 7;
 	
 	private static CompassProvider singelton;
 	
@@ -102,6 +106,23 @@ public class CompassProvider {
 			logger.info("   No, need to use a different method");
 		} catch (Exception e) {
 			logger.silentexception("Retrieving Compass as a Motorola failed", e);
+			//Nothing to do here, just fall through to the next method
+		}
+		try {
+			//#debug info
+			logger.info("Trying to see if Orientation method is available");
+			Compass compass = obtainOrientationCompass();
+			if (compass != null) {
+				compassRetrievelMethod = COMPASSMETHOD_ORIENTATION;
+				//#debug info
+				logger.info("   Yes, the JSR179 Orientation class method works");
+				return;
+			} else {
+				//#debug info
+				logger.info("   No, need to use a different method");
+			}
+		} catch (Exception e) {
+			logger.silentexception("Retrieving Compass with JSR179 Orientation class failed", e);
 			//Nothing to do here, just fall through to the next method
 		}
 		try {
@@ -211,6 +232,32 @@ public class CompassProvider {
 		return null;
 	}
 	
+	private Compass obtainOrientationCompass() {
+		Compass compass = new Compass();
+		
+		Orientation orientation;
+		float azimuth;
+
+		try {
+			Class.forName("javax.microedition.location.Orientation");
+			orientation = Orientation.getOrientation();
+			compass.direction = orientation.getCompassAzimuth();
+		} catch (NoClassDefFoundError ncdfe) {
+			//#debug info
+			logger.info("JSR179 Orientation class for compass is not available");
+			return null;
+                } catch (LocationException le) {
+			//#debug info
+			logger.info("JSR179 Orientation class for compass is not available");
+			return null;
+		} catch (Exception e) {
+			//#debug info
+			logger.info("JSR179 Orientation class for compass is not available");
+			return null;
+		}
+		return compass;
+	}
+	
 	private Compass obtainSocketCompass() {
 		int retval;
 		retval = SocketGateway.getSocketData(SocketGateway.TYPE_COMPASS);
@@ -268,6 +315,9 @@ public class CompassProvider {
 		}
 		if (compassRetrievelMethod == COMPASSMETHOD_S60FP5) {
 			cachedCompass = obtainS60FP5Compass();
+		}
+		if (compassRetrievelMethod == COMPASSMETHOD_ORIENTATION) {
+			cachedCompass = obtainOrientationCompass();
 		}
 		if (compassRetrievelMethod == COMPASSMETHOD_SOCKET) {
 			cachedCompass = obtainSocketCompass();
