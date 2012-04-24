@@ -1221,13 +1221,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 
 			if (c == CMDS[SEARCH_CMD]) {
-				if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)) {
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)
+				    && hasPointerEvents()) {
 					showingTraceIconMenu = false;
 					showingSplitSearch = true;
 					guiSearch = new GuiSearch(this, GuiSearch.ACTION_DEFAULT);
 					guiSearch.sizeChanged(getWidth(), getHeight());
-					// restarts imagecollector
-					resetSize();
+					restartImageCollector();
 				} else {
 					guiSearch = new GuiSearch(this, GuiSearch.ACTION_DEFAULT);
 					guiSearch.show();
@@ -1752,8 +1752,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					showingTraceIconMenu = false;
 					showingSplitSetup = true;
 					guiDiscoverIconMenu.sizeChanged(getWidth(), getHeight());
-					// restarts imagecollector
-					resetSize();
+					restartImageCollector();
 				}
 				return;
 			}
@@ -2042,6 +2041,26 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 	}
 
+	public void restartImageCollector() {
+		setDisplayCoords(getWidth(), getHeight());
+		updateLastUserActionTime();
+		if (imageCollector != null) {
+			stopImageCollector();
+			try {
+				startImageCollector();
+				imageCollector.resume();
+				imageCollector.newDataReady();
+			} catch (Exception e) {
+				logger.exception(Locale.get("trace.CouldNotReinitialiseImageCollector")/*Could not reinitialise Image Collector after size change*/, e);
+			}
+			/**
+			 * Recalculate the projection, as it may depends on the size of the screen
+			 */
+			updatePosition();
+		}
+		tl = new TraceLayout(minX, minY, maxX, maxY);
+	}
+
 	public void sizeChanged(int w, int h) {
 		updateLastUserActionTime();
 		if (imageCollector != null) {
@@ -2063,6 +2082,16 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 		setDisplayCoords(w, h);
 		tl = new TraceLayout(minX, minY, maxX, maxY);
+
+		if (isShowingSplitIconMenu() && (traceIconMenu != null)) {
+			traceIconMenu.sizeChanged(w, h);
+		}
+		if (isShowingSplitSearch() && (guiSearch != null)) {
+			guiSearch.sizeChanged(w, h);
+		}
+		if (isShowingSplitSetup() && (guiDiscoverIconMenu != null)) {
+			guiDiscoverIconMenu.sizeChanged(w, h);
+		}
 	}
 
 	private void setDisplayCoords(int w, int h) {
@@ -2071,23 +2100,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (isShowingSplitIconMenu()) {
 			maxY = h / 2;
 			renderDiff = 0;
-			if (traceIconMenu != null) {
-				traceIconMenu.sizeChanged(w, h);
-			}
 		}
 		if (isShowingSplitSearch()) {
 			maxY = h / 2;
 			renderDiff = 0;
-			if (guiSearch != null) {
-				guiSearch.sizeChanged(w, h);
-			}
 		}
 		if (isShowingSplitSetup()) {
 			maxY = h / 2;
 			renderDiff = 0;
-			if (guiDiscoverIconMenu != null) {
-				guiDiscoverIconMenu.sizeChanged(w, h);
-			}
 		}
 	}
 
@@ -4102,11 +4122,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (traceIconMenu == null) {
 			traceIconMenu = new TraceIconMenu(this, this);
 		}
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)) {
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)
+		    && hasPointerEvents()) {
 			showingTraceIconMenu = true;
 			traceIconMenu.sizeChanged(getWidth(), getHeight());
-			// restarts imagecollector
-			resetSize();
+			restartImageCollector();
 		} else {
 			traceIconMenu.show();
 		}
@@ -4169,8 +4189,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				} else if (isShowingSplitTraceIconMenu()) {
 					showingTraceIconMenu = false;
 				}
-				// restarts imagecollector
-				resetSize();
+				restartImageCollector();
 			}
 		}
 		if (actionId == SAVE_PREDEF_WAYP_CMD && gpx != null && choiceName != null) {
