@@ -1816,22 +1816,49 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					}
 				}
 				if (c == CMDS[EDIT_ENTITY]) {
+					// if we clicked a clickable marker, get coords from the marker instead of tap
+					int x = centerP.x;
+					int y = centerP.y;
+					int nodeID = -1;
+					int xOverScan = 0;
+					int yOverScan = 0;
+					if (imageCollector != null) {
+						xOverScan = imageCollector.xScreenOverscan;
+						yOverScan = imageCollector.yScreenOverscan;
+						panProjection=imageCollector.getCurrentProjection();
+					} else {
+						panProjection = null;
+					}
+
+					ClickableCoords coords = getClickableMarker(x - xOverScan, y - yOverScan);
+					if (coords != null) {
+						x = coords.x;
+						y = coords.y;
+						nodeID = coords.nodeID;
+						System.out.println("NodeID: " + nodeID);
+					}
 					if (Legend.enableEdits) {
 						// FIXME: do the following:
 						// * set a flag that default operation is OSM edit
 						// * do a search for nearby POIs, asking for type
 						// * when the user selects, open OSM editing
 
-						GuiSearch guiSearch = new GuiSearch(this, GuiSearch.ACTION_EDIT_ENTITY);
-						guiSearch.show();
-						return;
+						if (nodeID != -1) {
+							GuiOsmPoiDisplay guiNode = new GuiOsmPoiDisplay(nodeID, null,
+										 center.radlat, center.radlon, this);
+							guiNode.show();
+							guiNode.refresh();
+							return;
+						} else {
+							GuiSearch guiSearch = new GuiSearch(this, GuiSearch.ACTION_EDIT_ENTITY);
+							guiSearch.show();
+							return;
+						}
 					} else {
 						parent.alert("Editing", "Editing support was not enabled in Osm2GpsMid", Alert.FOREVER);
 					}
 				}
 				if (c == CMDS[RETRIEVE_NODE]) {
-					// FIXME add support for accessing a node
-					// under cursor if clickable markers are on (so it'll work also on non-touch phones)
 					if (Legend.enableEdits) {
 						GuiOsmPoiDisplay guiNode = new GuiOsmPoiDisplay(-1, null,
 								center.radlat, center.radlon, this);
