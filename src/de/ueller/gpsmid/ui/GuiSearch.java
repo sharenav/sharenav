@@ -843,7 +843,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		gc.fillRect(0, renderDiff, maxX, maxY);
 		if (yc < renderDiff) {
 			gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_ARROWS]);
-			gc.drawString("^", maxX, 0, Graphics.TOP | Graphics.RIGHT);
+			gc.drawString("^", maxX, renderDiff, Graphics.TOP | Graphics.RIGHT);
 		}
 		// insert new results from search thread 
 		insertResults();
