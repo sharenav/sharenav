@@ -2196,7 +2196,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 						}
 					}
 					state = STATE_MAIN;
-					show();
+					if (Trace.getInstance().isShowingSplitSearch()) {
+						Trace.getInstance().show();
+					} else {
+						show();
+					}
 					synchronized(this) {
 						try {
 							//Wait for the Names to be resolved
