@@ -246,6 +246,10 @@ public class CompassProvider {
 			orientation = Orientation.getOrientation();
 			compass.direction = orientation.getCompassAzimuth();
 			return compass;
+		} catch (NullPointerException np) {
+			// Calibration needed
+			// FIXME signal this to the user, tell them to calibrate & try
+			// again
 		} catch (NoClassDefFoundError ncdfe) {
 			//#debug info
 			logger.info("JSR179 Orientation class for compass is not available");
