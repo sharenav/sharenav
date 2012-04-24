@@ -1245,7 +1245,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			if (cursor < result.size() - 1) {
 				cursor++;
 			}			
-			if (((cursor + 1) * fontSize + scrollOffset) > maxY) {
+			if (((cursor + 1) * fontSize + scrollOffset + renderDiff) > maxY) {
 				scrollOffset -= 3*fontSize;
 			}
 
