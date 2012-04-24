@@ -2461,7 +2461,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	public void clearShowingSplitSetup() {
 		showingSplitSetup = false;
-		restartImageCollector();		
+		//restartImageCollector();		
 	}
 
 	public void setShowingSplitTraceIconMenu() {
@@ -4180,17 +4180,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			uncacheIconMenu();
 		}
 		if (actionId == IconActionPerformer.BACK_ACTIONID) {
-			if (isShowingSplitScreen()) {
-				if (isShowingSplitSetup()) {
-					showingSplitSetup = false;
-					showingTraceIconMenu = true;
-				} else if (isShowingSplitSearch()) {
-					showingSplitSearch = false;
-					showingTraceIconMenu = true;
-				} else if (isShowingSplitTraceIconMenu()) {
-					showingTraceIconMenu = false;
-				}
-				restartImageCollector();
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)) {
+				showingSplitSetup = false;
+				showingTraceIconMenu = false;
+				showingSplitSearch = false;
+				resetSize();
 			}
 		}
 		if (actionId == SAVE_PREDEF_WAYP_CMD && gpx != null && choiceName != null) {

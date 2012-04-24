@@ -786,8 +786,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	
 	public void commandAction(Command c, Displayable d) {
 		if (c == EXIT_CMD) {
-			destroy();
-       		Trace.getInstance().show();
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)) {
+				Trace.getInstance().performIconAction(IconActionPerformer.BACK_ACTIONID, null);
+			} else {
+				destroy();
+				Trace.getInstance().show();
+			}
 			return;
 		}
 		if (c == BACK_CMD) {
@@ -1801,6 +1805,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				// back to normal trace icon menu
 				Trace.getInstance().clearShowingSplitSetup();
 				Trace.getInstance().setShowingSplitTraceIconMenu();
+				Trace.getInstance().restartImageCollector();		
 			}
 		} else {
 			if (actionId == IconActionPerformer.BACK_ACTIONID) {
