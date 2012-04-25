@@ -92,6 +92,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		minX = 0;
 		minY = 0;
 		if (Trace.getInstance().isShowingSplitIconMenu()) {
+			maxX = Trace.getInstance().getWidth();
 			maxY = Trace.getInstance().getHeight();
 			renderDiff = Trace.getInstance().getHeight() / 2;
 		} else {
