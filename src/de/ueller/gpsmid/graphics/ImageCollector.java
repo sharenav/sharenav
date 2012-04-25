@@ -274,6 +274,7 @@ public class ImageCollector implements Runnable {
 					    ((layer < 5 && layer > 1)
 					    //#if polish.api.finland
 					    // don't skip node layer where speed camera is if camera alert is on
+					     || (layer == 14 && !Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDCAMERA_ALERT))
 					    //#else
 					    || (layer == 14)
 					    //#endif
