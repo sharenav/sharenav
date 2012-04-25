@@ -93,7 +93,7 @@ public class GuiSetupSound extends Form implements CommandListener {
 			append(spdAlertGroup);
 
 			spdAlertTolerance = new TextField(Locale.get("guisetupsound.SpeedAlertTolerance")/*Speed alert tolerance*/,
-					Integer.toString(Configuration.getSpeedTolerance()), 3, TextField.DECIMAL);
+					Integer.toString(Configuration.getSpeedTolerance()), 3, TextField.ANY);
 			append(spdAlertTolerance);
 
 			addCommand(CMD_SAVE);
