@@ -1311,6 +1311,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				langToAdd = "devdefault";
 			}
 			uiLang = langToAdd;
+		} else if (uiLangGroup.getSelectedIndex() - numLangDifference >= Legend.numUiLang) {
+			// acoid array out of bounds, see https://sourceforge.net/projects/gpsmid/forums/forum/677689/topic/5216306
+			uiLang = langToAdd;
 		} else if (Legend.numUiLang + numLangDifference > 1) {
 			uiLang = Legend.uiLang[uiLangGroup.getSelectedIndex()-numLangDifference];
 		}
