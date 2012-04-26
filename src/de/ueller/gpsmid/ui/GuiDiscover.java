@@ -539,8 +539,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//#style formItem
 		menuDisplayOptions.append(directionOpts);
 
-		String [] dirOpts = new String[1];
+		String [] dirOpts = new String[2];
 		dirOpts[0] = Locale.get("guidiscover.autocalibrate")/*Auto-calibrate dig.compass deviation by movement*/;
+		dirOpts[1] = Locale.get("guidiscover.alwaysrotatebycompass")/*Always rotate map by compass*/;
 		directionDevOpts = new ChoiceGroup(Locale.get("guidiscover.CompassOptions")/*Compass Options:*/, Choice.MULTIPLE, dirOpts, null);
 		//#style formItem
 		menuDisplayOptions.append(directionDevOpts);
@@ -1106,6 +1107,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				rotationGroup.setSelectedIndex(Configuration.getProjDefault(), true);
 				renderOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE) ? 1 : 0, true);
 				directionDevOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AUTOCALIBRATE));
+				directionDevOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_ALWAYS_ROTATE));
 				directionOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION) ? 1 : 0, true);
 				if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION)) {
 					directionOpts.setSelectedIndex(2, true);
@@ -1458,10 +1460,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION,
 							  false);
 		}
-		boolean calibrateOpts[] = new boolean[1];
+		boolean calibrateOpts[] = new boolean[2];
 		directionDevOpts.getSelectedFlags(calibrateOpts);
 
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_AUTOCALIBRATE, directionDevOpts.isSelected(0));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_ALWAYS_ROTATE, directionDevOpts.isSelected(1));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE,
 				(renderOpts.getSelectedIndex() == 1)
 		);

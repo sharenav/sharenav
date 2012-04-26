@@ -1336,3 +1336,4 @@ guisearch.label0=0
 guisearch.clabel0=POIs
 guidiscover.autocalibrate=Auto-calibrate dig.compass deviation by movement
 guidiscover.CompassOptions=Compass Options
+guidiscover.alwaysrotatebycompass=Rapid rotate map

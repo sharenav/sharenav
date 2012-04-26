@@ -3049,6 +3049,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		//}
 		//	course = compassDeviated;
 		//}
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_ALWAYS_ROTATE)) {
+			course = compassDeviated;
+			updatePosition();
+		}
 	}
 
 	public static void updateLastUserActionTime() {
