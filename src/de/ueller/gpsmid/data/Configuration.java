@@ -296,7 +296,7 @@ public class Configuration {
 	public final static short CFGBIT_SUPPRESS_ROUTE_WARNING = 114;
 	/** bit 115: Flag whether to simplify map drawing when busy */
 	public final static short CFGBIT_SIMPLIFY_MAP_WHEN_BUSY = 115;
-	/** bit 116: Flag whether to use movement for direction when moving (compass otherwise) */
+	/** bit 116: Flag whether to use compass and movement autoswitch for direction when moving (only compass or movement otherwise) */
 	public final static short CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION = 116;
 	/** bit 117: backlight method ANDROID_WINDOW_MANAGER */
 	public final static short CFGBIT_BACKLIGHT_ANDROID_WINDOW_MANAGER = 117;
