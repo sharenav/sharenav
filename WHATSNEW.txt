@@ -110,6 +110,9 @@
       will be user-settable. When a predefined waypoint icon is pressed, the named
       waypoint (possibly with extra info asked from user) will be saved as a waypoint
       and in the track if track is recording.
+    *** Digital compass ***
+    - Support for JSR179 Orientation class compass (e.g. Nokia C6-01)
+    - Auto-switch between compass & movement now works even when previous setting was movement
     *** Tacho ***
     - HDOP is shown in tachometer
     *** Alerts ***
