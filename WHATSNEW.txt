@@ -113,6 +113,8 @@
     *** Digital compass ***
     - Support for JSR179 Orientation class compass (e.g. Nokia C6-01)
     - Auto-switch between compass & movement now works even when previous setting was movement
+    - Add option for rapid rotation (without this, rotation by compass happens whenever
+      a GPS location is received)
     *** Tacho ***
     - HDOP is shown in tachometer
     *** Alerts ***
