@@ -1,5 +1,6 @@
 /*
  * GpsMid - Copyright (c) 2009 Kai Krueger apmonkey at users dot sourceforge dot net 
+ *          Copyright (c) 2011,2012 Jyrki Kuoppala jkpj at users dot sourceforge dot net 
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,16 +44,8 @@ import de.ueller.gpsmid.ui.GpsMid;
 import de.enough.polish.util.Locale;
 
 /**
+ * Compass implementation
  * 
- * This location provider tries to use the cell-id of the currently
- * connected cell to retrieve a very rough estimate of position. This
- * estimate can be off by up to the range of kilometers. In order to
- * map the cell-id to a location we use OpenCellID.org, that uses
- * crowd sourcing to determine the locations. As such, many cell-ids
- * may not yet be in their database.
- * 
- * This LocationProvider can only retrieve cell-ids for Sony Ericsson phones
- *
  */
 public class GetCompass implements CompassProducer {
 	
@@ -64,12 +57,6 @@ public class GetCompass implements CompassProducer {
 	public void triggerPositionUpdate() {
 	}
 
-	/**
-	 * Periodically retrieve the current Cell-id and
-	 * convert cell id to a location and send it
-	 * to the LocationReceiver
-	 *
-	 */
 	public class RetrievePosition extends TimerTask {
 		
 		public void run() {

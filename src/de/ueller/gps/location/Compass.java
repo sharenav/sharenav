@@ -1,5 +1,6 @@
 /*
  * GpsMid - Copyright (c) 2009 Kai Krueger apmonkey at users dot sourceforge dot net 
+ *          Copyright (c) 2011,2012 Jyrki Kuoppala jkpj at users dot sourceforge dot net 
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
