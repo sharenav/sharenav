@@ -2461,6 +2461,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		return showingTraceIconMenu || showingSplitSearch || showingSplitSetup;
 	}
 
+	public static void clearTraceInstance() {
+		if (!Legend.isValid) {
+			traceInstance = null;
+		}
+	}
+
 	public boolean isShowingSplitSetup() {
 		return showingSplitSetup;
 	}

@@ -1302,6 +1302,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		Configuration.closeMapZipFile();
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS, mapSrcOptions.isSelected(0));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS, mapSrcOptions.isSelected(1));
+		if (!Legend.isValid) {
+			Trace.clearTraceInstance();
+		}
 		Legend.reReadLegend();
 		Trace trace = Trace.getInstance();
 		trace.restart();
