@@ -331,6 +331,8 @@ public class Configuration {
 	// bit 131: Open search in split-screen mode
         // FIXME use the same as for iconmenus for now
 	public final static short CFGBIT_SEARCH_SPLITSCREEN = 130;
+	// bit 131: Auto-calibration for compass deviation by movement
+	public final static short CFGBIT_COMPASS_AUTOCALIBRATE = 132;
 	
 	/**
 	 * These are the database record IDs for each configuration option

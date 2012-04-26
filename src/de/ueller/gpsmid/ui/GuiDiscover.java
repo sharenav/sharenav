@@ -239,13 +239,13 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup mapSrc;
 	private ChoiceGroup mapSrcOptions;
 	private ChoiceGroup rotationGroup;
-	private ChoiceGroup directionGroup;
 	private ChoiceGroup nightModeGroup;
 	private ChoiceGroup uiLangGroup;
 	private ChoiceGroup naviLangGroup;
 	private ChoiceGroup onlineLangGroup;
 	private ChoiceGroup onlineOptionGroup;
 	private ChoiceGroup directionOpts;
+	private ChoiceGroup directionDevOpts;
 	private ChoiceGroup renderOpts;
 	private ChoiceGroup visualOpts;
 	private TextField	tfDestLineWidth;
@@ -538,6 +538,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		directionOpts = new ChoiceGroup(Locale.get("guidiscover.DirectionOptions")/*Rotate map*/, Choice.EXCLUSIVE, direction, null);
 		//#style formItem
 		menuDisplayOptions.append(directionOpts);
+
+		String [] dirOpts = new String[1];
+		dirOpts[0] = Locale.get("guidiscover.autocalibrate")/*Auto-calibrate dig.compass deviation by movement*/;
+		directionDevOpts = new ChoiceGroup(Locale.get("guidiscover.CompassOptions")/*Compass Options:*/, Choice.MULTIPLE, dirOpts, null);
+		//#style formItem
+		menuDisplayOptions.append(directionDevOpts);
 
 		String [] renders = new String[2];
 		renders[0] = Locale.get("guidiscover.aslines")/*as lines*/;
@@ -1099,6 +1105,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				nightModeGroup.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE) ? 1 : 0, true);
 				rotationGroup.setSelectedIndex(Configuration.getProjDefault(), true);
 				renderOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE) ? 1 : 0, true);
+				directionDevOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AUTOCALIBRATE));
 				directionOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION) ? 1 : 0, true);
 				if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION)) {
 					directionOpts.setSelectedIndex(2, true);
@@ -1451,6 +1458,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION,
 							  false);
 		}
+		boolean calibrateOpts[] = new boolean[1];
+		directionDevOpts.getSelectedFlags(calibrateOpts);
+
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_AUTOCALIBRATE, directionDevOpts.isSelected(0));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE,
 				(renderOpts.getSelectedIndex() == 1)
 		);

@@ -1334,3 +1334,5 @@ guisearch.clabel1=exit search
 guisearch.clabel1wordSearch=exit search
 guisearch.label0=0
 guisearch.clabel0=POIs
+guidiscover.autocalibrate=Auto-calibrate dig.compass deviation by movement
+guidiscover.CompassOptions=Compass Options

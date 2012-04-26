@@ -3153,7 +3153,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
                                        updateCourse((int) pos.course);
 				       thirdPrevCourse = secondPrevCourse;
 				       secondPrevCourse = prevCourse;
-
+				       // check for compass deviation auto-update, do it if set
+				       if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_AUTOCALIBRATE)) {
+					       compassDeviation = (int) pos.course - compassDirection;
+				       }
                                } else if (prevCourse == -1) {
 				       if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION)) {
 					       updateCourse(compassDeviated);
