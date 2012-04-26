@@ -657,6 +657,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return;
 			}
 			running=true;
+			startCompass();
 			int locprov = Configuration.getLocationProvider();
 			receiveMessage(Locale.get("trace.ConnectTo")/*Connect to */ + Configuration.LOCATIONPROVIDER[locprov]);
 			if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_CELLID_STARTUP)) {
@@ -810,7 +811,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			//#debug info
 			logger.info("end startLocationPovider thread");
 			//		setTitle("lp="+Configuration.getLocationProvider() + " " + Configuration.getBtUrl());
-			startCompass();
 		} catch (SecurityException se) {
 			/**
 			 * The application was not permitted to connect to the required resources
