@@ -1120,9 +1120,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						} else {
 							compassDeviation += courseDiff;
 							compassDeviation %= 360;
-							if (course < 0) {
-								course += 360;
+							if (compassDeviation < 0) {
+								compassDeviation += 360;
 							}
+							deviateCompass();
+							course = compassDeviated;
+							updatePosition();
 						}
 					} else {
 						// manual rotation 
@@ -3027,11 +3030,15 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public synchronized void receiveCompassStatus(int status) {
 	}
 
+	public void deviateCompass() {
+		compassDeviated = (compassDirection + compassDeviation + 360) % 360;
+	}
+
 	public synchronized void receiveCompass(float direction) {
 		//#debug debug
 		logger.debug("Got compass reading: " + direction);
 		compassDirection = (int) direction;
-		compassDeviated = ((int) direction + compassDeviation + 360) % 360;
+		deviateCompass();
 		// TODO: allow for user to use compass for turning the map in panning mode
 		// (gpsRenter test below switchable by user setting)
 		//if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null && gpsRecenter) {
@@ -3155,6 +3162,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				       // check for compass deviation auto-update, do it if set
 				       if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_AUTOCALIBRATE)) {
 					       compassDeviation = (int) pos.course - compassDirection;
+					       deviateCompass();
 				       }
                                } else if (prevCourse == -1) {
 				       if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION)) {
