@@ -88,7 +88,7 @@ public class GetCompass implements CompassProducer {
 	boolean sensorrunning = false;
 //#endif
 
-	public boolean needsPolling = false;
+	public boolean needsPolling = true;
 
 	private int compassRetrievelMethod = -1;
 	
@@ -114,7 +114,7 @@ public class GetCompass implements CompassProducer {
 				}
 
 				compass = obtainCurrentCompass();
-				if ((compass == null)) {
+				if (compass == null) {
 					//#debug debug
 					logger.debug("No compass direction available");
 					receiverList.receiveCompassStatus(0);
@@ -227,12 +227,12 @@ public class GetCompass implements CompassProducer {
 			logger.silentexception("Retrieving Compass as a Nokia S60 3rd FP2 failed", e);
 		}
 		compassRetrievelMethod = COMPASSMETHOD_NONE;
+		//#debug info
+		logger.error(Locale.get("compassprovider.NoMethodForCompass")/*No method of retrieving Compass is valid, can not use Compass*/);
 	}
 
 	public boolean init(CompassReceiver receiver) {
 		getCompassMethod();
-		//#debug info
-		logger.error(Locale.get("compassprovider.NoMethodForCompass")/*No method of retrieving Compass is valid, can not use Compass*/);
 		try {
 			this.receiverList.addReceiver(receiver);
 			
@@ -260,8 +260,24 @@ public class GetCompass implements CompassProducer {
 	}
 
 	public boolean activate(CompassReceiver receiver) {
-		rp = new RetrievePosition();
-		GpsMid.getTimer().schedule(rp, 250, 250);
+		Compass compass = null;
+		try {
+			compass = obtainCurrentCompass();
+		} catch (Exception e) {
+			logger.silentexception("Could not retrieve compass direction", e);
+		}
+		if (compass == null) {
+			//#debug debug
+			logger.debug("No compass direction available");
+			receiverList.receiveCompassStatus(0);
+			return false;
+		}
+		receiverList.receiveCompassStatus(1);
+		receiverList.receiveCompass(compass.direction);
+		if (needsPolling) {
+			rp = new RetrievePosition();
+			GpsMid.getTimer().schedule(rp, 250, 250);
+		}
 		return true;
 	}
 	public boolean deactivate(CompassReceiver receiver) {
@@ -329,12 +345,12 @@ public class GetCompass implements CompassProducer {
 
 		List<Sensor> mySensors = mySensorManager.getSensorList(Sensor.TYPE_ORIENTATION);
   
-		if(mySensors.size() > 0){
-		    mySensorManager.registerListener(mySensorEventListener, mySensors.get(0), SensorManager.SENSOR_DELAY_NORMAL);
-		    sensorrunning = true;
-		}
-		else{
-		    sensorrunning = false;
+		if (mySensors.size() > 0) {
+			mySensorManager.registerListener(mySensorEventListener, mySensors.get(0), SensorManager.SENSOR_DELAY_NORMAL);
+			sensorrunning = true;
+			needsPolling = false;
+		} else {
+			sensorrunning = false;
 		}
 
 		if (! inited) {
@@ -358,8 +374,9 @@ public class GetCompass implements CompassProducer {
 
 		@Override
 		public void onSensorChanged(SensorEvent event) {
-			// direction here
-			direction = event.values[0];
+			Compass compass = new Compass();
+			compass.direction = event.values[0];
+			receiverList.receiveCompass(compass.direction);
 		}
 	};
         //#endif
