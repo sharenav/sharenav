@@ -553,9 +553,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 		addAllCommands();
 		
-		Configuration.loadKeyShortcuts(gameKeyCommand, singleKeyPressCommand,
-				repeatableKeyPressCommand, doubleKeyPressCommand, longKeyPressCommand,
-				nonReleasableKeyPressCommand, CMDS);
+		if (Legend.isValid) {
+			Configuration.loadKeyShortcuts(gameKeyCommand, singleKeyPressCommand,
+						       repeatableKeyPressCommand, doubleKeyPressCommand, longKeyPressCommand,
+						       nonReleasableKeyPressCommand, CMDS);
+		}
 
 		if (!Configuration.getCfgBitState(Configuration.CFGBIT_CANVAS_SPECIFIC_DEFAULTS_DONE)) {
 			if (getWidth() > 219) {
@@ -575,7 +577,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 		
 		try {
-			startup();
+			if (Legend.isValid) {
+				startup();
+			}
 		} catch (Exception e) {
 			logger.fatal(Locale.get("trace.GotExceptionDuringStartup")/*Got an exception during startup: */ + e.getMessage());
 			e.printStackTrace();
