@@ -3049,7 +3049,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		//}
 		//	course = compassDeviated;
 		//}
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_ALWAYS_ROTATE)) {
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_ALWAYS_ROTATE)
+		    // if we have autoswitch, rotate by compass only when movement course is not valid
+		    && !(Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION)
+			&& (fspeed >= courseMinSpeed && thirdPrevCourse != -1))) {
 			course = compassDeviated;
 			updatePosition();
 		}
