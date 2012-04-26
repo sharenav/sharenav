@@ -47,7 +47,6 @@ import de.ueller.gps.Satellite;
 import de.ueller.gps.location.CellIdProvider;
 import de.ueller.gps.location.Compass;
 import de.ueller.gps.location.CompassProducer;
-import de.ueller.gps.location.CompassProvider;
 import de.ueller.gps.location.CompassReceiver;
 import de.ueller.gps.location.GsmCell;
 import de.ueller.gps.location.GetCompass;
@@ -2775,7 +2774,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		Compass compass = null;
 
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)) {
-			compass = CompassProvider.getInstance().obtainCachedCompass();
+			compass = GetCompass.getInstance().obtainCachedCompass();
 		}
 
 		if (cell == null) {
