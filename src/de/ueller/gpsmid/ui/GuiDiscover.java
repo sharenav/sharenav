@@ -1429,24 +1429,25 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 
 		Configuration.setProjTypeDefault( (byte) rotationGroup.getSelectedIndex() );
 
-		if ((!Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION)) && directionOpts.getSelectedIndex() == 1) {
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION,
-							  (directionOpts.getSelectedIndex() == 1));
+		if ((!Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION)) &&
+		    (directionOpts.getSelectedIndex() == 1 || directionOpts.getSelectedIndex() == 2)) {
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION, true);
 			Trace.getInstance().startCompass();
 		}
-		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION) && directionOpts.getSelectedIndex() != 1) {
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION,
-							  (directionOpts.getSelectedIndex() == 1));
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION)
+		    && directionOpts.getSelectedIndex() == 0) {
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION, false);
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION, false);
 			Trace.getInstance().stopCompass();
 		}
 
-		if ((!Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION)) && directionOpts.getSelectedIndex() == 2) {
+		if ((!Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION))
+		    && directionOpts.getSelectedIndex() == 2) {
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION,
 							  true);
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION,
-							  true);
 		}
-		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION) && directionOpts.getSelectedIndex() != 2) {
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION)
+		    && directionOpts.getSelectedIndex() != 2) {
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION,
 							  false);
 		}
