@@ -251,7 +251,7 @@ public class NoiseMaker
 				}
 			} catch (Exception ex) {
 
-				mLogger.silentException("Error opening external sound file, map url: " + Configuration.getMapUrl() + " file: " + soundFileWithSuffix, ex);
+				mLogger.silentexception("Error opening external sound file, map url: " + Configuration.getMapUrl() + " file: " + soundFileWithSuffix, ex);
 				return false;
 			}
 			// zip map
