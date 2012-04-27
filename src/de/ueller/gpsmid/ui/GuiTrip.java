@@ -166,6 +166,24 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 		return y;
 	}
 
+	protected int paintSun(Graphics g, int h, int w, int y) {
+		//mLcdFont.setFontSize(18);
+		g.drawLine(w >> 1, y - 24, w >> 1, h);
+		if (mSunRiseset != null) {
+			g.drawString(Locale.get("guitrip.Sunrise")/*Sunrise: */ + mSunCalc.formatTime(mSunRiseset[SunCalc.RISE]), 
+						 (w >> 1) - 3, y, Graphics.BOTTOM | Graphics.RIGHT);
+
+			g.drawString(Locale.get("guitrip.Sunset")/*Sunset: */ + mSunCalc.formatTime(mSunRiseset[SunCalc.SET]), 
+					 	 w - 3, y, Graphics.BOTTOM | Graphics.RIGHT);
+		} else {
+			g.drawString(Locale.get("guitrip.SunriseNA")/*Sunrise: N/A*/, (w >> 1) - 3, y, 
+						 Graphics.BOTTOM | Graphics.RIGHT);
+			g.drawString(Locale.get("guitrip.SunsetNA")/*Sunset: N/A*/, w - 3, y, 
+					 	 Graphics.BOTTOM | Graphics.RIGHT);
+		}
+		return y;
+	}
+
 	protected void calcSun() {
 		// Calculate sunrise and sunset times at the first time
 		// or when the map position changed more than 10 km
@@ -210,20 +228,7 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 
 		// Draw sunrise and sunset time
 		y += 24;
-		//mLcdFont.setFontSize(18);
-		g.drawLine(w >> 1, y - 24, w >> 1, h);
-		if (mSunRiseset != null) {
-			g.drawString(Locale.get("guitrip.Sunrise")/*Sunrise: */ + mSunCalc.formatTime(mSunRiseset[SunCalc.RISE]), 
-						 (w >> 1) - 3, y, Graphics.BOTTOM | Graphics.RIGHT);
-
-			g.drawString(Locale.get("guitrip.Sunset")/*Sunset: */ + mSunCalc.formatTime(mSunRiseset[SunCalc.SET]), 
-					 	 w - 3, y, Graphics.BOTTOM | Graphics.RIGHT);
-		} else {
-			g.drawString(Locale.get("guitrip.SunriseNA")/*Sunrise: N/A*/, (w >> 1) - 3, y, 
-						 Graphics.BOTTOM | Graphics.RIGHT);
-			g.drawString(Locale.get("guitrip.SunsetNA")/*Sunset: N/A*/, w - 3, y, 
-					 	 Graphics.BOTTOM | Graphics.RIGHT);
-		}
+		y = paintSun(g, h, w, y);
 	}
 
 	public void show() {
