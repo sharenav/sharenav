@@ -37,7 +37,7 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 	private final Command NEXT_CMD = new Command(Locale.get("guitrip.Next")/*Next*/, Command.SCREEN, 5);
 	private final static Logger mLogger = Logger.getInstance(GuiTrip.class,
 			Logger.DEBUG);
-	private final Trace mParent;
+	private Trace mParent = null;
 	private LcdNumericFont mLcdFont;
 	private SunCalc mSunCalc;
 
@@ -46,6 +46,10 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 	private int mKmWidth = -1;
 	private int mMiWidth = -1;
 	private int mfontHeight = -1;
+
+	public GuiTrip() {
+		init();
+	}
 
 	public GuiTrip(Trace parent) {
 		// #debug
@@ -76,11 +80,15 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 			longKeyPressCommand.put(longKeys.getKeyIdx(i), NEXT_CMD);
 		}
 
+		init();
+	}
+
+	protected void init() {
 		mLcdFont = new LcdNumericFont();
 		mSunCalc = null;
 	}
 
-	protected int paintTrip(Graphics g, int minX, int minY, int maxX, int maxY, int yDiff) {
+	protected int paintTrip(Graphics g, int minX, int minY, int maxX, int maxY, int yDiff, Position pos) {
 		if (mKmWidth < 0) {
 			/**
 			 * Cache the values of the width of these strings
@@ -90,8 +98,6 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 			mMiWidth = f.stringWidth("mi");
 			mfontHeight = f.getHeight();
 		}
-		Position pos = mParent.getCurrentPosition();
-		
 		g.setColor(Legend.COLORS[Legend.COLOR_TACHO_BACKGROUND]);
 		g.fillRect(minX, minY, maxX, maxY);
 
@@ -222,7 +228,9 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 		int w = getWidth();
 		
 		int y = 48;
-		y = paintTrip(g, 0, 0, w, h, y);
+		Position pos = mParent.getCurrentPosition();
+		
+		y = paintTrip(g, 0, 0, w, h, y, pos);
 
 		calcSun();
 
