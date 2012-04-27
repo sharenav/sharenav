@@ -29,10 +29,18 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 
 	public static volatile TraceLayout tl = null;
 
-	private static final int DISPLAY = 1;
-	private static final int SINGLE_TAP = 2;
-	private static final int DOUBLE_TAP = 3;
-	private static final int LONG_TAP = 4;
+	private static final int DISPLAY = 0;
+	private static final int SINGLE_TAP = 1;
+	private static final int DOUBLE_TAP = 2;
+	private static final int LONG_TAP = 3;
+
+	private static String modes[] = {
+		Locale.get("trace.displayhelp"),
+		Locale.get("touchhelp.help1"),
+		Locale.get("touchhelp.help2"),
+		Locale.get("touchhelp.help3") };
+
+	private static int mode = 1;
 
 	private static final Command CMD_BACK = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 3);
 	private GpsMidDisplayable parent;
@@ -41,7 +49,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 
 	// one for map, one for lower than, three for selecting mode
 	// (singletap, double tap or long tap)
-	private static final int addHelpEle = 5;
+	private static final int addHelpEle = 6;
 
 	public LayoutElement helpEle[] = new LayoutElement[TraceLayout.ELE_COUNT + addHelpEle];
 
@@ -369,6 +377,24 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.ELE_COUNT+4].setVRelative(tl.ele[TraceLayout.TITLEBAR]);
 		helpEle[TraceLayout.ELE_COUNT+4].setAdditionalOffsY(4);
 		helpEle[TraceLayout.ELE_COUNT+4].setAdditionalOffsX(-28);
+
+		tl.addElement(helpEle[TraceLayout.ELE_COUNT+5],
+			      LayoutElement.FLAG_FONT_MEDIUM |
+			      LayoutElement.FLAG_VALIGN_WITH_RELATIVE |
+			      LayoutElement.FLAG_HALIGN_RIGHT |
+			      LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX);
+		helpEle[TraceLayout.ELE_COUNT+5].setVRelative(tl.ele[TraceLayout.TITLEBAR]);
+		helpEle[TraceLayout.ELE_COUNT+5].setAdditionalOffsY(6);
+		helpEle[TraceLayout.ELE_COUNT+5].setAdditionalOffsX(-38);
+	}
+
+	private void rotateMode() {
+		mode += 1;
+		mode = mode % 4;
+	}
+
+	private void showMode() {
+		helpEle[TraceLayout.ELE_COUNT+5].setText(modes[mode] + " (" + (mode + 1) + "/" + modes.length + ")");
 	}
 
 	protected void paint(Graphics g) {
@@ -382,7 +408,16 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		g.fillRect(0, 0, w, h);
 		createTraceLayoutElements();
 		if (hasPointerEvents()) {
-			setSingleTap();
+			showMode();
+			if (mode == DISPLAY) {
+				setDisplay();
+			} else if (mode == SINGLE_TAP) {
+				setSingleTap();
+			} else if (mode == DOUBLE_TAP) {
+				setDoubleTap();
+			} else if (mode == LONG_TAP) {
+				setLongTap();
+			} 
 		} else {
 			setDisplay();
 		}
@@ -396,8 +431,10 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.SOLUTION].setText(Locale.get("displayhelp.Solution"));
 		helpEle[TraceLayout.TITLEBAR].setText(Locale.get("displayhelp.StatusBar"));
 		helpEle[TraceLayout.WAYNAME].setText(Locale.get("displayhelp.WayName"));
-		//helpEle[TraceLayout.ROUTE_INSTRUCTION].setText(Locale.get("displayhelp.routeinst"));
+		helpEle[TraceLayout.RECORDED_COUNT].setText(Locale.get("displayhelp.RecordedTrackPoints"));
+		helpEle[TraceLayout.ROUTE_INSTRUCTION].setText(Locale.get("displayhelp.routeinst"));
 	}
+
 	private void setSingleTap() {
 		helpEle[TraceLayout.ZOOM_IN].setText(Locale.get("touchhelp.plus"));
 		helpEle[TraceLayout.ZOOM_OUT].setText(Locale.get("touchhelp.minus"));
@@ -413,10 +450,32 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.SHOW_DEST].setText(Locale.get("touchhelp.lt"));
 		helpEle[TraceLayout.SCALEBAR].setText(Locale.get("touchhelp.ScaleBar"));
 		helpEle[TraceLayout.POINT_OF_COMPASS].setText(Locale.get("touchhelp.Compass"));
-		//helpEle[TraceLayout.SOLUTION].setText(Locale.get("touchhelp.Solution"));
 		helpEle[TraceLayout.TITLEBAR].setText(Locale.get("touchhelp.StatusBar"));
 		helpEle[TraceLayout.ELE_COUNT].setText(Locale.get("touchhelp.gt"));
 		helpEle[TraceLayout.ELE_COUNT+1].setText(Locale.get("touchhelp.Map"));
+	}
+
+	private void setDoubleTap() {
+		helpEle[TraceLayout.RECENTER_GPS].setText(Locale.get("touchhelp.pipeDoubleTap"));
+		helpEle[TraceLayout.CURRENT_TIME].setText(Locale.get("touchhelp.ClockDoubleTap"));
+		helpEle[TraceLayout.SEARCH].setText(Locale.get("touchhelp.usDoubleTap"));
+		helpEle[TraceLayout.POINT_OF_COMPASS].setText(Locale.get("touchhelp.CompassDoubleTap"));
+		helpEle[TraceLayout.ELE_COUNT+1].setText(Locale.get("touchhelp.MapDoubleTap"));
+		helpEle[TraceLayout.SOLUTION].setText(Locale.get("touchhelp.SolutionDoubleTap"));
+		helpEle[TraceLayout.TITLEBAR].setText(Locale.get("touchhelp.StatusBarDoubleTap"));
+	}
+
+	private void setLongTap() {
+		helpEle[TraceLayout.POINT_OF_COMPASS].setText(Locale.get("touchhelp.CompassLongTap"));
+		helpEle[TraceLayout.RECORDINGS].setText(Locale.get("touchhelp.starLongTap"));
+		helpEle[TraceLayout.SEARCH].setText(Locale.get("touchhelp.usLongTap"));
+		helpEle[TraceLayout.ROUTE_DISTANCE].setText(Locale.get("touchhelp.DistanceLongTap"));
+		helpEle[TraceLayout.CURRENT_TIME].setText(Locale.get("touchhelp.ClockLongTap"));
+		helpEle[TraceLayout.SOLUTION].setText(Locale.get("touchhelp.SolutionLongTap"));
+		helpEle[TraceLayout.ELE_COUNT].setText(Locale.get("touchhelp.gtLongTap"));
+		helpEle[TraceLayout.ELE_COUNT+1].setText(Locale.get("touchhelp.MapLongTap"));
+		helpEle[TraceLayout.RECORDED_COUNT].setText(Locale.get("touchhelp.RecordedTrackPointsLongTap"));
+
 	}
 
 	protected void pointerPressed(int x, int y) {
@@ -441,13 +500,18 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		int eleId = tl.getElementId(e);
 		if (e != null) {
 			tl.clearTouchedElement();
+			if (eleId == TraceLayout.ELE_COUNT+5) {
+				rotateMode();
+			}
 			if (eleId > TraceLayout.ELE_COUNT) {
 				eleId -= TraceLayout.ELE_COUNT;
 			}
 			if (eleId != -1 && eleId < helpEle.length) {
 				helpEle[eleId].setTouched(false);
-				GpsMid.getInstance().alert(Locale.get("traceiconmenu.HelpPage"),
-							   helpEle[eleId].getText(), 20000);
+				if (eleId != 5 && e != tl.ele[TraceLayout.TITLEBAR]) {
+					GpsMid.getInstance().alert(Locale.get("traceiconmenu.HelpPage"),
+								   helpEle[eleId].getText(), 20000);
+				}
 			}
 			repaint();
 			if (e == tl.ele[TraceLayout.TITLEBAR]) {
