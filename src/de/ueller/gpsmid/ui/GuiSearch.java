@@ -1048,7 +1048,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					gsl = new GuiSearchLayout(0, renderDiff, width, height);
 				}
 			
-				String letters[] = {  Locale.get("guisearch.cursor")/*cursor*/, "  X  ", "  <- ", 
+				String letters[] = {  Locale.get("guisearch.choose")/*choose*/, "  X  ", "  <- ", 
 						      Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
 						      Locale.get("guisearch.label1wordSearch")/* 1*- */ :
 						      Locale.get("guisearch.label1")/*_1*- */,
