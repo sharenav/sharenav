@@ -81,6 +81,7 @@ public class ImageCache {
 
 	private final static Logger logger = Logger.getInstance(ImageCache.class,Logger.DEBUG);
 	private static Hashtable imageCache = new Hashtable();
+	private static long lastCleanup = 0;
 
 	
 	/** returns an Image object of the given filename in the given width and height, either by loading it or taking it from the cache */
@@ -100,6 +101,10 @@ public class ImageCache {
 	
 	/** returns an Image object of the given parameters in the given width and height, either by loading / resizing / creating it or taking it from the cache */
 	public static Image getImage(String fileName, Image baseImg, int oneColor, int width, int height) {
+		long now = System.currentTimeMillis(); 
+		if (Math.abs(now - lastCleanup) > 30000) {
+			cleanup(30000);
+		}
 		
 		ImgId id = (baseImg == null) ?
 				(fileName == null ? new ImgId(oneColor, width, height) : new ImgId(fileName, width, height))
@@ -159,6 +164,7 @@ public class ImageCache {
 			CacheEntry cachedImage = (CacheEntry) imageCache.get(id);
 			if (Math.abs(now - cachedImage.lastUsedTime) > minUnusedMillis) {
 				remove.addElement(id);
+				System.out.println("Uncaching " + id.toString());
 			}
 	    }
 		
@@ -166,7 +172,7 @@ public class ImageCache {
 			imageCache.remove(remove.firstElement());
 			remove.removeElementAt(0);
 		}
-
+		lastCleanup = now;
 	}
 
 	public static void testImageCache() {
