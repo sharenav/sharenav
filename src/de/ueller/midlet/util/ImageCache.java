@@ -84,6 +84,11 @@ public class ImageCache {
 	private static long lastCleanup = 0;
 
 	
+	/** returns an Image object of the given filename in its original width and height, either by loading it or taking it from the cache */
+	public static Image getImage(String fileName) {
+		return getImage(fileName, 0, 0);
+	}
+	
 	/** returns an Image object of the given filename in the given width and height, either by loading it or taking it from the cache */
 	public static Image getImage(String fileName, int width, int height) {
 		return getImage(fileName, null, 0, width, height);
