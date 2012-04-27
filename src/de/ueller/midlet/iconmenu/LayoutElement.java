@@ -641,7 +641,7 @@ public class LayoutElement {
 	public void paint(Graphics g) {
 		if (specialElementID != 0 && textIsValid) {
 			if ( (flags & FLAG_TRANSPARENT_BACKGROUND_BOX) > 0 ) {				
-				Image imgBackground = ImageCache.getImage(0x80FFFFFF, right -left - 1, bottom - top - 1);
+				Image imgBackground = ImageCache.getOneColorImage(0x80FFFFFF, right -left - 1, bottom - top - 1);
 				if (imgBackground != null) {
 					g.drawImage(imgBackground, left + 1, top + 1, Graphics.TOP | Graphics.LEFT);
 				}
@@ -664,7 +664,7 @@ public class LayoutElement {
 				g.drawRect(left, top, right-left, bottom - top);
 			}
 			if ( (flags & FLAG_TRANSPARENT_BACKGROUND_BOX) > 0 ) {				
-				Image imgBackground = ImageCache.getImage(0x80FFFFFF, right -left - 1, bottom - top - 1);
+				Image imgBackground = ImageCache.getOneColorImage(0x80FFFFFF, right -left - 1, bottom - top - 1);
 				if (imgBackground != null) {
 					g.drawImage(imgBackground, left + 1, top + 1, Graphics.TOP | Graphics.LEFT);
 				}

@@ -95,12 +95,12 @@ public class ImageCache {
 	}
 
 	/** returns an Image object of the given base image in the given width and height, either by resizing it or taking it from the cache */
-	public static Image getImage(Image baseImg, int width, int height) {
+	public static Image getScaledImage(Image baseImg, int width, int height) {
 		return getImage(null, baseImg, 0, width, height);
 	}
 
 	/** returns an Image object of the given one color in the given width and height, either by creating it or taking it from the cache */
-	public static Image getImage(int oneColor, int width, int height) {
+	public static Image getOneColorImage(int oneColor, int width, int height) {
 		return getImage(null, null, oneColor, width, height);
 	}
 	
