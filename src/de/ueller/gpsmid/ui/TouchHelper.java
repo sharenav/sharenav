@@ -508,9 +508,15 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 			}
 			if (eleId != -1 && eleId < helpEle.length) {
 				helpEle[eleId].setTouched(false);
-				if (eleId != 5 && e != tl.ele[TraceLayout.TITLEBAR]) {
-					GpsMid.getInstance().alert(Locale.get("traceiconmenu.HelpPage"),
-								   helpEle[eleId].getText(), 20000);
+				if (eleId != 5) {
+					// handle map tap; scale bar won't be shown though
+					if (eleId == 1) {
+						GpsMid.getInstance().alert(Locale.get("traceiconmenu.HelpPage"),
+									   modes[mode] + ": " + helpEle[eleId+TraceLayout.ELE_COUNT].getText(), 20000);
+					} else {
+						GpsMid.getInstance().alert(Locale.get("traceiconmenu.HelpPage"),
+									   modes[mode] + ": " + helpEle[eleId].getText(), 20000);
+					}
 				}
 			}
 			repaint();
