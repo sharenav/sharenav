@@ -1921,6 +1921,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	private void reSearch() {
+		//System.out.println("reSearch starting, searchThread: " + searchThread + " searchCanon: " + searchCanon.toString());
 		if (searchThread != null) {
 			//#debug info
 			logger.info("researching");

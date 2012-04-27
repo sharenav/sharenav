@@ -57,6 +57,7 @@ public class SearchNames implements Runnable {
 
 	public void run() {
 	    try {
+		    //System.out.println ("dosearch: indexType is " + indexType + " newSearch: " + newSearch);
 		    while (newSearch) {
 			    //System.out.println ("dosearch: indexType is " + indexType);
 			    doSearch(search, indexType);
@@ -87,6 +88,8 @@ public class SearchNames implements Runnable {
 	
 	//TODO: explain
 	private void doSearch(String search, int iType) throws IOException {
+		//System.out.println ("doSearch: string " + search + " iType " + iType);
+		//System.out.println ("stopSearch: " + stopSearch + " newSearch: " + newSearch);
 		try {
 			synchronized(this) {
 				stopSearch = false;
@@ -372,12 +375,17 @@ public class SearchNames implements Runnable {
 						if (isInArray == null) {
 							gui.addDistanceToSearchResult(sr);
 						}
-						if (newSearch) {
-							if (!appendRes) {						
-								gui.clearList();
-							}
-							newSearch = false;
-						}
+						// why would this need to be here, esp. the newSearch = false? seems to break searches sometimes
+						// due to a race condition, 
+						// see bug 3509277 in tracker
+						// introduced in a large commit 2d554687f61fb47276f643396e6933b6920bbec3
+						// in Feb 2008, 
+						// if (newSearch) {
+						//	if (!appendRes) {						
+						//		gui.clearList();
+						//	}
+						//	newSearch = false;
+						//}
 						if (foundEntries < SEARCH_MAX_COUNT && gui.addResult(sr)) {
 							foundEntries++;
 							if (foundEntries >= SEARCH_MAX_COUNT) {
@@ -482,6 +490,7 @@ public class SearchNames implements Runnable {
 	public synchronized void search(String search, int type) {
 		//#debug
 		logger.info("search for  " + search);
+		//System.out.println ("search: string " + search + " set indexType to " + type);
 		stopSearch = true;
 		newSearch = true;
 		appendRes = false;
