@@ -39,12 +39,12 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 	private final Command NEXT_CMD = new Command(Locale.get("guitacho.Next")/*Next*/, Command.SCREEN, 5);
 	private final static Logger logger = Logger.getInstance(GuiTacho.class,
 			Logger.DEBUG);
-	private final Trace parent;
-	private final LcdNumericFont lcdFont;
+	private Trace parent = null;
+	private LcdNumericFont lcdFont = null;
 
 	private final Calendar cal = Calendar.getInstance();
 	private final Date date = new Date();
-	private final StringBuffer timeString;
+	private StringBuffer timeString = null;
 
 	private float alt_delta = 0.0f;
 	private float odo = 0.0f;
@@ -60,6 +60,10 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 	private int kmWidth = -1;
 	private int miWidth = -1;
 	private int fHeight = -1;
+
+	public GuiTacho() {
+		init();
+	}
 
 	public GuiTacho(Trace parent) {
 		// #debug
@@ -90,6 +94,10 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 			longKeyPressCommand.put(longKeys.getKeyIdx(i), NEXT_CMD);
 		}
 
+		init();
+	}
+
+	protected void init() {
 		lcdFont = new LcdNumericFont();
 
 		timeString = new StringBuffer();
@@ -224,14 +232,13 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 		}
 	}
 
-	protected void paint(Graphics g) {
-		//#debug debug
-		logger.debug("Drawing Tacho screen");
+	protected void setValues(Trace parent, Graphics g) {
 		if (kmhWidth < 0) {
 			/**
 			 * Cache the values of the width of these Strings
 			 */
 			Font f = g.getFont();
+			f = g.getFont();
 			kmhWidth = f.stringWidth(Locale.get("guitacho.kmh")/*km/h*/);
 			mphWidth = f.stringWidth(Locale.get("guitacho.mph")/*mph*/);
 			kmWidth = f.stringWidth(Locale.get("guitacho.km")/*km*/);
@@ -240,13 +247,20 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 			mWidth = f.stringWidth(Locale.get("guitacho.m")/*m*/);
 			fHeight = f.getHeight();
 		}
-		Position pos = parent.getCurrentPosition();
 		odo = parent.gpx.currentTrkLength() / 1000.0f;
 		avg_spd = parent.gpx.currentTrkAvgSpd() * 3.6f;
 		max_spd = ((int)(parent.gpx.maxTrkSpeed() * 36.0f))/10.0f;
 		alt_delta = parent.gpx.deltaAltTrkSpeed();
 		duration = parent.gpx.currentTrkDuration();
 		
+	}
+
+	protected void paint(Graphics g) {
+		//#debug debug
+		logger.debug("Drawing Tacho screen");
+		setValues(parent, g);
+		Position pos = parent.getCurrentPosition();
+
 		int h = getHeight();
 		int w = getWidth();
 		
