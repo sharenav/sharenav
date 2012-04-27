@@ -1746,7 +1746,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 
 			if (c == CMDS[ICON_MENU] && Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
-				if (!isShowingSplitScreen()) {
+				if (isShowingSplitScreen()) {
+					stopShowingSplitScreen();
+				} else {
 					showIconMenu();
 				}
 				return;
@@ -4144,11 +4146,15 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			addAllCommands();
 		}
 	}
-	
+
+	public void stopShowingSplitScreen() {
+		showingSplitSetup = false;
+		showingTraceIconMenu = false;
+		showingSplitSearch = false;
+		resetSize();
+	}
+
 	public void showIconMenu() {
-		if (isShowingSplitSearch()) {
-			showingSplitSearch = false;
-		}
 		if (traceIconMenu == null) {
 			traceIconMenu = new TraceIconMenu(this, this);
 		}
@@ -4210,10 +4216,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 		if (actionId == IconActionPerformer.BACK_ACTIONID) {
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)) {
-				showingSplitSetup = false;
-				showingTraceIconMenu = false;
-				showingSplitSearch = false;
-				resetSize();
+				stopShowingSplitScreen();
 			}
 		}
 		if (actionId == SAVE_PREDEF_WAYP_CMD && gpx != null && choiceName != null) {
