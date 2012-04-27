@@ -384,7 +384,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 			      LayoutElement.FLAG_HALIGN_RIGHT |
 			      LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX);
 		helpEle[TraceLayout.ELE_COUNT+5].setVRelative(tl.ele[TraceLayout.TITLEBAR]);
-		helpEle[TraceLayout.ELE_COUNT+5].setAdditionalOffsY(6);
+		helpEle[TraceLayout.ELE_COUNT+5].setAdditionalOffsY(18);
 		helpEle[TraceLayout.ELE_COUNT+5].setAdditionalOffsX(-38);
 	}
 
