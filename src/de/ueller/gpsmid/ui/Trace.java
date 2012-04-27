@@ -92,6 +92,7 @@ import de.ueller.gpsmid.tile.SingleTile;
 import de.ueller.midlet.iconmenu.IconActionPerformer;
 import de.ueller.midlet.iconmenu.LayoutElement;
 import de.ueller.midlet.ui.CompletionListener;
+import de.ueller.midlet.util.ImageCache;
 import de.ueller.midlet.util.ImageTools;
 import de.ueller.util.CancelMonitorInterface;
 import de.ueller.util.DateTimeTools;
@@ -4186,7 +4187,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (origIcon != null) {
 			int height = getHeight() / 7;
 			int width = height;
-			Image icon = ImageTools.scaleImage(origIcon, width, height);
+			Image icon = ImageCache.getScaledImage(origIcon, width, height);
 			pc.g.drawImage(icon, (getHeight() >= 320 ? 5 : 30),
 				       15 + getHeight()/40
 				       + iconNumber * (height + getHeight()/40),
