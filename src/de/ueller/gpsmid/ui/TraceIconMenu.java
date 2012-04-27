@@ -47,10 +47,11 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 	{ "N30", "N40", "N50", "N60", "N70", "N80", "N100", "N120", "Nvaiht", "Tievalot", "Tievalotpois", "2kaist", "1kaist", "aita", "aitapois", "b", "bvas", "kam", "N %f", "b %s", "tie %s", "tieoik", "tievas" };
 	//#else
 	private final static String[] predefs = {
+	    "30", "40", "50", "60", "70", "80", "90", "100", "110", "120",
 		"City limit",
 		"Speed %f",
 		"Speed end",
-		"House nr.",
+		"House nr. %f",
 		"Bus stop",
 		"Agr 1 asph",
 		"Agr %f gravel",
@@ -75,7 +76,7 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 		mp.createAndAddIcon(Locale.get("traceiconmenu.MapFeature")/*Map Features*/, "i_mapfeat", Trace.MAPFEATURES_CMD);
 		
 		mp.createAndAddIcon(Locale.get("traceiconmenu.Setup")/*Setup*/, "i_setup", Trace.SETUP_CMD);
-		mp.createAndAddIcon(Locale.get("traceiconmenu.Tacho")/*Tacho*/, "i_tacho", Trace.DATASCREEN_CMD);
+		mp.createAndAddIcon(Locale.get("traceiconmenu.Tacho")/*Tacho*/, "i_tacho", Trace.CMS_CMD);
 		mp.createAndAddIcon(Locale.get("traceiconmenu.Overview")/*Overview/Filter Map*/, "i_overview", Trace.OVERVIEW_MAP_CMD);
 		
 		iconOnlineInfo =	mp.createAndAddIcon(Locale.get("traceiconmenu.Online")/*Online*/, "i_online", Trace.ONLINE_INFO_CMD);		
