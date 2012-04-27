@@ -166,14 +166,7 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 		return y;
 	}
 
-	protected void paint(Graphics g) {
-		//#debug debug
-		mLogger.debug("Drawing Trip screen");
-		int h = getHeight();
-		int w = getWidth();
-		
-		int y = 48;
-		y = paintTrip(g, h, w, y);
+	protected void calcSun() {
 		// Calculate sunrise and sunset times at the first time
 		// or when the map position changed more than 10 km
 		if ((mSunCalc == null) ||
@@ -202,6 +195,18 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 			mSunRiseset = mSunCalc.calcRiseSet( SunCalc.SUNRISE_SUNSET );
 			mLogger.info("SunCalc result: " + mSunCalc.toString());
 		}
+	}
+
+	protected void paint(Graphics g) {
+		//#debug debug
+		mLogger.debug("Drawing Trip screen");
+		int h = getHeight();
+		int w = getWidth();
+		
+		int y = 48;
+		y = paintTrip(g, h, w, y);
+
+		calcSun();
 
 		// Draw sunrise and sunset time
 		y += 24;
