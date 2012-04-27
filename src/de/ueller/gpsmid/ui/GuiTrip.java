@@ -80,9 +80,7 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 		mSunCalc = null;
 	}
 
-	protected void paint(Graphics g) {
-		//#debug debug
-		mLogger.debug("Drawing Trip screen");
+	protected int paintTrip(Graphics g, int h, int w, int y) {
 		if (mKmWidth < 0) {
 			/**
 			 * Cache the values of the width of these strings
@@ -94,14 +92,10 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 		}
 		Position pos = mParent.getCurrentPosition();
 		
-		int h = getHeight();
-		int w = getWidth();
-		
 		g.setColor(Legend.COLORS[Legend.COLOR_TACHO_BACKGROUND]);
 		g.fillRect(0, 0, w, h);
 
 		g.setColor(Legend.COLORS[Legend.COLOR_TACHO_TEXT]);
-		int y = 48;
 
 		// Draw our own course
 		// TODO: Filter this but not at the presentation layer again as Trace.java
@@ -169,7 +163,17 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 			}
 		}
 		g.drawLine(0, y, w, y);
+		return y;
+	}
 
+	protected void paint(Graphics g) {
+		//#debug debug
+		mLogger.debug("Drawing Trip screen");
+		int h = getHeight();
+		int w = getWidth();
+		
+		int y = 48;
+		y = paintTrip(g, h, w, y);
 		// Calculate sunrise and sunset times at the first time
 		// or when the map position changed more than 10 km
 		if ((mSunCalc == null) ||
