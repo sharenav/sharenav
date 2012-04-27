@@ -1136,7 +1136,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				WaypointsTile.useNewWptFont();
 
 				// convert bits from backlight flag into selection states
-				boolean[] sellight = new boolean[9];
+				boolean[] sellight = new boolean[10];
 				sellight[0] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ON);
 				sellight[1] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED);
 				sellight[2] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_KEEPALIVE);
@@ -1499,7 +1499,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		
 		// convert boolean array with selection states for backlight
 		// to one flag with corresponding bits set
-		boolean[] sellight = new boolean[9];
+		boolean[] sellight = new boolean[10];
 		backlightOpts.getSelectedFlags( sellight );
 		// save selected values to record store
 		int i = 0;
