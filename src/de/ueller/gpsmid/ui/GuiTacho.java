@@ -172,7 +172,7 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 		g.drawLine(minX + (maxX - minX) >> 1, y, minX + (maxX - minX) >> 1, y + 32);
 		y += 28;
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
-		        g.drawString(Locale.get("guitacho.km")/*km*/, (minX + (maxX - minX) >> 1) - 1, y - 5, Graphics.BOTTOM
+		        g.drawString(Locale.get("guitacho.km")/*km*/, minX + ((maxX - minX) >> 1) - 1, y - 5, Graphics.BOTTOM
 					| Graphics.RIGHT);
 			if (odo > 10) {
 				lcdFont.drawFloat(g, odo, 1, minX + ((maxX - minX) >> 1) - kmWidth - 2, y);
