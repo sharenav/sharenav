@@ -37,7 +37,11 @@ class ImgId {
 	}	
 	
 	public int hashCode() {
-		return this.width + this.height; 		
+		return this.width + this.height;
+	}
+	
+	public String toString() {
+		return "(" + this.width + "x" + this.height + ")"; 		
 	}
 		
 }
@@ -64,7 +68,7 @@ class ImgIdFile extends ImgId {
 	}
 
 	public String toString() {
-		return this.fileName;
+		return this.fileName + super.toString();
 	}
 
 }
@@ -92,7 +96,7 @@ class ImgIdOneColor extends ImgId {
 	}
 
 	public String toString() {
-		return "oneColor(" + this.width + "x" + this.height + ")";
+		return "oneColor" + super.toString();
 	}
 }
 
@@ -117,6 +121,11 @@ class ImgIdBaseImage extends ImgId {
 	public int hashCode() {
 		return super.hashCode() + this.baseImage.hashCode(); 		
 	}
+
+	public String toString() {
+		return baseImage + super.toString();
+	}
+
 }
 
 
@@ -162,11 +171,19 @@ public class ImageCache {
 		if (width != 0) {
 			img = ImageTools.scaleImage(img, width, height);
 		}
+		return cacheImage(img, id);			
+	}
+
+	/**
+	 * @param img
+	 * @param id
+	 */
+	public static Image cacheImage(Image img, ImgId id) {
 		if (img != null) {
 			System.out.println("Caching " + id.toString());				
 			imageCache.put(id, new CacheEntry(img));
 		}
-		return img;				
+		return img;
 	}
 
 	/** returns an Image object of the given base image in the given width and height, either by resizing it or taking it from the cache */
@@ -180,11 +197,7 @@ public class ImageCache {
 		if (width != 0) {
 			img = ImageTools.scaleImage(baseImage, width, height);
 		}
-		if (img != null) {
-			System.out.println("Caching " + id.toString());				
-			imageCache.put(id, new CacheEntry(img));
-		}
-		return img;				
+		return cacheImage(img, id);			
 	}
 
 	/** returns an Image object of the given one color in the given width and height, either by creating it or taking it from the cache */
@@ -207,9 +220,7 @@ public class ImageCache {
 			logger.exception("Cannot create one color image", e);
 			return null;
         }
-		System.out.println("Caching " + id.toString());
-		imageCache.put(id, new CacheEntry(img));
-		return img;
+		return cacheImage(img, id);	
 	}
 	
 	public static Image getCachedImage(CacheEntry cacheEntry) {
