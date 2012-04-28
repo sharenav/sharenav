@@ -154,13 +154,13 @@ public class ImageCache {
 	
 	/** returns an Image object of the given filename in the given width and height, either by loading it or taking it from the cache */
 	public static Image getImageFromFile(String fileName, int width, int height) {
-		Image img;
 		ImgIdFile id = new ImgIdFile(fileName, width, height);
 		CacheEntry cacheEntry = (CacheEntry) imageCache.get(id);
 		if (cacheEntry != null) {
 			return getCachedImage(cacheEntry);
 		}
 		// file system image
+		Image img;
 		try {
 			img = Image.createImage(fileName);
 			System.out.println("Caching " + id.toString());				
@@ -188,12 +188,12 @@ public class ImageCache {
 
 	/** returns an Image object of the given base image in the given width and height, either by resizing it or taking it from the cache */
 	public static Image getScaledImage(Image baseImage, int width, int height) {
-		Image img = null;
 		ImgIdBaseImage id = new ImgIdBaseImage(baseImage, width, height);
 		CacheEntry cacheEntry = (CacheEntry) imageCache.get(id);
 		if (cacheEntry != null) {
 			return getCachedImage(cacheEntry);
 		}
+		Image img = null;
 		if (width != 0) {
 			img = ImageTools.scaleImage(baseImage, width, height);
 		}
@@ -203,12 +203,12 @@ public class ImageCache {
 	/** returns an Image object of the given one color in the given width and height, either by creating it or taking it from the cache */
 	public static Image getOneColorImage(int color, int width, int height) {
 		cleanup();
-		Image img;
 		ImgIdOneColor id = new ImgIdOneColor(color, width, height);
 		CacheEntry cacheEntry = (CacheEntry) imageCache.get(id);
 		if (cacheEntry != null) {
 			return getCachedImage(cacheEntry);
 		}
+		Image img;
 		int rawSize = width * height;
 		int[] rawOutput = new int[rawSize];
         for (int outOffset = 0; outOffset < rawSize;) {
