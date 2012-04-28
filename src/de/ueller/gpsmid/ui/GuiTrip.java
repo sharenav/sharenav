@@ -19,6 +19,7 @@ import de.ueller.gps.location.LocationUpdateListener;
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.Position;
+import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.midlet.graphics.LcdNumericFont;
 import de.ueller.util.IntTree;
 import de.ueller.util.Logger;
@@ -88,7 +89,7 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 		mSunCalc = null;
 	}
 
-	protected int paintTrip(Graphics g, int minX, int minY, int maxX, int maxY, int yDiff, Position pos) {
+	protected int paintTrip(Graphics g, int minX, int minY, int maxX, int maxY, int yDiff, Position pos, PositionMark destination, Trace trace) {
 		if (mKmWidth < 0) {
 			/**
 			 * Cache the values of the width of these strings
@@ -99,7 +100,7 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 			mfontHeight = f.getHeight();
 		}
 		g.setColor(Legend.COLORS[Legend.COLOR_TACHO_BACKGROUND]);
-		g.fillRect(minX, minY, maxX, maxY);
+		g.fillRect(minX, minY, maxX - minX, maxY - minY);
 
 		g.setColor(Legend.COLORS[Legend.COLOR_TACHO_TEXT]);
 
@@ -112,7 +113,7 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 		
 		// Draw heading and distance to the destination
 		yDiff += 48;
-		if (mParent.getDestination() == null) {
+		if (destination == null) {
 			mLcdFont.drawInvalid(g, minX + 3, maxX, minY + yDiff - 6);
 			yDiff += 48;
 			mLcdFont.drawInvalid(g, minX + 4, maxX - mKmWidth -1, minY + yDiff - 6);
@@ -122,9 +123,9 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 				g.drawString(Locale.get("guitacho.mi"), maxX - 1, minY + yDiff - 3, Graphics.BOTTOM | Graphics.RIGHT);
 			}
 		} else {
-			float[] result = ProjMath.calcDistanceAndCourse(mParent.center.radlat, 
-					mParent.center.radlon, mParent.getDestination().lat, 
-					mParent.getDestination().lon);
+			float[] result = ProjMath.calcDistanceAndCourse(trace.center.radlat, 
+					trace.center.radlon, destination.lat, 
+					destination.lon);
 			// Heading (result[1])
 			int relHeading = (int)(result[1] - pos.course + 0.5);
 			if (relHeading < 0)
@@ -174,15 +175,15 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 
 	protected int paintSun(Graphics g, int minX, int minY, int maxX, int maxY, int yDiff) {
 		//mLcdFont.setFontSize(18);
-		g.drawLine(minX + maxX /2, minY + yDiff - 24, minX + maxX / 2, maxY);
+		g.drawLine(minX + (maxX - minX) /2, minY + yDiff - 24, minX + (maxX -minX) / 2, maxY);
 		if (mSunRiseset != null) {
 			g.drawString(Locale.get("guitrip.Sunrise")/*Sunrise: */ + mSunCalc.formatTime(mSunRiseset[SunCalc.RISE]), 
-						 minX + (maxX / 2) - 3, minY + yDiff, Graphics.BOTTOM | Graphics.RIGHT);
+						 minX + ((maxX - minX) / 2) - 3, minY + yDiff, Graphics.BOTTOM | Graphics.RIGHT);
 
 			g.drawString(Locale.get("guitrip.Sunset")/*Sunset: */ + mSunCalc.formatTime(mSunRiseset[SunCalc.SET]), 
 					 	 maxX - 3, minY + yDiff, Graphics.BOTTOM | Graphics.RIGHT);
 		} else {
-			g.drawString(Locale.get("guitrip.SunriseNA")/*Sunrise: N/A*/, minX + (maxX / 2) - 3, minY + yDiff, 
+			g.drawString(Locale.get("guitrip.SunriseNA")/*Sunrise: N/A*/, minX + ((maxX - minX) / 2) - 3, minY + yDiff, 
 						 Graphics.BOTTOM | Graphics.RIGHT);
 			g.drawString(Locale.get("guitrip.SunsetNA")/*Sunset: N/A*/, maxX - 3, minY + yDiff, 
 					 	 Graphics.BOTTOM | Graphics.RIGHT);
@@ -190,13 +191,13 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 		return yDiff;
 	}
 
-	protected void calcSun() {
+	protected void calcSun(Trace trace) {
 		// Calculate sunrise and sunset times at the first time
 		// or when the map position changed more than 10 km
 		if ((mSunCalc == null) ||
 			( 	mSunCalc != null
-			 &&	Math.abs(ProjMath.getDistance(mParent.center.radlat,
-											  mParent.center.radlon,
+			 &&	Math.abs(ProjMath.getDistance(trace.center.radlat,
+											  trace.center.radlon,
 											  mSunCalc.getLatitude() * MoreMath.FAC_DECTORAD,
 											  mSunCalc.getLongitude() * MoreMath.FAC_DECTORAD
 				) ) > 10000)
@@ -204,8 +205,8 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 			if (mSunCalc == null) {
 				mSunCalc = new SunCalc();
 			}
-			mSunCalc.setLatitude(mParent.center.radlat * MoreMath.FAC_RADTODEC);
-			mSunCalc.setLongitude(mParent.center.radlon * MoreMath.FAC_RADTODEC);
+			mSunCalc.setLatitude(trace.center.radlat * MoreMath.FAC_RADTODEC);
+			mSunCalc.setLongitude(trace.center.radlon * MoreMath.FAC_RADTODEC);
 			Calendar nowCal = Calendar.getInstance();
 			mSunCalc.setYear( nowCal.get( Calendar.YEAR ) );
 			mSunCalc.setMonth( nowCal.get( Calendar.MONTH ) + 1 );
@@ -230,9 +231,9 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 		int y = 48;
 		Position pos = mParent.getCurrentPosition();
 		
-		y = paintTrip(g, 0, 0, w, h, y, pos);
+		y = paintTrip(g, 0, 0, w, h, y, pos, mParent.getDestination(), mParent);
 
-		calcSun();
+		calcSun(mParent);
 
 		// Draw sunrise and sunset time
 		y += 24;

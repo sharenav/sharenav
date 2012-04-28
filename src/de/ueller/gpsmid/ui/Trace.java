@@ -182,8 +182,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	protected static final int ROTATE_TRAVEL_MODE_CMD = 67;
 	protected static final int SAVE_PREDEF_WAYP_CMD = 68;
 	protected static final int TOUCH_HELP_CMD = 69;
+	protected static final int CMS_CMD = 70;
 
-	private final Command [] CMDS = new Command[70];
+	private final Command [] CMDS = new Command[71];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -346,6 +347,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private static TraceIconMenu traceIconMenu = null;
 	private static GuiDiscover guiDiscover = null;
 	private static GuiDiscoverIconMenu guiDiscoverIconMenu = null;
+	private static CMSLayout cmsl = null;
 	
 	private final static Logger logger = Logger.getInstance(Trace.class, Logger.DEBUG);
 
@@ -459,6 +461,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private boolean showingTraceIconMenu = false;
 	private boolean showingSplitSearch = false;
 	private boolean showingSplitSetup = false;
+	private boolean showingSplitCMS = false;
 
 	private GuiWaypointPredefinedForm mForm;
 
@@ -551,6 +554,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		CMDS[ROUTE_TO_FAVORITE_CMD] = new Command(Locale.get("guidiscover.KeyShortcuts")/**/,Command.ITEM,100);
 		CMDS[ROTATE_TRAVEL_MODE_CMD] = new Command(Locale.get("guiroute.TravelBy")/**/,Command.ITEM,100);
 		CMDS[TOUCH_HELP_CMD] = new Command(Locale.get("trace.touchhelp")/*Touchscreen functions*/,Command.ITEM,100);
+		CMDS[CMS_CMD] = new Command(Locale.get("trace.Tacho")/*Tacho*/, Command.ITEM, 100);
 
 		addAllCommands();
 		
@@ -1231,6 +1235,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)
 				    && hasPointerEvents()) {
 					showingTraceIconMenu = false;
+					showingSplitCMS = false;
 					showingSplitSearch = true;
 					guiSearch = new GuiSearch(this, GuiSearch.ACTION_DEFAULT);
 					guiSearch.sizeChanged(getWidth(), getHeight());
@@ -1741,6 +1746,21 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					updatePosition();
 				}
 			}
+			if (c == CMDS[CMS_CMD]) {
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)
+				    && hasPointerEvents()) {
+					cmsl = new CMSLayout(minX, 0 + getHeight() / 2, maxX, getHeight());
+					guiTrip = new GuiTrip();
+					guiTrip.init();
+					showingSplitCMS = true;
+					showingTraceIconMenu = false;
+					cmsl.setOnScreenButtonSize(false);
+					//cmsl.sizeChanged(getWidth(), getHeight());
+					restartImageCollector();
+				}
+				return;
+			}
+
 			if (c == CMDS[DATASCREEN_CMD]) {
 				showNextDataScreen(DATASCREEN_NONE);
 				return;
@@ -1760,6 +1780,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					guiDiscoverIconMenu = new GuiDiscoverIconMenu(guiDiscover, guiDiscover);
 					showingTraceIconMenu = false;
 					showingSplitSetup = true;
+					showingSplitCMS = false;
 					guiDiscoverIconMenu.sizeChanged(getWidth(), getHeight());
 					restartImageCollector();
 				}
@@ -2101,20 +2122,15 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (isShowingSplitSetup() && (guiDiscoverIconMenu != null)) {
 			guiDiscoverIconMenu.sizeChanged(w, h);
 		}
+		if (isShowingSplitCMS() && (cmsl != null)) {
+			cmsl.sizeChanged(w, h);
+		}
 	}
 
 	private void setDisplayCoords(int w, int h) {
 		maxX = w;
 		maxY = h;
-		if (isShowingSplitIconMenu()) {
-			maxY = h / 2;
-			renderDiff = 0;
-		}
-		if (isShowingSplitSearch()) {
-			maxY = h / 2;
-			renderDiff = 0;
-		}
-		if (isShowingSplitSetup()) {
+		if (isShowingSplitScreen()) {
 			maxY = h / 2;
 			renderDiff = 0;
 		}
@@ -2134,6 +2150,38 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		return notForTrace;
 	}
 
+	private void updateCMS(Graphics g) {
+		//LayoutElement e = null;
+		if (cmsl != null) {
+			int maxSpeed = 0;
+			if (actualSpeedLimitWay != null) {
+				maxSpeed = actualSpeedLimitWay.getMaxSpeed();
+			}
+			if (maxSpeed != 0) {
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
+					cmsl.ele[CMSLayout.SPEEDING_SIGN].setText(Integer.toString(maxSpeed));
+				} else {
+					cmsl.ele[CMSLayout.SPEEDING_SIGN].setText(Integer.toString((int)(maxSpeed / 1.609344f + 0.5f)));
+				}
+			}
+			if (guiTrip != null) {
+				int y = 48;
+				Position pos = getCurrentPosition();
+		
+				//y = guiTrip.paintTrip(g, (cmsl.getMaxX() - cmsl.getMinX()), this.getWidth()/2, this.getWidth() / 2, this.getHeight() - 40, y, pos, getDestination(), this);
+				y = guiTrip.paintTrip(g, this.getWidth()/4, this.getHeight() / 2, this.getWidth() / 2, this.getHeight()/4*3, y, pos, getDestination(), this);
+
+				guiTrip.calcSun(this);
+
+				// Draw sunrise and sunset time
+				y += 24;
+				y = guiTrip.paintSun(g, this.getWidth() / 4,
+						     this.getHeight() / 2, this.getWidth() / 2, this.getHeight()/4*3, y);
+
+			}
+		}
+	}
+		
 	protected void paint(Graphics g) {
 		//#debug debug
 		logger.debug("Drawing Map screen");
@@ -2394,6 +2442,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 				// if current time is visible, positioning OFFROUTE above current time will work
 				tl.ele[TraceLayout.ROUTE_OFFROUTE].setVRelative(e);
+
+				if (isShowingSplitCMS()) {
+					updateCMS(g);
+				}
 			}
 			
 			setAlertSign(Legend.getNodeTypeDesc((short) alertNodeType));
@@ -2458,10 +2510,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (isShowingSplitSetup() && guiDiscoverIconMenu != null) {
 			guiDiscoverIconMenu.paint(g);
 		}
+		if (isShowingSplitCMS() && cmsl != null) {
+			cmsl.paint(g);
+		}
 	}
 
 	public boolean isShowingSplitScreen() {
-		return showingTraceIconMenu || showingSplitSearch || showingSplitSetup;
+		return showingTraceIconMenu || showingSplitSearch || showingSplitSetup || showingSplitCMS;
 	}
 
 	public static void clearTraceInstance() {
@@ -2472,6 +2527,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	public boolean isShowingSplitSetup() {
 		return showingSplitSetup;
+	}
+
+	public boolean isShowingSplitCMS() {
+		return showingSplitCMS;
 	}
 
 	public void clearShowingSplitSetup() {
@@ -3403,6 +3462,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				guiDiscoverIconMenu.pointerPressed(x, y);
 				return;
 			}
+			if (isShowingSplitCMS() && cmsl != null) {
+				cmsl.pointerPressed(x, y);
+				return;
+			}
 		}
 
 		updateLastUserActionTime();
@@ -3491,6 +3554,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				guiDiscoverIconMenu.pointerReleased(x, y);
 				return;
 			}
+			if (isShowingSplitCMS() && cmsl != null) {
+				cmsl.pointerReleased(x, y);
+				return;
+			}
 		}
 
 		// releasing the pointer cancels the check for long tap
@@ -3542,6 +3609,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			if (isShowingSplitSetup() && guiDiscoverIconMenu != null) {
 				guiDiscoverIconMenu.pointerDragged(x, y);
+				return;
+			}
+			if (isShowingSplitCMS() && cmsl != null) {
+				cmsl.pointerDragged(x, y);
 				return;
 			}
 		}
@@ -4152,6 +4223,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		showingSplitSetup = false;
 		showingTraceIconMenu = false;
 		showingSplitSearch = false;
+		showingSplitCMS = false;
 		resetSize();
 	}
 

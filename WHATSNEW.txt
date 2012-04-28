@@ -117,6 +117,7 @@
       a GPS location is received)
     *** Tacho ***
     - HDOP is shown in tachometer
+    - Tacho is shown as a kind of "computer-mode screen" at the same time with map when in split-screen mode
     *** Alerts ***
     - Generic alerts can now be defined in style file for visual & audible alerts
       on selected POI types. An alert is triggered whenever a POI with alert

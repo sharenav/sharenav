@@ -76,7 +76,11 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 		mp.createAndAddIcon(Locale.get("traceiconmenu.MapFeature")/*Map Features*/, "i_mapfeat", Trace.MAPFEATURES_CMD);
 		
 		mp.createAndAddIcon(Locale.get("traceiconmenu.Setup")/*Setup*/, "i_setup", Trace.SETUP_CMD);
-		mp.createAndAddIcon(Locale.get("traceiconmenu.Tacho")/*Tacho*/, "i_tacho", Trace.CMS_CMD);
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)) {
+			mp.createAndAddIcon(Locale.get("traceiconmenu.Tacho")/*Tacho*/, "i_tacho", Trace.CMS_CMD);
+		} else {
+			mp.createAndAddIcon(Locale.get("traceiconmenu.Tacho")/*Tacho*/, "i_tacho", Trace.DATASCREEN_CMD);
+		}
 		mp.createAndAddIcon(Locale.get("traceiconmenu.Overview")/*Overview/Filter Map*/, "i_overview", Trace.OVERVIEW_MAP_CMD);
 		
 		iconOnlineInfo =	mp.createAndAddIcon(Locale.get("traceiconmenu.Online")/*Online*/, "i_online", Trace.ONLINE_INFO_CMD);		
