@@ -45,7 +45,6 @@ import de.ueller.midlet.gps.importexport.Jsr211ContentHandlerInterface;
 //#endif
 
 //#if polish.api.min-samsapi
-import de.ueller.midlet.util.ImageCache;
 import de.ueller.midlet.util.SamsLcdLight;
 import de.ueller.midlet.util.SiemGameLight;
 //#endif
@@ -54,6 +53,7 @@ import de.ueller.gps.Node;
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.TrackPlayer;
+import de.ueller.midlet.util.ImageCache;
 import de.ueller.util.HelperRoutines;
 import de.ueller.util.Logger;
 
