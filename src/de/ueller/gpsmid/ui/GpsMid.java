@@ -45,6 +45,7 @@ import de.ueller.midlet.gps.importexport.Jsr211ContentHandlerInterface;
 //#endif
 
 //#if polish.api.min-samsapi
+import de.ueller.midlet.util.ImageCache;
 import de.ueller.midlet.util.SamsLcdLight;
 import de.ueller.midlet.util.SiemGameLight;
 //#endif
@@ -723,7 +724,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 			log.info("New phoneMaxMemory: " + phoneMaxMemory);
 		}
 		long freeMem = 0;
-		for (int i=0; i < 3; i++) {
+		for (int i=0; i < 4; i++) {
 			if ( phoneMaxMemory > totalMem ) {
 				// Phone with increasing heap
 				freeMem = phoneMaxMemory - totalMem + runt.freeMemory();;
@@ -745,6 +746,11 @@ public class GpsMid extends MIDlet implements CommandListener {
 						Trace.uncacheIconMenu();
 						break;
 					case 2:
+						//#debug trace
+						log.trace("Memory is low, freeing cached images");
+						ImageCache.cleanup(0);
+						break;
+					case 3:
 						//#debug trace
 						log.trace("Memory is low, need freeing " + freeMem);
 						if (trace != null) {

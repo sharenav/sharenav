@@ -12,6 +12,7 @@ import javax.microedition.lcdui.Image;
 
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
+import de.ueller.midlet.util.ImageCache;
 import de.ueller.midlet.util.ImageTools;
 import de.ueller.util.Logger;
 
@@ -640,8 +641,7 @@ public class LayoutElement {
 	public void paint(Graphics g) {
 		if (specialElementID != 0 && textIsValid) {
 			if ( (flags & FLAG_TRANSPARENT_BACKGROUND_BOX) > 0 ) {				
-				// was 0x80FFFFFF; black is 0x80000000
-				Image imgBackground = ImageTools.oneColorImage(right -left - 1, bottom - top - 1, 0x80FFFFFF);
+				Image imgBackground = ImageCache.getOneColorImage(0x80FFFFFF, right -left - 1, bottom - top - 1);
 				if (imgBackground != null) {
 					g.drawImage(imgBackground, left + 1, top + 1, Graphics.TOP | Graphics.LEFT);
 				}
@@ -664,7 +664,7 @@ public class LayoutElement {
 				g.drawRect(left, top, right-left, bottom - top);
 			}
 			if ( (flags & FLAG_TRANSPARENT_BACKGROUND_BOX) > 0 ) {				
-				Image imgBackground = ImageTools.oneColorImage(right -left - 1, bottom - top - 1, 0x80FFFFFF);
+				Image imgBackground = ImageCache.getOneColorImage(0x80FFFFFF, right -left - 1, bottom - top - 1);
 				if (imgBackground != null) {
 					g.drawImage(imgBackground, left + 1, top + 1, Graphics.TOP | Graphics.LEFT);
 				}
