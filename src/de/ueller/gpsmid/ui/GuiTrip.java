@@ -159,7 +159,7 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 					g.drawString(Locale.get("guitacho.mi"), maxX - 1, minY + yDiff - 3, Graphics.BOTTOM | Graphics.RIGHT);
 				} else if (result[0] > 1609) {
 					mLcdFont.drawFloat(g, (int)((result[0] / 160.9f) + 0.5) / 
-							10.0f, minX + 1, maxX - mMiWidth - 1, minY + yDiff - 6);
+							10.0f, 1, maxX - mMiWidth - 1, minY + yDiff - 6);
 					g.drawString(Locale.get("guitacho.mi"), maxX - 1, minY + yDiff - 3, Graphics.BOTTOM | Graphics.RIGHT);
 				} else {
 					// Using width of "km" to avoid jumping of number between m and km ranges.

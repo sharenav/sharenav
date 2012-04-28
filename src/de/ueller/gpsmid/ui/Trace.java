@@ -2171,14 +2171,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				Position pos = getCurrentPosition();
 		
 				//y = guiTrip.paintTrip(g, (cmsl.getMaxX() - cmsl.getMinX()), this.getWidth()/2, this.getWidth() / 2, this.getHeight() - 40, y, pos, getDestination(), this);
-				y = guiTrip.paintTrip(g, this.getWidth() / 4 * 3, this.getHeight(), this.getWidth(), this.getHeight(), y, pos, getDestination(), this);
+				y = guiTrip.paintTrip(g, this.getWidth() / 4, this.getHeight()/2, this.getWidth() / 2, this.getHeight(), y, pos, getDestination(), this);
 
 				guiTrip.calcSun(this);
 
 				// Draw sunrise and sunset time
 				y += 24;
-				y = guiTrip.paintSun(g, this.getWidth() / 4 * 3,
-						     this.getHeight(), this.getWidth(), this.getHeight(), y);
+				y = guiTrip.paintSun(g, this.getWidth() / 4,
+						     this.getHeight()/2, this.getWidth()/2, this.getHeight(), y);
 
 			}
 			if (guiTacho != null) {
