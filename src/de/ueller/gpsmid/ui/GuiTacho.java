@@ -175,9 +175,9 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 		        g.drawString(Locale.get("guitacho.km")/*km*/, (minX + (maxX - minX) >> 1) - 1, y - 5, Graphics.BOTTOM
 					| Graphics.RIGHT);
 			if (odo > 10) {
-				lcdFont.drawFloat(g, odo, 1, (minX + (maxX - minX) >> 1) - kmWidth - 2, y);
+				lcdFont.drawFloat(g, odo, 1, minX + ((maxX - minX) >> 1) - kmWidth - 2, y);
 			} else {
-				lcdFont.drawFloat(g, odo, 2, (minX + (maxX - minX) >> 1) - kmWidth - 2, y);
+				lcdFont.drawFloat(g, odo, 2, minX + ((maxX - minX) >> 1) - kmWidth - 2, y);
 			}
 			g.drawString(Locale.get("guitacho.kmh")/*km/h*/, maxX - 1, y - 5, Graphics.BOTTOM | Graphics.RIGHT);
 			if (avg_spd > 30) {
