@@ -1752,6 +1752,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					cmsl = new CMSLayout(minX, 0 + getHeight() / 2, maxX, getHeight());
 					guiTrip = new GuiTrip();
 					guiTrip.init();
+					guiTacho = new GuiTacho();
+					guiTacho.init();
 					showingSplitCMS = true;
 					showingTraceIconMenu = false;
 					cmsl.setOnScreenButtonSize(false);
@@ -2169,15 +2171,20 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				Position pos = getCurrentPosition();
 		
 				//y = guiTrip.paintTrip(g, (cmsl.getMaxX() - cmsl.getMinX()), this.getWidth()/2, this.getWidth() / 2, this.getHeight() - 40, y, pos, getDestination(), this);
-				y = guiTrip.paintTrip(g, this.getWidth()/4, this.getHeight() / 2, this.getWidth() / 2, this.getHeight()/4*3, y, pos, getDestination(), this);
+				y = guiTrip.paintTrip(g, this.getWidth() / 4 * 3, this.getHeight(), this.getWidth(), this.getHeight(), y, pos, getDestination(), this);
 
 				guiTrip.calcSun(this);
 
 				// Draw sunrise and sunset time
 				y += 24;
-				y = guiTrip.paintSun(g, this.getWidth() / 4,
-						     this.getHeight() / 2, this.getWidth() / 2, this.getHeight()/4*3, y);
+				y = guiTrip.paintSun(g, this.getWidth() / 4 * 3,
+						     this.getHeight(), this.getWidth(), this.getHeight(), y);
 
+			}
+			if (guiTacho != null) {
+				guiTacho.setValues(this, g);
+				guiTacho.paintTacho(g, this.getWidth() / 2,
+						    this.getHeight() / 2, this.getWidth(), this.getHeight() / 4 * 3, getCurrentPosition());
 			}
 		}
 	}

@@ -121,10 +121,10 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 				.append(HelperRoutines.formatInt2(cal.get(Calendar.MONTH) + 1))
 				.append(".")
 				.append(HelperRoutines.formatInt2(cal.get(Calendar.YEAR) % 100));
-		g.drawString(timeString.toString(), 3, y, Graphics.TOP | Graphics.LEFT);
+		g.drawString(timeString.toString(), minX + 3, y, Graphics.TOP | Graphics.LEFT);
 		
 		g.drawString("HDOP: " + pos.hdop
-			     + " " + parent.solutionStr, (maxX >> 1) + 3, y, Graphics.TOP
+			     + " " + parent.solutionStr, minX + ((maxX - minX) >> 1) + 3, y, Graphics.TOP
 				| Graphics.LEFT);
 		
 		timeString.setLength(0);
@@ -136,13 +136,13 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 						HelperRoutines.formatInt2(cal.get(Calendar.MINUTE)))
 				.append(":").append(
 						HelperRoutines.formatInt2(cal.get(Calendar.SECOND)));
-		g.drawString(timeString.toString(), 3, y, Graphics.TOP | Graphics.LEFT);
+		g.drawString(timeString.toString(), minX + 3, y, Graphics.TOP | Graphics.LEFT);
 		
-		g.drawString("PDOP: " + pos.pdop, (maxX >> 1) + 3, y, Graphics.TOP
+		g.drawString("PDOP: " + pos.pdop, minX + ((maxX - minX) >> 1) + 3, y, Graphics.TOP
 				| Graphics.LEFT);
 
 		y += fHeight;
-		g.drawLine(maxX >> 1, minY, maxX >> 1, y);
+		g.drawLine(minX + (maxX - minX) >> 1, minY, minX + (maxX - minX) >> 1, y);
 		g.drawLine(minX, y, maxX, y);
 		y += 64;
 		lcdFont.setFontSize(48);
@@ -169,15 +169,15 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 		g.drawLine(minX, y, maxX, y);
 		
 		lcdFont.setFontSize(18);
-		g.drawLine(maxX >> 1, y, maxX >> 1, y + 32);
+		g.drawLine(minX + (maxX - minX) >> 1, y, minX + (maxX - minX) >> 1, y + 32);
 		y += 28;
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
-		        g.drawString(Locale.get("guitacho.km")/*km*/, (maxX >> 1) - 1, y - 5, Graphics.BOTTOM
+		        g.drawString(Locale.get("guitacho.km")/*km*/, (minX + (maxX - minX) >> 1) - 1, y - 5, Graphics.BOTTOM
 					| Graphics.RIGHT);
 			if (odo > 10) {
-				lcdFont.drawFloat(g, odo, 1, (maxX >> 1) - kmWidth - 2, y);
+				lcdFont.drawFloat(g, odo, 1, (minX + (maxX - minX) >> 1) - kmWidth - 2, y);
 			} else {
-				lcdFont.drawFloat(g, odo, 2, (maxX >> 1) - kmWidth - 2, y);
+				lcdFont.drawFloat(g, odo, 2, (minX + (maxX - minX) >> 1) - kmWidth - 2, y);
 			}
 			g.drawString(Locale.get("guitacho.kmh")/*km/h*/, maxX - 1, y - 5, Graphics.BOTTOM | Graphics.RIGHT);
 			if (avg_spd > 30) {
@@ -186,12 +186,12 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 				lcdFont.drawFloat(g, avg_spd, 1, maxX - kmhWidth - 2, y);
 			}
 		} else {
-		        g.drawString(Locale.get("guitacho.mi")/*mi*/, (maxX >> 1) - 1, y - 5, Graphics.BOTTOM
+		        g.drawString(Locale.get("guitacho.mi")/*mi*/, minX + ((maxX - minX) >> 1) - 1, y - 5, Graphics.BOTTOM
 					| Graphics.RIGHT);
 			if (odo > 10) {
-				lcdFont.drawFloat(g, (odo / 1.609344f), 1, (maxX >> 1) - miWidth - 2, y);
+				lcdFont.drawFloat(g, (odo / 1.609344f), 1, minX + ((maxX - minX) >> 1) - miWidth - 2, y);
 			} else {
-				lcdFont.drawFloat(g, (odo / 1.609344f), 2, (maxX >> 1) - miWidth - 2, y);
+				lcdFont.drawFloat(g, (odo / 1.609344f), 2, minX + ((maxX - minX) >> 1) - miWidth - 2, y);
 			}
 			g.drawString(Locale.get("guitacho.mph")/*mph*/, maxX - 1, y - 5, Graphics.BOTTOM | Graphics.RIGHT);
 			if (avg_spd > 30) {
@@ -201,11 +201,11 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 			}
 		}
 		g.drawLine(minX, y, maxX, y);
-		g.drawLine(maxX >> 1, y, maxX >> 1, y + 32);
+		g.drawLine(minX + (maxX - minX) >> 1, y, minX + (maxX - minX) >> 1, y + 32);
 		y += 28;
 		
-		g.drawString(Locale.get("guitacho.m")/*m*/, (maxX >> 1) - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
-		lcdFont.drawInt(g, (int) pos.altitude, (maxX >> 1) - mWidth - 2, y);
+		g.drawString(Locale.get("guitacho.m")/*m*/, minX + ((maxX - minX) >> 1) - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+		lcdFont.drawInt(g, (int) pos.altitude, minX + ((maxX - minX) >> 1) - mWidth - 2, y);
 		
 		g.drawString(Locale.get("guitacho.mmin")/*m/min*/, maxX - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
 		lcdFont.drawFloat(g, alt_delta * 60, 1, maxX - mminWidth - 2, y);
@@ -221,7 +221,7 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 						HelperRoutines.formatInt2((int)(duration / (1000 * 60)) % 60))
 				.append(":").append(
 						HelperRoutines.formatInt2((int)(duration / 1000) % 60));
-		g.drawString(timeString.toString(), (maxX >> 1) - 1, y + 3,
+		g.drawString(timeString.toString(), minX + ((maxX - minX) >> 1) - 1, y + 3,
 				Graphics.BOTTOM | Graphics.RIGHT);
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
 			g.drawString(max_spd + " " + Locale.get("guitacho.kmh")/*km/h*/, maxX - 1, y + 3, Graphics.BOTTOM
@@ -233,6 +233,7 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 	}
 
 	protected void setValues(Trace parent, Graphics g) {
+		this.parent = parent;
 		if (kmhWidth < 0) {
 			/**
 			 * Cache the values of the width of these Strings
