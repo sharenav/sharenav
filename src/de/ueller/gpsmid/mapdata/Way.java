@@ -568,6 +568,9 @@ public class Way extends Entity {
 								pc.conWayBearingHasName[pc.conWayBearingsCount] = (nameIdx >= 0);
 								pc.conWayBearingWayType[pc.conWayBearingsCount] = this.type;
 								int idxC = path[i + d];
+								if (idxC < 0) {
+									idxC += 65536;
+								}
 								/* if the route node and the next node on the way are very close together, use one node later on the way for the bearing calculation:
 								 * this especially prevents issues with almost identical coordinates from the start point to the next node on the way like
 								 * http://www.openstreetmap.org/browse/node/429201917 and http://www.openstreetmap.org/browse/node/21042290
@@ -589,6 +592,9 @@ public class Way extends Entity {
 										iAfterNext >= 0)
 								{
 									idxC = path [iAfterNext];
+									if (idxC < 0) {
+										idxC += 65536;
+									}
 									//System.out.println("EXAMINE AFTER NEXT");
 								}
 								
@@ -662,6 +668,9 @@ public class Way extends Entity {
 				direction = -1;
 			}
 			int idx1 = path[from];
+			if (idx1 < 0) {
+				idx1 += 65536;
+			}
 			int idx2;
 
 			// sum up the distance of the segments between searchCon1 and searchCon2
@@ -673,6 +682,9 @@ public class Way extends Entity {
 					}
 				}
 				idx2 = path[i+1];
+				if (idx2 < 0) {
+					idx2 += 65536;
+				}
 				float dist = ProjMath.getDistance(
 						(t.centerLat + t.nodeLat[idx1] * MoreMath.FIXPT_MULT_INV),
 						(t.centerLon + t.nodeLon[idx1] * MoreMath.FIXPT_MULT_INV),
@@ -759,6 +771,9 @@ public class Way extends Entity {
 					containsCon2At - direction < path.length
 				) {
 					int idxC = path[containsCon2At - direction];
+					if (idxC < 0) {
+						idxC += 65536;
+					}
 					/* if the route node and the previous node on the way are very close together, use one node before on the way for the bearing calculation:
 					 * this especially prevents issues with almost identical coordinates from the previous node on the way and the route node
 					 * (as we can't distinguish them exactly enough with fix point coordinates)
@@ -779,6 +794,9 @@ public class Way extends Entity {
 							iBeforePrevious < path.length
 					) {
 						idxC = path [iBeforePrevious];
+						if (idxC < 0) {
+							idxC += 65536;
+						}
 					}
 					pc.conWayEndBearing = MoreMath.bearing_start(
 						(t.centerLat + t.nodeLat[idxC] * MoreMath.FIXPT_MULT_INV),

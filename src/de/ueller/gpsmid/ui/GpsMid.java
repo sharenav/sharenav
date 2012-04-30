@@ -53,6 +53,7 @@ import de.ueller.gps.Node;
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.TrackPlayer;
+import de.ueller.midlet.util.ImageCache;
 import de.ueller.util.HelperRoutines;
 import de.ueller.util.Logger;
 
@@ -210,6 +211,11 @@ public class GpsMid extends MIDlet implements CommandListener {
 				e.printStackTrace();
 				errorMsg = Locale.get("gpsmid.FailToLoadBasicConf")/*Failed to load basic configuration! Check your map data source: */
 					+ e.getMessage();
+			}
+			if (!Legend.isValid) {
+				if (errorMsg == null) {
+					errorMsg = Locale.get("gpsmid.FailToLoadBasicConf");
+				} 
 //#if polish.android
 				errorMsg += Locale.get("gpsmid.ForAndroidInstall")/*  - For Android, you need to manually install the map (e.g. unzip the J2ME map jar bundle with same settings & version as the .apk) on the SD card or use a special bundle script in tools/ for now*/;
 //#endif
@@ -248,19 +254,23 @@ public class GpsMid extends MIDlet implements CommandListener {
 			}
 			//#endif
 		}
-		// if our stored state is running, don't show splash (mainly significant for Android)
-		if (initDone || Configuration.getCfgBitState(Configuration.CFGBIT_RUNNING)
-		    || (Configuration.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN) && Legend.isValid)) {
-			showMapScreen();
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_RUNNING)) {
-				// returning from pause or restart
-				// size may have changed, also workaround for microemulator refresh issue
-				trace.resetSize();
-				// restart location provider (if enabled) after pause
-				trace.resumeAfterPause();
+		if (Legend.isValid) {
+			// if our stored state is running, don't show splash (mainly significant for Android)
+			if (initDone || Configuration.getCfgBitState(Configuration.CFGBIT_RUNNING)
+			    || (Configuration.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN) && Legend.isValid)) {
+				showMapScreen();
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_RUNNING)) {
+					// returning from pause or restart
+					// size may have changed, also workaround for microemulator refresh issue
+					trace.resetSize();
+					// restart location provider (if enabled) after pause
+					trace.resumeAfterPause();
+				}
+			} else {
+				new Splash(this, initDone);
 			}
 		} else {
-			new Splash(this, initDone);
+			Trace.getInstance().commandAction(Trace.SETUP_CMD);
 		}
 		// RouteNodeTools.initRecordStore();
 		startBackLightTimer();
@@ -714,7 +724,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 			log.info("New phoneMaxMemory: " + phoneMaxMemory);
 		}
 		long freeMem = 0;
-		for (int i=0; i < 3; i++) {
+		for (int i=0; i < 4; i++) {
 			if ( phoneMaxMemory > totalMem ) {
 				// Phone with increasing heap
 				freeMem = phoneMaxMemory - totalMem + runt.freeMemory();;
@@ -736,6 +746,11 @@ public class GpsMid extends MIDlet implements CommandListener {
 						Trace.uncacheIconMenu();
 						break;
 					case 2:
+						//#debug trace
+						log.trace("Memory is low, freeing cached images");
+						ImageCache.cleanup(0);
+						break;
+					case 3:
 						//#debug trace
 						log.trace("Memory is low, need freeing " + freeMem);
 						if (trace != null) {

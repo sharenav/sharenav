@@ -47,10 +47,11 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 	{ "N30", "N40", "N50", "N60", "N70", "N80", "N100", "N120", "Nvaiht", "Tievalot", "Tievalotpois", "2kaist", "1kaist", "aita", "aitapois", "b", "bvas", "kam", "N %f", "b %s", "tie %s", "tieoik", "tievas" };
 	//#else
 	private final static String[] predefs = {
+	    "30", "40", "50", "60", "70", "80", "90", "100", "110", "120",
 		"City limit",
 		"Speed %f",
 		"Speed end",
-		"House nr.",
+		"House nr. %f",
 		"Bus stop",
 		"Agr 1 asph",
 		"Agr %f gravel",
@@ -75,7 +76,11 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 		mp.createAndAddIcon(Locale.get("traceiconmenu.MapFeature")/*Map Features*/, "i_mapfeat", Trace.MAPFEATURES_CMD);
 		
 		mp.createAndAddIcon(Locale.get("traceiconmenu.Setup")/*Setup*/, "i_setup", Trace.SETUP_CMD);
-		mp.createAndAddIcon(Locale.get("traceiconmenu.Tacho")/*Tacho*/, "i_tacho", Trace.DATASCREEN_CMD);
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)) {
+			mp.createAndAddIcon(Locale.get("traceiconmenu.Tacho")/*Tacho*/, "i_tacho", Trace.CMS_CMD);
+		} else {
+			mp.createAndAddIcon(Locale.get("traceiconmenu.Tacho")/*Tacho*/, "i_tacho", Trace.DATASCREEN_CMD);
+		}
 		mp.createAndAddIcon(Locale.get("traceiconmenu.Overview")/*Overview/Filter Map*/, "i_overview", Trace.OVERVIEW_MAP_CMD);
 		
 		iconOnlineInfo =	mp.createAndAddIcon(Locale.get("traceiconmenu.Online")/*Online*/, "i_online", Trace.ONLINE_INFO_CMD);		
@@ -100,7 +105,6 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 		mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
 
 		//#if not polish.api.online
-		iconOnlineInfo.makeImageGreyed();
 		iconAddPOI.makeImageGreyed();
 		iconEditWay.makeImageGreyed();
 		iconAddAddr.makeImageGreyed();
@@ -212,9 +216,16 @@ true ?
 		mp = createAndAddMenuPage(Locale.get("traceiconmenu.HelpPage")/* Help */, 3, 3);
 
 		mp.createAndAddIcon(Locale.get("generic.About")/*About*/, "i_about", Trace.ABOUT_CMD);
-		iconHelpOnlineTouch = mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Touch")/*Touch*/, "i_online", Trace.HELP_ONLINE_TOUCH_CMD);
-		iconHelpOnlineWiki = mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Wiki")/*Wiki*/, "i_online", Trace.HELP_ONLINE_WIKI_CMD);
+		if (hasPointerEvents()) {
+			mp.createAndAddIcon(Locale.get("trace.touchhelp")/*Touchscreen functions*/, "is_gui", Trace.TOUCH_HELP_CMD);
+		} else {
+			mp.createAndAddIcon(Locale.get("trace.displayhelp")/**/, "is_gui", Trace.TOUCH_HELP_CMD);
+
+		}
 		mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Keys")/*Keys*/, "is_keys", Trace.KEYS_HELP_CMD);
+		if (hasPointerEvents()) {
+			iconHelpOnlineTouch = mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Touch")/*Touch*/, "i_online", Trace.HELP_ONLINE_TOUCH_CMD);
+		}		iconHelpOnlineWiki = mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Wiki")/*Wiki*/, "i_online", Trace.HELP_ONLINE_WIKI_CMD);
 		mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
 	}
 

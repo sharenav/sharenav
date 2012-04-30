@@ -22,11 +22,22 @@
     - In routing choice, added buttons for selection of route mode - no need to go through menu
     - More icon sizes are included, you can now choose from "useIcons = small|true|big|large|huge" in the .properties file.
       useIcons=large and useIcons=huge make sense for devices with high resolution displays
-    - Links to online help for touchscreen and GpsMid wiki in Online menu
     - Help tab added to icon menu
+    - Links to online help for touchscreen and GpsMid wiki in Online menu
+    - Display & touch screen helper in help menu
     - Favorites can be optionally shown as routing targets in route icon menu
     - Long tap on map now opens a context menu which now has nearby POI search in addition to the
-      previously-existing online functions
+      previously-existing online functions; also has options to route to and set as destination.
+      Long tap on a clickable marker POI allows for opening POI url, phone or editing POI tags.
+      On keyboard-only phones, the content menu is accessible as the Here&Online menu (formerly
+      names as Online).
+    - Clickable markers for POIs: URLs on map are now optionally touchable links which open the URL in a web browser,
+      and with a long tap open a context menu (Here&Online). On keyboard-only phones, the same is achieved by positioning
+      the cursor marker inside a marker area and choosing Here&Online.
+    - Optional split-screen mode, where map is in upper half of screen and icon menu is in lower half of screen.
+      Useful for e.g. one-touch waypoint recording, routing etc. when the device screen size allows for it.
+      Keyboard commands are current not handled for split-screen mode, so it's practically useful currently only
+      for touch screen device users.
     *** Map display ***
     - The map screen now updated more often during panning when dragging the touch screen.
       (not only after the ImageCollector class has finished drawing the map but every 1/3 s)
@@ -99,8 +110,14 @@
       will be user-settable. When a predefined waypoint icon is pressed, the named
       waypoint (possibly with extra info asked from user) will be saved as a waypoint
       and in the track if track is recording.
+    *** Digital compass ***
+    - Support for JSR179 Orientation class compass (e.g. Nokia C6-01)
+    - Auto-switch between compass & movement now works even when previous setting was movement
+    - Add option for rapid rotation (without this, rotation by compass happens whenever
+      a GPS location is received)
     *** Tacho ***
     - HDOP is shown in tachometer
+    - Tacho is shown as a kind of "computer-mode screen" at the same time with map when in split-screen mode
     *** Alerts ***
     - Generic alerts can now be defined in style file for visual & audible alerts
       on selected POI types. An alert is triggered whenever a POI with alert

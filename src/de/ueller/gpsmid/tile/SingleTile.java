@@ -372,13 +372,13 @@ public class SingleTile extends Tile implements QueueableTile {
 		boolean alert = Legend.isNodeAlert(t);
 		//#if polish.api.finland
 		boolean cameraAlert = Legend.isCamera(t);
-		if (cameraAlert) {
+		if (cameraAlert && Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDCAMERA_ALERT)) {
 			// FIXME: get and pass coordinates to keep track of distance
 			// to camera
 			pc.trace.setCameraAlert(t);
 		}
 		//#endif
-		if (alert) {
+		if (alert && Configuration.getCfgBitState(Configuration.CFGBIT_NODEALERT_VISUAL)) {
 			// FIXME: get and pass coordinates to keep track of distance
 			// to alert POI
 			pc.trace.setNodeAlert(t);
@@ -452,8 +452,42 @@ public class SingleTile extends Tile implements QueueableTile {
 		
 		if (img != null ) {
 			//FIXME make optional if alert by growing image on map happens
-			if (alert) {
+			//#if polish.api.finland
+			if (cameraAlert && Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDCAMERA_ALERT)) {
 				img = ImageTools.scaleImage(img, img.getWidth() * 2, img.getHeight() * 2);
+			}
+			//#endif
+			if (alert && Configuration.getCfgBitState(Configuration.CFGBIT_NODEALERT_VISUAL)) {
+				img = ImageTools.scaleImage(img, img.getWidth() * 2, img.getHeight() * 2);
+			}
+			// && Legend.isNodeClickable(t)) would limit to only those specified in style file
+			// && pc.trace.tl.bigOnScreenButtons would limit activity to only when single-clicked
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS)) {
+				String url = null;
+				if (Legend.enableUrlTags && urlIdx[i] != -1) {
+						url = pc.trace.getUrl(urlIdx[i]);
+				}
+				String phone = null;
+				if (Legend.enablePhoneTags && phoneIdx[i] != -1) {
+						phone = pc.trace.getUrl(phoneIdx[i]);
+				}
+				int nodeID = -1;
+				//#if polish.api.bigsearch
+				//#if polish.api.osm-editing
+				if (Legend.enableEdits) {
+					nodeID = osmID[i];
+				}
+				//#endif
+				//#endif
+				if (url != null || Legend.isNodeClickable(t)) {
+					int dia = Configuration.getTouchMarkerDiameter();
+					// FIXME create a specific color (semi-transparent would be good) for this
+					pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE]);
+					pc.g.drawArc(pc.swapLineP.x - dia / 2, pc.swapLineP.y -
+						     (Legend.isNodeImageCentered(t) ? dia / 2 : dia / 2 + img.getHeight() / 2 ), dia, dia, 0, 360);
+					//System.out.println("url: " + url + " phone: " + phone);
+					pc.trace.addClickableMarker(pc.swapLineP.x, pc.swapLineP.y, url, phone, nodeID);
+				}
 			}
 			// FIXME check and cleanup after the functionality is in good enough condition
 			// logger.debug("draw img " + img);

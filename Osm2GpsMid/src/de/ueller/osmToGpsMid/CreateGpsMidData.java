@@ -80,6 +80,9 @@ public class CreateGpsMidData implements FilenameFilter {
 	// public final static byte LEGEND_FLAG_NON_ROUTABLE = 0x20; routable flag has been  moved to Way
 	public final static byte LEGEND_FLAG_ALERT = 0x20;
 	public final static byte LEGEND_FLAG_MIN_DESCRIPTION_SCALE = 0x40;
+	public final static int	 LEGEND_FLAG_ADDITIONALFLAG = 0x80;
+
+	public final static byte LEGEND_FLAG2_CLICKABLE = 0x01;
 
 	public final static byte ROUTE_FLAG_MOTORWAY = 0x01;
 	public final static byte ROUTE_FLAG_MOTORWAY_LINK = 0x02;
@@ -356,6 +359,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			for (EntityDescription entity : config.getPOIDescs()) {
 				POIdescription poi = (POIdescription) entity; 
 				byte flags = 0;
+				byte flags2 = 0;
 				if (poi.image != null && !poi.image.equals("")) {
 					flags |= LEGEND_FLAG_IMAGE;
 				}
@@ -374,6 +378,9 @@ public class CreateGpsMidData implements FilenameFilter {
 				if (poi.alert) {
 					flags |= LEGEND_FLAG_ALERT;
 				}
+				if (poi.clickable) {
+					flags2 |= LEGEND_FLAG2_CLICKABLE;
+				}				
 				// polish.api.bigstyles
 				if (config.bigStyles) {
 					dsi.writeShort(poi.typeNum);
@@ -381,7 +388,13 @@ public class CreateGpsMidData implements FilenameFilter {
 				} else {
 					dsi.writeByte(poi.typeNum);
 				}
+				if (flags2 != 0) {
+					flags |= LEGEND_FLAG_ADDITIONALFLAG;
+				}
 				dsi.writeByte(flags);
+				if (flags2 != 0) {
+					dsi.writeByte(flags2);
+				}
 				dsi.writeUTF(_(poi.description));
 				dsi.writeBoolean(poi.imageCenteredOnNode);
 				dsi.writeInt(poi.minEntityScale);
@@ -440,13 +453,16 @@ public class CreateGpsMidData implements FilenameFilter {
 			for (EntityDescription entity : Configuration.getConfiguration().getWayDescs()) {
 				WayDescription way = (WayDescription) entity;
 				byte flags = 0;
+				byte flags2 = 0;
 				if (!way.hideable) {
 					flags |= LEGEND_FLAG_NON_HIDEABLE;
 				}				
-				// FIXME requires map format change, one more byte
-				//if (way.alert) {
-				//	flags |= LEGEND_FLAG4_ALERT;
-				//}				
+				if (way.alert) {
+					flags |= LEGEND_FLAG_ALERT;
+				}				
+				if (way.clickable) {
+					flags2 |= LEGEND_FLAG2_CLICKABLE;
+				}				
 				if (way.image != null && !way.image.equals("")) {
 					flags |= LEGEND_FLAG_IMAGE;
 				}
@@ -465,7 +481,13 @@ public class CreateGpsMidData implements FilenameFilter {
 				} else {
 					dsi.writeByte(way.typeNum);
 				}
+				if (flags2 != 0) {
+					flags |= LEGEND_FLAG_ADDITIONALFLAG;
+				}
 				dsi.writeByte(flags);
+				if (flags2 != 0) {
+					dsi.writeByte(flags2);
+				}
 				byte routeFlags = 0;
 				if (way.value.equalsIgnoreCase("motorway")) {
 					routeFlags |= ROUTE_FLAG_MOTORWAY;

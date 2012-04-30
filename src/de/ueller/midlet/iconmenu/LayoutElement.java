@@ -12,6 +12,7 @@ import javax.microedition.lcdui.Image;
 
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
+import de.ueller.midlet.util.ImageCache;
 import de.ueller.midlet.util.ImageTools;
 import de.ueller.util.Logger;
 
@@ -86,6 +87,7 @@ public class LayoutElement {
 	protected boolean textIsValid = false;
 	protected boolean oldTextIsValid = false;
 	protected boolean isOnScreen = false;
+	protected boolean touched = false;
 	
 	/** make the element width a percentage of the LayoutManager width or font height*/
 	private int widthPercent = 100;
@@ -157,6 +159,14 @@ public class LayoutElement {
 	protected void calcSizeAndPosition() {
 		calcSize();
 		calcPosition();
+	}
+
+	public void setTouched(boolean b) {
+		this.touched = b;
+	}
+
+	public boolean isTouched() {
+		return this.touched;
 	}
 
 	protected void calcSize() {
@@ -630,6 +640,12 @@ public class LayoutElement {
 	
 	public void paint(Graphics g) {
 		if (specialElementID != 0 && textIsValid) {
+			if ( (flags & FLAG_TRANSPARENT_BACKGROUND_BOX) > 0 ) {				
+				Image imgBackground = ImageCache.getOneColorImage(0x80FFFFFF, right -left - 1, bottom - top - 1);
+				if (imgBackground != null) {
+					g.drawImage(imgBackground, left + 1, top + 1, Graphics.TOP | Graphics.LEFT);
+				}
+			}
 			g.setFont(font);
 			lm.drawSpecialElement(g, specialElementID, text, left, top);
 			isOnScreen = true;
@@ -648,7 +664,7 @@ public class LayoutElement {
 				g.drawRect(left, top, right-left, bottom - top);
 			}
 			if ( (flags & FLAG_TRANSPARENT_BACKGROUND_BOX) > 0 ) {				
-				Image imgBackground = ImageTools.oneColorImage(right -left - 1, bottom - top - 1, 0x80FFFFFF);
+				Image imgBackground = ImageCache.getOneColorImage(0x80FFFFFF, right -left - 1, bottom - top - 1);
 				if (imgBackground != null) {
 					g.drawImage(imgBackground, left + 1, top + 1, Graphics.TOP | Graphics.LEFT);
 				}
@@ -661,7 +677,7 @@ public class LayoutElement {
 				} else {
 					g.drawImage(image, left, top, Graphics.TOP|Graphics.LEFT);
 				}
-				if (imp.touchedElement == this) {
+				if (this.touched || imp.touchedElement == this) {
 					g.drawImage(imp.hlImage, left - 1, top - 1, Graphics.TOP|Graphics.LEFT);					
 				}
 			}

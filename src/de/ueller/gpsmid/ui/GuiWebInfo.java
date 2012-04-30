@@ -14,6 +14,7 @@ import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.PaintContext;
 import de.ueller.gpsmid.data.Position;
+import de.ueller.gpsmid.data.RoutePositionMark;
 import de.ueller.gpsmid.mapdata.Way;
 import de.ueller.util.Logger;
 import de.ueller.util.MoreMath;
@@ -29,6 +30,9 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 	private final Command SELECT_CMD = new Command(Locale.get("guiwebinfo.Select")/*Select*/, Command.OK, 2);
 	private GpsMidDisplayable mParent;
 	private Position mPos;
+	private String mPoiUrl;
+	private String mPoiPhone;
+	private int mNodeID;
 	private Way actualWay;
 	private Trace trace;
 
@@ -40,14 +44,22 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 //#endif
 
 	// if longtap is true, instantiate as context menu which also has nearby POI search
-	public GuiWebInfo(GpsMidDisplayable parent, Position pos, PaintContext pc, boolean longtap) {
+	public GuiWebInfo(GpsMidDisplayable parent, Position pos, PaintContext pc, boolean longtap, String poiUrl, String poiPhone,
+		int nodeID) {
 		super(Locale.get("guiwebinfo.ContactWebOrPhone")/*Contact by web or phone*/, List.IMPLICIT);
-		actualWay = pc.actualWay;
+		actualWay = pc.trace.actualWay;
 		trace = pc.trace;
+		mPoiUrl = poiUrl;
+		mPoiPhone = poiPhone;
 		mParent = parent;
 		mPos = pos;
+		mNodeID = nodeID;
+		if (longtap) {
+			this.append(Locale.get("guisearch.nearestpois")/*Nearest POIs*/, null);
+			this.append(Locale.get("guiwaypoint.AsDestination")/*As destination*/, null);
+			this.append(Locale.get("trace.CalculateRoute")/*Calculate route*/, null);
+		}
 		//#if polish.api.online
-		this.append(Locale.get("guisearch.nearestpois")/*Nearest POIs*/, null);
 		//this.append("Wikipedia (Web)", null);
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WIKIPEDIA_RSS)) {
 			this.append(Locale.get("guiwebinfo.WikipediaRSS")/*Wikipedia (RSS)*/, null);
@@ -67,11 +79,26 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 //#endif
 		//#endif
 		if (Legend.enableUrlTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITE)) {
-			this.append(Locale.get("guiwebinfo.Website")/*Website*/, null);
+			//System.out.println("actualWay: " + actualWay + " urlIdx: " + actualWay.urlIdx + " url: " + trace.getUrl(actualWay.urlIdx));
+			String url;
+			if (mPoiUrl != null || ((actualWay != null) && ((url = trace.getUrl(actualWay.urlIdx)) != null))) {
+				this.append(Locale.get("guiwebinfo.Website")/*Website*/, null);
+			}
 		}
 		if (Legend.enablePhoneTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_PHONE)) {
-			this.append(Locale.get("guiwebinfo.Phone")/*Phone*/, null);
+			//System.out.println("actualWay: " + actualWay + " phoneIdx: " + actualWay.phoneIdx + " phone: " + trace.getUrl(actualWay.phoneIdx));
+			String phone;
+			if (mPoiPhone != null || ((actualWay != null) && ((phone = trace.getUrl(actualWay.phoneIdx)) != null))) {
+				this.append(Locale.get("guiwebinfo.Phone")/*Phone*/, null);
+			}
 		}
+		//#if polish.api.bigsearch
+		//#if polish.api.osm-editing
+		if (mNodeID != -1 && Legend.enableEdits) {
+			this.append(Locale.get("guiwebinfo.EditPOI")/*Edit POI*/, null);
+		}		
+		//#endif 
+		//#endif 
 		// FIXME add "search for name on the web" for POI names once the code to select POIS is in place
 		this.addCommand(BACK_CMD);
 		this.setCommandListener(this);
@@ -96,6 +123,25 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 				} catch (Exception e) {
 					mLogger.exception("Could not open GuiSearch for nearby POI search", e);
 				}
+			} else if (site.equals(Locale.get("guiwaypoint.AsDestination")/*As destination*/)) {
+				RoutePositionMark pm1 = new RoutePositionMark(mPos.latitude, mPos.longitude);
+				trace.setDestination(pm1);
+				mParent.show();
+			} else if (site.equals(Locale.get("trace.CalculateRoute")/*Calculate route*/)) {
+				RoutePositionMark pm1 = new RoutePositionMark(mPos.latitude, mPos.longitude);
+				trace.setDestination(pm1);
+				trace.commandAction(Trace.ROUTING_START_CMD);
+				mParent.show();
+			//#if polish.api.bigsearch
+			//#if polish.api.osm-editing
+			} else if (site.equalsIgnoreCase(Locale.get("guiwebinfo.EditPOI")/*Edit POI*/)) {
+					//System.out.println("Calling GuiOsmPoiDisplay: nodeID " + mNodeID);
+					GuiOsmPoiDisplay guiNode = new GuiOsmPoiDisplay((int) mNodeID, null,
+											mPos.latitude, mPos.longitude, mParent);
+					guiNode.show();
+					guiNode.refresh();
+			//#endif 
+			//#endif 
 			} else {
 				String url = getUrlForSite(site);
 				openUrl(url);
@@ -193,14 +239,17 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 				+ ((mPos.longitude < 0)?"_W_":"_E_");
 		}
 		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.Website")/*Website*/)) {
-			// FIXME way urls are quite rare, should add support for POI urls
-			if ((actualWay != null)) {
+			if (mPoiUrl != null) {
+				url = mPoiUrl;
+			} else if (actualWay != null) {
 				url = trace.getUrl(actualWay.urlIdx);
 			}
 		}
 		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.Phone")/*Phone*/)) {
 			String phone;
-			if ((actualWay != null) && ((phone = trace.getUrl(actualWay.phoneIdx)) != null)) {
+			if (mPoiPhone != null) {
+				url = "tel:" + mPoiPhone;
+			} else if ((actualWay != null) && ((phone = trace.getUrl(actualWay.phoneIdx)) != null)) {
 				url = "tel:" + phone;
 			}
 		}

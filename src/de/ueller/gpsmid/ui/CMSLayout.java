@@ -1,5 +1,7 @@
 /*
  * GpsMid - Copyright (c) 2009 sk750 at users dot sourceforge dot net
+ * GpsMid - Copyright (c) 2012 Jyrki Kuoppala jkpj at users dot sourceforge dot net
+ * derived from TraceLayout.java
  * See COPYING
  */
 
@@ -17,8 +19,7 @@ import de.ueller.util.ProjMath;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
-
-public class TraceLayout extends LayoutManager {
+public class CMSLayout extends LayoutManager {
 	public static final int TITLEBAR = 0;
 	public static final int SCALEBAR = 1;
 	public static final int POINT_OF_COMPASS = 2;
@@ -66,7 +67,7 @@ public class TraceLayout extends LayoutManager {
 	private String sOldSpeed = "";
 	
 	
-	public TraceLayout(int minX, int minY, int maxX, int maxY) {
+	public CMSLayout(int minX, int minY, int maxX, int maxY) {
 		super(minX, minY, maxX, maxY, Legend.COLORS[Legend.COLOR_MAP_TOUCHED_BUTTON_BACKGROUND]);
 		
 		for (int i = 0; i < ELE_COUNT; i++) {
@@ -202,6 +203,7 @@ public class TraceLayout extends LayoutManager {
 		);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_SPEED_BACKGROUND]);
 		e.setColor(Legend.COLORS[Legend.COLOR_SPEED_TEXT]);
+		e.setAdditionalOffsX(40);
 		e.setVRelative(ele[ROUTE_DISTANCE]);
 		
 		e = ele[CURRENT_TIME]; addElement(e,
@@ -379,7 +381,7 @@ public class TraceLayout extends LayoutManager {
 	}	
 	
 	public void setOnScreenButtonSize(boolean big) {
-		TraceLayout.bigOnScreenButtons = big;
+		CMSLayout.bigOnScreenButtons = big;
 		setOnScreenButtonSize();
 	}
 	
@@ -387,15 +389,9 @@ public class TraceLayout extends LayoutManager {
 		float factor;
 		int fontFlag;
 		int fontFlag2;
-		if (TraceLayout.bigOnScreenButtons) {
-			factor = 1.5f;
-			fontFlag = LayoutElement.FLAG_FONT_LARGE;
-			fontFlag2 = fontFlag | LayoutElement.FLAG_FONT_BOLD;
-		} else {
-			factor = 1;
-			fontFlag = LayoutElement.FLAG_FONT_MEDIUM;
-			fontFlag2 = fontFlag;
-		}
+		factor = 1;
+		fontFlag = LayoutElement.FLAG_FONT_MEDIUM;
+		fontFlag2 = fontFlag;
 		
 		LayoutElement e = ele[ZOOM_IN];
 		e.setWidthPercent((int) (170 * factor));
@@ -506,6 +502,10 @@ public class TraceLayout extends LayoutManager {
 		}
 	}
 	
+	public void paint(Graphics g) {
+		super.paint(g);
+	}
+
 	public void calcScaleBarWidth(PaintContext pc) {
 		// Avoid exception after route calculation
 		if ( pc.getP() == null )
@@ -572,7 +572,18 @@ public class TraceLayout extends LayoutManager {
 				top + speedingSignWidth / 2 - (char0Height / 2),
 				Graphics.TOP | Graphics.HCENTER);
 	}
-	
+	public void pointerPressed(int x, int y) {
+	}	
+	public void pointerReleased(int x, int y) {
+	}	
+	public void pointerDragged(int x, int y) {
+	}	
+	public void sizeChanged(int x, int y) {
+	}	
+	public int getMaxX() {
+		return maxX;
+	}	
+	public int getMinX() {
+		return minX;
+	}	
 }
-
- 	  	 

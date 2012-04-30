@@ -14,6 +14,8 @@ public class WayDescription {
 	public boolean isArea;
 	public byte wayWidth;
 	public boolean hideable;
+	public boolean	alert;
+	public boolean	clickable;
 	public byte overviewMode;
 	public byte routeFlags;
 	public Image	image;

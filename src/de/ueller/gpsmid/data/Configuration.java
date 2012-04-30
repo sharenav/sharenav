@@ -296,7 +296,7 @@ public class Configuration {
 	public final static short CFGBIT_SUPPRESS_ROUTE_WARNING = 114;
 	/** bit 115: Flag whether to simplify map drawing when busy */
 	public final static short CFGBIT_SIMPLIFY_MAP_WHEN_BUSY = 115;
-	/** bit 116: Flag whether to use movement for direction when moving (compass otherwise) */
+	/** bit 116: Flag whether to use compass and movement autoswitch for direction when moving (only compass or movement otherwise) */
 	public final static short CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION = 116;
 	/** bit 117: backlight method ANDROID_WINDOW_MANAGER */
 	public final static short CFGBIT_BACKLIGHT_ANDROID_WINDOW_MANAGER = 117;
@@ -324,6 +324,17 @@ public class Configuration {
 	public final static short CFGBIT_NODEALERT_SND = 127;
 	// bit 128: Visual alert for alert node nearby
 	public final static short CFGBIT_NODEALERT_VISUAL = 128;
+	// bit 129: Enable clickable map objects
+	public final static short CFGBIT_CLICKABLE_MAPOBJECTS = 129;
+	// bit 130: Open icon menu in split-screen mode
+	public final static short CFGBIT_ICONMENUS_SPLITSCREEN = 130;
+	// bit 131: Open search in split-screen mode
+        // FIXME use the same as for iconmenus for now
+	public final static short CFGBIT_SEARCH_SPLITSCREEN = 130;
+	// bit 132: Auto-calibration for compass deviation by movement
+	public final static short CFGBIT_COMPASS_AUTOCALIBRATE = 132;
+	// bit 133: Always rotate map by compass
+	public final static short CFGBIT_COMPASS_ALWAYS_ROTATE = 133;
 	
 	/**
 	 * These are the database record IDs for each configuration option
@@ -2467,4 +2478,8 @@ public class Configuration {
 		}
 	}
 	
+	public static int getTouchMarkerDiameter() {
+		// FIXME switch this based on pixels-per-inch value and/or make user-configurable
+		return 40;
+	}
 }

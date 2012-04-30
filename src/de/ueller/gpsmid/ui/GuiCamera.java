@@ -642,6 +642,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 					logger.exception(Locale.get("guicamera.CouldNotStopCameraViewer")/*Could not stop camera viewer*/, e);
 				}
 			}
+			basedirectory = Configuration.getPhotoUrl();
 			Form setupDialog = new Form(Locale.get("guicamera.Setup")/*Setup*/);
 			setupDialog.addCommand(CANCEL_CMD);
 			setupDialog.addCommand(OK_CMD);

@@ -128,7 +128,7 @@ public class LayoutManager extends Vector {
 		Font oldFont = g.getFont();
 		for (int i = 0; i < this.size(); i++){
 			e = (LayoutElement) this.elementAt(i);
-			if (e == touchedElement) {
+			if (e == touchedElement || e.isTouched()) {
 				//#debug debug
 				logger.trace("paint touched element " + i);
 				e.paintHighlighted(g);
@@ -154,9 +154,20 @@ public class LayoutManager extends Vector {
 	
 	public int getElementIdAtPointer(int x, int y) {
 		LayoutElement e;
-		for (int i = 0; i < this.size(); i++){
+		for (int i = this.size() - 1; i >= 0 ; i--){
 			e = getElementAt(i);
 			if (e.isInElement(x, y)) {
+				return i;
+			}
+		}
+		return -1;	
+	}
+
+	public int getElementId(LayoutElement element) {
+		LayoutElement e;
+		for (int i = 0; i < this.size(); i++){
+			e = getElementAt(i);
+			if (e == element) {
 				return i;
 			}
 		}
@@ -172,6 +183,9 @@ public class LayoutManager extends Vector {
 	}
 
 	public void clearTouchedElement() {
+		if (touchedElement != null) {
+			touchedElement.setTouched(false);
+		}
 		touchedElement = null;
 	}
 	

@@ -12,10 +12,6 @@ import de.enough.polish.util.Locale;
 
 public class ImageTools  {
 	private final static Logger logger = Logger.getInstance(ImageTools.class,Logger.DEBUG);
-	private static Image oneColorImage = null;
-	private static int oneColorImageWidth = 0;
-	private static int oneColorImageHeight = 0;
-	private static int oneColorImageColor = 0;
 	
 	public static Image getGreyImage(Image original) {
         try {
@@ -86,31 +82,7 @@ public class ImageTools  {
 			logger.exception(Locale.get("imagetools.ExceptionScalingImage")/*Exception scaling image*/, e);
         	return original;
         }
-    }
-
-	public static Image oneColorImage(int width, int height, int color) {        
-		if (width == oneColorImageWidth && height == oneColorImageHeight && color == oneColorImageColor) {
-			//System.out.println("Using buffered oneColorImage");
-			return oneColorImage;
-		}
-		
-		int rawSize = width * height;
-		int[] rawOutput = new int[rawSize];        
-        for (int outOffset = 0; outOffset < rawSize;) {
-            rawOutput[outOffset++]= color;
-        }
-	    try {
-	        oneColorImage = Image.createRGBImage(rawOutput, width, height, true);
-	        oneColorImageWidth = width;
-	        oneColorImageHeight = height;
-	        oneColorImageColor = color;
-        } catch (Exception e) {
-			logger.exception("Cannot create one color image", e);
-			oneColorImage = null;
-        }
-    	return oneColorImage;
-    }
-	
+    }	
 	
 	public static boolean isScaleMemAvailable(Image original, int newWidth, int newHeight) {
 		return (Runtime.getRuntime().freeMemory() > 5*(original.getHeight() * original.getWidth() + newWidth * newHeight));

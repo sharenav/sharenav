@@ -239,13 +239,13 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup mapSrc;
 	private ChoiceGroup mapSrcOptions;
 	private ChoiceGroup rotationGroup;
-	private ChoiceGroup directionGroup;
 	private ChoiceGroup nightModeGroup;
 	private ChoiceGroup uiLangGroup;
 	private ChoiceGroup naviLangGroup;
 	private ChoiceGroup onlineLangGroup;
 	private ChoiceGroup onlineOptionGroup;
 	private ChoiceGroup directionOpts;
+	private ChoiceGroup directionDevOpts;
 	private ChoiceGroup renderOpts;
 	private ChoiceGroup visualOpts;
 	private TextField	tfDestLineWidth;
@@ -293,7 +293,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		menuFileSel.addCommand(BACK_CMD);
 		menuFileSel.setCommandListener(this);
 
-		show();
+		if (!Trace.getInstance().isShowingSplitScreen()) {
+			show();
+		}
 	}
 
 	private void initBluetoothSelect() {
@@ -535,6 +537,13 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//#style formItem
 		menuDisplayOptions.append(directionOpts);
 
+		String [] dirOpts = new String[2];
+		dirOpts[0] = Locale.get("guidiscover.autocalibrate")/*Auto-calibrate dig.compass deviation by movement*/;
+		dirOpts[1] = Locale.get("guidiscover.alwaysrotatebycompass")/*Always rotate map by compass*/;
+		directionDevOpts = new ChoiceGroup(Locale.get("guidiscover.CompassOptions")/*Compass Options:*/, Choice.MULTIPLE, dirOpts, null);
+		//#style formItem
+		menuDisplayOptions.append(directionDevOpts);
+
 		String [] renders = new String[2];
 		renders[0] = Locale.get("guidiscover.aslines")/*as lines*/;
 		renders[1] = Locale.get("guidiscover.asstreets")/*as streets*/;
@@ -629,7 +638,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//#style formItem
 		menuDisplayOptions.append(sizeOpts);
 
-		String [] mapInfos = new String[9];
+		String [] mapInfos = new String[10];
 		mapInfos[0] = Locale.get("guidiscover.Pointofcompass")/*Point of compass in rotated map*/;
 		mapInfos[1] = Locale.get("guidiscover.Scalebar")/*Scale bar*/;
 		mapInfos[2] = Locale.get("guidiscover.Speed")/*Speed when driving*/;
@@ -639,6 +648,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		mapInfos[6] = Locale.get("guidiscover.Clock")/*Clock with current time*/;
 		mapInfos[7] = Locale.get("guidiscover.Accuracy")/*Accuracy with GPS status*/;
 		mapInfos[8] = Locale.get("guiroute.TravelBy")/*Travel by:*/;
+		mapInfos[9] = Locale.get("guidiscover.clickMarkers")/*Clickable markers*/;
 		mapInfoOpts = new ChoiceGroup(Locale.get("guidiscover.Infos")/*Infos in Map Screen:*/,
 				Choice.MULTIPLE, mapInfos, null);
 		//#style formItem
@@ -782,8 +792,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		logger.debug("GuiDiscover got Command " + c);
 
 		if (c == EXIT_CMD) {
-			destroy();
-       		Trace.getInstance().show();
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)) {
+				Trace.getInstance().performIconAction(IconActionPerformer.BACK_ACTIONID, null);
+			} else {
+				destroy();
+				Trace.getInstance().show();
+			}
 			return;
 		}
 		if (c == BACK_CMD) {
@@ -1091,6 +1105,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				nightModeGroup.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE) ? 1 : 0, true);
 				rotationGroup.setSelectedIndex(Configuration.getProjDefault(), true);
 				renderOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE) ? 1 : 0, true);
+				directionDevOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AUTOCALIBRATE));
+				directionDevOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_ALWAYS_ROTATE));
 				directionOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION) ? 1 : 0, true);
 				if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION)) {
 					directionOpts.setSelectedIndex(2, true);
@@ -1108,6 +1124,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				mapInfoOpts.setSelectedIndex(6, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP));
 				mapInfoOpts.setSelectedIndex(7, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_ACCURACY));
 				mapInfoOpts.setSelectedIndex(8, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_TRAVEL_MODE_IN_MAP));
+				mapInfoOpts.setSelectedIndex(9, Configuration.getCfgBitSavedState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS));
 				clockOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_GPS_TIME));
 				clockOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_GPS_TIME_FALLBACK));
 				metricUnits.setSelectedIndex(Configuration.getCfgBitSavedState(Configuration.CFGBIT_METRIC) ? 0 : 1, true);
@@ -1118,7 +1135,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				WaypointsTile.useNewWptFont();
 
 				// convert bits from backlight flag into selection states
-				boolean[] sellight = new boolean[9];
+				boolean[] sellight = new boolean[10];
 				sellight[0] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ON);
 				sellight[1] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED);
 				sellight[2] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_KEEPALIVE);
@@ -1284,6 +1301,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		Configuration.closeMapZipFile();
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS, mapSrcOptions.isSelected(0));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS, mapSrcOptions.isSelected(1));
+		if (!Legend.isValid) {
+			Trace.clearTraceInstance();
+		}
 		Legend.reReadLegend();
 		Trace trace = Trace.getInstance();
 		trace.restart();
@@ -1301,6 +1321,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			if (langToAdd.equals("")) {
 				langToAdd = "devdefault";
 			}
+			uiLang = langToAdd;
+		} else if (uiLangGroup.getSelectedIndex() - numLangDifference >= Legend.numUiLang) {
+			// acoid array out of bounds, see https://sourceforge.net/projects/gpsmid/forums/forum/677689/topic/5216306
 			uiLang = langToAdd;
 		} else if (Legend.numUiLang + numLangDifference > 1) {
 			uiLang = Legend.uiLang[uiLangGroup.getSelectedIndex()-numLangDifference];
@@ -1417,27 +1440,33 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 
 		Configuration.setProjTypeDefault( (byte) rotationGroup.getSelectedIndex() );
 
-		if ((!Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION)) && directionOpts.getSelectedIndex() == 1) {
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION,
-							  (directionOpts.getSelectedIndex() == 1));
+		if ((!Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION)) &&
+		    (directionOpts.getSelectedIndex() == 1 || directionOpts.getSelectedIndex() == 2)) {
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION, true);
 			Trace.getInstance().startCompass();
 		}
-		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION) && directionOpts.getSelectedIndex() != 1) {
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION,
-							  (directionOpts.getSelectedIndex() == 1));
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION)
+		    && directionOpts.getSelectedIndex() == 0) {
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION, false);
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION, false);
 			Trace.getInstance().stopCompass();
 		}
 
-		if ((!Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION)) && directionOpts.getSelectedIndex() == 2) {
+		if ((!Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION))
+		    && directionOpts.getSelectedIndex() == 2) {
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION,
 							  true);
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION,
-							  true);
 		}
-		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION) && directionOpts.getSelectedIndex() != 2) {
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION)
+		    && directionOpts.getSelectedIndex() != 2) {
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION,
 							  false);
 		}
+		boolean calibrateOpts[] = new boolean[2];
+		directionDevOpts.getSelectedFlags(calibrateOpts);
+
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_AUTOCALIBRATE, directionDevOpts.isSelected(0));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_ALWAYS_ROTATE, directionDevOpts.isSelected(1));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE,
 				(renderOpts.getSelectedIndex() == 1)
 		);
@@ -1457,6 +1486,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP, mapInfoOpts.isSelected(6));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_ACCURACY, mapInfoOpts.isSelected(7));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_TRAVEL_MODE_IN_MAP, mapInfoOpts.isSelected(8));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS, mapInfoOpts.isSelected(9));
 		
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_GPS_TIME, clockOpts.isSelected(0));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_GPS_TIME_FALLBACK, clockOpts.isSelected(1));
@@ -1468,7 +1498,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		
 		// convert boolean array with selection states for backlight
 		// to one flag with corresponding bits set
-		boolean[] sellight = new boolean[9];
+		boolean[] sellight = new boolean[10];
 		backlightOpts.getSelectedFlags( sellight );
 		// save selected values to record store
 		int i = 0;
@@ -1785,13 +1815,24 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 
 	/** Interface for received actions from the IconMenu GUI */
 	public void performIconAction(int actionId, String choiceName) {
-		show();
-		if (actionId == IconActionPerformer.BACK_ACTIONID) {
-			uncacheIconMenu();
-			System.gc();
-			commandAction(EXIT_CMD, (Displayable) null);
+		if (Trace.getInstance().isShowingSplitScreen()) {
+			// To make setup forms work, exit from split-screen mode
+			// so we return to non-split-screen setup icon menu
+			if (actionId != IconActionPerformer.BACK_ACTIONID) {
+				Trace.getInstance().clearShowingSplitSetup();
+				showSetupDialog(actionId);
+			} else {
+				// back to normal trace icon menu
+				Trace.getInstance().clearShowingSplitSetup();
+				Trace.getInstance().setShowingSplitTraceIconMenu();
+				Trace.getInstance().restartImageCollector();		
+			}
 		} else {
-			showSetupDialog(actionId);
+			if (actionId == IconActionPerformer.BACK_ACTIONID) {
+				commandAction(EXIT_CMD, (Displayable) null);
+			} else {
+				showSetupDialog(actionId);
+			}
 		}
 	}
 }

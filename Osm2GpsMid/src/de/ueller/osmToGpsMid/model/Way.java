@@ -62,6 +62,10 @@ public class Way extends Entity implements Comparable<Way> {
 	public static final byte WAY_FLAG3_NAMEASFORAREA = 16;
 	public static final byte WAY_FLAG3_HAS_HOUSENUMBERS = 32;
 	public static final byte WAY_FLAG3_LONGHOUSENUMBERS = 64;
+	public static final int	 WAY_FLAG3_ADDITIONALFLAG = 128;
+
+	public static final byte WAY_FLAG4_ALERT = 1;
+	public static final byte WAY_FLAG4_CLICKABLE = 2;
 
 	public Long id;
 

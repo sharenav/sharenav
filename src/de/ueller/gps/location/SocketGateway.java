@@ -46,9 +46,9 @@ public class SocketGateway {
 	final static int PROTO_REQ_CELLID = 6574723;
 	final static int PROTO_REQ_COMPASS = 6574724;
 	
-	private static CompassProvider singelton;
+	private static GetCompass singelton;
 	
-	private static final Logger logger = Logger.getInstance(CompassProvider.class,
+	private static final Logger logger = Logger.getInstance(GetCompass.class,
 			Logger.TRACE);
 	
 	private static SocketConnection clientSock = null;

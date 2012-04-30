@@ -19,6 +19,7 @@ import de.ueller.gps.location.LocationUpdateListener;
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.Position;
+import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.midlet.graphics.LcdNumericFont;
 import de.ueller.util.IntTree;
 import de.ueller.util.Logger;
@@ -37,7 +38,7 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 	private final Command NEXT_CMD = new Command(Locale.get("guitrip.Next")/*Next*/, Command.SCREEN, 5);
 	private final static Logger mLogger = Logger.getInstance(GuiTrip.class,
 			Logger.DEBUG);
-	private final Trace mParent;
+	private Trace mParent = null;
 	private LcdNumericFont mLcdFont;
 	private SunCalc mSunCalc;
 
@@ -46,6 +47,10 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 	private int mKmWidth = -1;
 	private int mMiWidth = -1;
 	private int mfontHeight = -1;
+
+	public GuiTrip() {
+		init();
+	}
 
 	public GuiTrip(Trace parent) {
 		// #debug
@@ -76,13 +81,15 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 			longKeyPressCommand.put(longKeys.getKeyIdx(i), NEXT_CMD);
 		}
 
+		init();
+	}
+
+	protected void init() {
 		mLcdFont = new LcdNumericFont();
 		mSunCalc = null;
 	}
 
-	protected void paint(Graphics g) {
-		//#debug debug
-		mLogger.debug("Drawing Trip screen");
+	protected int paintTrip(Graphics g, int minX, int minY, int maxX, int maxY, int yDiff, Position pos, PositionMark destination, Trace trace) {
 		if (mKmWidth < 0) {
 			/**
 			 * Cache the values of the width of these strings
@@ -92,90 +99,105 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 			mMiWidth = f.stringWidth("mi");
 			mfontHeight = f.getHeight();
 		}
-		Position pos = mParent.getCurrentPosition();
-		
-		int h = getHeight();
-		int w = getWidth();
-		
 		g.setColor(Legend.COLORS[Legend.COLOR_TACHO_BACKGROUND]);
-		g.fillRect(0, 0, w, h);
+		g.fillRect(minX, minY, maxX - minX, maxY - minY);
 
 		g.setColor(Legend.COLORS[Legend.COLOR_TACHO_TEXT]);
-		int y = 48;
 
 		// Draw our own course
 		// TODO: Filter this but not at the presentation layer again as Trace.java
 		// did but in one place (a data layer) where all parts of the code can use it.
 		mLcdFont.setFontSize(36);
-		mLcdFont.drawInt(g, (int)(pos.course), w, y - 6);
-		g.drawLine(0, y, w, y);
+		mLcdFont.drawInt(g, (int)(pos.course), maxX, minY + yDiff - 6);
+		g.drawLine(minX, minY + yDiff, maxX, minY + yDiff);
 		
 		// Draw heading and distance to the destination
-		y += 48;
-		if (mParent.getDestination() == null) {
-			mLcdFont.drawInvalid(g, 3, w, y - 6);
-			y += 48;
-			mLcdFont.drawInvalid(g, 4, w - mKmWidth -1, y - 6);
+		yDiff += 48;
+		if (destination == null) {
+			mLcdFont.drawInvalid(g, minX + 3, maxX, minY + yDiff - 6);
+			yDiff += 48;
+			mLcdFont.drawInvalid(g, minX + 4, maxX - mKmWidth -1, minY + yDiff - 6);
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
-				g.drawString(Locale.get("guitacho.km"), w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+				g.drawString(Locale.get("guitacho.km"), maxX - 1, minY + yDiff - 3, Graphics.BOTTOM | Graphics.RIGHT);
 			} else {
-				g.drawString(Locale.get("guitacho.mi"), w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+				g.drawString(Locale.get("guitacho.mi"), maxX - 1, minY + yDiff - 3, Graphics.BOTTOM | Graphics.RIGHT);
 			}
 		} else {
-			float[] result = ProjMath.calcDistanceAndCourse(mParent.center.radlat, 
-					mParent.center.radlon, mParent.getDestination().lat, 
-					mParent.getDestination().lon);
+			float[] result = ProjMath.calcDistanceAndCourse(trace.center.radlat, 
+					trace.center.radlon, destination.lat, 
+					destination.lon);
 			// Heading (result[1])
 			int relHeading = (int)(result[1] - pos.course + 0.5);
 			if (relHeading < 0)
 			{
 				relHeading += 360;
 			}
-			mLcdFont.drawInt(g, relHeading, w, y - 6);
-			g.drawLine(0, y, w, y);
+			mLcdFont.drawInt(g, relHeading, maxX, minY + yDiff - 6);
+			g.drawLine(minX, minY + yDiff, maxX, minY + yDiff);
 		
 			// Distance (result[0])
-			y += 48;
+			yDiff += 48;
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
 				if (result[0] > 100000) {
 					mLcdFont.drawInt(g, (int)((result[0] / 1000.0f) + 0.5), 
-							w - mKmWidth -1, y - 6);
-					g.drawString(Locale.get("guitacho.km"), w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+							maxX - mKmWidth -1, minY + yDiff - 6);
+					g.drawString(Locale.get("guitacho.km"), maxX - 1, minY + yDiff - 3, Graphics.BOTTOM | Graphics.RIGHT);
 				} else if (result[0] > 1000) {
 					mLcdFont.drawFloat(g, (int)((result[0] / 100.0f) + 0.5) / 
-							10.0f, 1, w - mKmWidth - 1, y - 6);
-					g.drawString(Locale.get("guitacho.km"), w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+							10.0f, 1, maxX - mKmWidth - 1, minY + yDiff - 6);
+					g.drawString(Locale.get("guitacho.km"), maxX - 1, minY + yDiff - 3, Graphics.BOTTOM | Graphics.RIGHT);
 				} else {
 					// Using width of "km" to avoid jumping of number between m and km ranges.
 					mLcdFont.drawInt(g, (int)(result[0] + 0.5), 
-							w - mKmWidth - 1, y - 6);
-					g.drawString(Locale.get("guitacho.m"), w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+							maxX - mKmWidth - 1, minY + yDiff - 6);
+					g.drawString(Locale.get("guitacho.m"), maxX - 1, minY + yDiff - 3, Graphics.BOTTOM | Graphics.RIGHT);
 				}
 			} else {
 				if (result[0] > 160934) {
 					mLcdFont.drawInt(g, (int)((result[0] / 1609.3f) + 0.5), 
-							w - mMiWidth -1, y - 6);
-					g.drawString(Locale.get("guitacho.mi"), w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+							maxX - mMiWidth -1, minY + yDiff - 6);
+					g.drawString(Locale.get("guitacho.mi"), maxX - 1, minY + yDiff - 3, Graphics.BOTTOM | Graphics.RIGHT);
 				} else if (result[0] > 1609) {
 					mLcdFont.drawFloat(g, (int)((result[0] / 160.9f) + 0.5) / 
-							10.0f, 1, w - mMiWidth - 1, y - 6);
-					g.drawString(Locale.get("guitacho.mi"), w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+							10.0f, 1, maxX - mMiWidth - 1, minY + yDiff - 6);
+					g.drawString(Locale.get("guitacho.mi"), maxX - 1, minY + yDiff - 3, Graphics.BOTTOM | Graphics.RIGHT);
 				} else {
 					// Using width of "km" to avoid jumping of number between m and km ranges.
 					mLcdFont.drawInt(g, (int)(result[0] + 0.5), 
-							w - mMiWidth - 1, y - 6);
-					g.drawString(Locale.get("guitacho.yd"), w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+							maxX - mMiWidth - 1, minY + yDiff - 6);
+					g.drawString(Locale.get("guitacho.yd"), maxX - 1, minY + yDiff - 3, Graphics.BOTTOM | Graphics.RIGHT);
 				}
 			}
 		}
-		g.drawLine(0, y, w, y);
+		g.drawLine(minX, minY + yDiff, maxX, minY + yDiff);
+		return yDiff;
+	}
 
+	protected int paintSun(Graphics g, int minX, int minY, int maxX, int maxY, int yDiff) {
+		//mLcdFont.setFontSize(18);
+		g.drawLine(minX + (maxX - minX) /2, minY + yDiff - 24, minX + (maxX -minX) / 2, maxY);
+		if (mSunRiseset != null) {
+			g.drawString(Locale.get("guitrip.Sunrise")/*Sunrise: */ + mSunCalc.formatTime(mSunRiseset[SunCalc.RISE]), 
+						 minX + ((maxX - minX) / 2) - 3, minY + yDiff, Graphics.BOTTOM | Graphics.RIGHT);
+
+			g.drawString(Locale.get("guitrip.Sunset")/*Sunset: */ + mSunCalc.formatTime(mSunRiseset[SunCalc.SET]), 
+					 	 maxX - 3, minY + yDiff, Graphics.BOTTOM | Graphics.RIGHT);
+		} else {
+			g.drawString(Locale.get("guitrip.SunriseNA")/*Sunrise: N/A*/, minX + ((maxX - minX) / 2) - 3, minY + yDiff, 
+						 Graphics.BOTTOM | Graphics.RIGHT);
+			g.drawString(Locale.get("guitrip.SunsetNA")/*Sunset: N/A*/, maxX - 3, minY + yDiff, 
+					 	 Graphics.BOTTOM | Graphics.RIGHT);
+		}
+		return yDiff;
+	}
+
+	protected void calcSun(Trace trace) {
 		// Calculate sunrise and sunset times at the first time
 		// or when the map position changed more than 10 km
 		if ((mSunCalc == null) ||
 			( 	mSunCalc != null
-			 &&	Math.abs(ProjMath.getDistance(mParent.center.radlat,
-											  mParent.center.radlon,
+			 &&	Math.abs(ProjMath.getDistance(trace.center.radlat,
+											  trace.center.radlon,
 											  mSunCalc.getLatitude() * MoreMath.FAC_DECTORAD,
 											  mSunCalc.getLongitude() * MoreMath.FAC_DECTORAD
 				) ) > 10000)
@@ -183,8 +205,8 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 			if (mSunCalc == null) {
 				mSunCalc = new SunCalc();
 			}
-			mSunCalc.setLatitude(mParent.center.radlat * MoreMath.FAC_RADTODEC);
-			mSunCalc.setLongitude(mParent.center.radlon * MoreMath.FAC_RADTODEC);
+			mSunCalc.setLatitude(trace.center.radlat * MoreMath.FAC_RADTODEC);
+			mSunCalc.setLongitude(trace.center.radlon * MoreMath.FAC_RADTODEC);
 			Calendar nowCal = Calendar.getInstance();
 			mSunCalc.setYear( nowCal.get( Calendar.YEAR ) );
 			mSunCalc.setMonth( nowCal.get( Calendar.MONTH ) + 1 );
@@ -198,23 +220,24 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 			mSunRiseset = mSunCalc.calcRiseSet( SunCalc.SUNRISE_SUNSET );
 			mLogger.info("SunCalc result: " + mSunCalc.toString());
 		}
+	}
+
+	protected void paint(Graphics g) {
+		//#debug debug
+		mLogger.debug("Drawing Trip screen");
+		int h = getHeight();
+		int w = getWidth();
+		
+		int y = 48;
+		Position pos = mParent.getCurrentPosition();
+		
+		y = paintTrip(g, 0, 0, w, h, y, pos, mParent.getDestination(), mParent);
+
+		calcSun(mParent);
 
 		// Draw sunrise and sunset time
 		y += 24;
-		//mLcdFont.setFontSize(18);
-		g.drawLine(w >> 1, y - 24, w >> 1, h);
-		if (mSunRiseset != null) {
-			g.drawString(Locale.get("guitrip.Sunrise")/*Sunrise: */ + mSunCalc.formatTime(mSunRiseset[SunCalc.RISE]), 
-						 (w >> 1) - 3, y, Graphics.BOTTOM | Graphics.RIGHT);
-
-			g.drawString(Locale.get("guitrip.Sunset")/*Sunset: */ + mSunCalc.formatTime(mSunRiseset[SunCalc.SET]), 
-					 	 w - 3, y, Graphics.BOTTOM | Graphics.RIGHT);
-		} else {
-			g.drawString(Locale.get("guitrip.SunriseNA")/*Sunrise: N/A*/, (w >> 1) - 3, y, 
-						 Graphics.BOTTOM | Graphics.RIGHT);
-			g.drawString(Locale.get("guitrip.SunsetNA")/*Sunset: N/A*/, w - 3, y, 
-					 	 Graphics.BOTTOM | Graphics.RIGHT);
-		}
+		y = paintSun(g, 0, 0, w, h, y);
 	}
 
 	public void show() {

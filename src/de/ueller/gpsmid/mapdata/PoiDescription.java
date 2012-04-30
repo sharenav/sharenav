@@ -13,6 +13,7 @@ public class PoiDescription {
 	public int		maxImageScale;
 	public boolean	hideable;
 	public boolean	alert;
+	public boolean	clickable;
 	public byte		overviewMode;
 	//#if polish.api.osm-editing
 	public String[]	osmTags;

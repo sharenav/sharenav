@@ -42,10 +42,11 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	protected GpsMidDisplayable parent = null;
 	protected IconActionPerformer actionPerformer = null;
 
-	private int minX;
+	private int minX = 0;
 	private int maxX;
-	private int minY;
+	private int minY = 0;
 	private int maxY;
+	private int renderDiff = 0;
 	public volatile int tabNr = 0;
 	private volatile int leftMostTabNr = 0;
 	private boolean inTabRow = false;
@@ -88,14 +89,21 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	}
 
 	private void initIconMenuWithPagesGUI(GpsMidDisplayable parent, IconActionPerformer actionPerformer) {
-		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
+		minX = 0;
+		minY = 0;
+		if (Trace.getInstance().isShowingSplitIconMenu()) {
+			maxX = Trace.getInstance().getWidth();
+			maxY = Trace.getInstance().getHeight();
+			renderDiff = Trace.getInstance().getHeight() / 2;
+		} else {
+			setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
+			renderDiff = 0;
+			maxX = getWidth();
+			maxY = getHeight();
+		}
 		this.parent = parent;
 		// must be below setFullScreenMode() for not recreating this icon menu because of the size change
 		this.actionPerformer = actionPerformer;
-		this.minX = 0;
-		this.minY = 0;
-		this.maxX = getWidth();
-		this.maxY = getHeight();
 		recreateTabButtons();
 		setCommandListener(this);
 		addCommands();
@@ -111,15 +119,15 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		   because the icons would then would be mapped wrongly to keys on 176*220 because
 		   of buttons and status bar)
 		*/
-		if (getWidth() > getHeight() && numRows > numCols
+	    if ((maxX - minX) > maxY - (minY + renderDiff) && numRows > numCols
 				||
-			getWidth() < getHeight() && numRows < numCols
+			(maxX - minX) < maxY - (minY + renderDiff) && numRows < numCols
 		) {
 			int tmp = numCols;
 			numCols = numRows;
 			numRows = tmp;
 		}
-		IconMenuPage imp = new IconMenuPage( pageTitle, actionPerformer, numCols, numRows, minX, calcIconMenuMinY(), maxX, calcIconMenuMaxY());
+		IconMenuPage imp = new IconMenuPage( pageTitle, actionPerformer, numCols, numRows, minX, calcIconMenuMinY() + renderDiff, maxX, calcIconMenuMaxY() + renderDiff);
 		iconMenuPages.addElement(imp);
 		recreateTabButtonsRequired = true;
 		return imp;
@@ -134,7 +142,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	
 	/** create a layout manager with the direction buttons */
 	private void createTabPrevNextButtons() {
-		tabDirectionButtonManager = new LayoutManager(minX, minY, maxX, maxY, Legend.COLORS[Legend.COLOR_ICONMENU_TOUCHED_BUTTON_BACKGROUND_COLOR]);
+		tabDirectionButtonManager = new LayoutManager(minX, minY + renderDiff, maxX, maxY, Legend.COLORS[Legend.COLOR_ICONMENU_TOUCHED_BUTTON_BACKGROUND_COLOR]);
 		ePrevTab = tabDirectionButtonManager.createAndAddElement(
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_TOP |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
@@ -164,10 +172,18 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	}
 
 	
+	public void doRepaint() {
+		if (Trace.getInstance().isShowingSplitIconMenu()) {
+			Trace.getInstance().repaint();
+		} else {
+			repaint();
+		}
+	}
+
 	/** recreates the tab buttons for all the iconMenuPages */
 	private void recreateTabButtons() {
 		createTabPrevNextButtons();
-		tabButtonManager = new LayoutManager(ePrevTab.right, minY, eNextTab.left, maxY, Legend.COLORS[Legend.COLOR_ICONMENU_TOUCHED_BUTTON_BACKGROUND_COLOR]);
+		tabButtonManager = new LayoutManager(ePrevTab.right, minY + renderDiff, eNextTab.left, maxY, Legend.COLORS[Legend.COLOR_ICONMENU_TOUCHED_BUTTON_BACKGROUND_COLOR]);
 		LayoutElement e = null;
 		IconMenuPage imp = null;
 		for (int i=0; i < iconMenuPages.size(); i++) {
@@ -198,7 +214,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 
 	public void show() {
 		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
-		repaint();
+		doRepaint();
 		GpsMid.getInstance().show(this);
 	}
 	
@@ -218,8 +234,14 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	}
 	
 	public void sizeChanged(int w, int h) {
-		this.maxX = w;
-		this.maxY = h;
+		maxX = w;
+		maxY = h;
+                if (Trace.getInstance().isShowingSplitIconMenu()) {
+			renderDiff = h / 2;
+		} else {
+			setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
+			renderDiff = 0;
+		}
 		recreateTabButtons();
 		IconMenuPage imp = null;
 		for (int i=0; i < iconMenuPages.size(); i++) {
@@ -232,9 +254,9 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 			   because the icons would then would be mapped wrongly to keys on 176*220 because
 			   of buttons and status bar)
 			*/
-			if (getWidth() > getHeight() && imp.numRows > imp.numCols
+			if ((maxX - minX) > maxY - (minY + renderDiff) && imp.numRows > imp.numCols
 					||
-				getWidth() < getHeight() && imp.numRows < imp.numCols
+				(maxX - minX) < maxY - (minY + renderDiff) && imp.numRows < imp.numCols
 			) {
 				int tmp = imp.numCols;
 				imp.numCols = imp.numRows;
@@ -310,7 +332,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		if (c == OK_CMD) {
 			if (inTabRow) {
 				inTabRow = false;
-				repaint();
+				doRepaint();
 			} else {
 				performIconAction(getActiveMenuPage().getActiveEleActionId(),
 						  getActiveMenuPage().getActiveEleChoiceName());
@@ -384,7 +406,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 //				nextTab();
 //			}
 //		}
-		repaint();
+		doRepaint();
 	}
 
 	protected void keyRepeated(int keyCode) {
@@ -413,7 +435,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 			if (iconFromKeyCode >= 0) {
 				if ((System.currentTimeMillis() - pressedKeyTime) >= 1000 && pressedKeyCode == keyCode) {
 						setActiveTab(iconFromKeyCode);
-						repaint();
+						doRepaint();
 				} else {
 					if(iconFromKeyCode < getActiveMenuPage().size()){
 						performIconAction(getActiveMenuPage().getElementAt(iconFromKeyCode).actionID,
@@ -424,7 +446,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		}
 	}
 	
-	protected void pointerReleased(int x, int y) {
+	public void pointerReleased(int x, int y) {
 		getActiveMenuPage().clearTouchedElement();
 		tabButtonManager.clearTouchedElement();
 		tabDirectionButtonManager.clearTouchedElement();
@@ -438,15 +460,28 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 			} else if (directionId == 1) {
 				nextTab();
 			} else {
-				int newTab = tabButtonManager.getElementIdAtPointer(x, y);
-				if (newTab >= 0) {
-					setActiveTab(newTab);
+				if (tabDirectionButtonManager.getElementAtPointer(x, y) == eStatusBar) {
+						int actionId = getActiveMenuPage().getActiveEleActionId();
+						String choiceName = getActiveMenuPage().getActiveEleChoiceName();
+						if (actionId >= 0) {
+							System.out.println("actionID: " + actionId + " choiceName " + choiceName);
+							performIconAction(actionId, choiceName);
+							return;
+						}
 				} else {
-					int actionId = getActiveMenuPage().getActionIdAtPointer(x, y);
-					String choiceName = getActiveMenuPage().getChoiceNameAtPointer(x, y);
-					if (actionId >= 0) {
-						performIconAction(actionId, choiceName);
-						return;
+					int newTab = tabButtonManager.getElementIdAtPointer(x, y);
+					if (newTab >= 0) {
+						setActiveTab(newTab);
+					} else {
+						if (getActiveMenuPage().getElementAtPointer(x, y) == eStatusBar) {
+						} else {
+							int actionId = getActiveMenuPage().getActionIdAtPointer(x, y);
+							String choiceName = getActiveMenuPage().getChoiceNameAtPointer(x, y);
+							if (actionId >= 0) {
+								performIconAction(actionId, choiceName);
+								return;
+							}
+						}					
 					}
 				}
 			}
@@ -463,17 +498,18 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 			nextTab();
 		}
 
-		repaint();
+		doRepaint();
 	}
 	
 	
-	protected void pointerPressed(int x, int y) {
+	public void pointerPressed(int x, int y) {
 		pointerPressedDown = true;
 		touchX = x;
 		touchY = y;
 		LayoutElement e = getActiveMenuPage().getElementAtPointer(x, y);
 		if (e != null && e.actionID >= 0) {
 			getActiveMenuPage().setTouchedElement(e);
+			getActiveMenuPage().setCursor(getActiveMenuPage().getElementIdAtPointer(x, y));
 		} else {
 			e = tabButtonManager.getElementAtPointer(x, y);
 			if (e != null) {
@@ -486,11 +522,11 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 			}
 		}
 		if (e != null) {
-			repaint();
+			doRepaint();
 		}
 	}
 	
-	protected void pointerDragged (int x, int y) {
+	public void pointerDragged (int x, int y) {
 		// return if drag event was not in this canvas but rather the previous one
 		if (!pointerPressedDown) {
 			return;
@@ -504,7 +540,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 			getActiveMenuPage().clearTouchedElement();
 		}
 		getActiveMenuPage().dragOffsX = x - touchX;
-		repaint();
+		doRepaint();
 	}
 	
 
@@ -526,7 +562,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		
 		// Clean the Canvas
 		g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_BACKGROUND]);
-		g.fillRect(0, 0, getWidth(), getHeight());
+		g.fillRect(minX, minY + renderDiff, maxX, maxY);
 
 		if (recreateTabButtonsRequired) {
 			recreateTabButtons();

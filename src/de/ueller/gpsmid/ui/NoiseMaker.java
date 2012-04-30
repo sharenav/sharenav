@@ -250,7 +250,8 @@ public class NoiseMaker
 					is = Configuration.mapZipFile.getInputStream(Configuration.mapZipFile.getEntry(soundFileWithSuffix));
 				}
 			} catch (Exception ex) {
-				mLogger.exception("Error opening external sound file, map url: " + Configuration.getMapUrl() + " file: " + soundFileWithSuffix, ex);
+
+				mLogger.silentexception("Error opening external sound file, map url: " + Configuration.getMapUrl() + " file: " + soundFileWithSuffix, ex);
 				return false;
 			}
 			// zip map

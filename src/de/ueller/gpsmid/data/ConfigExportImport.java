@@ -28,8 +28,8 @@ public class ConfigExportImport {
 				con.create();
 			}
 			Configuration.serialise(con.openOutputStream());
-			con.close();
 			String name = con.getName();
+			con.close();
 			GpsMid.getInstance().alert(Locale.get("generic.Info")/*Info*/, 
 						   Locale.get("guidiscover.CfgExported", name)/*Configuration exported to '<file>'*/, 3000);
 		} catch (Exception e) {

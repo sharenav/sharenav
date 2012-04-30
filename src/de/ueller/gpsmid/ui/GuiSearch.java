@@ -188,6 +188,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 	
 	private volatile int fontSize;
 	
+	private int minX;
+	private int maxX;
+	private int minY;
+	private int maxY;
+	private int renderDiff;
+
 	private volatile boolean isSearchCanceled;
 	
 	/**
@@ -254,6 +260,15 @@ public class GuiSearch extends Canvas implements CommandListener,
 		this.parent = parent;
 		setCommandListener(this);
 		
+		this.minX = 0;
+		this.minY = 0;
+		this.maxX = Trace.getInstance().getWidth();
+		this.maxY = Trace.getInstance().getHeight();
+
+		if (Trace.getInstance().isShowingSplitSearch()) {
+			this.renderDiff = Trace.getInstance().getHeight() / 2;
+		}
+
 		//#if polish.android
 		AndroidDisplay ad = AndroidDisplay.getDisplay(GpsMid.getInstance());
 		ad.setOnKeyListener(new OnKeyListener()
@@ -330,7 +345,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			public void run() {
 				tickerTick();
 				if (needsPainting) {
-					repaint();
+					doRepaint();
 				}
 			}			
 		};
@@ -439,8 +454,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 				parent.setDestination(positionMark);
 				//#debug info
 				logger.info("Search selected: " + positionMark);
-				destroy();
-				parent.show();				
+				if (!Trace.getInstance().isShowingSplitSearch()) {
+					parent.show();				
+					destroy();
+				}
 				if (c == ROUTE1_CMD || c == ROUTE2_CMD) {
 					parent.performIconAction(Trace.ROUTING_START_WITH_MODE_SELECT_CMD, null);
 				}
@@ -452,8 +469,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 				}
 				SearchResult sr = (SearchResult) result.elementAt(cursor);				
 				parent.receivePosition(sr.lat, sr.lon, Configuration.getRealBaseScale());				
-				parent.show();				
-				destroy();
+				if (!Trace.getInstance().isShowingSplitSearch()) {
+					parent.show();				
+					destroy();
+				}
 				return;
 			}
 			if (c == BACK_CMD) {
@@ -541,7 +560,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			spacePressed = false;
 			setTitle();
 			carret=0;
-			repaint();
+			doRepaint();
 			return;
 		}
 		if (c == BOOKMARK_CMD || c == FAVORITE_CMD) {
@@ -629,6 +648,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			//#if polish.android
 			Form poiSelectForm = new Form(Locale.get("guisearch.NearestPoi")/*Nearest POI*/);
 			poiSelectField = new PoiTypeMenu(this);
+			//#style formItem
 			poiSelectForm.append(poiSelectField);
 			// FIXME perhaps this should be optional
 			//InputMethodManager imm = (InputMethodManager) MidletBridge.instance.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -691,9 +711,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	public void show() {
 		hideKeypad = false;
-		height = getHeight();
-		width = getWidth();
-		gsl = new GuiSearchLayout(0, 0, width, height);
+		gsl = new GuiSearchLayout(0, renderDiff, maxX, maxY);
 		potentialDoubleClick = false;
 		pointerDragged = false;
 		if ((defaultAction == ACTION_EDIT_ENTITY || defaultAction == ACTION_NEARBY_POI) && !poisSearched) {
@@ -712,15 +730,26 @@ public class GuiSearch extends Canvas implements CommandListener,
 			GpsMid.getInstance().show(this);
 			//Display.getDisplay(parent.getParent()).setCurrent(this);
 		}
-		repaint();
+		doRepaint();
+		}
+	}
+
+	public void doRepaint() {
+		if (Trace.getInstance().isShowingSplitSearch()) {
+			Trace.getInstance().repaint();
+		} else {
+			repaint();
 		}
 	}
 
 	public void sizeChanged(int w, int h) {
-		width = w;
-		height = h;
-		gsl = new GuiSearchLayout(0, 0, w, h);
-		repaint();
+		maxX = w;
+		maxY = h;
+		if (Trace.getInstance().isShowingSplitSearch()) {
+			renderDiff = Trace.getInstance().getHeight() / 2;
+		}
+		gsl = new GuiSearchLayout(0, renderDiff, w, h);
+		doRepaint();
 	}
 
 	//#if polish.api.bigsearch
@@ -808,67 +837,13 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (fontSize == 0) {
 			fontSize = gc.getFont().getHeight();
 		}		
-		int yc=scrollOffset;
+		int yc=scrollOffset + renderDiff;
 		int reducedName=0;
 		gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BACKGROUND]);
-		gc.fillRect(0, 0, getWidth(), getHeight());
-		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)) {
-			gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
-			if (hasPointerEvents() && ! hideKeypad) {
-				if (gsl == null) {
-					gsl = new GuiSearchLayout(0, 0, width, height);
-				}
-			
-				String letters[] = {  Locale.get("guisearch.cursor")/*cursor*/, "  X  ", "  <- ", 
-						      Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
-						      Locale.get("guisearch.label1wordSearch")/* 1*- */ :
-						      Locale.get("guisearch.label1")/*_1*- */,
-						      Locale.get("guisearch.label2")/* abc2*/,
-						      Locale.get("guisearch.label3")/* def3*/, Locale.get("guisearch.label4")/* ghi4*/,
-						      Locale.get("guisearch.label5")/* jkl5*/, Locale.get("guisearch.label6")/* mno6*/,
-						      Locale.get("guisearch.label7")/*pqrs7*/, Locale.get("guisearch.label8")/* tuv8*/,
-						      Locale.get("guisearch.label9")/*wxyz9*/, 
-						      Locale.get("guisearch.fulltextshort")/*fulltext*/, "  0  ", 
-						      Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
-						      Locale.get("guisearch.pound")/*_#end*/ :
-						      Locale.get("guisearch.poundNameSearch")/*#end*/};
-				if (cursorKeypad) {
-					String keypadLetters[] = {  Locale.get("guisearch.abc")/*abc*/, "  X  ", "  <- ", 
-						       Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
-						       Locale.get("guisearch.label1wordSearch")/* 1*- */ :
-						       Locale.get("guisearch.label1")/*_1*- */,
-						       Locale.get("guisearch.clabel2")/* abc2*/,
-						       Locale.get("guisearch.clabel3")/* def3*/, Locale.get("guisearch.clabel4")/* ghi4*/,
-						       Locale.get("guisearch.clabel5")/* jkl5*/, Locale.get("guisearch.clabel6")/* mno6*/,
-						       Locale.get("guisearch.clabel7")/*pqrs7*/, Locale.get("guisearch.clabel8")/* tuv8*/,
-						       Locale.get("guisearch.sort")/*sort*/, 
-						       Locale.get("guisearch.more")/*more*/, "  0  ", 
-						       Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
-						       Locale.get("guisearch.pound")/*_#end*/ :
-						       Locale.get("guisearch.poundNameSearch")/*#end*/};
-					letters = keypadLetters;
-				}
-				if (hideKeypad) {
-					String hideLetters[] = { " ", "  X  " };
-					letters = hideLetters;
-				}
-				for (int i = 0; i < 15 ; i++) {
-					if (!hideKeypad || i == 1) {
-						// hide sort when more than 2 chars typed
-						if (i == GuiSearchLayout.KEY_9 /* sort */
-						    && cursorKeypad && carret > 2) {
-							gsl.ele[i].setText(" ");
-						} else {
-							gsl.ele[i].setText(letters[i]);
-						}
-					}
-				}
-				gsl.paint(gc);
-			}
-		}
-		if (yc < 0) {
+		gc.fillRect(0, renderDiff, maxX, maxY);
+		if (yc < renderDiff) {
 			gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_ARROWS]);
-			gc.drawString("^", getWidth(), 0, Graphics.TOP | Graphics.RIGHT);
+			gc.drawString("^", maxX, renderDiff, Graphics.TOP | Graphics.RIGHT);
 		}
 		// insert new results from search thread 
 		insertResults();
@@ -883,13 +858,13 @@ public class GuiSearch extends Canvas implements CommandListener,
 	    StringBuffer nearNameb=new StringBuffer();
 
 	    for (int i=0;i<result.size();i++){	    	
-			if (yc < 0) {
+			if (yc < renderDiff) {
 				yc += fontSize;
 				continue;
 			}
-			if (yc > getHeight()) {
+			if (yc > maxY) {
 				gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_ARROWS]);
-				gc.drawString("v", getWidth(), getHeight() - 7,
+				gc.drawString("v", maxX, maxY - 7,
 						Graphics.BOTTOM | Graphics.RIGHT);				
 				break;
 			}
@@ -1066,6 +1041,61 @@ public class GuiSearch extends Canvas implements CommandListener,
 			}
 			yc+=fontSize;
 		}
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)) {
+			gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
+			if (hasPointerEvents() && ! hideKeypad) {
+				if (gsl == null) {
+					gsl = new GuiSearchLayout(0, renderDiff, width, height);
+				}
+			
+				String letters[] = {  Locale.get("guisearch.choose")/*choose*/, "  X  ", "  <- ", 
+						      Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+						      Locale.get("guisearch.label1wordSearch")/* 1*- */ :
+						      Locale.get("guisearch.label1")/*_1*- */,
+						      Locale.get("guisearch.label2")/* abc2*/,
+						      Locale.get("guisearch.label3")/* def3*/, Locale.get("guisearch.label4")/* ghi4*/,
+						      Locale.get("guisearch.label5")/* jkl5*/, Locale.get("guisearch.label6")/* mno6*/,
+						      Locale.get("guisearch.label7")/*pqrs7*/, Locale.get("guisearch.label8")/* tuv8*/,
+						      Locale.get("guisearch.label9")/*wxyz9*/, 
+						      Locale.get("guisearch.fulltextshort")/*fulltext*/, "  0  ", 
+						      Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+						      Locale.get("guisearch.pound")/*_#end*/ :
+						      Locale.get("guisearch.poundNameSearch")/*#end*/};
+				if (cursorKeypad) {
+					String keypadLetters[] = {  Locale.get("guisearch.abc")/*abc*/, "  X  ", "  <- ", 
+						       Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+						       Locale.get("guisearch.clabel1wordSearch")/*exit search*/ :
+						       Locale.get("guisearch.clabel1")/*exit search*/,
+						       Locale.get("guisearch.clabel2")/* abc2*/,
+						       Locale.get("guisearch.clabel3")/* def3*/, Locale.get("guisearch.clabel4")/* ghi4*/,
+						       Locale.get("guisearch.clabel5")/* jkl5*/, Locale.get("guisearch.clabel6")/* mno6*/,
+						       Locale.get("guisearch.clabel7")/*pqrs7*/, Locale.get("guisearch.clabel8")/* tuv8*/,
+						       Locale.get("guisearch.sort")/*sort*/, 
+						       Locale.get("guisearch.more")/*more*/,
+           					    Locale.get("guisearch.clabel0")/*POIs*/,
+						       Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+						       Locale.get("guisearch.pound")/*_#end*/ :
+						       Locale.get("guisearch.poundNameSearch")/*#end*/};
+					letters = keypadLetters;
+				}
+				if (hideKeypad) {
+					String hideLetters[] = { " ", "  X  " };
+					letters = hideLetters;
+				}
+				for (int i = 0; i < 15 ; i++) {
+					if (!hideKeypad || i == 1) {
+						// hide sort when more than 2 chars typed
+						if (i == GuiSearchLayout.KEY_9 /* sort */
+						    && cursorKeypad && carret > 2) {
+							gsl.ele[i].setText(" ");
+						} else {
+							gsl.ele[i].setText(letters[i]);
+						}
+					}
+				}
+				gsl.paint(gc);
+			}
+		}
 	}
 	
 	protected void keyRepeated(int keyCode) {
@@ -1164,7 +1194,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				if (displayReductionLevel > 4) {
 					displayReductionLevel = 0;
 				}
-				repaint(0, 0, getWidth(), getHeight());
+				repaint(0, renderDiff, maxX, maxY);
 				return;
 			}
 			// Unicode character 10 is LF
@@ -1209,13 +1239,13 @@ public class GuiSearch extends Canvas implements CommandListener,
 			if (scrollOffset > 0) {
 				scrollOffset = 0;
 			}
-			repaint(0, 0, getWidth(), getHeight());
+			repaint(0, renderDiff, maxX, maxY);
 			return;
 		} else if (action == DOWN) {
 			if (cursor < result.size() - 1) {
 				cursor++;
 			}			
-			if (((cursor + 1) * fontSize + scrollOffset) > getHeight()) {
+			if (((cursor + 1) * fontSize + scrollOffset + renderDiff) > maxY) {
 				scrollOffset -= 3*fontSize;
 			}
 
@@ -1223,7 +1253,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				scrollOffset = 0;
 			}
 
-			repaint(0, 0, getWidth(), getHeight());
+			repaint(0, renderDiff, maxX, maxY);
 			return;
 		} else if (action == LEFT) {
 			if (carret > 0) {
@@ -1253,7 +1283,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				result.removeAllElements();
 				reSearch();
 			}
-			repaint(0, 0, getWidth(), getHeight());
+			repaint(0, renderDiff, maxX, maxY);
 			return;
 		} else if (action == RIGHT) {
 			if (carret < searchCanon.length()) {
@@ -1297,7 +1327,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					return;
 				}
 			}
-			repaint(0, 0, getWidth(), getHeight());
+			repaint(0, renderDiff, maxX, maxY);
 			return;
 		} else if (keyCode == -8 || keyCode == 8 || keyCode == 127) { 
 			/** Non standard Key -8: hopefully is mapped to
@@ -1402,7 +1432,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			reSearch();
 		}
 		if (spacePressed) {
-			repaint(0, 0, getWidth(), getHeight());
+			repaint(0, renderDiff, maxX, maxY);
 		} else {
 			//System.out.println("zeroing spacePressed");
 			reSearch();
@@ -1428,7 +1458,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	//#endif
 
 	private boolean nameBiggerThanFits(Graphics gc, String name) {
-		return 17 + gc.getFont().stringWidth(name) > getWidth();
+		return 17 + gc.getFont().stringWidth(name) > maxX;
 	}
 
 	private void tickerTick() {
@@ -1586,9 +1616,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 		pointerYPressed = y;
 
 		/** if clicking above or below the search results show a text field to enter the search string */
-		int clickIdx = (y - scrollOffset)/fontSize;
+		int clickIdx = (y - renderDiff - scrollOffset)/fontSize;
 		if ( (state == STATE_MAIN || state == STATE_FAVORITES)
-			&& (clickIdx < 0 || clickIdx >= result.size() || ((clickIdx + 1) * fontSize + scrollOffset) > getHeight())
+			&& (clickIdx < 0 || clickIdx >= result.size() || ((clickIdx + 1) * fontSize + scrollOffset) > maxY)
 		     && (hideKeypad || !Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD))
 
 		) {
@@ -1605,7 +1635,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					) {
 					//System.out.println("setTouchedElement: " + touchedElementId);
 					gsl.setTouchedElement((LayoutElement) gsl.elementAt(touchedElementId));
-					repaint();
+					doRepaint();
 				}
 			}
 			tapAutoReleaseTimerTask = new TimerTask() {
@@ -1635,7 +1665,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	public void autoPointerRelease(int x, int y) {
-		int clickIdx = (y - scrollOffset)/fontSize;
+		int clickIdx = (y - renderDiff - scrollOffset)/fontSize;
 		long currTime = System.currentTimeMillis();
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)
 		    && !hideKeypad
@@ -1646,9 +1676,18 @@ public class GuiSearch extends Canvas implements CommandListener,
 			    gsl.isAnyActionIdAtPointer(x, y)
 				) {
 				//gsl.setTouchedElement((LayoutElement) gsl.elementAt(touchedElementId));
-				//repaint();
+				//doRepaint();
 				if (touchedElementId == GuiSearchLayout.KEY_1) {
-					keyPressed('1');
+					if (cursorKeypad) {
+						destroy();
+						if (Trace.getInstance().isShowingSplitSearch()) {
+							Trace.getInstance().showIconMenu();
+						} else {
+							parent.show();
+						}
+					} else {
+						keyPressed('1');
+					}
 				} else if (touchedElementId == GuiSearchLayout.KEY_2) {
 					if (cursorKeypad) {
 						//#if polish.android
@@ -1712,7 +1751,16 @@ public class GuiSearch extends Canvas implements CommandListener,
 				} else if (touchedElementId == GuiSearchLayout.KEY_9) {
 					keyPressed('9');
 				} else if (touchedElementId == GuiSearchLayout.KEY_0) {
-					keyPressed('0');
+					if (cursorKeypad) {
+						defaultAction = ACTION_NEARBY_POI;
+						poisSearched = false;
+						state = STATE_POI;
+						filter = 0;
+						showPoiTypeForm();
+						poisSearched = true;
+					} else {
+						keyPressed('0');
+					}
 				} else if (touchedElementId == GuiSearchLayout.KEY_STAR) {
 					if (cursorKeypad) {
 						keyPressed(KEY_STAR);
@@ -1734,7 +1782,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		
 		} else {
 			// if touching the right side of the display (150% font height) this equals to the * key 
-			if (x > getWidth() - fontSize * 3 / 2) {
+			if (x > maxX - fontSize * 3 / 2) {
 				keyPressed(KEY_STAR);
 			} else {
 				// else position the cursor
@@ -1746,7 +1794,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (gsl != null) {
 		    gsl.clearTouchedElement();
 		}
-		repaint();
+		doRepaint();
 	}
 
 	public void pointerReleased(int x, int y) {
@@ -1755,7 +1803,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			return;
 		}
 		long currTime = System.currentTimeMillis();
-		int clickIdx = (y - scrollOffset)/fontSize;
+		int clickIdx = (y - renderDiff - scrollOffset)/fontSize;
 		//#debug debug
 		logger.debug("PointerReleased: " + x + "," + y);
 		pointerActionDone = true;
@@ -1793,7 +1841,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				int xDist = x - pointerXPressed; 
 				logger.debug("Slide right " + xDist);
 				// Sort mode Slide: Sliding right at least half the screen width is the same as the # key
-				if (xDist > getWidth() / 2 ) {
+				if (xDist > maxX / 2 ) {
 					//#debug debug
 					logger.debug("Sort mode slide");
 					keyPressed(KEY_POUND);
@@ -1801,10 +1849,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 				} else if (xDist > fontSize ) {
 					logger.debug("Route slide");
 					cursor = clickIdxAtSlideStart;
-					repaint();
+					doRepaint();
 					commandAction( ROUTE1_CMD, (Displayable) null);					
 				// Search field slide: sliding left at least the fontHeight
-				} else if (xDist < -getWidth()/2 ) {
+				} else if (xDist < -maxX/2 ) {
 					logger.debug("Search field slide");
 					GuiNameEnter gne = new GuiNameEnter(this, null, Locale.get("guisearch.SearchForNamesStarting")/*Search for names starting with:*/, searchCanon.toString(), 20);
 					gne.show();
@@ -1813,7 +1861,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					logger.debug("Select entry slide");
 					cursor = clickIdxAtSlideStart;
 					resetTicker();
-					repaint();
+					doRepaint();
 				}
 			}
 			pointerDragged = false;
@@ -1824,7 +1872,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (gsl != null) {
 		    gsl.clearTouchedElement();
 		}		
-		repaint();
+		doRepaint();
 	}
 	
 	public void pointerDragged(int x, int y) {
@@ -1868,11 +1916,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 			}
 			pointerXDragged = x;
 			pointerYDragged = y;
-			repaint();
+			doRepaint();
 		}
 	}
 
 	private void reSearch() {
+		//System.out.println("reSearch starting, searchThread: " + searchThread + " searchCanon: " + searchCanon.toString());
 		if (searchThread != null) {
 			//#debug info
 			logger.info("researching");
@@ -1880,7 +1929,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			searchThread.search(NumberCanon.canonial(searchCanon.toString()),
 					    Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ? 
 					    SearchNames.INDEX_WORD : SearchNames.INDEX_BIGNAME);
-			repaint(0, 0, getWidth(), getHeight());
+			repaint(0, renderDiff, maxX, maxY);
 			// title will be set by SearchName.doSearch when we need to determine first if we have favorites
 			//#if polish.api.bigsearch
 			if (searchCanon.length() > 0 || matchMode()) { 
@@ -1895,6 +1944,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	private void appendCompassDirection(StringBuffer sb, SearchResult sr) {
+		if (Trace.getInstance().isShowingSplitSearch()) {
+			sr.dist=ProjMath.getDistance(sr.lat, sr.lon, parent.center.radlat, parent.center.radlon);
+		}
 		if (sr.dist >= 0) {
 			int courseToGo;
 			courseToGo = (int) (MoreMath.bearing_int(
@@ -2067,7 +2119,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 	
 	public void triggerRepaint(){
-		repaint(0, 0, getWidth(), getHeight());
+		repaint(0, renderDiff, maxX, maxY);
 	}
 
 	public synchronized void clearList() {
@@ -2145,14 +2197,18 @@ public class GuiSearch extends Canvas implements CommandListener,
 						}
 					}
 					state = STATE_MAIN;
-					show();
+					if (Trace.getInstance().isShowingSplitSearch()) {
+						Trace.getInstance().show();
+					} else {
+						show();
+					}
 					synchronized(this) {
 						try {
 							//Wait for the Names to be resolved
 							//This is an arbitrary value, but hopefully
 							//a reasonable compromise.
 							wait(500);
-							repaint();
+							doRepaint();
 						} catch (InterruptedException e) {
 							//Nothing to do
 						}

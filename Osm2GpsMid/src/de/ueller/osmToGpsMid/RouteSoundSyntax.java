@@ -182,7 +182,7 @@ public class RouteSoundSyntax {
 	}
 	
 	public Object[] getSoundNames() {
-		rememberSounds("CONNECT;DISCONNECT");
+		rememberSounds("CONNECT;DISCONNECT;CAMERA_ALERT");
 		return soundNames.toArray();
 	}
 	
