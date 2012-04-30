@@ -62,6 +62,7 @@ public class Routing implements Runnable {
 	public boolean boostTrunksAndPrimarys = false;	
 	public boolean useMotorways = false;
 	public boolean useTollRoads = false;	
+	public boolean showRouteHelpers = false;
 	
 	private int oomCounter = 0;
 	private int expanded;
@@ -118,6 +119,7 @@ public class Routing implements Runnable {
 			}
 		}
 		currentTravelMask = Configuration.getTravelMask();
+		showRouteHelpers = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTEHELPERS);
 	}
 	
 	private GraphNode search(RouteNode dest) throws Exception {
@@ -423,7 +425,12 @@ public class Routing implements Runnable {
 					} else {
 						open.put(nodeSuccessor.toId, newNode);
 					}
-//					parent.getRouteNodes().addElement(new RouteHelper(newNode.state.to.lat,newNode.state.to.lon,"t"+expanded));
+					if (showRouteHelpers) {
+						RouteNode rn = getRouteNode(newNode.state.toId);
+						if (rn != null) {
+							parent.getRouteNodes().addElement(new RouteHelper(rn.lat, rn.lon, "t"+expanded));
+						}
+					}
 //					evaluated++;
 					children.addElement(newNode);
 				}
@@ -817,14 +824,18 @@ public class Routing implements Runnable {
 				
 				// Roundabouts don't need to be explicitly tagged as oneways in OSM 
 				// according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
-					
-//				parent.getRouteNodes().addElement(new RouteHelper(fromMark.nodeLat[nearestSegment],fromMark.nodeLon[nearestSegment],"oneWay sec"));
+				
+				if (showRouteHelpers) {
+					parent.getRouteNodes().addElement(new RouteHelper(fromMark.nodeLat[nearestSegment],fromMark.nodeLon[nearestSegment],"oneWay sec"));
+				}
 				RouteNode rn=findPrevRouteNode(nearestSegment-1, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
 				if (rn != null) {
 					routeFrom = rn;
 					firstNodeId1 = rn.id; // must be before the oneDirection check as this routeNode might be the source node for connection/duration determination
 					if (! w.isOneDirectionOnly() ) { // if no against oneway rule applies
-//						parent.getRouteNodes().addElement(new RouteHelper(rn.lat,rn.lon,"next back"));
+						if (showRouteHelpers) {
+							parent.getRouteNodes().addElement(new RouteHelper(rn.lat,rn.lon,"next back"));
+						}
 						// TODO: fill in bearings and cost
 						Connection initialState=new Connection(rn,0,(byte)99,(byte)99, -1);
 						GraphNode firstNode=new GraphNode(initialState,null,penAgainstOsmDirection,0,(byte)99);
