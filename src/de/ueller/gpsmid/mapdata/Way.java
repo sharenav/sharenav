@@ -695,14 +695,29 @@ public class Way extends Entity {
 			}
 			
 			/* check if this is a better match than a maybe previous one:
-			if the distance is closer than the already matching one
+			if the travelling time is shorter than the already matching one
 			this way contains a better path between the connections
 			*/
-			if (conWayRealDistance < pc.conWayDistanceToNext &&
+			int maxspeed = (short) getMaxSpeed();
+			//if (maxspeed == 0) {
+			//	maxspeed = Legend.getWayMaxSpeed(this, Configuration.getTravelModeNr());
+			//}
+			// FIXME is this good? Winter speed handling might be inconsistent
+			if (getMaxSpeedWinter() != 0 && Configuration.getCfgBitState(Configuration.CFGBIT_MAXSPEED_WINTER)) {
+				maxspeed = (short) getMaxSpeedWinter();
+			}
+			//System.out.println("maxspeed: " + maxspeed);
+			//System.out.println("pc.conWayMaxSpeed: " + pc.conWayMaxSpeed);
+			//System.out.println("conWayRealDistance: " + conWayRealDistance);
+			//System.out.println("pc.conWayDistanceToNext: " + pc.conWayDistanceToNext);
+			// FIXME how to best take variable speed into account?
+			if (
 				/* check if way is routable
 				 * (there are situations where 2 ways have the same nodes, e.g. a tram and a highway)
 				*/
-				this.isRoutableWay() 
+				this.isRoutableWay() &&
+				conWayRealDistance / (maxspeed == 0 ? 1 : maxspeed)
+				< pc.conWayDistanceToNext / (maxspeed == 0 ? 1 : pc.conWayMaxSpeed)
 			) {
 //				if (pc.conWayDistanceToNext != Float.MAX_VALUE) {
 //					String name1=null, name2=null;
@@ -713,10 +728,7 @@ public class Way extends Entity {
 //				}
 				// this is currently the best path between searchCon1 and searchCon2
 				pc.conWayDistanceToNext = conWayRealDistance;
-				pc.conWayMaxSpeed = (short) getMaxSpeed();
-				if (getMaxSpeedWinter() != 0 && Configuration.getCfgBitState(Configuration.CFGBIT_MAXSPEED_WINTER)) {
-					pc.conWayMaxSpeed = (short) getMaxSpeedWinter();
-				}
+				pc.conWayMaxSpeed = (short) maxspeed;
 				if (pc.conWayMaxSpeed == Legend.MAXSPEED_MARKER_NONE) {
 					pc.conWayMaxSpeed = (short) Legend.MAXSPEED_ESTIMATE_NONE;
 				} else if (pc.conWayMaxSpeed == Legend.MAXSPEED_MARKER_VARIABLE) {
