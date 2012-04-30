@@ -82,6 +82,8 @@ import de.ueller.gpsmid.mapdata.Way;
 import de.ueller.gpsmid.mapdata.WaySegment;
 import de.ueller.gpsmid.names.Names;
 import de.ueller.gpsmid.names.Urls;
+import de.ueller.gpsmid.routing.RouteConnectionTraces;
+import de.ueller.gpsmid.routing.RouteHelpers;
 import de.ueller.gpsmid.routing.RouteInstructions;
 import de.ueller.gpsmid.routing.RouteLineProducer;
 import de.ueller.gpsmid.routing.RouteNode;
@@ -327,9 +329,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public Way actualSpeedLimitWay;
 	public volatile Way actualWay;
 	public volatile SingleTile actualSingleTile;
-
-	// this is only for visual debugging of the routing engine
-	Vector routeNodeHelpers = new Vector();
 
 	private long oldRecalculationTime;
 
@@ -1550,7 +1549,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					// center of the map is the route source
 					RoutePositionMark routeSource = new RoutePositionMark(center.radlat, center.radlon);
 					logger.info("Routing source: " + routeSource);
-					routeNodeHelpers=new Vector();
 					routeEngine = new Routing(this);
 					routeEngine.solve(routeSource, dest);
 //					resume();
@@ -4106,7 +4104,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		RouteInstructions.routeInstructionsHeight = 0;
 		RouteInstructions.abortRouteLineProduction();
 		setRoute(null);
-		setRouteNodeHelpers(null);
+		RouteHelpers.clear();
+		RouteConnectionTraces.clear();
 	}
 	
 	/**
@@ -4187,14 +4186,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	
 	public QueueDictReader getDictReader() {
 		return dictReader;
-	}
-
-	public Vector getRouteNodeHelpers() {
-		return routeNodeHelpers;
-	}
-
-	public void setRouteNodeHelpers(Vector routeNodeHelpers) {
-		this.routeNodeHelpers = routeNodeHelpers;
 	}
 	
 	protected void hideNotify() {

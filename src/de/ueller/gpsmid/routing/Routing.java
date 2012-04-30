@@ -63,6 +63,7 @@ public class Routing implements Runnable {
 	public boolean useMotorways = false;
 	public boolean useTollRoads = false;	
 	public boolean showRouteHelpers = false;
+	public boolean showConnectionTraces = false;
 	
 	private int oomCounter = 0;
 	private int expanded;
@@ -120,6 +121,7 @@ public class Routing implements Runnable {
 		}
 		currentTravelMask = Configuration.getTravelMask();
 		showRouteHelpers = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTEHELPERS);
+		showConnectionTraces = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTECONNECTION_TRACES);
 	}
 	
 	private GraphNode search(RouteNode dest) throws Exception {
@@ -351,6 +353,14 @@ public class Routing implements Runnable {
 					continue;
 				}
 				
+				if (showConnectionTraces) {
+					RouteNode rn1 = getRouteNode(currentNode.state.toId);
+					RouteNode rn2 = getRouteNode(nodeSuccessor.toId);
+					if (rn1 != null && rn2 != null) {
+						RouteConnectionTraces.addRouteConnectionTrace(rn1.lat, rn1.lon, rn2.lat, rn2.lon, "");						
+					}
+				}
+				
 				int turnCost=getTurnCost(currentNode.fromBearing,nodeSuccessor.startBearing);
 				//System.out.println ("currentNode frombearing " + currentNode.fromBearing
 				//		    + " nodeSuccessor.startBearing " + nodeSuccessor.startBearing);
@@ -428,7 +438,7 @@ public class Routing implements Runnable {
 					if (showRouteHelpers) {
 						RouteNode rn = getRouteNode(newNode.state.toId);
 						if (rn != null) {
-							parent.getRouteNodeHelpers().addElement(new RouteHelper(rn.lat, rn.lon, "t"+expanded));
+							RouteHelpers.addRouteHelper(rn.lat, rn.lon, "t"+expanded);
 						}
 					}
 //					evaluated++;
@@ -826,7 +836,7 @@ public class Routing implements Runnable {
 				// according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
 				
 				if (showRouteHelpers) {
-					parent.getRouteNodeHelpers().addElement(new RouteHelper(fromMark.nodeLat[nearestSegment],fromMark.nodeLon[nearestSegment],"oneWay sec"));
+					RouteHelpers.addRouteHelper(fromMark.nodeLat[nearestSegment],fromMark.nodeLon[nearestSegment],"oneWay sec");
 				}
 				RouteNode rn=findPrevRouteNode(nearestSegment-1, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
 				if (rn != null) {
@@ -834,7 +844,7 @@ public class Routing implements Runnable {
 					firstNodeId1 = rn.id; // must be before the oneDirection check as this routeNode might be the source node for connection/duration determination
 					if (! w.isOneDirectionOnly() ) { // if no against oneway rule applies
 						if (showRouteHelpers) {
-							parent.getRouteNodeHelpers().addElement(new RouteHelper(rn.lat,rn.lon,"next back"));
+							RouteHelpers.addRouteHelper(rn.lat,rn.lon,"next back");
 						}
 						// TODO: fill in bearings and cost
 						Connection initialState=new Connection(rn,0,(byte)99,(byte)99, -1);
@@ -964,6 +974,9 @@ public class Routing implements Runnable {
 	
 	
 	private final Vector solve () {
+		RouteHelpers.clear();
+		RouteConnectionTraces.clear();
+				
 		// when we search the closest routeNode, we must be able to access all routeNodes, not only the mainStreetNet one's
 		Routing.onlyMainStreetNet = false;
 

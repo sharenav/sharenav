@@ -337,6 +337,8 @@ public class Configuration {
 	public final static short CFGBIT_COMPASS_ALWAYS_ROTATE = 133;
 	// bit 134: display RouteHelpers
 	public final static short CFGBIT_ROUTEHELPERS = 134;
+	// bit 135: display RouteConnectionHelpers
+	public final static short CFGBIT_ROUTECONNECTION_TRACES = 135;
 	/**
 	 * These are the database record IDs for each configuration option
 	 */
@@ -629,7 +631,8 @@ public class Configuration {
 			// remember for which version the default values were stored
 			write(VERSION, RECORD_ID_CONFIG_VERSION);
 			
-			//setCfgBitSavedState(CFGBIT_ROUTEHELPERS, true);
+			// setCfgBitSavedState(CFGBIT_ROUTEHELPERS, true);
+			// setCfgBitSavedState(CFGBIT_ROUTECONNECTION_TRACES, true);
 			
 		} catch (Exception e) {
 			logger.exception(Locale.get("configuration.ProblemsWithReadingConfig")/*Problems with reading our configuration: */, e);
