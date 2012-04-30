@@ -419,7 +419,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	}
 
 	private void initMapSource() {
-		//Prepare Map Source selection menu
 		logger.info("Starting map source setup menu");
 		menuSelectMapSource = new Form(Locale.get("guidiscover.SelectMapSource")/*Select Map Source*/);
 		menuSelectMapSource.addCommand(BACK_CMD);
@@ -443,8 +442,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	}
 
 	private void initDisplay() {
-		//Prepare Display options menu
-		logger.info(Locale.get("guidiscover.StartingDisplaySetupMenu")/*Starting display setup menu*/);
+		logger.info("Starting display setup menu");
 
 		menuDisplayOptions = new Form(Locale.get("guidiscover.DisplayOptions")/*Display Options*/);
 
@@ -663,8 +661,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	
 	//#if polish.api.osm-editing
 	private void initOSMaccountOptions() {
-		//Prepare Debug selection menu
-		logger.info(Locale.get("guidiscover.StartingOSM")/*Starting OSM account setup menu*/);
+		logger.info("Starting OSM account setup menu");
 		menuOsmAccountOptions = new Form(Locale.get("guidiscover.OpenStreetMapAccount")/*OpenStreetMap account*/);
 		menuOsmAccountOptions.addCommand(BACK_CMD);
 		menuOsmAccountOptions.addCommand(OK_CMD);
@@ -744,7 +741,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	}
 
 	private void initOpencellidOptions() {
-		//Prepare Debug selection menu
 		logger.info("Starting Opencellid apikey setup menu");
 		menuOpencellidOptions = new Form(Locale.get("guidiscover.Opencellid")/*Opencellid*/);
 		menuOpencellidOptions.addCommand(BACK_CMD);
@@ -782,6 +778,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	}
 	
 	public void commandAction(Command c, Displayable d) {
+		//#debug debug
+		logger.debug("GuiDiscover got Command " + c);
+
 		if (c == EXIT_CMD) {
 			destroy();
        		Trace.getInstance().show();
