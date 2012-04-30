@@ -974,6 +974,9 @@ public class Routing implements Runnable {
 	
 	
 	private final Vector solve () {
+		RouteHelpers.clear();
+		RouteConnectionTraces.clear();
+				
 		// when we search the closest routeNode, we must be able to access all routeNodes, not only the mainStreetNet one's
 		Routing.onlyMainStreetNet = false;
 
