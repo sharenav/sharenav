@@ -206,6 +206,10 @@ public class RouteInstructions {
 					pc.g.drawString(n.name, pc.lineP2.x+7, pc.lineP2.y+5, Graphics.BOTTOM | Graphics.LEFT);
 				}
 			}
+			
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_ROUTECONNECTION_TRACES)) {
+				RouteConnectionTraces.paint(pc, xo, yo);
+			}
 
 			boolean routeRecalculationRequired=false;
 			float remainingDistance = 0;

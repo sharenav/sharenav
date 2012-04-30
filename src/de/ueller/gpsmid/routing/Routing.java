@@ -63,6 +63,7 @@ public class Routing implements Runnable {
 	public boolean useMotorways = false;
 	public boolean useTollRoads = false;	
 	public boolean showRouteHelpers = false;
+	public boolean showConnectionTraces = false;
 	
 	private int oomCounter = 0;
 	private int expanded;
@@ -120,6 +121,7 @@ public class Routing implements Runnable {
 		}
 		currentTravelMask = Configuration.getTravelMask();
 		showRouteHelpers = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTEHELPERS);
+		showConnectionTraces = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTECONNECTION_TRACES);
 	}
 	
 	private GraphNode search(RouteNode dest) throws Exception {
@@ -349,6 +351,14 @@ public class Routing implements Runnable {
 					 (currentNode.state.connectionId == -1 || currentNode.state.connectionId == -2)  ) {
 					//System.out.println("currentNode.state.toId: " + currentNode.state.toId + " " + firstNodeId1 +  " " + firstNodeId2 + " " + currentNode.state.connectionId);
 					continue;
+				}
+				
+				if (showConnectionTraces) {
+					RouteNode rn1 = getRouteNode(currentNode.state.toId);
+					RouteNode rn2 = getRouteNode(nodeSuccessor.toId);
+					if (rn1 != null && rn2 != null) {
+						RouteConnectionTraces.addRouteConnectionTrace(rn1.lat, rn1.lon, rn2.lat, rn2.lon, "");						
+					}
 				}
 				
 				int turnCost=getTurnCost(currentNode.fromBearing,nodeSuccessor.startBearing);
