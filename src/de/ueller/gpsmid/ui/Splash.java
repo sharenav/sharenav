@@ -72,12 +72,8 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		Locale.get("splash.MapData2")/* from OpenStreetMap*/,
 		Locale.get("splash.MapData3")/* licensed under CC 2.0*/,
 		Locale.get("splash.MapData4")/* http://creativecommons.org/*/,
-		Configuration.getHasPointerEvents() ? 
-		Locale.get("splash.skiptouch")/* Tap at top to skip this */:
 		Locale.get("splash.skip")/* Press '*' to skip this */,
 		Locale.get("splash.screen")/* screen at startup. */,
-		Configuration.getHasPointerEvents() ? 
-		"Tap middle of screen to": 
 		"Press '#' if you want to",
 		"switch to English." };
 	private final Font f;
@@ -100,6 +96,9 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	public Splash(GpsMid main, boolean initDone) {
 		this.main = main;
 		this.initDone = initDone;
+
+		Configuration.setHasPointerEvents(hasPointerEvents());
+
 		try {
 			splash = Image.createImage("/Gps-splash.png");
 		} catch (IOException e) {
@@ -304,16 +303,21 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	// for a possible Native Android workaround
 	protected void keyReleased(int keyCode) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (initDone) {
-				shutdown = true;
-				GpsMid.showMapScreen();
-				return;
+			if (main.shouldBeShown().equals(menuSplash)) {
+				// Return from menu to splash screen
+				show();
 			} else {
-				shutdown = true;
-				Configuration.setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, false, true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_RUNNING, false, true);
-				main.notifyDestroyed();
-				return;
+				if (initDone) {
+					shutdown = true;
+					GpsMid.showMapScreen();
+					return;
+				} else {
+					shutdown = true;
+					Configuration.setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, false, true);
+					Configuration.setCfgBitState(Configuration.CFGBIT_RUNNING, false, true);
+					main.notifyDestroyed();
+					return;
+				}
 			}
 		}
 	}
