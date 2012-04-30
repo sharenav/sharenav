@@ -329,7 +329,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public volatile SingleTile actualSingleTile;
 
 	// this is only for visual debugging of the routing engine
-	Vector routeNodes = new Vector();
+	Vector routeNodeHelpers = new Vector();
 
 	private long oldRecalculationTime;
 
@@ -1550,7 +1550,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					// center of the map is the route source
 					RoutePositionMark routeSource = new RoutePositionMark(center.radlat, center.radlon);
 					logger.info("Routing source: " + routeSource);
-					routeNodes=new Vector();
+					routeNodeHelpers=new Vector();
 					routeEngine = new Routing(this);
 					routeEngine.solve(routeSource, dest);
 //					resume();
@@ -4106,7 +4106,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		RouteInstructions.routeInstructionsHeight = 0;
 		RouteInstructions.abortRouteLineProduction();
 		setRoute(null);
-		setRouteNodes(null);
+		setRouteNodeHelpers(null);
 	}
 	
 	/**
@@ -4189,12 +4189,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		return dictReader;
 	}
 
-	public Vector getRouteNodes() {
-		return routeNodes;
+	public Vector getRouteNodeHelpers() {
+		return routeNodeHelpers;
 	}
 
-	public void setRouteNodes(Vector routeNodes) {
-		this.routeNodes = routeNodes;
+	public void setRouteNodeHelpers(Vector routeNodeHelpers) {
+		this.routeNodeHelpers = routeNodeHelpers;
 	}
 	
 	protected void hideNotify() {
