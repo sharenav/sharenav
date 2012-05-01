@@ -101,6 +101,9 @@
       the minimum route line width is now 5 instead of 3.
     - don't pause GpsMid (& close location producer) if we're routing 
     - add option to select whether to aim for shortest time or shortest distance
+    - adjustment to routing parametres for faster route calculation - routes
+      should be as good as before, please report if you get worse routes than
+      earlier
     *** Osm2GpsMid GUI ***
     - Route destinations for the route corridor are saved in last.properties. After loading
       a .properties file with route destinations you can press "Calculate Route Corridor"
