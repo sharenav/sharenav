@@ -98,7 +98,7 @@ public class Routing implements Runnable {
 	public Routing(Trace parent) throws IOException {
 		this.parent = parent;
 		
-		estimateFac = (Configuration.getRouteEstimationFac() / 10f) + 0.8f;
+		estimateFac = (Configuration.getRouteEstimationFac() / 10f) + 0.92f;
 		if (Configuration.getRouteEstimationFac() > 0) {
 			if (!Configuration.getCfgBitState(Configuration.CFGBIT_SUPPRESS_ROUTE_WARNING)) {
 				parent.alert(Locale.get("routing.RoutingWarningTitle")/*Routing warning*/,
