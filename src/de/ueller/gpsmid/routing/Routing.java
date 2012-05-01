@@ -62,6 +62,8 @@ public class Routing implements Runnable {
 	public boolean boostTrunksAndPrimarys = false;	
 	public boolean useMotorways = false;
 	public boolean useTollRoads = false;	
+	public boolean showRouteHelpers = false;
+	public boolean showConnectionTraces = false;
 	
 	private int oomCounter = 0;
 	private int expanded;
@@ -118,6 +120,8 @@ public class Routing implements Runnable {
 			}
 		}
 		currentTravelMask = Configuration.getTravelMask();
+		showRouteHelpers = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTEHELPERS);
+		showConnectionTraces = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTECONNECTION_TRACES);
 	}
 	
 	private GraphNode search(RouteNode dest) throws Exception {
@@ -349,6 +353,14 @@ public class Routing implements Runnable {
 					continue;
 				}
 				
+				if (showConnectionTraces) {
+					RouteNode rn1 = getRouteNode(currentNode.state.toId);
+					RouteNode rn2 = getRouteNode(nodeSuccessor.toId);
+					if (rn1 != null && rn2 != null) {
+						RouteConnectionTraces.addRouteConnectionTrace(rn1.lat, rn1.lon, rn2.lat, rn2.lon, "");						
+					}
+				}
+				
 				int turnCost=getTurnCost(currentNode.fromBearing,nodeSuccessor.startBearing);
 				//System.out.println ("currentNode frombearing " + currentNode.fromBearing
 				//		    + " nodeSuccessor.startBearing " + nodeSuccessor.startBearing);
@@ -423,7 +435,12 @@ public class Routing implements Runnable {
 					} else {
 						open.put(nodeSuccessor.toId, newNode);
 					}
-//					parent.getRouteNodes().addElement(new RouteHelper(newNode.state.to.lat,newNode.state.to.lon,"t"+expanded));
+					if (showRouteHelpers) {
+						RouteNode rn = getRouteNode(newNode.state.toId);
+						if (rn != null) {
+							RouteHelpers.addRouteHelper(rn.lat, rn.lon, "t"+expanded);
+						}
+					}
 //					evaluated++;
 					children.addElement(newNode);
 				}
@@ -502,6 +519,9 @@ public class Routing implements Runnable {
 		while(lo<=hi) {
 			int cur = (lo+hi)/2;
 			long ot = ((GraphNode)nodes.elementAt(cur)).total;
+			// FIXME isn't this wrong? Doesn't seem sensible that
+			// costs are sorted the opposite from total, when
+			// total is costs + distance
 			if((tot < ot) || (tot == ot && costs >= ((GraphNode) nodes.elementAt(cur)).costs)) 
 				hi = cur - 1;
 			else lo = cur + 1;
@@ -817,14 +837,18 @@ public class Routing implements Runnable {
 				
 				// Roundabouts don't need to be explicitly tagged as oneways in OSM 
 				// according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
-					
-//				parent.getRouteNodes().addElement(new RouteHelper(fromMark.nodeLat[nearestSegment],fromMark.nodeLon[nearestSegment],"oneWay sec"));
+				
+				if (showRouteHelpers) {
+					RouteHelpers.addRouteHelper(fromMark.nodeLat[nearestSegment],fromMark.nodeLon[nearestSegment],"oneWay sec");
+				}
 				RouteNode rn=findPrevRouteNode(nearestSegment-1, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
 				if (rn != null) {
 					routeFrom = rn;
 					firstNodeId1 = rn.id; // must be before the oneDirection check as this routeNode might be the source node for connection/duration determination
 					if (! w.isOneDirectionOnly() ) { // if no against oneway rule applies
-//						parent.getRouteNodes().addElement(new RouteHelper(rn.lat,rn.lon,"next back"));
+						if (showRouteHelpers) {
+							RouteHelpers.addRouteHelper(rn.lat,rn.lon,"next back");
+						}
 						// TODO: fill in bearings and cost
 						Connection initialState=new Connection(rn,0,(byte)99,(byte)99, -1);
 						GraphNode firstNode=new GraphNode(initialState,null,penAgainstOsmDirection,0,(byte)99);
@@ -953,6 +977,9 @@ public class Routing implements Runnable {
 	
 	
 	private final Vector solve () {
+		RouteHelpers.clear();
+		RouteConnectionTraces.clear();
+				
 		// when we search the closest routeNode, we must be able to access all routeNodes, not only the mainStreetNet one's
 		Routing.onlyMainStreetNet = false;
 

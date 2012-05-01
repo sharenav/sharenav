@@ -192,16 +192,13 @@ public class RouteInstructions {
 			ConnectionWithNode c;
 			ConnectionWithNode cNow = null;
 			ConnectionWithNode cThen =null;
-			Vector routeNodes = trace.getRouteNodes();
-			// Show helper nodes for Routing
-			for (int x=0; x<routeNodes.size();x++){
-				RouteHelper n=(RouteHelper) routeNodes.elementAt(x);
-				pc.getP().forward(n.node.radlat, n.node.radlon, pc.lineP2);
-				pc.lineP2.x-=xo;
-				pc.lineP2.x-=yo;
 
-				pc.g.drawRect(pc.lineP2.x-5, pc.lineP2.y-5, 10, 10);
-				pc.g.drawString(n.name, pc.lineP2.x+7, pc.lineP2.y+5, Graphics.BOTTOM | Graphics.LEFT);
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_ROUTEHELPERS)) {
+				RouteHelpers.paint(pc, xo, yo);
+			}
+			
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_ROUTECONNECTION_TRACES)) {
+				RouteConnectionTraces.paint(pc, xo, yo);
 			}
 
 			boolean routeRecalculationRequired=false;
