@@ -656,7 +656,11 @@ public class Routing implements Runnable {
 			// estimate 50 Km/h (14 m/s) as average speed 
 			return (int) (((dist/1.7f)+turnCost)*estimateFac);
 		} else {
-			return (int) ((dist*1.1f + turnCost)*estimateFac);
+			//return (int) ((dist*1.1f + turnCost)*estimateFac);
+			// we're aiming for shortest distance; return just the distance,
+			// unadjusted if user has set factor to 0, adjusted by estimation
+			// factor otherwise
+			return (int) (dist * (Configuration.getRouteEstimationFac() / 10f + 1));
 		}
 	}
 
