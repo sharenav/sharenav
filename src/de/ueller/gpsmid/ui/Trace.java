@@ -419,7 +419,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	private Urls urlsThread;
 
-	private ImageCollector imageCollector;
+	public ImageCollector imageCollector;
 	
 	private QueueDataReader tileReader;
 
