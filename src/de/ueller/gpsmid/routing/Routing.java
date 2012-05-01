@@ -27,7 +27,8 @@ import de.ueller.util.MoreMath;
 
 public class Routing implements Runnable {
 	private Thread processorThread;
-	public boolean bestTime = true;
+	public boolean bestTime = !Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_AIM);
+
 	private final Vector nodes = new Vector();
 	private final IntTree open = new IntTree();
 	private final IntTree closed = new IntTree();

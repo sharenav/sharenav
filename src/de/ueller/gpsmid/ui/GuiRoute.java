@@ -30,6 +30,7 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 	private ImageItem[] travelModeImages;
 	private Gauge gaugeRoutingEsatimationFac; 
 	private ChoiceGroup routingTurnRestrictionsGroup;
+	private ChoiceGroup routingTimeOrDistanceGroup;
 	private ChoiceGroup continueMapWhileRouteing;
 	private ChoiceGroup routingOptsGroup;
 	private ChoiceGroup routingWarningOptsGroup;
@@ -129,6 +130,13 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 		routingWarningOptsGroup = new ChoiceGroup(Locale.get("guiroute.RouteWarningSetting")/*Warning*/, Choice.MULTIPLE, routingWarningOpts, null);
 		routingWarningOptsGroup.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SUPPRESS_ROUTE_WARNING));
 		append(routingWarningOptsGroup);
+
+		String [] routingAim = new String[2];
+		routingAim[0] = Locale.get("guiroute.time")/*"Shortest time"*/;
+		routingAim[1] = Locale.get("guiroute.distance")/*Shortest distance*/;
+		routingTimeOrDistanceGroup = new ChoiceGroup(Locale.get("guiroute.aim")/*Aim in routing*/, Choice.EXCLUSIVE, routingAim ,null);
+		routingTimeOrDistanceGroup.setSelectedIndex( (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_AIM) ? 1 : 0), true);
+		append(routingTimeOrDistanceGroup);
 
 		String [] trStates = new String[2];
 		trStates[0] = Locale.get("generic.On")/*On*/;
@@ -236,6 +244,7 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 				) {
 				Configuration.setTravelMode(routingTravelModesGroup.getSelectedIndex());
 			}
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_AIM, (routingTimeOrDistanceGroup.getSelectedIndex() == 1));			
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION, (routingTurnRestrictionsGroup.getSelectedIndex() == 0) );			
 			Configuration.setRouteEstimationFac(gaugeRoutingEsatimationFac.getValue());
 

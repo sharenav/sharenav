@@ -339,6 +339,8 @@ public class Configuration {
 	public final static short CFGBIT_ROUTEHELPERS = 134;
 	// bit 135: display RouteConnectionHelpers
 	public final static short CFGBIT_ROUTECONNECTION_TRACES = 135;
+	// bit 136: Aim for shortest distance in routing if true (otherwise shortest time)
+	public final static short CFGBIT_ROUTE_AIM = 136;
 	/**
 	 * These are the database record IDs for each configuration option
 	 */

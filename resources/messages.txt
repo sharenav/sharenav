@@ -1333,3 +1333,7 @@ guidiscover.autocalibrate=Auto-calibrate dig.compass deviation by movement
 guidiscover.CompassOptions=Compass Options
 guidiscover.alwaysrotatebycompass=Rapid rotate map
 guisearch.choose=choose
+guiroute.aim=Aim in routing
+guiroute.time=Shortest time
+guiroute.distance=Shortest distance
+
