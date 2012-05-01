@@ -262,11 +262,14 @@ public class GuiSearch extends Canvas implements CommandListener,
 		
 		this.minX = 0;
 		this.minY = 0;
-		this.maxX = Trace.getInstance().getWidth();
-		this.maxY = Trace.getInstance().getHeight();
 
 		if (Trace.getInstance().isShowingSplitSearch()) {
+			this.maxX = Trace.getInstance().getWidth();
+			this.maxY = Trace.getInstance().getHeight();
 			this.renderDiff = Trace.getInstance().getHeight() / 2;
+		} else {
+			this.maxX = getWidth(); 
+			this.maxX = getHeight(); 
 		}
 
 		//#if polish.android
