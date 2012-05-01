@@ -263,10 +263,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 		this.minX = 0;
 		this.minY = 0;
 
-		if (Trace.getInstance().isShowingSplitSearch()) {
-			this.maxX = Trace.getInstance().getWidth();
-			this.maxY = Trace.getInstance().getHeight();
-			this.renderDiff = Trace.getInstance().getHeight() / 2;
+		if (parent.isShowingSplitSearch()) {
+			this.maxX = parent.getWidth();
+			this.maxY = parent.getHeight();
+			this.renderDiff = parent.getHeight() / 2;
 		} else {
 			this.maxX = getWidth(); 
 			this.maxX = getHeight(); 
@@ -457,7 +457,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				parent.setDestination(positionMark);
 				//#debug info
 				logger.info("Search selected: " + positionMark);
-				if (!Trace.getInstance().isShowingSplitSearch()) {
+				if (!parent.isShowingSplitSearch()) {
 					parent.show();				
 					destroy();
 				}
@@ -472,7 +472,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				}
 				SearchResult sr = (SearchResult) result.elementAt(cursor);				
 				parent.receivePosition(sr.lat, sr.lon, Configuration.getRealBaseScale());				
-				if (!Trace.getInstance().isShowingSplitSearch()) {
+				if (!parent.isShowingSplitSearch()) {
 					parent.show();				
 					destroy();
 				}
@@ -738,8 +738,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	public void doRepaint() {
-		if (Trace.getInstance().isShowingSplitSearch()) {
-			Trace.getInstance().repaint();
+		if (parent.isShowingSplitSearch()) {
+			parent.repaint();
 		} else {
 			repaint();
 		}
@@ -748,8 +748,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 	public void sizeChanged(int w, int h) {
 		maxX = w;
 		maxY = h;
-		if (Trace.getInstance().isShowingSplitSearch()) {
-			renderDiff = Trace.getInstance().getHeight() / 2;
+		if (parent.isShowingSplitSearch()) {
+			renderDiff = parent.getHeight() / 2;
 		}
 		gsl = new GuiSearchLayout(0, renderDiff, w, h);
 		doRepaint();
@@ -1207,7 +1207,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			// switches keycodes or something. 0 seems to be what is given in practice for the search key
 			// in KeyCommandCanvas, but not here
 		} else if (keyCode == 10 || action == FIRE || keyCode == 0) {
-				commandAction( Trace.getInstance().getCommand(Trace.ROUTING_START_CMD), (Displayable) null);
+				commandAction( parent.getCommand(Trace.ROUTING_START_CMD), (Displayable) null);
 		} else if (keyCode == 10 || action == FIRE || keyCode == KeyEvent.KEYCODE_BACK) {
 			// FIXME With this there's the problem that Back gets passed on to the next menu
 			// (e.g. route mode asking). See http://developer.android.com/sdk/android-2.0.html
@@ -1683,8 +1683,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 				if (touchedElementId == GuiSearchLayout.KEY_1) {
 					if (cursorKeypad) {
 						destroy();
-						if (Trace.getInstance().isShowingSplitSearch()) {
-							Trace.getInstance().showIconMenu();
+						if (parent.isShowingSplitSearch()) {
+							parent.showIconMenu();
 						} else {
 							parent.show();
 						}
@@ -1947,7 +1947,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	private void appendCompassDirection(StringBuffer sb, SearchResult sr) {
-		if (Trace.getInstance().isShowingSplitSearch()) {
+		if (parent.isShowingSplitSearch()) {
 			sr.dist=ProjMath.getDistance(sr.lat, sr.lon, parent.center.radlat, parent.center.radlon);
 		}
 		if (sr.dist >= 0) {
@@ -2200,8 +2200,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 						}
 					}
 					state = STATE_MAIN;
-					if (Trace.getInstance().isShowingSplitSearch()) {
-						Trace.getInstance().show();
+					if (parent.isShowingSplitSearch()) {
+						parent.show();
 					} else {
 						show();
 					}
