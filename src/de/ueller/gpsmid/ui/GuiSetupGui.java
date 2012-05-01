@@ -174,6 +174,10 @@ public class GuiSetupGui extends Form implements CommandListener {
 			}
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN,
 					imenuOpts.isSelected(1));
+			if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)
+			    && !imenuOpts.isSelected(2)) {
+				trace.stopShowingSplitScreen();
+			}
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN,
 					imenuOpts.isSelected(2));
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS,
