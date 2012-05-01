@@ -115,9 +115,10 @@ public class Routing implements Runnable {
 				// set roadRun mode if travel mode's maxEstimationSpeed >= 14 m/s (50 km/h), i.e. for motorized vehicles
 				roadRun = true;
 			} else {
-				// for non-motorized vehicles simply set highest estimateFac
+				// for non-motorized vehicles don't set highest estimateFac,
+				// it results in bad routes
+				// estimateFac = 1.8f;
 				roadRun = false;
-				estimateFac = 1.8f;
 			}
 		}
 		currentTravelMask = Configuration.getTravelMask();
