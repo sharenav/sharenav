@@ -269,7 +269,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			this.renderDiff = parent.getHeight() / 2;
 		} else {
 			this.maxX = getWidth(); 
-			this.maxX = getHeight(); 
+			this.maxY = getHeight(); 
 		}
 
 		//#if polish.android
