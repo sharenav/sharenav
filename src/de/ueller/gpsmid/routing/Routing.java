@@ -152,6 +152,18 @@ public class Routing implements Runnable {
 //			System.out.println("use main street net");
 		}
 		
+		/*
+		 * Implement A* route search
+		 * (see e.g. http://en.wikipedia.org/wiki/A*_search_algorithm) 
+		 * where GraphNode variables are as follows
+		 * costs = g_score[start]
+		 * distance = h_score[start] (heuristic estimate from estimate())
+		 * total = f_score[start], costs + distance
+		 *
+		 * nodes is the openset
+		 * closed is the closedset
+		 */
+
 		for (int noSolutionRetries = 0; noSolutionRetries <= maxTimesToReduceMainStreetNet; noSolutionRetries++) {
 		int mainStreetConsExamined = 0;
 		motorwayConsExamined = 0;
@@ -312,7 +324,7 @@ public class Routing implements Runnable {
 			// have been examined.
 			// MainStreet Net Distance Check - this will turn on the MainStreetNet mode 
 			// if we are far away enough from routeStart and routeDest.
-			if (mainStreetConsExamined > 20
+			if (bestTime && mainStreetConsExamined > 20
 				&& MoreMath.dist(tile.lastRouteNode.lat, tile.lastRouteNode.lon, dest.lat, dest.lon) > mainStreetNetDistanceMeters
 				&& MoreMath.dist(tile.lastRouteNode.lat, tile.lastRouteNode.lon, routeFrom.lat, routeFrom.lon) > mainStreetNetDistanceMeters
 			) {
