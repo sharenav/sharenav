@@ -32,18 +32,19 @@ public class RouteConnectionTraces {
 	}
 
 	public static void paint(PaintContext pc, int xo, int yo) {
+		ConnectionTrace ci;
+		int x;
+		int y;
+		pc.g.setColor(0x00FF5060);
 		// Show helper connections
 		for (int i = 0; i < routeConnectionTraces.size(); i++) {
-			ConnectionTrace ci = (ConnectionTrace) routeConnectionTraces
-					.elementAt(i);
+			ci = (ConnectionTrace) routeConnectionTraces.elementAt(i);
 			pc.getP().forward(ci.node.radlat, ci.node.radlon, pc.lineP2);
-			int x = pc.lineP2.x - xo;
-			int y = pc.lineP2.y - yo;
-			pc.getP().forward(ci.successorNode.radlat, ci.successorNode.radlon,
-					pc.lineP2);
+			x = pc.lineP2.x - xo;
+			y = pc.lineP2.y - yo;
+			pc.getP().forward(ci.successorNode.radlat, ci.successorNode.radlon, pc.lineP2);
 			pc.lineP2.x -= xo;
 			pc.lineP2.y -= yo;
-			pc.g.setColor(0x00FF5060);
 			pc.g.drawLine(x, y, pc.lineP2.x, pc.lineP2.y);
 			// pc.g.drawString(n.name, pc.lineP2.x+7, pc.lineP2.y+5,
 			// Graphics.BOTTOM | Graphics.LEFT);
