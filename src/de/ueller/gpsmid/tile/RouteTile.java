@@ -99,7 +99,7 @@ public class RouteTile extends RouteBaseTile {
 			}
 			if (showConnections && connections == null) {
 				try {
-					loadConnections(true);
+					loadConnections(!Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_AIM));
 				} catch (IOException e) {
 					logger.exception(Locale.get("routetile.FailedLoadingRoutingConnections")/*Failed to load routing connections*/, e);
 					return;
@@ -129,7 +129,7 @@ public class RouteTile extends RouteBaseTile {
 								RouteBaseTile dict = (RouteBaseTile) Trace.getInstance().getDict((byte)4);
 								rnt = dict.getRouteNode(c.toId);
 								if (rnt != null) {
-									reverseCons = dict.getConnections(rnt.id, dict, true);
+									reverseCons = dict.getConnections(rnt.id, dict, !Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_AIM));
 								} else {
 									g.setColor(255, 70, 70);
 									final byte radius = 10;
@@ -426,7 +426,7 @@ public class RouteTile extends RouteBaseTile {
 				// due the shorts in map data we don't match exactly
 				if (MoreMath.approximately_equal(n.lat,lat,0.0000005f) &&
 					MoreMath.approximately_equal(n.lon,lon,0.0000005f)){
-					Connection cons[] = this.getConnections(n.id, this, true);					
+					Connection cons[] = this.getConnections(n.id, this, !Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_AIM));
 					//#debug debug
 					logger.debug("aprox equal matches...");
 					if (cons.length > 0) {

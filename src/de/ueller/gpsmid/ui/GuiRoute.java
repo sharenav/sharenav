@@ -244,6 +244,7 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 				) {
 				Configuration.setTravelMode(routingTravelModesGroup.getSelectedIndex());
 			}
+			// FIXME check if we need to drop connections when changing this
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_AIM, (routingTimeOrDistanceGroup.getSelectedIndex() == 1));			
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION, (routingTurnRestrictionsGroup.getSelectedIndex() == 0) );			
 			Configuration.setRouteEstimationFac(gaugeRoutingEsatimationFac.getValue());
