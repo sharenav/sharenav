@@ -366,7 +366,11 @@ public class Routing implements Runnable {
 				int turnCost=getTurnCost(currentNode.fromBearing,nodeSuccessor.startBearing);
 				//System.out.println ("currentNode frombearing " + currentNode.fromBearing
 				//		    + " nodeSuccessor.startBearing " + nodeSuccessor.startBearing);
-				successorCost = currentNode.costs + nodeSuccessor.getCost()+turnCost;
+				successorCost = currentNode.costs + nodeSuccessor.getCost();
+				
+				if (bestTime) {
+					successorCost += turnCost;
+				}
 				
 				/* make motorways and toll roads very expensive if they are not allowed
 				  but still make them usable as the route might start on them */
