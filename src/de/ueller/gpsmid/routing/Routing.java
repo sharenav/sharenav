@@ -375,12 +375,13 @@ public class Routing implements Runnable {
 					}
 				}
 				
-				int turnCost=getTurnCost(currentNode.fromBearing,nodeSuccessor.startBearing);
+				int turnCost;
 				//System.out.println ("currentNode frombearing " + currentNode.fromBearing
 				//		    + " nodeSuccessor.startBearing " + nodeSuccessor.startBearing);
 				successorCost = currentNode.costs + nodeSuccessor.getCost();
 				
 				if (bestTime) {
+					turnCost = getTurnCost(currentNode.fromBearing,nodeSuccessor.startBearing);
 					successorCost += turnCost;
 				}
 				
