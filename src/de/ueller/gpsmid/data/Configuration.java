@@ -341,6 +341,8 @@ public class Configuration {
 	public final static short CFGBIT_ROUTECONNECTION_TRACES = 135;
 	// bit 136: Aim for shortest distance in routing if true (otherwise shortest time)
 	public final static short CFGBIT_ROUTE_AIM = 136;
+	// bit 136: Estimation heuristic for best time simple 120 km/h
+	public final static short CFGBIT_ROUTE_ESTIMATION_120KMH = 137;
 	/**
 	 * These are the database record IDs for each configuration option
 	 */
@@ -635,7 +637,8 @@ public class Configuration {
 			
 			// setCfgBitSavedState(CFGBIT_ROUTEHELPERS, true);
 			// setCfgBitSavedState(CFGBIT_ROUTECONNECTION_TRACES, true);
-			
+			// setCfgBitSavedState(CFGBIT_ROUTE_ESTIMATION_120KMH, true);
+
 		} catch (Exception e) {
 			logger.exception(Locale.get("configuration.ProblemsWithReadingConfig")/*Problems with reading our configuration: */, e);
 		}

@@ -599,6 +599,11 @@ public class Routing implements Runnable {
 		}
 		int dist = MoreMath.dist(toNode.lat, toNode.lon, dest.lat, dest.lon);
 		
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_ESTIMATION_120KMH)) {
+			// estimate 120 km/h as average speed
+			return (int) (dist/3.33f * (Configuration.getRouteEstimationFac() / 10f + 1));
+		}
+
 		/* sharp turns > 100 degrees between motorways and especially motorway links
 		 * can't be accepted without checking for a better alternative
 		 * to avoid entering and then immediately leaving motorway links
