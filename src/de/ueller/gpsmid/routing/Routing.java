@@ -395,7 +395,7 @@ public class Routing implements Runnable {
 				}
 				//System.out.println("successor " + nodeSuccessor + " cost " + successorCost + " turnCost : " + turnCost + " node " + currentNode + " current node costs " + currentNode.costs + " nodesucc cost " + nodeSuccessor.getCost());
 				// when the next connection starts at traffic signals and the current one isn't also starting at a traffic signal but we are not on a motorway connection
-				if (nodeSuccessor.startsAtTrafficSignals() && !currentNode.state.startsAtTrafficSignals() && !nodeSuccessor.isMotorwayConnection() ) {
+				if (bestTime && nodeSuccessor.startsAtTrafficSignals() && !currentNode.state.startsAtTrafficSignals() && !nodeSuccessor.isMotorwayConnection() ) {
 					//System.out.println("TRAFFIC SIGNAL");
 					// add configured secs traffic signal calc delay
 					successorCost += trafficSignalCalcDelayTSecs;
