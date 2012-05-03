@@ -1336,4 +1336,4 @@ guisearch.choose=choose
 guiroute.aim=Aim in routing
 guiroute.time=Shortest time
 guiroute.distance=Shortest distance
-
+guidiscover.ShowRouteCalcTraces=Show Route Calculation Traces

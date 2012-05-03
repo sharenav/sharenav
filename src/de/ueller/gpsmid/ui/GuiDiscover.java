@@ -344,14 +344,16 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//#style formItem
 		menuDebug.append(debugSeverity);
 
-		loggings = new String[3];
+		loggings = new String[4];
 		loggings[0] = Locale.get("guidiscover.ShowRouteConnections")/*Show route connections*/;
-		loggings[1] = Locale.get("guidiscover.ShowTurnRestrictions")/*Show turn restrictions*/;
-		loggings[2] = Locale.get("guidiscover.ShowInconsistentBearings")/*Show inconsistent bearings*/;
+		loggings[1] = Locale.get("guidiscover.ShowRouteCalcTraces")/*Show route calculation traces*/;
+		loggings[2] = Locale.get("guidiscover.ShowTurnRestrictions")/*Show turn restrictions*/;
+		loggings[3] = Locale.get("guidiscover.ShowInconsistentBearings")/*Show inconsistent bearings*/;
 		debugOther = new ChoiceGroup(Locale.get("guidiscover.Other")/*Other:*/, ChoiceGroup.MULTIPLE, loggings, null);
 		debugOther.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_CONNECTIONS));
-		debugOther.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS));
-		debugOther.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_BEARINGS));
+		debugOther.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTECONNECTION_TRACES));
+		debugOther.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS));
+		debugOther.setSelectedIndex(3, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_BEARINGS));
 		//#style formItem
 		menuDebug.append(debugOther);
 	}
@@ -1561,8 +1563,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		Configuration.setDebugSeverityDebug(selDebug[1]);
 		Configuration.setDebugSeverityTrace(selDebug[2]);
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_CONNECTIONS, debugOther.isSelected(0));
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS, debugOther.isSelected(1));
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_BEARINGS, debugOther.isSelected(2));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTECONNECTION_TRACES, debugOther.isSelected(1));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS, debugOther.isSelected(2));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_BEARINGS, debugOther.isSelected(3));
 		Logger.setGlobalLevel();
 		state = STATE_ROOT;
 		this.show();
