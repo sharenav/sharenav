@@ -180,8 +180,9 @@ public class Routing implements Runnable {
 					continue;
 				}
 			}
-			if (!(currentNode.total == bestTotal)) {
-				if (setBest(currentNode.total,currentNode.costs)) {
+
+			if (!(currentNode.getTotal() == bestTotal)) {
+				if (setBest(currentNode.getTotal(),currentNode.costs)) {
 					break; // cancel route calculation 1/2
 				}
 			} 
@@ -525,7 +526,7 @@ public class Routing implements Runnable {
 	private void addToNodes(Vector children) {
 		for (int i = 0; i < children.size(); i++) { 
 			GraphNode newNode = (GraphNode) children.elementAt(i);
-			long newTotal = newNode.total;
+			long newTotal = newNode.getTotal();
 			long newCosts = newNode.costs;
 			int idx = bsearch(0, nodes.size()-1, newTotal, newCosts);
 			nodes.insertElementAt(newNode, idx); 
@@ -537,7 +538,7 @@ public class Routing implements Runnable {
 		int hi = h;
 		while(lo<=hi) {
 			int cur = (lo+hi)/2;
-			long ot = ((GraphNode)nodes.elementAt(cur)).total;
+			long ot = ((GraphNode)nodes.elementAt(cur)).getTotal();
 			// FIXME isn't this wrong? Doesn't seem sensible that
 			// costs are sorted the opposite from total, when
 			// total is costs + distance
