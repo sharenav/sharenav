@@ -167,7 +167,18 @@ public class Routing implements Runnable {
 		for (int noSolutionRetries = 0; noSolutionRetries <= maxTimesToReduceMainStreetNet; noSolutionRetries++) {
 		int mainStreetConsExamined = 0;
 		motorwayConsExamined = 0;
+		
+		/* calculation statistics for debug purposes */
+//		int maxNodesSize = 0;
+//		int maxOpenSize = 0;
+//		int maxClosedSize = 0;
+
 		while (!(nodes.isEmpty())) {
+			/* calculation statistics for debug purposes */
+//			if (nodes.size() > maxNodesSize) maxNodesSize = nodes.size();
+//			if (open.size() > maxOpenSize) maxOpenSize = open.size();
+//			if (closed.size() > maxClosedSize) maxClosedSize = closed.size();
+			
 			currentNode = (GraphNode) nodes.firstElement();
 			if (checkForTurnRestrictions) {
 				if(closed.get(currentNode.state.connectionId) != null) { // to avoid having to remove
@@ -180,12 +191,16 @@ public class Routing implements Runnable {
 					continue;
 				}
 			}
-			if (!(currentNode.total == bestTotal)) {
-				if (setBest(currentNode.total,currentNode.costs)) {
+
+			if (!(currentNode.getTotal() == bestTotal)) {
+				if (setBest(currentNode.getTotal(),currentNode.costs)) {
 					break; // cancel route calculation 1/2
 				}
 			} 
 			if (currentNode.state.toId == dest.id) {
+				/* calculation statistics for debug purposes */
+//				parent.alert("Max values", "Nodes:" + maxNodesSize + " Open:" + maxOpenSize + " Closed:" + maxClosedSize + " OutOfMem: " + oomCounter, 10000);
+
 				return currentNode;
 			}
 			children.removeAllElements();
@@ -438,7 +453,7 @@ public class Routing implements Runnable {
 							}
 						} 
 						theNode.costs = successorCost;
-						theNode.total = theNode.costs + theNode.distance;
+						//theNode.total = theNode.costs + theNode.distance;
 						theNode.parent = currentNode; 
 						theNode.fromBearing=currentNode.state.endBearing;
 						children.addElement(theNode);
@@ -525,7 +540,7 @@ public class Routing implements Runnable {
 	private void addToNodes(Vector children) {
 		for (int i = 0; i < children.size(); i++) { 
 			GraphNode newNode = (GraphNode) children.elementAt(i);
-			long newTotal = newNode.total;
+			long newTotal = newNode.getTotal();
 			long newCosts = newNode.costs;
 			int idx = bsearch(0, nodes.size()-1, newTotal, newCosts);
 			nodes.insertElementAt(newNode, idx); 
@@ -537,7 +552,7 @@ public class Routing implements Runnable {
 		int hi = h;
 		while(lo<=hi) {
 			int cur = (lo+hi)/2;
-			long ot = ((GraphNode)nodes.elementAt(cur)).total;
+			long ot = ((GraphNode)nodes.elementAt(cur)).getTotal();
 			// FIXME isn't this wrong? Doesn't seem sensible that
 			// costs are sorted the opposite from total, when
 			// total is costs + distance
@@ -1133,17 +1148,6 @@ public class Routing implements Runnable {
 			e.printStackTrace();
 			return null;
 		}
-	}
-	private Vector getSequence(GraphNode n) { 
-		Vector result;
-		if (n == null) {
-			result = new Vector();
-		} else { 
-			result = getSequence (n.parent);
-			ConnectionWithNode c=new ConnectionWithNode(getRouteNode(n.state.toId),n.state);
-			result.addElement(c);
-		} 
-		return result; 
 	}
 
 	private short getConnectionDurationFSecsForRouteNodes(int rnFromId, int rnToId) {
