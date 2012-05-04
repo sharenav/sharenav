@@ -1149,17 +1149,6 @@ public class Routing implements Runnable {
 			return null;
 		}
 	}
-	private Vector getSequence(GraphNode n) { 
-		Vector result;
-		if (n == null) {
-			result = new Vector();
-		} else { 
-			result = getSequence (n.parent);
-			ConnectionWithNode c=new ConnectionWithNode(getRouteNode(n.state.toId),n.state);
-			result.addElement(c);
-		} 
-		return result; 
-	}
 
 	private short getConnectionDurationFSecsForRouteNodes(int rnFromId, int rnToId) {
 		Connection successor[] = tile.getConnections(rnFromId,tile,bestTime);
