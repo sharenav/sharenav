@@ -167,7 +167,18 @@ public class Routing implements Runnable {
 		for (int noSolutionRetries = 0; noSolutionRetries <= maxTimesToReduceMainStreetNet; noSolutionRetries++) {
 		int mainStreetConsExamined = 0;
 		motorwayConsExamined = 0;
+		
+		/* calculation statistics for debug purposes */
+//		int maxNodesSize = 0;
+//		int maxOpenSize = 0;
+//		int maxClosedSize = 0;
+
 		while (!(nodes.isEmpty())) {
+			/* calculation statistics for debug purposes */
+//			if (nodes.size() > maxNodesSize) maxNodesSize = nodes.size();
+//			if (open.size() > maxOpenSize) maxOpenSize = open.size();
+//			if (closed.size() > maxClosedSize) maxClosedSize = closed.size();
+			
 			currentNode = (GraphNode) nodes.firstElement();
 			if (checkForTurnRestrictions) {
 				if(closed.get(currentNode.state.connectionId) != null) { // to avoid having to remove
@@ -187,6 +198,9 @@ public class Routing implements Runnable {
 				}
 			} 
 			if (currentNode.state.toId == dest.id) {
+				/* calculation statistics for debug purposes */
+//				parent.alert("Max values", "Nodes:" + maxNodesSize + " Open:" + maxOpenSize + " Closed:" + maxClosedSize + " OutOfMem: " + oomCounter, 10000);
+
 				return currentNode;
 			}
 			children.removeAllElements();
