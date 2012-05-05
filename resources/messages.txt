@@ -1337,3 +1337,5 @@ guiroute.distance=Shortest distance
 guidiscover.ShowRouteCalcTraces=Show Route Calculation Traces
 guidiscovericonmenu.Online=Here&Online
 traceiconmenu.Online=Here&Online
+routing.in= in 
+routing.sec= sec

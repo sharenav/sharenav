@@ -95,6 +95,8 @@ public class Routing implements Runnable {
 	int finalNodeId2 = 0;
 	Node finalDestPathSegNodeDummy2 = new Node();
 	
+	private long searchStartTime;
+
 	public Routing(Trace parent) throws IOException {
 		this.parent = parent;
 		
@@ -130,6 +132,7 @@ public class Routing implements Runnable {
 		GraphNode currentNode;
 		int successorCost;
 		Vector children = new Vector();
+		searchStartTime = System.currentTimeMillis();
 		expanded=0;
 		
 		boolean checkForTurnRestrictions =
@@ -1054,14 +1057,17 @@ public class Routing implements Runnable {
 			if (solution == null) {
 				return null; // cancel route calculation 2/2
 			}
+			int seconds = (int) (System.currentTimeMillis() - searchStartTime) / 1000;
+			logger.info("Route calculation took " + seconds + " seconds");
+			System.out.println("Route calculation took " + seconds + " seconds");
 			if (bestTime){
 				if (Configuration.getDebugSeverityDebug()) {
-					parent.receiveMessage(Locale.get("routing.RouteFound")/*Route found*/ + ": " + (bestTotal/600) + "min");
+					parent.receiveMessage(Locale.get("routing.RouteFound")/*Route found*/ + Locale.get("routing.in") + seconds + Locale.get("routing.sec") + ": " + (bestTotal/600) + Locale.get("routing.min"));
 				} else {
-					parent.receiveMessage(Locale.get("routing.RouteFound")/*Route found*/);					
+					parent.receiveMessage(Locale.get("routing.RouteFound")/*Route found*/ + Locale.get("routing.in") + seconds + Locale.get("routing.sec"));
 				}
 			} else {
-				parent.receiveMessage(Locale.get("routing.RouteFound")/*Route found*/ + ": " + (bestTotal/1000f) + Locale.get("routing.km")/*km*/);
+				parent.receiveMessage(Locale.get("routing.RouteFound")/*Route found*/  + Locale.get("routing.in") + seconds + Locale.get("routing.sec") + ": " + (bestTotal/1000f) + Locale.get("routing.km")/*km*/);
 			}
 			// when finally we get the sequence we must be able to access all route nodes, not only the mainstreet net's
 			Routing.onlyMainStreetNet = false;
