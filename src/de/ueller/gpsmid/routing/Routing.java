@@ -556,10 +556,8 @@ public class Routing implements Runnable {
 		while(lo<=hi) {
 			int cur = (lo+hi)/2;
 			long ot = ((GraphNode)nodes.elementAt(cur)).getTotal();
-			// FIXME isn't this wrong? Doesn't seem sensible that
-			// costs are sorted the opposite from total, when
-			// total is costs + distance
-			if((tot < ot) || (tot == ot && costs >= ((GraphNode) nodes.elementAt(cur)).costs)) 
+			// in a tie, the one is better which has a better real cost
+			if((tot < ot) || (tot == ot && costs < ((GraphNode) nodes.elementAt(cur)).costs)) 
 				hi = cur - 1;
 			else lo = cur + 1;
 		} 
