@@ -141,6 +141,14 @@ public class Way extends Entity implements Comparable<Way> {
 		this.type = other.type;
 	}
 
+	public boolean isMainstreet() {
+		WayDescription wayDesc = config.getWayDesc(type);
+		if (wayDesc == null) { 
+			return false; 
+		}
+		return wayDesc.isMainstreet();
+	}
+	
 	public boolean isHighway() {
 		return (getAttribute("highway") != null);
 	}
