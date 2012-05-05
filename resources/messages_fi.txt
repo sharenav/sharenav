@@ -877,3 +877,5 @@ guiroute.distance=Lyhin matka
 guidiscover.ShowRouteCalcTraces=Näytä reittilaskennan jäljet
 splash.enable=Näytetään käynnistymisikkuna
 splash.disable=Ei näytetä käynnistymisikkunaa
+routing.in= kesti 
+routing.sec= sek.
