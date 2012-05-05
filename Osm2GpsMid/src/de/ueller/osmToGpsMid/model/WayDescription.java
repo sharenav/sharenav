@@ -65,4 +65,7 @@ public class WayDescription extends EntityDescription{
 		return (wayDescFlags & WDFLAG_MOTORWAY) > 0;
 	}
 	
+	public boolean isMainstreet() {
+		return (wayDescFlags & WDFLAG_MAINSTREET_NET) > 0;		
+	}
 }
