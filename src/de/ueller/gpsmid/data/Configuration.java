@@ -343,6 +343,8 @@ public class Configuration {
 	public final static short CFGBIT_ROUTE_AIM = 136;
 	// bit 136: Estimation heuristic for best time simple 120 km/h
 	public final static short CFGBIT_ROUTE_ESTIMATION_120KMH = 137;
+	// bit 137: Ignore turn angles in route estimation heuristic
+	public final static short CFGBIT_ROUTE_ESTIMATION_NO_ANGLES = 138;
 	/**
 	 * These are the database record IDs for each configuration option
 	 */
@@ -636,8 +638,13 @@ public class Configuration {
 			write(VERSION, RECORD_ID_CONFIG_VERSION);
 			
 			// setCfgBitSavedState(CFGBIT_ROUTEHELPERS, true);
+			// setCfgBitSavedState(CFGBIT_ROUTEHELPERS, false);
 			// setCfgBitSavedState(CFGBIT_ROUTECONNECTION_TRACES, true);
+			// setCfgBitSavedState(CFGBIT_ROUTECONNECTION_TRACES, false);
 			// setCfgBitSavedState(CFGBIT_ROUTE_ESTIMATION_120KMH, true);
+			// setCfgBitSavedState(CFGBIT_ROUTE_ESTIMATION_120KMH, false);
+			// setCfgBitSavedState(CFGBIT_ROUTE_ESTIMATION_NO_ANGLES, true);
+			// setCfgBitSavedState(CFGBIT_ROUTE_ESTIMATION_NO_ANGLES, false);
 
 		} catch (Exception e) {
 			logger.exception(Locale.get("configuration.ProblemsWithReadingConfig")/*Problems with reading our configuration: */, e);

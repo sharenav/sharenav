@@ -602,8 +602,10 @@ public class Routing implements Runnable {
 //		if (noHeuristic){
 //			return 0;
 //		}
+		boolean angles = !Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_ESTIMATION_NO_ANGLES);
+
 		//int dTurn=from.endBearing-to.startBearing;
-		int turnCost=getTurnCost(from.endBearing, to.startBearing);
+		int turnCost=angles ? getTurnCost(from.endBearing, to.startBearing) : 0;
 		RouteNode toNode=getRouteNode(to.toId);
 		if (toNode == null) {
 			//#debug info
@@ -626,7 +628,7 @@ public class Routing implements Runnable {
 		 * like at http://www.openstreetmap.org/?mlat=48.061419&mlon=11.639106&zoom=18&layers=B000FTF
 		 * or vice versa like at http://www.openstreetmap.org/browse/node/673142
 		 */
-		if (from.isMotorwayConnection() && to.isMotorwayConnection() && getTurnAngle(from.endBearing, to.startBearing) > 100 ) {
+		if (angles && from.isMotorwayConnection() && to.isMotorwayConnection() && getTurnAngle(from.endBearing, to.startBearing) > 100 ) {
 			return (int) (dist * 2);
 		}
 		
