@@ -90,6 +90,7 @@ public class CreateGpsMidData implements FilenameFilter {
 		
 	// public  final static int MAX_DICT_DEEP = 5; replaced by Configuration.maxDictDepth
 	public  final static int ROUTEZOOMLEVEL = 4;
+	public  final static int ROUTEEXTRAMAINSTREETZOOMLEVEL = 5;
 	
 	/** The parser which parses the OSM data. The nodes, ways and relations are 
 	 * retrieved from it for further processing. */
@@ -98,7 +99,7 @@ public class CreateGpsMidData implements FilenameFilter {
 	/** This array contains one tile for each zoom level or level of detail and
 	 * the route tile. Each one is actually a tree of tiles because container tiles
 	 * contain two child tiles. */
-	Tile tile[] = new Tile[ROUTEZOOMLEVEL + 1];
+	Tile tile[] = new Tile[ROUTEEXTRAMAINSTREETZOOMLEVEL + 1];
 
 	/** Output length of the route connection for statistics */
 	long outputLengthConns = 0;
@@ -936,6 +937,23 @@ public class CreateGpsMidData implements FilenameFilter {
 		return outputMediaName;
 	}
 
+	public long exportRouteExtraMainstreetZoomLevelToMid() {
+		System.out.println("Exporting mainstreet route tiles");
+		System.out.println("================================");
+		long startTime = System.currentTimeMillis();
+		outputLengthConns = 0;
+		long bytesWritten = exportMapToMid(ROUTEEXTRAMAINSTREETZOOMLEVEL);
+		long time = (System.currentTimeMillis() - startTime);
+		System.out.println("  " + Configuration.memoryWithUnit(bytesWritten) + 
+			" for nodes in " + tileFilesWritten + " files, " +
+			Configuration.memoryWithUnit(outputLengthConns) + " for mainstreet connections in " + 
+			tileFilesWritten + " files");
+		System.out.println("    The mainstreet route tiles have been indexed by " + 
+				dictFilesWritten + " dictionary files");
+		System.out.println("  Time taken: " + time / 1000 + " seconds");
+		return 0;
+	}
+	
 	/** Prepares and writes the whole tile data for the specified zoom level to the 
 	 * files for dict and tile data.
 	 * The tile tree's root tile is put into the member array 'tile'.
@@ -961,7 +979,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				w1.used = false;
 				allBound.extend(w1.getBounds());
 			}			
-			if (zl == ROUTEZOOMLEVEL) {
+			if (zl == ROUTEZOOMLEVEL || zl == ROUTEEXTRAMAINSTREETZOOMLEVEL) {
 				// for RouteNodes
 				for (Node n : parser.getNodes()) {
 					n.used = false;
@@ -995,7 +1013,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				ct.t1 = tile[zl];
 				ct.t2 = new Tile((byte)zl);
 				ct.t2.type = Tile.TYPE_EMPTY;
-				if (zl == ROUTEZOOMLEVEL) {
+				if (zl == ROUTEZOOMLEVEL || zl == ROUTEEXTRAMAINSTREETZOOMLEVEL) {
 					ct.type = Tile.TYPE_ROUTECONTAINER;
 				} else {
 					ct.type = Tile.TYPE_CONTAINER;
@@ -1003,27 +1021,29 @@ public class CreateGpsMidData implements FilenameFilter {
 				tile[zl] = ct;
 			}
 			tile[zl].recalcBounds();
-			if (zl == ROUTEZOOMLEVEL) {
-				long startTime = System.currentTimeMillis();
-				for (Node n : parser.getDelayingNodes()) {
-					if (n != null) {
-						if (n.isTrafficSignals()) {
-							tile[zl].markTrafficSignalsRouteNodes(n);
+			if (zl == ROUTEZOOMLEVEL || zl == ROUTEEXTRAMAINSTREETZOOMLEVEL) {
+				if (zl == ROUTEZOOMLEVEL) {
+					long startTime = System.currentTimeMillis();
+					for (Node n : parser.getDelayingNodes()) {
+						if (n != null) {
+							if (n.isTrafficSignals()) {
+								tile[zl].markTrafficSignalsRouteNodes(n);
+							}
+						} else {
+							// this should not happen anymore because trafficSignalCount gets decremented now when the node id is duplicate
+							System.out.println("Warning: Delaying node is NULL");
 						}
-					} else {
-						// this should not happen anymore because trafficSignalCount gets decremented now when the node id is duplicate
-						System.out.println("Warning: Delaying node is NULL");
 					}
-				}
-				parser.freeUpDelayingNodes();
+					parser.freeUpDelayingNodes();
 				
-				long time = (System.currentTimeMillis() - startTime);
-				System.out.println("  Applied " + parser.trafficSignalCount + 
-						" traffic signals to " + Tile.numTrafficSignalRouteNodes + 
-						" route nodes, took " + time + " ms");
+					long time = (System.currentTimeMillis() - startTime);
+					System.out.println("  Applied " + parser.trafficSignalCount + 
+							" traffic signals to " + Tile.numTrafficSignalRouteNodes + 
+							" route nodes, took " + time + " ms");
 
-				Sequence rnSeq = new Sequence();
-				tile[zl].renumberRouteNode(rnSeq);
+					Sequence rnSeq = new Sequence();
+					tile[zl].renumberRouteNode(rnSeq); // do not renumber route nodes in ROUTEEXTRAMAINSTREETZOOMLEVEL to keep the ids from the full route net
+				}
 				tile[zl].calcHiLo();
 				tile[zl].writeConnections(path, parser.getTurnRestrictionHashMap());
 		        tile[zl].type = Tile.TYPE_ROUTECONTAINER;
@@ -1087,7 +1107,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			nodes = new ArrayList<Node>();
 			realBound = new Bounds();
 
-			if (t.zl != ROUTEZOOMLEVEL) {
+			if (t.zl != ROUTEZOOMLEVEL && t.zl != ROUTEEXTRAMAINSTREETZOOMLEVEL) {
 				// Reduce the content of 'ways' and 'nodes' to all relevant elements
 				// in the given bounds and create the binary map representation
 				maxSize = configuration.getMaxTileSize();
@@ -1209,7 +1229,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				// Tile is too large, try to split it.
 				// System.out.println("create Subtiles size=" + out.length + " ways=" + ways.size());
 				t.bounds = realBound.clone();
-				if (t.zl != ROUTEZOOMLEVEL) {
+				if (t.zl != ROUTEZOOMLEVEL && t.zl != ROUTEEXTRAMAINSTREETZOOMLEVEL) {
 					t.type = Tile.TYPE_CONTAINER;				
 				} else {
 					t.type = Tile.TYPE_ROUTECONTAINER;
@@ -1248,7 +1268,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				if (ways.size() > 0 || nodes.size() > 0) {
 					// Write as dataTile
 					t.fid = tileSeq.next();
-					if (t.zl != ROUTEZOOMLEVEL) {
+					if (t.zl != ROUTEZOOMLEVEL && t.zl != ROUTEEXTRAMAINSTREETZOOMLEVEL) {
 						writeRenderTile(t, tileBound, realBound, nodes, out);
 					} else {
 						writeRouteTile(t, tileBound, realBound, nodes, out);
@@ -1314,7 +1334,7 @@ public class CreateGpsMidData implements FilenameFilter {
 		for (Way w: t.ways) {
 			totalSegsWritten += w.getLineCount();
 		}
-		if (t.zl != ROUTEZOOMLEVEL) {
+		if (t.zl != ROUTEZOOMLEVEL && t.zl != ROUTEEXTRAMAINSTREETZOOMLEVEL) {
 			for (Node n : nodes) {
 				if (n.getType(null) > -1 ) {
 					totalPOIsWritten++;
@@ -1324,7 +1344,7 @@ public class CreateGpsMidData implements FilenameFilter {
 		
 		t.type = Tile.TYPE_MAP;
 		// RouteTiles will be written later because of renumbering
-		if (t.zl != ROUTEZOOMLEVEL) {
+		if (t.zl != ROUTEZOOMLEVEL && t.zl != ROUTEEXTRAMAINSTREETZOOMLEVEL) {
 			t.bounds = realBound.clone();
 			String lpath = path  + "/t" + t.zl  ;
 			FileOutputStream fo = FileTools.createFileOutputStream(lpath + "/" + t.fid + ".d");

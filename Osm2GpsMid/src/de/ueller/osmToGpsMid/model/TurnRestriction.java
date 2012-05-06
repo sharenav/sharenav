@@ -34,15 +34,16 @@ public class TurnRestriction {
 	public String restrictionType; // stored only for debugging
 	public TurnRestriction nextTurnRestrictionAtThisNode = null;
 	
-	public final static byte NO_LEFT_TURN = 0x01;
-	public final static byte NO_RIGHT_TURN = 0x02;
-	public final static byte NO_STRAIGHT_ON = 0x03;
-	public final static byte NO_U_TURN = 0x04;
-	public final static byte ONLY_LEFT_TURN = 0x05;
-	public final static byte ONLY_RIGHT_TURN = 0x06;
-	public final static byte ONLY_STRAIGHT_ON = 0x07;
-	public final static byte VIA_TYPE_IS_WAY = 0x20;
-	public final static byte IS_ONLY_TYPE_RESTRICTION = 0x40;
+	public final static int NO_LEFT_TURN = 0x01;
+	public final static int NO_RIGHT_TURN = 0x02;
+	public final static int NO_STRAIGHT_ON = 0x03;
+	public final static int NO_U_TURN = 0x04;
+	public final static int ONLY_LEFT_TURN = 0x05;
+	public final static int ONLY_RIGHT_TURN = 0x06;
+	public final static int ONLY_STRAIGHT_ON = 0x07;
+	public final static int VIA_TYPE_IS_WAY = 0x20;
+	public final static int IS_ONLY_TYPE_RESTRICTION = 0x40;
+	public final static int IS_EXTRAMAINSTREET = 0x80;
 
 	
 	public TurnRestriction(Relation relation) {
@@ -92,6 +93,14 @@ public class TurnRestriction {
 	
 	public boolean isComplete() {
 		return (viaRouteNode != null && fromRouteNode != null && toRouteNode != null);
+	}
+	
+	public boolean isExtraMainStreet() {
+		return (flags & IS_EXTRAMAINSTREET) > 0;
+	}
+
+	public void markExtraMainStreet() {
+		flags |= IS_EXTRAMAINSTREET;
 	}
 
 	public String getWayNameFromRefId(HashMap<Long,Way> wayHashMap, long wayRef) {

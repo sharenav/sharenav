@@ -39,24 +39,33 @@ import de.ueller.osmToGpsMid.tools.FileTools;
 public class RouteData {
 	private OsmParser parser;
 	private String path;
+	private boolean onlyExtraMainstreet;
 	public Map<Long, RouteNode> nodes = new HashMap<Long, RouteNode>();
+	public static Map<Long, RouteNode> fullNetNodes;
 
-	public RouteData(OsmParser parser, String path) {
+	public RouteData(OsmParser parser, String path, boolean onlyExtraMainstreet) {
 		super();
 		this.parser = parser;
 		this.path = path;
+		this.onlyExtraMainstreet = onlyExtraMainstreet;
+		// if this is Route data for full net remember the HashMap for ExtraMainstreetNet Route Data
+		if (!onlyExtraMainstreet) {
+			fullNetNodes = nodes;
+		}
 	}
 	
 	public void create(Configuration config) {
-		// reset connectedLineCount for each Node to 0
 		for (Node n:parser.getNodes()) {
+			// reset connectedLineCount for each Node to 0
 			n.resetConnectedLineCount();
+			// reset routeNode reference for each Node (for mainstreet route net)
+			n.routeNode = null;
 		}
 
 		boolean neverTrafficSignalsRouteNode = false;
 		// count all connections for all nodes
 		for (Way w:parser.getWays()) {
-			if (! w.isAccessForAnyRouting()) {
+			if (! w.isAccessForAnyRouting() || !isWayInCurrentRouteNet(w)) {
 				continue;
 			}
 
@@ -82,15 +91,22 @@ public class RouteData {
 		}
 		 
 		for (Way w:parser.getWays()) {
-			if (!w.isAccessForAnyRouting()) {
+			if (!w.isAccessForAnyRouting() || !isWayInCurrentRouteNet(w)) {
 				continue;
 			}
 			addConnections(w.getNodes(), w);
 
 		}
 		System.out.println("Created " + nodes.size() + " route nodes.");
-		createIds();
+		// do not renumber route node IDs for the ROUTEMAINSTREETZOOMLEVEL
+		if (!onlyExtraMainstreet) {
+			createIds();
+		}
 		calculateTurnRestrictions();
+		
+		if (onlyExtraMainstreet) {
+			replaceExtraMainStreetNetIdsWithFullNetIds();
+		}
 	}
 
 
@@ -120,6 +136,16 @@ public class RouteData {
 					continue;
 				}
 				
+				if (onlyExtraMainstreet) {
+					if (isWayInCurrentRouteNet(restrictionFromWay) && isWayInCurrentRouteNet(restrictionToWay) ) {
+						//System.out.println("  Mark extramainstreet turn restriction");
+						// mark the turn restrictions we have to write for the separate mainstreet net
+						turn.markExtraMainStreet();
+					} else {
+						turn = turn.nextTurnRestrictionAtThisNode;
+						continue;
+					}
+				}
 				turn.viaRouteNode = n;
 				turn.viaLat = n.node.lat;
 				turn.viaLon = n.node.lon;
@@ -400,6 +426,18 @@ public class RouteData {
 		}
 		return routeNode;
 	}
+
+	private RouteNode getFullNetRouteNode(Node n) {
+		RouteNode routeNode;
+		if (! fullNetNodes.containsKey(n.id)) {
+			routeNode = new RouteNode(n);
+			n.routeNode = routeNode;
+		} else {
+			routeNode = fullNetNodes.get(n.id);
+		}
+		return routeNode;
+	}
+
 	
 	/**
 	 * @param from
@@ -478,6 +516,15 @@ public class RouteData {
 		c.from = from;
 		
 	}
+
+	// is the way in the current route net (full net or extra mainstreet net)
+	public boolean isWayInCurrentRouteNet(Way w) {
+		if (!onlyExtraMainstreet) {
+			return true;
+		}
+		return w.isMainstreet();
+	}
+
 	
     @Deprecated
 	public boolean isRelevant(Node n) {
@@ -601,7 +648,7 @@ public class RouteData {
 					System.out.println("Read nodes " + parser.getNodes().size());
 					System.out.println("Read ways  " + parser.getNodes().size());
 					new CleanUpData(parser, conf);
-					RouteData rd = new RouteData(parser, "");
+					RouteData rd = new RouteData(parser, "", false);
 
 					rd.create(conf);
 					
@@ -785,5 +832,81 @@ public class RouteData {
 		}
 		parser.setDelayingNodes(delayingNodes);
 	}
+	
+	private void replaceExtraMainStreetNetIdsWithFullNetIds() {
+		RouteNode fullNetRouteNode;
+		// translate ids for connections
+		for (RouteNode n: nodes.values()) {
+			for (Connection c : n.getConnected()) {
+				fullNetRouteNode = getFullNetRouteNode(c.to.node);
+				if (fullNetRouteNode != null) {
+					c.to.id = fullNetRouteNode.id;
+				} else {
+					System.out.println("  error translating connection route node to.id for extramainstreetnet");							
+				}
+				fullNetRouteNode = getFullNetRouteNode(c.from.node);
+				if (fullNetRouteNode != null) {
+					c.from.id = fullNetRouteNode.id;
+				} else {
+					System.out.println("  error translating connection route node from.id for extramainstreetnet");							
+				}
+			}			
+			for (Connection c : n.getConnectedFrom()) {
+				fullNetRouteNode = getFullNetRouteNode(c.to.node);
+				if (fullNetRouteNode != null) {
+					c.to.id = fullNetRouteNode.id;
+				} else {
+					System.out.println("  error translating connectionFrom route node to.id for extramainstreetnet");							
+				}
+				fullNetRouteNode = getFullNetRouteNode(c.from.node);
+				if (fullNetRouteNode != null) {
+					c.from.id = fullNetRouteNode.id;
+				} else {
+					System.out.println("  error translating connectionFrom route node from.id for extramainstreetnet");							
+				}
+			}			
 
+			// translate ids in turn restrictions
+			TurnRestriction turn = (TurnRestriction) parser.getTurnRestrictionHashMap().get(new Long(n.node.id));
+			while (turn != null) {
+				if (turn.viaRouteNode != null) {
+					fullNetRouteNode = getFullNetRouteNode(turn.viaRouteNode.node);
+					if (fullNetRouteNode != null) {
+						turn.viaRouteNode.id = fullNetRouteNode.id;
+					} else {
+						System.out.println("  error translating via route node id for extramainstreetnet");							
+					}
+				}
+				if (turn.fromRouteNode != null) {
+					fullNetRouteNode = getFullNetRouteNode(turn.fromRouteNode.node);
+					if (fullNetRouteNode != null) {
+						turn.fromRouteNode.id = fullNetRouteNode.id;
+					} else {
+						System.out.println("  error translating from route node id for extramainstreetnet");							
+					}
+				}
+				if (turn.toRouteNode != null) {
+					fullNetRouteNode = getFullNetRouteNode(turn.toRouteNode.node);
+					if (fullNetRouteNode != null) {
+						turn.toRouteNode.id = fullNetRouteNode.id;
+					} else {
+						System.out.println("  error translating to route node id for extramainstreetnet");							
+					}
+				}
+				// translate additonalViaRouteNodes
+				if (turn.additionalViaRouteNodes != null) {
+					for (int i=0; i < turn.additionalViaRouteNodes.length; i++) {
+						fullNetRouteNode = getFullNetRouteNode(turn.additionalViaRouteNodes[i].node);
+						if (fullNetRouteNode != null) {
+							turn.additionalViaRouteNodes[i].id = fullNetRouteNode.id;
+						} else {
+							System.out.println("  error translating additional via route node id for extramainstreetnet");							
+						}
+					}
+				}
+				
+				turn = turn.nextTurnRestrictionAtThisNode;
+			}		
+		}
+	}
 }
