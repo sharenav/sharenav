@@ -937,5 +937,11 @@ public class Legend {
 
 	public static String getBundleDate() {
 		return bundleDate;
-	}	
+	}
+	
+	public boolean isExtraMainstreetAvailable() {
+		return false;
+		//return true;
+	}
+	
 }
