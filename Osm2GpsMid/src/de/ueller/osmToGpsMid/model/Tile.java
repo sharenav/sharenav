@@ -18,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -468,6 +469,21 @@ public class Tile {
 		}
 	}
 
+	
+	public class RouteNodeIdComparator implements Comparator<RouteNode> {
+	
+		@Override
+		public int compare(RouteNode n1, RouteNode n2) {
+			if (n1.id > n2.id) {
+				return 1;
+			}
+			if (n1.id < n2.id) {
+				return -1;
+			}
+			return 0;
+		}
+	}
+	
 	/**
 	 * @param path
 	 * @throws IOException 
@@ -483,6 +499,11 @@ public class Tile {
 //			System.out.println("resolve T2 with " + idxMin + " to "+ idxMax);
 		}
 		if (routeNodes != null) {
+			if (zl == CreateGpsMidData.ROUTEEXTRAMAINSTREETZOOMLEVEL) {
+				// sort route nodes by id for quick access in GpsMid
+				java.util.Collections.sort(routeNodes, new RouteNodeIdComparator());
+			}
+			
 			//System.out.println("Write Routenodes " + fid + " nodes " + 
 			// routeNodes.size() +"  with " + idxMin + " to " + idxMax);
 			FileOutputStream cfo = null;
@@ -515,6 +536,9 @@ public class Tile {
 			// in the second loop the remaining ones
 			for (int writeStreetNets = 0; writeStreetNets <= 1; writeStreetNets++) {
 				for (RouteNode n : routeNodes) {
+//					if (writeStreetNets ==0 && zl == CreateGpsMidData.ROUTEEXTRAMAINSTREETZOOMLEVEL) {
+//						System.out.println(n.id);
+//					}
 					isOnMainStreetNet = n.isOnMainStreetNet();
 					if (writeStreetNets == 0 && isOnMainStreetNet
 						||
