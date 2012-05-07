@@ -939,11 +939,7 @@ public class Legend {
 		return bundleDate;
 	}
 	
-<<<<<<< HEAD
 	public static boolean isExtraMainstreetAvailable() {
-=======
-	public boolean isExtraMainstreetAvailable() {
->>>>>>> refs/remotes/origin/master
 		return false;
 		//return true;
 	}
