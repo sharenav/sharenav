@@ -12,8 +12,10 @@ import de.enough.polish.util.Locale;
 
 import de.ueller.gps.Node;
 import de.ueller.gpsmid.data.Configuration;
+import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.gpsmid.data.RoutePositionMark;
+import de.ueller.gpsmid.mapdata.DictReader;
 import de.ueller.gpsmid.mapdata.Way;
 import de.ueller.gpsmid.tile.RouteBaseTile;
 import de.ueller.gpsmid.tile.Tile;
@@ -36,6 +38,8 @@ public class Routing implements Runnable {
 
 	private final static Logger logger = Logger.getInstance(Routing.class, Logger.ERROR);
 	private RouteBaseTile tile;
+	private RouteBaseTile tileExtraMainstreetNet;
+	private static boolean isExtraMainstreetNetAvailable = Legend.isExtraMainstreetAvailable();
 	private RouteNode routeFrom;
 	private RouteNode routeTo;
 	private volatile RoutePositionMark fromMark;
@@ -129,6 +133,11 @@ public class Routing implements Runnable {
 	}
 	
 	private GraphNode search(RouteNode dest) throws Exception {
+		if (isExtraMainstreetNetAvailable) {
+			System.out.println("EXTRAMAINSTREETNET available");
+		}
+		
+		RouteBaseTile currentTile = null;
 		GraphNode currentNode;
 		int successorCost;
 		Vector children = new Vector();
@@ -237,20 +246,42 @@ public class Routing implements Runnable {
 //			}
 //			//#debug error
 //			System.out.println("Begin load connections MEM " +  runtime.freeMemory() + " exp=" + expanded +  " open " + open.size() + "  closed " + closed.size());
-			try {
-				tile.cleanup(50);
-				successor=tile.getConnections(currentNode.state.toId,tile,bestTime);
-			} catch (OutOfMemoryError e) {
-				oomCounter++;
-				tile.cleanup(0);
-				System.gc();
-				//#debug error
-				logger.debug("after cleanUp : " + runtime.freeMemory());
-//				successor=currentNode.state.to.getConnections(tile);
-				estimateFac += 0.02f;
-				successor=tile.getConnections(currentNode.state.toId,tile,bestTime);
-				//#debug error
-				logger.debug("after load single Conection : " + runtime.freeMemory());
+
+			if (isExtraMainstreetNetAvailable && Routing.onlyMainStreetNet && currentNode.state.isMainStreetNet()) {
+				currentTile = tileExtraMainstreetNet;
+				try {
+					tileExtraMainstreetNet.cleanup(50);
+					successor=tileExtraMainstreetNet.getConnections(currentNode.state.toId,tileExtraMainstreetNet,bestTime);
+					System.out.println("ExtraMainstreetNet: getConnections");
+				} catch (OutOfMemoryError e) {
+					oomCounter++;
+					tileExtraMainstreetNet.cleanup(0);
+					System.gc();
+					//#debug error
+					logger.debug("after cleanUp : " + runtime.freeMemory());
+	//				successor=currentNode.state.to.getConnections(tile);
+					estimateFac += 0.02f;
+					successor=tileExtraMainstreetNet.getConnections(currentNode.state.toId,tileExtraMainstreetNet,bestTime);
+					//#debug error
+					logger.debug("after load single Conection : " + runtime.freeMemory());
+				}				
+			} else {
+				currentTile = tile;
+				try {
+					tile.cleanup(50);
+					successor=tile.getConnections(currentNode.state.toId,tile,bestTime);
+				} catch (OutOfMemoryError e) {
+					oomCounter++;
+					tile.cleanup(0);
+					System.gc();
+					//#debug error
+					logger.debug("after cleanUp : " + runtime.freeMemory());
+	//				successor=currentNode.state.to.getConnections(tile);
+					estimateFac += 0.02f;
+					successor=tile.getConnections(currentNode.state.toId,tile,bestTime);
+					//#debug error
+					logger.debug("after load single Conection : " + runtime.freeMemory());
+				}
 			}
 			if (successor == null){
 				successor=new Connection[0];
@@ -258,9 +289,9 @@ public class Routing implements Runnable {
 			
 			// check for turn restrictions
 			boolean turnRestricted []= new boolean[successor.length];
-			if (checkForTurnRestrictions && tile.lastNodeHadTurnRestrictions) {
+			if (checkForTurnRestrictions && currentTile.lastNodeHadTurnRestrictions) {
 				int nextId;
-				TurnRestriction turnRestriction = tile.getTurnRestrictions(currentNode.state.toId);
+				TurnRestriction turnRestriction = currentTile.getTurnRestrictions(currentNode.state.toId);
 				while (turnRestriction != null) { // loop through all turn restrictions at this route node
 					if ( (turnRestriction.affectedTravelModes & currentTravelMask) > 0 ){
 						GraphNode parentNode;
@@ -343,8 +374,8 @@ public class Routing implements Runnable {
 			// MainStreet Net Distance Check - this will turn on the MainStreetNet mode 
 			// if we are far away enough from routeStart and routeDest.
 			if (bestTime && mainStreetConsExamined > 20
-				&& MoreMath.dist(tile.lastRouteNode.lat, tile.lastRouteNode.lon, dest.lat, dest.lon) > mainStreetNetDistanceMeters
-				&& MoreMath.dist(tile.lastRouteNode.lat, tile.lastRouteNode.lon, routeFrom.lat, routeFrom.lon) > mainStreetNetDistanceMeters
+				&& MoreMath.dist(currentTile.lastRouteNode.lat, currentTile.lastRouteNode.lon, dest.lat, dest.lon) > mainStreetNetDistanceMeters
+				&& MoreMath.dist(currentTile.lastRouteNode.lat, currentTile.lastRouteNode.lon, routeFrom.lat, routeFrom.lon) > mainStreetNetDistanceMeters
 			) {
 				// System.out.println(mainStreetConsExamined + " mainStreetConsExamined " + 
 				//		MoreMath.dist(tile.lastRouteNode.lat, tile.lastRouteNode.lon, dest.lat, dest.lon));
@@ -1185,13 +1216,22 @@ public class Routing implements Runnable {
 				// nothing to do in that case						
 			}
 		}
-		this.tile = (RouteBaseTile) parent.getDict((byte) 4);
+		this.tile = (RouteBaseTile) parent.getDict((byte) DictReader.ROUTEZOOMLEVEL);
 		if (this.tile == null) {
 			parent.receiveMessage("No route tile in map data");
 			parent.setRoute(null);
 			return;
 		}
 
+		if (isExtraMainstreetNetAvailable) {
+			this.tileExtraMainstreetNet = (RouteBaseTile) parent.getDict((byte) DictReader.ROUTEEXTRAMAINSTREETZOOMLEVEL);
+			if (this.tileExtraMainstreetNet == null) {
+				parent.receiveMessage("No extramainstreet route tile in map data");
+				parent.setRoute(null);
+				return;
+			}
+		}
+		
 		try {
 			//#debug error
 			logger.info("Starting routing thread");
