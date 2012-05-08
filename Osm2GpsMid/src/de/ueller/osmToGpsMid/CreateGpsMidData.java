@@ -938,8 +938,8 @@ public class CreateGpsMidData implements FilenameFilter {
 	}
 
 	public long exportRouteExtraMainstreetZoomLevelToMid() {
-		System.out.println("Exporting mainstreet route tiles");
-		System.out.println("================================");
+		System.out.println("Exporting extra mainstreet route tiles");
+		System.out.println("======================================");
 		long startTime = System.currentTimeMillis();
 		outputLengthConns = 0;
 		long bytesWritten = exportMapToMid(ROUTEEXTRAMAINSTREETZOOMLEVEL);
