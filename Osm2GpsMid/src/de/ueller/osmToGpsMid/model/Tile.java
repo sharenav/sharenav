@@ -338,16 +338,26 @@ public class Tile {
 						writeStreetNets > 0 && !isOnMainStreetNet
 					) { 
 						rn.id = rnSeq.get();
-//						if (isOnMainStreetNet) {
-//							System.out.println("main" + rn.id);
-//						} else {
-//							System.out.println("norm" + rn.id);							
-//						}
 						rnSeq.inc();
-						if (isOnMainStreetNet) {
-							numMainStreetRouteNodes++;
-						}
 					}
+				}
+			}
+		}
+	}
+	
+	public void countMainstreetRouteNodesPerTile() {
+		if (type == TYPE_ROUTECONTAINER) {
+			if (t1 != null) {
+				t1.countMainstreetRouteNodesPerTile();
+			}
+			if (t2 != null) {
+				t2.countMainstreetRouteNodesPerTile();
+			}
+		}
+		if (type == TYPE_ROUTEDATA) {
+			for (RouteNode rn : routeNodes) {
+				if (rn.isOnMainStreetNet()) {
+					numMainStreetRouteNodes++;
 				}
 			}
 		}
@@ -520,6 +530,9 @@ public class Tile {
 			DataOutputStream nds = new DataOutputStream(new BufferedOutputStream(fo));
 			// write out the number of mainStreetNet RouteNodes
 			nds.writeShort(numMainStreetRouteNodes);
+			// if (zl == CreateGpsMidData.ROUTEEXTRAMAINSTREETZOOMLEVEL) {
+			//	System.out.println("Num MainStreetRouteNodes: " + numMainStreetRouteNodes);
+			// }
 			// write out the number of normalStreetNet RouteNodes
 			nds.writeShort(routeNodes.size() - numMainStreetRouteNodes);
 
@@ -536,10 +549,10 @@ public class Tile {
 			// in the second loop the remaining ones
 			for (int writeStreetNets = 0; writeStreetNets <= 1; writeStreetNets++) {
 				for (RouteNode n : routeNodes) {
-//					if (writeStreetNets ==0 && zl == CreateGpsMidData.ROUTEEXTRAMAINSTREETZOOMLEVEL) {
-//						System.out.println(n.id);
-//					}
 					isOnMainStreetNet = n.isOnMainStreetNet();
+					// if (writeStreetNets == 0 && zl == CreateGpsMidData.ROUTEEXTRAMAINSTREETZOOMLEVEL && n.isOnMainStreetNet()) {
+					//	System.out.println(n.id);
+					// }
 					if (writeStreetNets == 0 && isOnMainStreetNet
 						||
 						writeStreetNets > 0 && !isOnMainStreetNet

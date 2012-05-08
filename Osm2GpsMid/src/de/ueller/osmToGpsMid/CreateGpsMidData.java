@@ -1044,6 +1044,7 @@ public class CreateGpsMidData implements FilenameFilter {
 					Sequence rnSeq = new Sequence();
 					tile[zl].renumberRouteNode(rnSeq); // do not renumber route nodes in ROUTEEXTRAMAINSTREETZOOMLEVEL to keep the ids from the full route net
 				}
+				tile[zl].countMainstreetRouteNodesPerTile();
 				tile[zl].calcHiLo();
 				tile[zl].writeConnections(path, parser.getTurnRestrictionHashMap());
 		        tile[zl].type = Tile.TYPE_ROUTECONTAINER;
