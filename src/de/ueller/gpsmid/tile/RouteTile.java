@@ -13,7 +13,6 @@ import javax.microedition.lcdui.Graphics;
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.PaintContext;
-import de.ueller.gpsmid.mapdata.DictReader;
 import de.ueller.gpsmid.routing.Connection;
 import de.ueller.gpsmid.routing.RouteNode;
 import de.ueller.gpsmid.routing.RouteTileRet;
@@ -32,9 +31,7 @@ public class RouteTile extends RouteBaseTile {
 	RouteNode[] nodes = null;
 	TurnRestriction[] turns = null;
 	Connection[][] connections = null;
-	
 	boolean onlyMainStreetNetLoaded = true;
-	boolean isExtraMainsteetNetTile;
 
 	private final static Logger logger = Logger.getInstance(RouteTile.class, Logger.INFO);
 
@@ -47,7 +44,6 @@ public class RouteTile extends RouteBaseTile {
     	minId=dis.readInt();
     	maxId=dis.readInt();
 		fileId = (short) dis.readInt();
-		isExtraMainsteetNetTile = (zl == DictReader.ROUTEEXTRAMAINSTREETZOOMLEVEL);
 		//#debug error
 		logger.debug("created RouteTile deep:" + deep + ":RT Nr=" + fileId + "id("+minId+"/"+maxId+")");
 	}
@@ -130,7 +126,7 @@ public class RouteTile extends RouteBaseTile {
 							Connection [] reverseCons = null;
 							RouteNode rnt = getRouteNode(c.toId);						
 							if (rnt == null) {
-								RouteBaseTile dict = (RouteBaseTile) Trace.getInstance().getDict((byte) DictReader.ROUTEZOOMLEVEL);
+								RouteBaseTile dict = (RouteBaseTile) Trace.getInstance().getDict((byte)4);
 								rnt = dict.getRouteNode(c.toId);
 								if (rnt != null) {
 									reverseCons = dict.getConnections(rnt.id, dict, !Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_AIM));
@@ -194,7 +190,7 @@ public class RouteTile extends RouteBaseTile {
 						g.fillRect(viaNodeP.x - 3, viaNodeP.y - 2, 7, 7);
 						TurnRestriction turnRestriction = getTurnRestrictions(nodes[i].id);
 						int drawOffs = 0;
-						RouteBaseTile dict = (RouteBaseTile) Trace.getInstance().getDict((byte) DictReader.ROUTEZOOMLEVEL);
+						RouteBaseTile dict = (RouteBaseTile) Trace.getInstance().getDict((byte)4);
 						while (turnRestriction != null) {						
 //							turnPaint++;
 //							if (turnPaint > 2) { // paint only a certain turn restriction for debugging
@@ -274,54 +270,32 @@ public class RouteTile extends RouteBaseTile {
 	}
 
 
-	public RouteNode getRouteNode(int id) {	
+	public RouteNode getRouteNode(int id) {
 		if (minId <= id && maxId >= id){
 			//#debug debug
 			logger.debug("getRouteNode("+id+")");
 			lastUse=0;
-			if (isExtraMainsteetNetTile) {
+			if (loadNodesRequired() || id - minId >= nodes.length ){
 				try {
-					loadNodes(true, id);
+					loadNodes(Routing.onlyMainStreetNet, id);
 				} catch (IOException e) {
 					e.printStackTrace();
 					return null;
 				}
-				int idx = getIdxForId(id);
-				//#debug debug
-				logger.debug("getRouteNode("+id+") at " + idx);
-				return nodes[idx];
-			} else {
-				if (loadNodesRequired() || id - minId >= nodes.length ){
-					try {
-						loadNodes(Routing.onlyMainStreetNet, id);
-					} catch (IOException e) {
-						e.printStackTrace();
-						return null;
-					}
-				}
-				//#debug debug
-				logger.debug("getRouteNode("+id+") at "+(id-minId));
-				return nodes[id - minId];
 			}
-		} else {
+			//#debug debug
+			logger.debug("getRouteNode("+id+") at "+(id-minId));
+			return nodes[id - minId];
+		} else 
 			return null;
-		}
-		
 	}
 
 
 	private void loadNodes(boolean onlyMainStreetNet, int idRequested) throws IOException {
 		// when we (re)read the nodes and turn restrictions, the connections must be reread as well because the normal streetNet might be included now as well
 		connections = null;
-		String tx;
-		if( isExtraMainsteetNetTile) {
-			tx = "/t5/";
-			onlyMainStreetNet = true;
-		} else {
-			tx= "/t4/";
-		}
 		
-		DataInputStream ts=new DataInputStream(Configuration.getMapResource(tx + fileId + ".d"));
+		DataInputStream ts=new DataInputStream(Configuration.getMapResource("/t4/" + fileId + ".d"));
 		short numMainStreetRouteNodes = ts.readShort();
 		short numNormalStreetRouteNodes = ts.readShort();
 
@@ -331,7 +305,7 @@ public class RouteTile extends RouteBaseTile {
 		/* a routeNode that's not in the mainStreetNet might have been requested e.g. from getConnections() if since the last getRouteNode()
 		 * this tile has been cleaned up and Routing.onlyMainstreetNet also changed to true
 		 */
-		if (!isExtraMainsteetNetTile && idRequested != -1 && idRequested - minId >= numMainStreetRouteNodes) {
+		if (idRequested != -1 && idRequested - minId >= numMainStreetRouteNodes) {
 			/* in this case we must load all nodes, even if onlyMainStreetNet was requested */
 			onlyMainStreetNet = false;
 		}
@@ -339,7 +313,7 @@ public class RouteTile extends RouteBaseTile {
 		int maxReadStreetNets = 1;
 		int totalRouteNodesToLoad = numMainStreetRouteNodes + numNormalStreetRouteNodes;
 		int totalTurnRestrictionsToLoad = numMainStreetTurnRestrictions + numNormalStreetTurnRestrictions;
-		if (onlyMainStreetNet || isExtraMainsteetNetTile) {
+		if (onlyMainStreetNet) {
 			maxReadStreetNets = 0;
 			totalRouteNodesToLoad = numMainStreetRouteNodes;
 			totalTurnRestrictionsToLoad = numMainStreetTurnRestrictions;
@@ -354,8 +328,7 @@ public class RouteTile extends RouteBaseTile {
 		short count = numMainStreetRouteNodes;
 		short countTurnRestrictions = numMainStreetTurnRestrictions;
 		//#debug debug		
-		logger.debug("load nodes "+ numMainStreetRouteNodes + "/" + numNormalStreetRouteNodes + " ("+minId+"/"+maxId+") in Tile " + tx + fileId + ".d");
-		System.out.println("load nodes "+ numMainStreetRouteNodes + "/" + numNormalStreetRouteNodes + " ("+minId+"/"+maxId+") in Tile " + tx + fileId + ".d");
+		logger.debug("load nodes "+count+" ("+minId+"/"+maxId+") in Tile t4/" + fileId + ".d");
 		nodes = new RouteNode[totalRouteNodesToLoad];
 		turns = new TurnRestriction[totalTurnRestrictionsToLoad];
 		for (int readStreetNets = 0; readStreetNets <= maxReadStreetNets; readStreetNets++) {
@@ -367,11 +340,7 @@ public class RouteTile extends RouteBaseTile {
 	//			ts.readInt();
 				n.setConSizeWithFlags(ts.readByte());
 	//			n.fid=fileId;
-				if (isExtraMainsteetNetTile) {
-					n.id = ts.readInt();
-				} else {
-					n.id = idx + minId;
-				}
+				n.id = idx + minId;
 				nodes[idx++]=n;
 			}
 					
@@ -520,24 +489,13 @@ public class RouteTile extends RouteBaseTile {
 			try {
 				if (loadNodesRequired() || id - minId >= nodes.length ){
 					loadNodes(Routing.onlyMainStreetNet, id);
-					if (isExtraMainsteetNetTile) {
-						System.out.println("load nodes");
-					}
 				}
 				if (connections == null){
 					loadConnections(bestTime);
 				}
-				int idx = id - minId;
-				if (isExtraMainsteetNetTile) {
-					try {
-						idx = getIdxForId(id);
-					} catch (Exception e) {
-						System.out.println("id:" + id + " minId:" + minId + " maxId:" + maxId + " nodes.length:" + nodes.length);
-					}
-				}
-				tile.lastNodeHadTurnRestrictions = nodes[idx].hasTurnRestrictions();
-				tile.lastRouteNode = nodes[idx];
-				return connections[idx];
+				tile.lastNodeHadTurnRestrictions = nodes[id-minId].hasTurnRestrictions();
+				tile.lastRouteNode = nodes[id-minId];
+				return connections[id-minId];
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -555,17 +513,11 @@ public class RouteTile extends RouteBaseTile {
 	private void loadConnections(boolean bestTime) throws IOException {
 		int numTravelModes= Legend.getTravelModes().length;
 		int currentTravelMode = Configuration.getTravelModeNr();			
-		
-		String cx;
-		if (isExtraMainsteetNetTile) {
-			cx = "/c5/";
-		} else {
-			cx = "/c/";
-		}
+			
 		connections = new Connection[nodes.length][];
 		//#debug debug
-		logger.debug("getConnections in file " + cx + fileId + ".d");
-		DataInputStream cs=new DataInputStream(Configuration.getMapResource(cx + fileId + ".d"));
+		logger.debug("getConnections in file " + "/c/" + fileId + ".d");
+		DataInputStream cs=new DataInputStream(Configuration.getMapResource("/c/" + fileId + ".d"));
 
 		int minConnectionId = cs.readInt();
 		
@@ -657,7 +609,7 @@ public class RouteTile extends RouteBaseTile {
 				
 		}
 		
-		if (!onlyMainStreetNetLoaded && !isExtraMainsteetNetTile) {
+		if (!onlyMainStreetNetLoaded) {
 			/**
 			 * Check to see if everything went well with reading the tile.
 			 */
@@ -699,24 +651,4 @@ public class RouteTile extends RouteBaseTile {
 			connections[addIdx]=newCons;
 		}
 	}
-
-	private int getIdxForId(int searchId) {
-		int lo = 0;
-		int hi = nodes.length;
-		int cur;
-		while (lo <= hi) {
-			cur = (lo + hi) / 2;
-			if (searchId < nodes[cur].id) {
-				hi = cur - 1;
-			} else {
-				lo = cur + 1;
-			}
-		}
-		if (nodes[hi].id == searchId) {
-			return hi;
-		}
-		System.out.println("ExtraMainstreetNet: Can't find route node");
-		return -1;
-	}
-
 }

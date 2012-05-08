@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import de.ueller.gpsmid.data.Configuration;
-import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.tile.ContainerTile;
 import de.ueller.gpsmid.tile.FileTile;
 import de.ueller.gpsmid.tile.RouteContainerTile;
@@ -32,9 +31,6 @@ public class DictReader implements Runnable {
 	private Tile dict;
 	private final Trace	t;
 
-	public  final static int ROUTEZOOMLEVEL = 4;
-	public  final static int ROUTEEXTRAMAINSTREETZOOMLEVEL = 5;
-	public  final static int GPXZOOMLEVEL = 6;
 	
 	public DictReader(Trace t) {
 		super();
@@ -49,19 +45,15 @@ public class DictReader implements Runnable {
 
 	public void run() {
 		try {
-			for (byte i = 0; i <= ROUTEEXTRAMAINSTREETZOOMLEVEL; i++) {
+			for (byte i = 0; i <= 4; i++) {
 				readData(i);
-				if (i == ROUTEEXTRAMAINSTREETZOOMLEVEL) {
-					System.out.println("extra mainstreet net is available");
-					Legend.setExtraMainstreetAvailable(true);
-				}
 			}
 			t.setBaseTilesRead(true);
 		} catch (OutOfMemoryError oome) {
 			logger.fatal(Locale.get("dictreader.DictReaderCrashOOM")/*DictReader thread crashed as out of memory: */ + oome.getMessage());
 			oome.printStackTrace();
 		} catch (IOException e) {
-			GpsMid.getInstance().restart(); 
+			GpsMid.getInstance().restart();
 			logger.fatal(Locale.get("dictreader.FailedToLoadMap")/*Failed to load basic map data: */ + e.getMessage());
 			e.printStackTrace();
 		}

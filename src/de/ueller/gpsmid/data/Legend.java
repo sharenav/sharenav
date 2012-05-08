@@ -259,8 +259,6 @@ public class Legend {
 	private static int cameraType = 0;
 	//#endif
 
-	private static boolean extraMainstreetAvailable = false;
-	
 	public static void reReadLegend() {
 		try {
 			Legend.readLegend();
@@ -942,11 +940,8 @@ public class Legend {
 	}
 	
 	public static boolean isExtraMainstreetAvailable() {
-		return extraMainstreetAvailable;
-	}
-
-	public static void setExtraMainstreetAvailable(boolean available) {
-		extraMainstreetAvailable = available;
+		return false;
+		//return true;
 	}
 	
 }
