@@ -1522,6 +1522,7 @@ public class Configuration {
 			confString += "  Code base: " + appParam + "\n";
 			confString += "  Keeping map files after .jar creation: " + !cleanupTmpDirAfterUse() + "\n";
 			confString += "  Enable routing: " + useRouting + "\n";
+			confString += "  Generate Extra MainstreetNet: " + useExtraMainstreetNet + "\n";
 			confString += "  Include icons: " + useIcons + "\n";
 			confString += "  Include sound format(s): " + useSounds + "\n";
 			confString += "  Style-file: " + getStyleFileName() + "\n";
