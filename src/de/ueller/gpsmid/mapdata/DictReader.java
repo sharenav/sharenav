@@ -31,6 +31,9 @@ public class DictReader implements Runnable {
 	private Tile dict;
 	private final Trace	t;
 
+	public  final static int ROUTEZOOMLEVEL = 4;
+	public  final static int GPXZOOMLEVEL = 5;
+	public  final static int NUM_DICT_ZOOMLEVELS = GPXZOOMLEVEL + 1;
 	
 	public DictReader(Trace t) {
 		super();
@@ -45,7 +48,7 @@ public class DictReader implements Runnable {
 
 	public void run() {
 		try {
-			for (byte i = 0; i <= 4; i++) {
+			for (byte i = 0; i <= ROUTEZOOMLEVEL; i++) {
 				readData(i);
 			}
 			t.setBaseTilesRead(true);

@@ -89,6 +89,8 @@ public class RouteTile extends RouteBaseTile {
 		if (! (showConnections || showTurnRestrictions)) {
 			return;
 		}
+
+		RouteBaseTile dict = (RouteBaseTile) Trace.getInstance().getDict(DictReader.ROUTEZOOMLEVEL);
 		
 		// show route cost only if Alternative Info/Type Information in Map Features is activated
 		boolean showCost = Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE);			
@@ -133,7 +135,6 @@ public class RouteTile extends RouteBaseTile {
 							Connection [] reverseCons = null;
 							RouteNode rnt = getRouteNode(c.toId);						
 							if (rnt == null) {
-								RouteBaseTile dict = (RouteBaseTile) Trace.getInstance().getDict((byte)4);
 								rnt = dict.getRouteNode(c.toId);
 								if (rnt != null) {
 									reverseCons = dict.getConnections(rnt.id, dict, !Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_AIM));
@@ -197,7 +198,6 @@ public class RouteTile extends RouteBaseTile {
 						g.fillRect(viaNodeP.x - 3, viaNodeP.y - 2, 7, 7);
 						TurnRestriction turnRestriction = getTurnRestrictions(nodes[i].id);
 						int drawOffs = 0;
-						RouteBaseTile dict = (RouteBaseTile) Trace.getInstance().getDict((byte)4);
 						while (turnRestriction != null) {						
 //							turnPaint++;
 //							if (turnPaint > 2) { // paint only a certain turn restriction for debugging

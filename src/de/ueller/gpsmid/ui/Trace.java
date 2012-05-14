@@ -323,7 +323,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	
 	/** Flag if a route is currently being calculated */
 	public volatile boolean routeCalc = false;
-	public Tile tiles[] = new Tile[6];
+	public Tile tiles[] = new Tile[DictReader.NUM_DICT_ZOOMLEVELS];
 	public volatile boolean baseTilesRead = false;
 	
 	public Way actualSpeedLimitWay;
@@ -2008,7 +2008,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		dictReader = new QueueDictReader(this);
 		this.gpx = new Gpx();
 		this.audioRec = new AudioRecorder();
-		setDict(gpx, (byte)5);
+		setDict(gpx, (byte) DictReader.GPXZOOMLEVEL);
 		startImageCollector();
 		recreateTraceLayout();
 	}

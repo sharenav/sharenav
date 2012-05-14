@@ -14,6 +14,7 @@ import de.ueller.gps.Node;
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.gpsmid.data.RoutePositionMark;
+import de.ueller.gpsmid.mapdata.DictReader;
 import de.ueller.gpsmid.mapdata.Way;
 import de.ueller.gpsmid.tile.RouteBaseTile;
 import de.ueller.gpsmid.tile.Tile;
@@ -1185,7 +1186,7 @@ public class Routing implements Runnable {
 				// nothing to do in that case						
 			}
 		}
-		this.tile = (RouteBaseTile) parent.getDict((byte) 4);
+		this.tile = (RouteBaseTile) parent.getDict((byte) DictReader.ROUTEZOOMLEVEL);
 		if (this.tile == null) {
 			parent.receiveMessage("No route tile in map data");
 			parent.setRoute(null);
