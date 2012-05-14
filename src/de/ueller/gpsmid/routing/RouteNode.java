@@ -89,4 +89,8 @@ public class RouteNode {
 		return "RouteNode(" + id +") RAD:" + lat + "/" + lon + " DEG: " + MoreMath.FAC_RADTODEC * lat + "/" + MoreMath.FAC_RADTODEC * lon + ")"; 
 	}
 
+	public String toUrl(){
+		return "http://www.osm.org/?mlat=" + MoreMath.FAC_RADTODEC * lat + "&mlon=" + MoreMath.FAC_RADTODEC * lon + "&zoom=18&layers=M"; 
+	}
+
 }
