@@ -82,12 +82,19 @@ public class RouteTile extends RouteBaseTile {
 		if (pc == null) {
 			return;
 		}
+
+		boolean showConnections = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS);
+		boolean showTurnRestrictions = Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS);
+		// return if neither connections nor turn restrictions have to be shown
+		if (! (showConnections || showTurnRestrictions)) {
+			return;
+		}
+		
+		// show route cost only if Alternative Info/Type Information in Map Features is activated
+		boolean showCost = Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE);			
+
 		if (contain(pc)) {
-			boolean showConnections = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS);
-			// show route cost only if Alternative Info/Type Information in Map Features is activated
-			boolean showCost = Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE);			
-			boolean showTurnRestrictions = Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS);
-			
+
 //			drawBounds(pc, 255, 255, 255);
 			if (nodes == null || onlyMainStreetNetLoaded) {
 				try {
