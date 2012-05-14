@@ -50,9 +50,11 @@ public class DictReader implements Runnable {
 			}
 			t.setBaseTilesRead(true);
 		} catch (OutOfMemoryError oome) {
+			t.setBaseTilesRead(true); // avoid endless loop in Trace
 			logger.fatal(Locale.get("dictreader.DictReaderCrashOOM")/*DictReader thread crashed as out of memory: */ + oome.getMessage());
 			oome.printStackTrace();
 		} catch (IOException e) {
+			t.setBaseTilesRead(true); // avoid endless loop in Trace
 			GpsMid.getInstance().restart();
 			logger.fatal(Locale.get("dictreader.FailedToLoadMap")/*Failed to load basic map data: */ + e.getMessage());
 			e.printStackTrace();
