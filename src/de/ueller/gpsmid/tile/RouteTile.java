@@ -13,6 +13,7 @@ import javax.microedition.lcdui.Graphics;
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.PaintContext;
+import de.ueller.gpsmid.mapdata.DictReader;
 import de.ueller.gpsmid.routing.Connection;
 import de.ueller.gpsmid.routing.RouteNode;
 import de.ueller.gpsmid.routing.RouteTileRet;
