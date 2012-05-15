@@ -37,6 +37,8 @@ public class Routing implements Runnable {
 
 	private final static Logger logger = Logger.getInstance(Routing.class, Logger.ERROR);
 	private RouteBaseTile tile;
+	private RouteBaseTile currentTile = null;
+	private boolean markSuccessorsToFullFillMainstreetNetDistance = false;
 	private RouteNode routeFrom;
 	private RouteNode routeTo;
 	private volatile RoutePositionMark fromMark;
@@ -238,20 +240,32 @@ public class Routing implements Runnable {
 //			}
 //			//#debug error
 //			System.out.println("Begin load connections MEM " +  runtime.freeMemory() + " exp=" + expanded +  " open " + open.size() + "  closed " + closed.size());
-			try {
-				tile.cleanup(50);
-				successor=tile.getConnections(currentNode.state.toId,tile,bestTime);
-			} catch (OutOfMemoryError e) {
-				oomCounter++;
-				tile.cleanup(0);
-				System.gc();
-				//#debug error
-				logger.debug("after cleanUp : " + runtime.freeMemory());
-//				successor=currentNode.state.to.getConnections(tile);
-				estimateFac += 0.02f;
-				successor=tile.getConnections(currentNode.state.toId,tile,bestTime);
-				//#debug error
-				logger.debug("after load single Conection : " + runtime.freeMemory());
+			
+			Routing.onlyMainStreetNet =	currentNode.getFlag(GraphNode.GN_FLAG_CONNECTION_STARTS_INSIDE_MAINSTREETDISTANCE);
+
+			/*
+			 *  when we are examining the mainstreet net, connections not on the mainstreet net
+			 *  do not need to be examined if we've seen already enough mainstreet net connections
+			 */
+			if (Routing.onlyMainStreetNet && !currentNode.state.isMainStreetNet() && mainStreetConsExamined > 20) {
+				successor = null;
+			} else {
+				currentTile = tile;
+				try {
+					tile.cleanup(50);
+					successor=tile.getConnections(currentNode.state.toId,tile,bestTime);
+				} catch (OutOfMemoryError e) {
+					oomCounter++;
+					tile.cleanup(0);
+					System.gc();
+					//#debug error
+					logger.debug("after cleanUp : " + runtime.freeMemory());
+	//				successor=currentNode.state.to.getConnections(tile);
+					estimateFac += 0.02f;
+					successor=tile.getConnections(currentNode.state.toId,tile,bestTime);
+					//#debug error
+					logger.debug("after load single Conection : " + runtime.freeMemory());
+				}
 			}
 			if (successor == null){
 				successor=new Connection[0];
@@ -259,9 +273,9 @@ public class Routing implements Runnable {
 			
 			// check for turn restrictions
 			boolean turnRestricted []= new boolean[successor.length];
-			if (checkForTurnRestrictions && tile.lastNodeHadTurnRestrictions) {
+			if (checkForTurnRestrictions && currentTile.lastNodeHadTurnRestrictions) {
 				int nextId;
-				TurnRestriction turnRestriction = tile.getTurnRestrictions(currentNode.state.toId);
+				TurnRestriction turnRestriction = currentTile.getTurnRestrictions(currentNode.state.toId);
 				while (turnRestriction != null) { // loop through all turn restrictions at this route node
 					if ( (turnRestriction.affectedTravelModes & currentTravelMask) > 0 ){
 						GraphNode parentNode;
@@ -337,22 +351,17 @@ public class Routing implements Runnable {
 					turnRestriction = turnRestriction.nextTurnRestrictionAtThisNode;
 				}
 			}	// end of check for turn restrictions
-			
-			// Use only mainstreet net if at least mainStreetNetDistanceMeters away from 
-			// start and destination points and already enough main street connections 
-			// have been examined.
-			// MainStreet Net Distance Check - this will turn on the MainStreetNet mode 
-			// if we are far away enough from routeStart and routeDest.
-			if (bestTime && mainStreetConsExamined > 20
-				&& MoreMath.dist(tile.lastRouteNode.lat, tile.lastRouteNode.lon, dest.lat, dest.lon) > mainStreetNetDistanceMeters
-				&& MoreMath.dist(tile.lastRouteNode.lat, tile.lastRouteNode.lon, routeFrom.lat, routeFrom.lon) > mainStreetNetDistanceMeters
+
+			/*  MainStreet Net Distance Check - this will turn on the MainStreetNet mode
+			 *  for the successors of this GraphNode if we are far away enough from routeStart and routeDest.
+			 */
+			if (	bestTime
+					&& MoreMath.dist(currentTile.lastRouteNode.lat, currentTile.lastRouteNode.lon, dest.lat, dest.lon) > mainStreetNetDistanceMeters
+					&& MoreMath.dist(currentTile.lastRouteNode.lat, currentTile.lastRouteNode.lon, routeFrom.lat, routeFrom.lon) > mainStreetNetDistanceMeters
 			) {
-				// System.out.println(mainStreetConsExamined + " mainStreetConsExamined " + 
-				//		MoreMath.dist(tile.lastRouteNode.lat, tile.lastRouteNode.lon, dest.lat, dest.lon));
-				// turn on mainStreetNetMode
-				Routing.onlyMainStreetNet = true;
+				markSuccessorsToFullFillMainstreetNetDistance = true;
 			} else {
-				Routing.onlyMainStreetNet = false;
+				markSuccessorsToFullFillMainstreetNetDistance = false;
 			}
 
 			for (int cl=0;cl < successor.length;cl++){
@@ -468,6 +477,10 @@ public class Routing implements Runnable {
 					GraphNode newNode;
 					estimation = estimate(currentNode.state,nodeSuccessor, dest);
 					newNode = new GraphNode(nodeSuccessor, currentNode, successorCost, estimation, currentNode.fromBearing);
+					// mark new GraphNode to examine only mainstreetNet successors
+					if (markSuccessorsToFullFillMainstreetNetDistance) {
+						newNode.setFlag(GraphNode.GN_FLAG_CONNECTION_STARTS_INSIDE_MAINSTREETDISTANCE);
+					}
 					if (checkForTurnRestrictions) {
 						open.put(nodeSuccessor.connectionId, newNode);
 					} else {
@@ -713,7 +726,7 @@ public class Routing implements Runnable {
 		if (id == Integer.MAX_VALUE){
 			return routeTo;
 		}
-		return tile.getRouteNode(id);
+		return currentTile.getRouteNode(id);
 	} 
 
 
