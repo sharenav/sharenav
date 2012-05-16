@@ -17,6 +17,7 @@ import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.PaintContext;
 import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.gpsmid.data.ScreenContext;
+import de.ueller.gpsmid.mapdata.DictReader;
 import de.ueller.gpsmid.mapdata.Way;
 import de.ueller.gpsmid.mapdata.WayDescription;
 import de.ueller.gpsmid.routing.RouteInstructions;
@@ -346,8 +347,8 @@ public class ImageCollector implements Runnable {
 					/**
 					 * Drawing waypoints
 					 */
-					if (t[5] != null) {
-						t[5].paint(createPC, layersToRender[layer]);
+					if (t[DictReader.GPXZOOMLEVEL] != null) {
+						t[DictReader.GPXZOOMLEVEL].paint(createPC, layersToRender[layer]);
 					}
 					if (suspended) {
 						// Don't continue rendering if suspended
