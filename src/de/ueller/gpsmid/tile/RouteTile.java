@@ -91,7 +91,7 @@ public class RouteTile extends RouteBaseTile {
 			return;
 		}
 
-		RouteBaseTile dict = (RouteBaseTile) Trace.getInstance().getDict(DictReader.ROUTEZOOMLEVEL);
+		RouteBaseTile dict = (RouteBaseTile) Trace.getInstance().getDict((byte)DictReader.ROUTEZOOMLEVEL);
 		
 		// show route cost only if Alternative Info/Type Information in Map Features is activated
 		boolean showCost = Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE);			
