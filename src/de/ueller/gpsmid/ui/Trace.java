@@ -2810,7 +2810,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			p = new Proj2D(new Node(pm.lat,pm.lon, true),5000,pc.xSize,pc.ySize);
 			pc.setP(p);
 			for (int i=0; i<4; i++) {
-				tiles[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD | Tile.OPT_FIND_CURRENT);
+				if (Legend.tileScaleLevelContainsRoutableWays[i]) {
+					tiles[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD | Tile.OPT_FIND_CURRENT);
+				}
 			}
 			// stop the search when a routable way is found
 			if (pc.actualRoutableWay != null) {

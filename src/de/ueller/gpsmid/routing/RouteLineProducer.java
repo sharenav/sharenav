@@ -152,9 +152,10 @@ public class RouteLineProducer implements Runnable {
 		pc.conWayBearingsCount = 0;
 		pc.setP(new Proj2D(new Node(pc.searchCon1Lat,pc.searchCon1Lon, true),5000,100,100));
 		for (int i = 0; i < 4; i++) {
-			trace.tiles[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD | Tile.OPT_CONNECTIONS2WAY);
+			if (Legend.tileScaleLevelContainsRoutableWays[i]) {
+				trace.tiles[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD | Tile.OPT_CONNECTIONS2WAY);
+			}
 		}
-		// if we've got a match
 		if (pc.conWayDistanceToNext != Float.MAX_VALUE ) {
 			cFrom = (ConnectionWithNode) route.elementAt(iConnFrom);
 			cFrom.wayFromConAt = pc.conWayFromAt;
