@@ -394,15 +394,7 @@ public class Routing implements Runnable {
 					//System.out.println("currentNode.state.toId: " + currentNode.state.toId + " " + firstNodeId1 +  " " + firstNodeId2 + " " + currentNode.state.connectionId);
 					continue;
 				}
-				
-				if (showConnectionTraces) {
-					RouteNode rn1 = getRouteNode(currentNode.state.toId);
-					RouteNode rn2 = getRouteNode(nodeSuccessor.toId);
-					if (rn1 != null && rn2 != null) {
-						RouteConnectionTraces.addRouteConnectionTrace(rn1.lat, rn1.lon, rn2.lat, rn2.lon, "");						
-					}
-				}
-				
+						
 				int turnCost;
 				//System.out.println ("currentNode frombearing " + currentNode.fromBearing
 				//		    + " nodeSuccessor.startBearing " + nodeSuccessor.startBearing);
@@ -480,6 +472,13 @@ public class Routing implements Runnable {
 					// mark new GraphNode to examine only mainstreetNet successors
 					if (markSuccessorsToFullFillMainstreetNetDistance) {
 						newNode.setFlag(GraphNode.GN_FLAG_CONNECTION_STARTS_INSIDE_MAINSTREETDISTANCE);
+					}
+					if (showConnectionTraces) {
+						RouteNode rn1 = getRouteNode(currentNode.state.toId);
+						RouteNode rn2 = getRouteNode(nodeSuccessor.toId);
+						if (rn1 != null && rn2 != null) {
+							RouteConnectionTraces.addRouteConnectionTrace(rn1.lat, rn1.lon, rn2.lat, rn2.lon, Routing.onlyMainStreetNet ? ConnectionTrace.WIDELINE : 0, "");						
+						}
 					}
 					if (checkForTurnRestrictions) {
 						open.put(nodeSuccessor.connectionId, newNode);
