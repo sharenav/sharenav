@@ -90,6 +90,10 @@
     *** Routing ***
     - fixes and improvements for mainstreet net. In motorcar transport mode
       this speeds up route calculation and reduces memory requirements for far distances.
+    - Lower values for distance to mainstreet net speed up route calculation.
+      It's now possible to put 1 into Setup/Routing as distance in km to Mainstreet Net,
+      GpsMid will handle it if there's no Mainstreet Net within this distance
+      at the route start or destination.
     - add support for toll rules for each travel mode to routemodes.inc.
       Ways will still be rendered with toll decoration only if toll=yes or toll=true is set
       regardless of toll rules or current travel mode
@@ -97,15 +101,17 @@
       in route calculation - in other words, when driving with car, don't assume we
       can start driving backwards without a u-turn or can just take a u-turn with no costs
     - optionally stop routing when we arrive at destination
-    - big navigation arrows for next two instructions in uppper left corner;
+    - big navigation arrows for next two instructions in upper left corner;
       options to show or not show the big arrows or the small in-map arrows.
     - On new GpsMid installations on devices with a display height or width > 400
       the minimum route line width is now 5 instead of 3.
     - don't pause GpsMid (& close location producer) if we're routing 
     - add option to select whether to aim for shortest time or shortest distance
-    - adjustment to routing parametres for faster route calculation - routes
+    - adjustment to routing parameters for faster route calculation - routes
       should be as good as before, please report if you get worse routes than
       earlier
+    - add option to Setup/Debug to show route calculation traces in map,
+      connections requested from mainstreet net are drawn wider
     *** Osm2GpsMid GUI ***
     - Route destinations for the route corridor are saved in last.properties. After loading
       a .properties file with route destinations you can press "Calculate Route Corridor"
