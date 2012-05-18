@@ -1014,23 +1014,41 @@ public class Routing implements Runnable {
 			finalDestPathSegNodeDummy1.radlat = toMark.nodeLat[finalSeg];
 			finalDestPathSegNodeDummy1.radlon = toMark.nodeLon[finalSeg];
 			
-			/* search closest MainstreetRouteNode at destination */
-			Routing.onlyMainStreetNet = true;
-			RouteNode best = new RouteNode();
-			best.lat = 999;
-			best.lon = 999;
-			float oldBestRouteNodeSearchEpsilon = RouteBaseTile.bestRouteNodeSearchEpsilon;
-			do {
-				best = tile.getRouteNode(best, routeTo.lat, routeTo.lon);
-				RouteBaseTile.bestRouteNodeSearchEpsilon += 0.1f;
-			} while (best.lat == 999 && RouteBaseTile.bestRouteNodeSearchEpsilon < 1);
-			RouteBaseTile.bestRouteNodeSearchEpsilon = oldBestRouteNodeSearchEpsilon;
-			
-			distToMainstreetNetRouteNode = (int) ProjMath.getDistance(routeTo.lat, routeTo.lon, best.lat, best.lon);		
-			// RouteHelpers.addRouteHelper(best.lat, best.lon, "Closest MainstreetRouteNode at destination");
-			Routing.onlyMainStreetNet = false;
-
 			if (routeTo != null) {
+				distToMainstreetNetRouteNode = 0;
+				if (Configuration.getTravelMode().useMainStreetNetForLargeRoutes()) {
+					/* search closest MainstreetRouteNode at destination */
+					Routing.onlyMainStreetNet = true;
+					// calc lat/lon per km
+					RouteNode best = new RouteNode();
+					best.lat = routeTo.lat + 0.001f;
+					best.lon = routeTo.lon;
+					float distLat = (int) ProjMath.getDistance(routeTo.lat, routeTo.lon, best.lat, best.lon);		
+					best.lat = routeTo.lat;
+					best.lon = routeTo.lon + 0.001f;
+					float distLon = (int) ProjMath.getDistance(routeTo.lat, routeTo.lon, best.lat, best.lon);		
+					float latLonPerKm = 1.0f / Math.max(distLat, distLon); // same as 0.001f * 1000 / Math.Max(distLat, distLon)
+					best.lat = 999;
+					best.lon = best.lat;
+	
+					float oldBestRouteNodeSearchEpsilon = RouteBaseTile.bestRouteNodeSearchEpsilon;
+					RouteBaseTile.bestRouteNodeSearchEpsilon = latLonPerKm; // start searching closest mainstreetnet route node within about one km around destination
+					// search closest mainstreet net route node within about 20 km around destination 
+					do {
+						best = tile.getRouteNode(best, routeTo.lat, routeTo.lon);
+						RouteBaseTile.bestRouteNodeSearchEpsilon += latLonPerKm;
+					} while (best.lat == 999 && RouteBaseTile.bestRouteNodeSearchEpsilon < latLonPerKm * 20);
+					RouteBaseTile.bestRouteNodeSearchEpsilon = oldBestRouteNodeSearchEpsilon;
+					
+					if (best.lat != 999) {
+						distToMainstreetNetRouteNode = (int) ProjMath.getDistance(routeTo.lat, routeTo.lon, best.lat, best.lon);
+					} else if (Configuration.getMainStreetDistanceKm() <= 20){
+						parent.alert("Routing", "No MainstreetNet RouteNode found within 20 km at destination", 5000);
+					}
+					// RouteHelpers.addRouteHelper(best.lat, best.lon, "Closest MainstreetRouteNode at destination");
+					Routing.onlyMainStreetNet = false;
+				}
+				
 				parent.cleanup();
 				System.gc();
 				//#debug error
