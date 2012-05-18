@@ -33,7 +33,8 @@ public class RouteTile extends RouteBaseTile {
 	TurnRestriction[] turns = null;
 	Connection[][] connections = null;
 	boolean onlyMainStreetNetLoaded = true;
-
+	short numMainStreetRouteNodes = 0;
+	
 	private final static Logger logger = Logger.getInstance(RouteTile.class, Logger.INFO);
 
 	
@@ -304,7 +305,7 @@ public class RouteTile extends RouteBaseTile {
 		connections = null;
 		
 		DataInputStream ts=new DataInputStream(Configuration.getMapResource("/t4/" + fileId + ".d"));
-		short numMainStreetRouteNodes = ts.readShort();
+		numMainStreetRouteNodes = ts.readShort();
 		short numNormalStreetRouteNodes = ts.readShort();
 
 		short numMainStreetTurnRestrictions = ts.readShort();
@@ -390,7 +391,7 @@ public class RouteTile extends RouteBaseTile {
 	}
 
 	public RouteNode getRouteNode(RouteNode best, float lat, float lon) {
-		if (contain(lat,lon,0.03f)){
+		if (contain(lat,lon,RouteBaseTile.bestRouteNodeSearchEpsilon)){
 			if (loadNodesRequired()){
 				try {
 					loadNodes(Routing.onlyMainStreetNet, -1);
@@ -403,7 +404,8 @@ public class RouteTile extends RouteBaseTile {
 				best=nodes[0];
 			}
 			int bestDist = MoreMath.dist(best.lat, best.lon, lat, lon);
-			for (int i=0; i<nodes.length;i++){
+			int nodesLength = Routing.onlyMainStreetNet ? numMainStreetRouteNodes : nodes.length;
+			for (int i=0; i<numMainStreetRouteNodes;i++){
 				RouteNode n = nodes[i];
 				int dist = MoreMath.dist(n.lat, n.lon, lat, lon);
 				if (dist < bestDist){

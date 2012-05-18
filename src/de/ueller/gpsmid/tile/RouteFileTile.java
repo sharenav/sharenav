@@ -75,7 +75,7 @@ public class RouteFileTile extends RouteBaseTile {
 	}
 
 	public RouteNode getRouteNode(RouteNode best, float lat, float lon) {
-		if (contain(lat,lon,0.03f)){
+		if (contain(lat,lon,RouteBaseTile.bestRouteNodeSearchEpsilon)){
 			if (tile == null){
 				try {
 					loadTile();

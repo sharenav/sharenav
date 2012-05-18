@@ -122,7 +122,7 @@ public class RouteContainerTile extends RouteBaseTile {
 	}
 
 	public RouteNode getRouteNode(RouteNode best, float lat, float lon) {
-		if (contain(lat, lon, 0.03f)) {
+		if (contain(lat, lon, RouteBaseTile.bestRouteNodeSearchEpsilon)) {
 			if (t1 != null) {
 				best = t1.getRouteNode(best, lat, lon);
 			}
@@ -198,4 +198,5 @@ public class RouteContainerTile extends RouteBaseTile {
 		}
 		return ret;
 	}
+	
 }

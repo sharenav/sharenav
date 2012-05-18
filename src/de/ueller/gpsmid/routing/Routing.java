@@ -23,6 +23,7 @@ import de.ueller.gpsmid.ui.Trace;
 import de.ueller.util.IntTree;
 import de.ueller.util.Logger;
 import de.ueller.util.MoreMath;
+import de.ueller.util.ProjMath;
 
 
 
@@ -38,6 +39,7 @@ public class Routing implements Runnable {
 	private final static Logger logger = Logger.getInstance(Routing.class, Logger.ERROR);
 	private RouteBaseTile tile;
 	private RouteBaseTile currentTile = null;
+	private int distToMainstreetNetRouteNode;
 	private boolean markSuccessorsToFullFillMainstreetNetDistance = false;
 	private RouteNode routeFrom;
 	private RouteNode routeTo;
@@ -157,6 +159,15 @@ public class Routing implements Runnable {
 			mainStreetNetDistanceMeters = Configuration.getMainStreetDistanceKm() * 1000;
 			maxTimesToReduceMainStreetNet = 4;
 //			System.out.println("use main street net");
+		}
+		
+		/* if the closest mainstreetnet route node is more far away
+		 * than the configured distance to mainstreet net
+		 * examine full net at destination 2 km earlier
+		 */
+		int destMainStreetNetDistanceMeters = mainStreetNetDistanceMeters;
+		if (destMainStreetNetDistanceMeters < distToMainstreetNetRouteNode) {
+			destMainStreetNetDistanceMeters = distToMainstreetNetRouteNode + 2000;
 		}
 		
 		/*
@@ -357,7 +368,7 @@ public class Routing implements Runnable {
 			 *  for the successors of this GraphNode if we are far away enough from routeStart and routeDest.
 			 */
 			if (	bestTime
-					&& MoreMath.dist(currentTile.lastRouteNode.lat, currentTile.lastRouteNode.lon, dest.lat, dest.lon) > mainStreetNetDistanceMeters
+					&& MoreMath.dist(currentTile.lastRouteNode.lat, currentTile.lastRouteNode.lon, dest.lat, dest.lon) > destMainStreetNetDistanceMeters
 					&& MoreMath.dist(currentTile.lastRouteNode.lat, currentTile.lastRouteNode.lon, routeFrom.lat, routeFrom.lon) > mainStreetNetDistanceMeters
 			) {
 				markSuccessorsToFullFillMainstreetNetDistance = true;
@@ -1018,6 +1029,22 @@ public class Routing implements Runnable {
 			finalDestPathSegNodeDummy1.radlat = toMark.nodeLat[finalSeg];
 			finalDestPathSegNodeDummy1.radlon = toMark.nodeLon[finalSeg];
 			
+			/* search closest MainstreetRouteNode at destination */
+			Routing.onlyMainStreetNet = true;
+			RouteNode best = new RouteNode();
+			best.lat = 999;
+			best.lon = 999;
+			float oldBestRouteNodeSearchEpsilon = RouteBaseTile.bestRouteNodeSearchEpsilon;
+			do {
+				best = tile.getRouteNode(best, routeTo.lat, routeTo.lon);
+				RouteBaseTile.bestRouteNodeSearchEpsilon += 0.1f;
+			} while (best.lat == 999 && RouteBaseTile.bestRouteNodeSearchEpsilon < 1);
+			RouteBaseTile.bestRouteNodeSearchEpsilon = oldBestRouteNodeSearchEpsilon;
+			
+			distToMainstreetNetRouteNode = (int) ProjMath.getDistance(routeTo.lat, routeTo.lon, best.lat, best.lon);		
+			// RouteHelpers.addRouteHelper(best.lat, best.lon, "Closest MainstreetRouteNode at destination");
+			Routing.onlyMainStreetNet = false;
+
 			if (routeTo != null) {
 				parent.cleanup();
 				System.gc();

@@ -14,6 +14,7 @@ public abstract class RouteBaseTile extends Tile {
 	protected int maxId;
 	public boolean lastNodeHadTurnRestrictions = false;
 	public RouteNode lastRouteNode = null;
+	public static float bestRouteNodeSearchEpsilon = 0.03f;
 
 	public abstract RouteNode getRouteNode(int id);
 	/**
