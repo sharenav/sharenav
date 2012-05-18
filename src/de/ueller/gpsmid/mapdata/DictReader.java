@@ -113,7 +113,7 @@ public class DictReader implements Runnable {
 			// Special case zoom level 4, which is the routing zoom level.
 			// If routing was disabled in Osm2GpsMid, this file won't
 			// exist. Give a more helpful message.
-			if (zl == 4) {
+			if (zl == ROUTEZOOMLEVEL) {
 				logger.info("Routing is not enabled in this midlet");
 				return;
 			} else {
