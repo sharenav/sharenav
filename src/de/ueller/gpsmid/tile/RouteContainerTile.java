@@ -185,7 +185,8 @@ public class RouteContainerTile extends RouteBaseTile {
 	
 	public RouteNode getRouteNode(float lat, float lon, RouteTileRet retTile) {
 		RouteNode ret = null;
-		if (contain(lat, lon, 0.03f)) {
+		// FIXME: do we need an epsilon at all here?
+		if (contain(lat, lon, 0.0000005f)) {
 			if (t1 != null) {
 				ret = t1.getRouteNode(lat, lon, retTile);
 			}
