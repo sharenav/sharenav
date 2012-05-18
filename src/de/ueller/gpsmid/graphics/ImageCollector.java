@@ -329,21 +329,22 @@ public class ImageCollector implements Runnable {
 					}
 					byte minTile = Legend.scaleToTile((int)(createPC.scale / (boost * overviewTileScaleBoost) ));
 					
-					if ((minTile >= 3) && (t[3] != null)) {
-						t[3].paint(createPC, layersToRender[layer]);
+					if (t[0] != null) {
+						t[0].paint(createPC, layersToRender[layer]);
+					}
+					if ((minTile >= 1) && (t[1] != null)) {
+						t[1].paint(createPC, layersToRender[layer]);
 						Thread.yield();
 					}
 					if ((minTile >= 2) && (t[2] != null)) {
 						t[2].paint(createPC, layersToRender[layer]);
 						Thread.yield();
 					}
-					if ((minTile >= 1) && (t[1] != null)) {
-						t[1].paint(createPC, layersToRender[layer]);
+					if ((minTile >= 3) && (t[3] != null)) {
+						t[3].paint(createPC, layersToRender[layer]);
 						Thread.yield();
 					}
-					if (t[0] != null) {
-						t[0].paint(createPC, layersToRender[layer]);
-					}
+
 					/**
 					 * Drawing waypoints
 					 */
