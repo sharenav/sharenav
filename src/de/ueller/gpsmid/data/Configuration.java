@@ -780,7 +780,7 @@ public class Configuration {
 		}
 
 		if (configVersionStored < 10) {
-			setMainStreetDistanceKm(3);
+			setMainStreetDistanceKm(1);
 		}
 		
 		if (configVersionStored < 11) {
