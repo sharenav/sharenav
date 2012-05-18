@@ -88,6 +88,8 @@
     - fulltext search now easily accessible on touch screen phones;
       the "*" key function moved to the cursor keyboard
     *** Routing ***
+    - fixes and improvements for mainstreet net. In motorcar transport mode
+      this speeds up route calculation and reduces memory requirements for far distances.
     - add support for toll rules for each travel mode to routemodes.inc.
       Ways will still be rendered with toll decoration only if toll=yes or toll=true is set
       regardless of toll rules or current travel mode
