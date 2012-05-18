@@ -158,8 +158,11 @@ public class CreateGpsMidData implements FilenameFilter {
 		sl.createNameList(path);
 		ul.createUrlList(path);
 		for (int i = 0; i <= 3; i++) {
-			System.out.println("Exporting tiles for zoomlevel " + i);
+			System.out.println("Exporting tiles for zoomlevel " + i );
 			System.out.println("===============================");
+			if (!LegendParser.tileScaleLevelContainsRoutableWays[i]) {
+				System.out.println("Info: This tile level contains no routable ways");
+			}
 			long startTime = System.currentTimeMillis();
 			long bytesWritten = exportMapToMid(i);
 			long time = (System.currentTimeMillis() - startTime);
@@ -328,7 +331,11 @@ public class CreateGpsMidData implements FilenameFilter {
 			 * Write Tile Scale Levels
 			 */
 			for (int i = 0; i < 4; i++) {
-				dsi.writeInt(LegendParser.tileScaleLevel[i]);
+				if (LegendParser.tileScaleLevelContainsRoutableWays[i]) {
+					dsi.writeInt(LegendParser.tileScaleLevel[i]);					
+				} else {
+					dsi.writeInt( -LegendParser.tileScaleLevel[i] );
+				}
 			}
 			/**
 			 * Write Travel Modes

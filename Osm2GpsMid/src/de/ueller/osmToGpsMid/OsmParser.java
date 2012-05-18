@@ -70,7 +70,7 @@ public abstract class OsmParser {
 	public int trafficSignalCount = 0;
 	private Vector<Bounds> bounds = null;
 	private Configuration configuration;
-
+	
 	protected int wayIns;
 
 	/**
@@ -158,6 +158,9 @@ public abstract class OsmParser {
 		if (w.isValid() /* && t > 0 */) {
 			w.trimPath();
 			w.determineWayRouteModes();
+			if (w.isAccessForAnyRouting()) {
+				LegendParser.tileScaleLevelContainsRoutableWays[w.getZoomlevel(configuration)] = true;
+			}
 			if (ways.get(w.id) != null) {
 				/**
 				 * This way is already in data storage. This results from

@@ -250,7 +250,8 @@ public class Legend {
 	private static String namePartRequired[] = {"", "", ""};
 	
 	public static int tileScaleLevel[] = { Integer.MAX_VALUE, 900000, 180000, 45000 }; 
-
+	public static boolean tileScaleLevelContainsRoutableWays[] = {true, true, true, true};
+	
 	private static TravelMode midletTravelModes[];	
 
 	private final static Logger logger = Logger.getInstance(Legend.class, Logger.TRACE);
@@ -412,6 +413,10 @@ public class Legend {
 		 */
 		for (int i = 0; i < 4; i++) {
 			tileScaleLevel[i] = ds.readInt();
+			if (tileScaleLevel[i] < 0) {
+				tileScaleLevel[i] = - tileScaleLevel[i];
+				tileScaleLevelContainsRoutableWays[i] = false;
+			}
 		}
 		
 		/*
