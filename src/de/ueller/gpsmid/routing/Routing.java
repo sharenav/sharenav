@@ -478,7 +478,7 @@ public class Routing implements Runnable {
 						RouteNode rn1 = getRouteNode(currentNode.state.toId);
 						RouteNode rn2 = getRouteNode(nodeSuccessor.toId);
 						if (rn1 != null && rn2 != null) {
-							RouteConnectionTraces.addRouteConnectionTrace(rn1.lat, rn1.lon, rn2.lat, rn2.lon, Routing.onlyMainStreetNet ? ConnectionTrace.WIDELINE : 0 + + (failedId ==  rn1.id ? ConnectionTrace.MARKNODE : 0), "");						
+							RouteConnectionTraces.addRouteConnectionTrace(rn1.lat, rn1.lon, rn2.lat, rn2.lon, Routing.onlyMainStreetNet ? ConnectionTrace.WIDELINE : 0, "");						
 						}
 					}
 					if (checkForTurnRestrictions) {
