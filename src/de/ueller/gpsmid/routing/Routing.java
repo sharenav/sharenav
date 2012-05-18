@@ -242,13 +242,13 @@ public class Routing implements Runnable {
 //			//#debug error
 //			System.out.println("Begin load connections MEM " +  runtime.freeMemory() + " exp=" + expanded +  " open " + open.size() + "  closed " + closed.size());
 			
-			Routing.onlyMainStreetNet =	currentNode.getFlag(GraphNode.GN_FLAG_CONNECTION_STARTS_INSIDE_MAINSTREETDISTANCE);
+			Routing.onlyMainStreetNet =	currentNode.getFlag(GraphNode.GN_FLAG_CONNECTION_STARTS_INSIDE_MAINSTREETDISTANCE) && mainStreetConsExamined > 20;
 
 			/*
 			 *  when we are examining the mainstreet net, connections not on the mainstreet net
 			 *  do not need to be examined if we've seen already enough mainstreet net connections
 			 */
-			if (Routing.onlyMainStreetNet && !currentNode.state.isMainStreetNet() && mainStreetConsExamined > 20) {
+			if (Routing.onlyMainStreetNet && !currentNode.state.isMainStreetNet()) {
 				successor = null;
 			} else {
 				currentTile = tile;
