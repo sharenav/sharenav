@@ -17,7 +17,7 @@ class RouteHelper {
 }
 
 public class RouteHelpers {
-	static Vector routeHelpers = null;
+	public static Vector routeHelpers = null;
 	
 	public static void addRouteHelper(float lat, float lon, String name) {
 		if (routeHelpers == null) {

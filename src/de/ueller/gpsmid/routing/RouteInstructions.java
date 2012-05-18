@@ -193,7 +193,7 @@ public class RouteInstructions {
 			ConnectionWithNode cNow = null;
 			ConnectionWithNode cThen =null;
 
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_ROUTEHELPERS)) {
+			if (RouteHelpers.routeHelpers != null) {
 				RouteHelpers.paint(pc, xo, yo);
 			}
 			

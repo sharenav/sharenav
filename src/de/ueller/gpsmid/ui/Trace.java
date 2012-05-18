@@ -4104,7 +4104,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		RouteInstructions.routeInstructionsHeight = 0;
 		RouteInstructions.abortRouteLineProduction();
 		setRoute(null);
-		RouteHelpers.clear();
 		RouteConnectionTraces.clear();
 	}
 	
