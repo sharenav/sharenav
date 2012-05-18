@@ -154,10 +154,8 @@ public class Routing implements Runnable {
 		
 		// set a mainStreetNetDistance that is unreachable to indicate the mainStreetNet is disabled
 		int mainStreetNetDistanceMeters = 40000000;
-		int maxTimesToReduceMainStreetNet = 0;
 		if (Configuration.getTravelMode().useMainStreetNetForLargeRoutes()) {
 			mainStreetNetDistanceMeters = Configuration.getMainStreetDistanceKm() * 1000;
-			maxTimesToReduceMainStreetNet = 4;
 //			System.out.println("use main street net");
 		}
 		
@@ -182,7 +180,6 @@ public class Routing implements Runnable {
 		 * closed is the closedset
 		 */
 
-		for (int noSolutionRetries = 0; noSolutionRetries <= maxTimesToReduceMainStreetNet; noSolutionRetries++) {
 		int mainStreetConsExamined = 0;
 		motorwayConsExamined = 0;
 		
@@ -517,18 +514,6 @@ public class Routing implements Runnable {
 			nodes.removeElementAt(0);
 			addToNodes(children); // update nodes
 		}
-		if (Routing.stopRouting) {
-			break;
-		} else {
-			if (mainStreetNetDistanceMeters < 40000000) {
-				// when using the mainStreetNet has given no solution retry with less mainStreetNet by increasing the estimated distance to the mainstreetNet
-				mainStreetNetDistanceMeters *= 2;
-				parent.receiveMessage("retry less mainStreetNet");
-			} else {
-				break; // when no mainstreetnet mode is active no retries are required
-			}
-		}
-		} // end noSolutionRetries loop
 		if (!Routing.stopRouting) {
 			parent.receiveMessage(Locale.get("routing.NoSolutionFound")/*no Solution found*/);
 		}
