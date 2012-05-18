@@ -359,10 +359,10 @@ public class ImageCollector implements Runnable {
 				/**
 				 * Drawing debuginfo for routing
 				 */
-				if (!suspended && t[4] != null 
+				if (!suspended && t[DictReader.ROUTEZOOMLEVEL] != null 
 						&& (Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS) 
 								|| Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS))) {
-					t[4].paint(createPC, (byte) 0);
+					t[DictReader.ROUTEZOOMLEVEL].paint(createPC, (byte) 0);
 				}
 
 				if ( htNotPaintedSingleTiles.isEmpty() ) {
