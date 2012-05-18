@@ -429,20 +429,16 @@ public class RouteTile extends RouteBaseTile {
 				}
 			}
 			for (int i=0; i<nodes.length;i++){
-				RouteNode n = nodes[i];
-				if (n.lat == lat && n.lon == lon){
-					return n;
-				}
 				// due the shorts in map data we don't match exactly
-				if (MoreMath.approximately_equal(n.lat,lat,0.0000005f) &&
-					MoreMath.approximately_equal(n.lon,lon,0.0000005f)){
-					Connection cons[] = this.getConnections(n.id, this, !Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_AIM));
+				if (MoreMath.approximately_equal(nodes[i].lat,lat,0.0000005f) &&
+					MoreMath.approximately_equal(nodes[i].lon,lon,0.0000005f)){
+					Connection cons[] = this.getConnections(nodes[i].id, this, !Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_AIM));
 					//#debug debug
 					logger.debug("aprox equal matches...");
 					if (cons.length > 0) {
 						//#debug debug
 						logger.debug("...and has connections in current travel mode");
-						return n;
+						return nodes[i];
 					}
 				}
 			}
