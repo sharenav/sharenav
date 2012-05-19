@@ -1290,7 +1290,7 @@ in the main index as well as in housenumber index.
   				<routing with="foot" accessible="true" speed="4" />  	
   			</Wvalue>
 			<Wvalue name = "tertiary_link" priority = "10">
-  				<description desc = "secondary link"/>
+  				<description desc = "tertiary link"/>
   				<namekey tag = "name"/>
 				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
