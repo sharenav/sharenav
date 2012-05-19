@@ -18,7 +18,7 @@
 			<routeAccessRestriction restrictionKey = "impassable" restrictionValues = "yes"/>
 			<tollRule tollKey = "toll" tollValues = "yes|true" enableToll = "true" debugTollRule = "false"/>
 		</routeMode>
-		<routeMode modeName = "bicycle" maxPrepareMeters="75" maxInMeters="299" maxEstimationSpeed="20" bicycleOppositeExceptions = "true">
+		<routeMode modeName = "bicycle" maxPrepareMeters="75" maxInMeters="299" maxEstimationSpeed="17" bicycleOppositeExceptions = "true">
 				<routeAccessRestriction restrictionKey = "bicycle" restrictionValues = "yes|designated" restrictionPermit = "true"/>
 				<routeAccessRestriction restrictionKey = "cycleway" restrictionValues = "track" restrictionPermit = "true"/>
 				<routeAccessRestriction restrictionKey = "bicycle" restrictionValues = "no|private"/>
