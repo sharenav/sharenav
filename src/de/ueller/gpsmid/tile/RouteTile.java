@@ -405,7 +405,7 @@ public class RouteTile extends RouteBaseTile {
 			}
 			int bestDist = MoreMath.dist(best.lat, best.lon, lat, lon);
 			int nodesLength = Routing.onlyMainStreetNet ? numMainStreetRouteNodes : nodes.length;
-			for (int i=0; i<numMainStreetRouteNodes;i++){
+			for (int i = 0; i < nodesLength; i++){
 				RouteNode n = nodes[i];
 				int dist = MoreMath.dist(n.lat, n.lon, lat, lon);
 				if (dist < bestDist){
