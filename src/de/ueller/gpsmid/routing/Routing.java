@@ -1037,10 +1037,10 @@ public class Routing implements Runnable {
 					do {
 						best = tile.getRouteNode(best, routeTo.lat, routeTo.lon);
 						RouteBaseTile.bestRouteNodeSearchEpsilon += latLonPerKm;
-					} while (best.lat == 999 && RouteBaseTile.bestRouteNodeSearchEpsilon < latLonPerKm * 20);
+					} while ( (best == null || best.lat == 999) && RouteBaseTile.bestRouteNodeSearchEpsilon < latLonPerKm * 20);
 					RouteBaseTile.bestRouteNodeSearchEpsilon = oldBestRouteNodeSearchEpsilon;
 					
-					if (best.lat != 999) {
+					if (best != null && best.lat != 999) {
 						distToMainstreetNetRouteNode = (int) ProjMath.getDistance(routeTo.lat, routeTo.lon, best.lat, best.lon);
 					} else if (Configuration.getMainStreetDistanceKm() <= 20){
 						parent.alert("Routing", "No MainstreetNet RouteNode found within 20 km at destination", 5000);
