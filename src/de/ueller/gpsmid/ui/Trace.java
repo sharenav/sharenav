@@ -1540,7 +1540,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			
 			if (c == CMDS[ROUTING_START_CMD]) {
-				if (! routeCalc || RouteLineProducer.isRunning()) {
+				if (!routeCalc || RouteLineProducer.isRunning()) { // if not in route calc or already producing the route line
+					// if the route line is currently being produced stop it  
+					if (RouteLineProducer.isRunning()) {
+						RouteInstructions.abortRouteLineProduction();						
+					}
 					routeCalc = true;
 					if (Configuration.getContinueMapWhileRouteing() != Configuration.continueMap_Always ) {
 	  				   stopImageCollector();
