@@ -34,6 +34,7 @@ public class RouteTile extends RouteBaseTile {
 	Connection[][] connections = null;
 	boolean onlyMainStreetNetLoaded = true;
 	short numMainStreetRouteNodes = 0;
+	private final static Connection[] emptyCons = new Connection[0];
 	
 	private final static Logger logger = Logger.getInstance(RouteTile.class, Logger.INFO);
 
@@ -594,7 +595,9 @@ public class RouteTile extends RouteBaseTile {
 			}
 			
 			
-			if (conSizeTravelMode == conSize) {
+			if (conSizeTravelMode == 0) { // when there are no connections from a route node for the used travel mode, save memory by reusing a final static empty connection
+				connections[in] = emptyCons; 				
+			} else if (conSizeTravelMode == conSize) {
 				connections[in]=cons;
 			} else {
 				// if not all connections are used, copy only the used connections to a new array that will get used
