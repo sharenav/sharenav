@@ -2393,7 +2393,7 @@ public class Way extends Entity {
 		} else {
 			// use color from style.xml
 			pc.g.setStrokeStyle(wayDesc.getGraphicsLineStyle());
-			pc.g.setColor(wayDesc.lineColor);
+			pc.g.setColor(this.isRoutableWay() ? wayDesc.lineColor : darkenNonRoutableColor(wayDesc.lineColor));				
 		}
 	}
 
@@ -2404,8 +2404,14 @@ public class Way extends Entity {
 		WayDescription wayDesc = Legend.getWayDescription((short) (type & 0xff));
 		//#endif
 		pc.g.setStrokeStyle(wayDesc.getGraphicsLineStyle());
-		pc.g.setColor(isDamaged() ? Legend.COLORS[Legend.COLOR_WAY_DAMAGED_DECORATION] : wayDesc.lineColor);
+		pc.g.setColor(isDamaged() ? Legend.COLORS[Legend.COLOR_WAY_DAMAGED_DECORATION] : darkenNonRoutableColor(wayDesc.lineColor));
 	}
+	
+	private int darkenNonRoutableColor(int color) {
+		return (this.isRoutableWay() || !Configuration.getCfgBitState(Configuration.CFGBIT_DRAW_NON_TRAVELMODE_WAYS_DARKER)) ? color : ((color & 0xfefefe) >> 1);
+	}
+	
+	
 	public int getWidth(PaintContext pc) {
 		//#if polish.api.bigstyles
 		WayDescription wayDesc = Legend.getWayDescription(type);

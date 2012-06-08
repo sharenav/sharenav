@@ -67,6 +67,7 @@
     - Accuracy of fix can be shown with GPS status
     - Number of satellites is show in some more cases also in NoFix situations.
     - Optional travel mode display (& setting on touch screen phones) on map
+    - New option in map features to draw ways not useable by the current travel mode darker
     - On new GpsMid installations on devices with a display height or width > 400
       the base zoom level is now 24 instead of 23 (map is zoomed once in).
     - There's now a setting for altitude correction.
@@ -94,6 +95,7 @@
       It's now possible to put 1 into Setup/Routing as distance in km to Mainstreet Net,
       GpsMid will handle it if there's no Mainstreet Net within this distance
       at the route start or destination.
+    - Default value for distance to mainstreet net in new midlets is now 2 km instead of 3. 
     - add support for toll rules for each travel mode to routemodes.inc.
       Ways will still be rendered with toll decoration only if toll=yes or toll=true is set
       regardless of toll rules or current travel mode

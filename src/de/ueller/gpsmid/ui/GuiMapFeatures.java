@@ -14,8 +14,8 @@ import de.enough.polish.util.Locale;
 public class GuiMapFeatures extends Form implements CommandListener {
 	// Groups
 	private ChoiceGroup elemsGroup;
-	private final	String [] elems = new String[10];
-	private final boolean[] selElems = new boolean[10];
+	private final	String [] elems = new String[11];
+	private final boolean[] selElems = new boolean[11];
 
 	private ChoiceGroup altInfosGroup;
 	private final	String [] altInfos = new String[2];
@@ -61,6 +61,7 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			elems[7] = Locale.get("guimapfeatures.BuildingLabels")/*Building labels*/; 		selElems[7]=Configuration.getCfgBitState(Configuration.CFGBIT_BUILDING_LABELS);
 			elems[8] = Locale.get("guimapfeatures.WaypointLabels")/*Waypoint labels*/; 		selElems[8]=Configuration.getCfgBitState(Configuration.CFGBIT_WPTTEXTS);
 			elems[9] = Locale.get("guimapfeatures.PlaceLabels")/*Place labels (cities, etc.)*/;	selElems[9]=Configuration.getCfgBitState(Configuration.CFGBIT_PLACETEXTS);
+			elems[10] = Locale.get("guimapfeatures.DrawNonTravelModeWaysDarker")/*draw non-travelmode ways darker*/;	selElems[10]=Configuration.getCfgBitState(Configuration.CFGBIT_DRAW_NON_TRAVELMODE_WAYS_DARKER);
 			elemsGroup = new ChoiceGroup(Locale.get("guimapfeatures.Elements")/*Elements*/, Choice.MULTIPLE, elems ,null);
 			elemsGroup.setSelectedFlags(selElems);
 			append(elemsGroup);
@@ -132,6 +133,7 @@ public class GuiMapFeatures extends Form implements CommandListener {
 	        Configuration.setCfgBitState(Configuration.CFGBIT_BUILDING_LABELS, selElems[7], setAsDefault);
 	        Configuration.setCfgBitState(Configuration.CFGBIT_WPTTEXTS, selElems[8], setAsDefault);
 	        Configuration.setCfgBitState(Configuration.CFGBIT_PLACETEXTS, selElems[9], setAsDefault);
+	        Configuration.setCfgBitState(Configuration.CFGBIT_DRAW_NON_TRAVELMODE_WAYS_DARKER, selElems[10], setAsDefault);
 
 			altInfosGroup.getSelectedFlags(selAltInfos);
 			Configuration.setCfgBitState(Configuration.CFGBIT_SHOWLATLON, selAltInfos[0], setAsDefault);

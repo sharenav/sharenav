@@ -1649,6 +1649,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					mode = 0;
 				}
 				Configuration.setTravelMode(mode);
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_DRAW_NON_TRAVELMODE_WAYS_DARKER)) {
+						newDataReady();
+				}
 				return;
 			}
 			if (c == CMDS[NORTH_UP_CMD]) {

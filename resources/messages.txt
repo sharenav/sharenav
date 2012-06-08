@@ -1339,3 +1339,4 @@ guidiscovericonmenu.Online=Here&Online
 traceiconmenu.Online=Here&Online
 routing.in= in 
 routing.sec= sec
+guimapfeatures.DrawNonTravelModeWaysDarker=Draw non-travelmode ways darker

@@ -67,8 +67,8 @@ public class Configuration {
 	
 	// bit 0: render as street
 	public final static short CFGBIT_STREETRENDERMODE = 0;
-//	// bit 1 have default values been once applied?
-//	public final static short CFGBIT_DEFAULTVALUESAPPLIED = 1;
+	// bit 1: Draw ways not useable in the current travel mode darker
+	public final static short CFGBIT_DRAW_NON_TRAVELMODE_WAYS_DARKER = 1;
 	// bit 2: show POITEXT
 	public final static short CFGBIT_POITEXTS = 2;
 	// bit 3: show WAYTEXT
@@ -341,10 +341,11 @@ public class Configuration {
 	public final static short CFGBIT_ROUTECONNECTION_TRACES = 135;
 	// bit 136: Aim for shortest distance in routing if true (otherwise shortest time)
 	public final static short CFGBIT_ROUTE_AIM = 136;
-	// bit 136: Estimation heuristic for best time simple 120 km/h
+	// bit 137: Estimation heuristic for best time simple 120 km/h
 	public final static short CFGBIT_ROUTE_ESTIMATION_120KMH = 137;
-	// bit 137: Ignore turn angles in route estimation heuristic
+	// bit 138: Ignore turn angles in route estimation heuristic
 	public final static short CFGBIT_ROUTE_ESTIMATION_NO_ANGLES = 138;
+	
 	/**
 	 * These are the database record IDs for each configuration option
 	 */
