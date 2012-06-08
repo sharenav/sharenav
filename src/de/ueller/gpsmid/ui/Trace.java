@@ -185,8 +185,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	protected static final int SAVE_PREDEF_WAYP_CMD = 68;
 	protected static final int TOUCH_HELP_CMD = 69;
 	protected static final int CMS_CMD = 70;
+	protected static final int TOGGLE_UNUSEABLEWAYS_DARKER = 71;
 
-	private final Command [] CMDS = new Command[71];
+	private final Command [] CMDS = new Command[72];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -554,6 +555,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		CMDS[ROTATE_TRAVEL_MODE_CMD] = new Command(Locale.get("guiroute.TravelBy")/**/,Command.ITEM,100);
 		CMDS[TOUCH_HELP_CMD] = new Command(Locale.get("trace.touchhelp")/*Touchscreen functions*/,Command.ITEM,100);
 		CMDS[CMS_CMD] = new Command(Locale.get("trace.Tacho")/*Tacho*/, Command.ITEM, 100);
+		CMDS[TOGGLE_UNUSEABLEWAYS_DARKER] = new Command(Locale.get("trace.ToggleUnuseableWaysDarker")/*Toggle unuseable ways darker */, Command.ITEM, 100);
 
 		addAllCommands();
 		
@@ -1607,6 +1609,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			if (c == CMDS[TOGGLE_OVERLAY_CMD]) {
 				showAddons++;
 				repaint();
+				return;
+			}
+			if (c == CMDS[TOGGLE_UNUSEABLEWAYS_DARKER]) {
+				Configuration.setCfgBitState(Configuration.CFGBIT_DRAW_NON_TRAVELMODE_WAYS_DARKER,
+						!(Configuration.getCfgBitState(Configuration.CFGBIT_DRAW_NON_TRAVELMODE_WAYS_DARKER)),
+						false);
+				newDataReady();
 				return;
 			}
 			if (c == CMDS[TOGGLE_BACKLIGHT_CMD]) {

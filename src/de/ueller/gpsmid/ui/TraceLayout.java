@@ -373,7 +373,7 @@ public class TraceLayout extends LayoutManager {
 		e.setVRelative(ele[ROUTE_INSTRUCTION]);
 		e.setHRelative(ele[ETA]);
 		e.setAdditionalOffsX(-2);
-		e.setActionID(Trace.ROTATE_TRAVEL_MODE_CMD);
+		e.setActionID(Trace.ROTATE_TRAVEL_MODE_CMD + (Trace.TOGGLE_UNUSEABLEWAYS_DARKER << 16));
 
 		setOnScreenButtonSize();
 	}	
