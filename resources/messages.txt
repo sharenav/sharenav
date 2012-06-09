@@ -1340,3 +1340,4 @@ traceiconmenu.Online=Here&Online
 routing.in= in 
 routing.sec= sec
 guimapfeatures.DrawNonTravelModeWaysDarker=Draw non-travelmode ways darker
+trace.ToggleUnuseableWaysDarker=Toggle unusable ways darker 
