@@ -188,13 +188,14 @@ public class AndroidLocationInput
 		//#debug info
 		logger.info("updateLocation: " + location);
 		if (location == null) {
+			//hasFix = false;
 			return;
 		}
+		lastFixTimestamp = System.currentTimeMillis();
 		hasFix = true;
 		if (currentState != LocationProvider.AVAILABLE) {
 			updateSolution(LocationProvider.AVAILABLE);
 		}
-		lastFixTimestamp = System.currentTimeMillis();
 		//#debug debug
 		logger.debug("received Location: " + location);
 		
