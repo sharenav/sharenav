@@ -118,3 +118,4 @@
 <!ATTLIST maxSpeedTemplate maxspeed CDATA #REQUIRED>
 <!ATTLIST tileScaleLevel level CDATA #REQUIRED>
 <!ATTLIST tileScaleLevel minScale CDATA #REQUIRED>
+<!ATTLIST tileScaleLevel allowedForRoutableWays CDATA #IMPLIED>

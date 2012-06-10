@@ -114,6 +114,9 @@
       earlier
     - add option to Setup/Debug to show route calculation traces in map,
       connections requested from mainstreet net are drawn wider
+    - new attribute 'allowedForRoutableWays' in style-file.xml for configuring if a tile scale level is allowed
+      to contain routable ways (default is "true"). If a tile scale level does not contain
+      any routable ways, it e.g. does not have to be searched for route line creation which results in better performance.
     *** Osm2GpsMid GUI ***
     - Route destinations for the route corridor are saved in last.properties. After loading
       a .properties file with route destinations you can press "Calculate Route Corridor"

@@ -76,6 +76,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 	private int wayIdx = 0;
 	private boolean nonValidStyleFile;
 	public static int tileScaleLevel[] = { Integer.MAX_VALUE, 900000, 180000, 45000 };
+	public static boolean tileScaleLevelIsAllowedForRoutableWays[] = {true, true, true, true};
 	public static boolean tileScaleLevelContainsRoutableWays[] = {false, false, false, false};
 	
 	private static HashSet<String> relevantKeys;
@@ -913,6 +914,10 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 								.println("scale in tileScaleLevel must be integer, but was "
 										+ atts.getValue("scale"));
 						nonValidStyleFile = true;
+					}
+					String allowedForRoutableWays = atts.getValue("allowedForRoutableWays");
+					if (allowedForRoutableWays != null) {
+						tileScaleLevelIsAllowedForRoutableWays[level] = allowedForRoutableWays.equalsIgnoreCase("true");
 					}
 				}
 			}

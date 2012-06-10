@@ -365,16 +365,17 @@ public class ImageCollector implements Runnable {
 								|| Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS))) {
 					t[DictReader.ROUTEZOOMLEVEL].paint(createPC, (byte) 0);
 				}
-
+				
+				//FIXME: Would it be also possible to add a check if requested single tiles are off-screen (or far offscreen, e.g. one display width / height) and remove those single tiles from the request queue? 
 				if ( htNotPaintedSingleTiles.isEmpty() ) {
 					// No not displayed tile.
 					// The  request queue can be cleared.
 					// This can happen when zooming far out and then zooming in again.
 					// Then many tiles will be queued which are not needed.
 					if ( Trace.getInstance().getDataReader() != null
-							&&
-					// do not clear the request queue while the route line is created, as this also requests single tiles
-						!RouteLineProducer.isRunning()
+//							&&
+//					// do not clear the request queue while the route line is created, as this also requests single tiles
+//						!RouteLineProducer.isRunning()
 					) {
 						Trace.getInstance().getDataReader().clearRequestQueue();
 					}
