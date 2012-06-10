@@ -372,9 +372,9 @@ public class ImageCollector implements Runnable {
 					// This can happen when zooming far out and then zooming in again.
 					// Then many tiles will be queued which are not needed.
 					if ( Trace.getInstance().getDataReader() != null
-							&&
-					// do not clear the request queue while the route line is created, as this also requests single tiles
-						!RouteLineProducer.isRunning()
+//							&&
+//					// do not clear the request queue while the route line is created, as this also requests single tiles
+//						!RouteLineProducer.isRunning()
 					) {
 						Trace.getInstance().getDataReader().clearRequestQueue();
 					}
