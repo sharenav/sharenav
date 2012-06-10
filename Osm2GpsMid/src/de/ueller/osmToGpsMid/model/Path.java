@@ -27,6 +27,16 @@ public class Path extends ArrayList<Node> {
 		super(newNodeList);
 	}
 
+	// create a reversed way
+	public Path(ArrayList<Node> nodeList, boolean reverse) {
+		super(2);
+		//System.out.println("size: " + nodeList.size());
+		for (int i = nodeList.size()-1; i >= 0; i--) {
+			//System.out.println("Adding node: " + nodeList.get(i));
+			this.add(nodeList.get(i));
+		}
+	}
+
 	public boolean add(Node n) {
 		return super.add(n);
 	}

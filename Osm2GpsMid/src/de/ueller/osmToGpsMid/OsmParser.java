@@ -150,6 +150,15 @@ public abstract class OsmParser {
 	 */
 	public void addWay(Way w) {
 		// polish.api.bigstyles
+		// If oneway=-1, reverse the way
+		if (w.isOneWayMinusOne()) {
+			//System.out.println("Reversing a oneway=-1 way, orig: " + w);
+			Way tmp_w = new Way(w, true);
+			w = tmp_w;
+			w.setAttribute("oneway","yes");
+			//System.out.println("Reversed a oneway=-1 way, result: " + w);
+		}
+
 		short t = w.getType(configuration);
 		/**
 		 * We seem to have a bit of a mess with respect to type -1 and 0. Both

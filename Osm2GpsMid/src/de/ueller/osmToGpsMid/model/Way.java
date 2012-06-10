@@ -120,6 +120,18 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	/**
+	 * create a new Way which shares the tags with the other way, has the same type and id, but direction reversed
+	 * 
+	 * @param other
+	 */
+	public Way(Way other, boolean reverse) {
+		super(other);
+		this.id = other.id;
+		this.type = other.type;
+		this.path = new Path(other.path, reverse);
+	}
+
+	/**
 	 * create a new Way which shares the tags with the other way, has the same type and id, but no Nodes
 	 * 
 	 * @param other
@@ -663,6 +675,13 @@ public class Way extends Entity implements Comparable<Way> {
 	 */
 	public boolean isOneWay() {
 		return (Configuration.attrToBoolean(getAttribute("oneway")) > 0);
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isOneWayMinusOne() {
+		return ("-1".equals(getAttribute("oneway")));
 	}
 
 	/** Check if cycleway=opposite or cycleway=opposite_track or cycleway=opposite_lane is set */

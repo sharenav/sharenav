@@ -173,6 +173,7 @@ GpsMid 0.7.7
     *** Osm2GpsMid ***
     - allow user to select map accuracy in .properties file with mapPrecisionInMeters=X
       (default 1 meter) - mainly for debugging & test purposes
+    - support for oneway=-1
     *** Sea support ***
     - Sea generation with generateSea=true in .properties is partially supported,
       known to work:
