@@ -439,15 +439,19 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 		int maxScale = c.getWayDesc(type).minEntityScale;
 		if (maxScale < LegendParser.tileScaleLevel[3]) { // 45000 in GpsMid 0.5.0
-			if (!isAccessForAnyRouting()) {
+			if (LegendParser.tileScaleLevelIsAllowedForRoutableWays[3] || !isAccessForAnyRouting()) {
 				return 3;
 			}
 		}
 		if (maxScale < LegendParser.tileScaleLevel[2]) { // 180000 in GpsMid 0.5.0
-			return 2;
+			if (LegendParser.tileScaleLevelIsAllowedForRoutableWays[2]|| !isAccessForAnyRouting()) {
+				return 2;
+			}
 		}
 		if (maxScale < LegendParser.tileScaleLevel[1]) { // 900000 in GpsMid 0.5.0
-			return 1;
+			if (LegendParser.tileScaleLevelIsAllowedForRoutableWays[1] || !isAccessForAnyRouting()) {
+				return 1;
+			}
 		}
 		return 0;
 	}
