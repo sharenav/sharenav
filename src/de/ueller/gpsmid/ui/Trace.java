@@ -4273,6 +4273,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		// are added to information shown
 		if (origIcon != null) {
 			int height = getHeight() / 7;
+			// FIXME: should keep aspect ratio
 			int width = height;
 			int x = (getHeight() >= 320 ? 5 : 30);
 			int y = 15 + getHeight()/40 + iconNumber * (height + getHeight()/40);
