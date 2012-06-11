@@ -1143,6 +1143,14 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 			if (!spacePressed) {
 				// first time here, search for whole words
+
+				// FIXME There is probably space for optimization here - I think the blocking search
+				// starts a new search going through all of the data, which can result in
+				// double the effort. With smarter communication between GuiSearch and the
+				// search thread, probably could do this so that the search would continue,
+				// and would be done only once. Not sure how the maximum number of search
+				// results is used (and how it should be used) here.
+
 				//System.out.println("space pressed, searching whole word index");
 				String searchString = NumberCanon.canonial(searchCanon.toString());
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH)) {
