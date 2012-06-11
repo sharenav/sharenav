@@ -355,7 +355,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		
 		needsPainting = false;
 		try {
-			GpsMid.getTimer().schedule(timerT, 400, 400);
+			GpsMid.getTimer().schedule(timerT, 250, 250);
 		} catch (Exception e) {
 			logger.exception("Failed to initialize GuiSearch repaint timer", e);
 		}
@@ -1481,7 +1481,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				} else if (ticker < 0) {
 					tickerDiff = 0;
 				}
-				if (needsTicker && isCursorValid() && (System.currentTimeMillis() - lastPaintTime) > 300) {
+				if (needsTicker && isCursorValid() && (System.currentTimeMillis() - lastPaintTime) > 200) {
 					needsPainting = true;
 				}
 				//System.out.println("tickerTick ending: ticker " + ticker + " tickerDiff " + tickerDiff);
