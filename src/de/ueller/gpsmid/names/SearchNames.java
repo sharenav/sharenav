@@ -455,33 +455,33 @@ public class SearchNames implements Runnable {
 		}
 	}
 
- 	/**
-	 * search for a canonicalised name and return a list of results through callbacks
-	 * @param search
-	 * @param type
-	 */
-	public synchronized void appendSearch(String search, final int type) {
-		logger.info("search for  " + search);
-		stopSearch = true;
-		newSearch = true;
-		appendRes = true;
-		//foundEntries = 0;
-		//System.out.println("appendSearch: " + search +  " " + type);
-		this.search = search;
-		final String searchvar = search;
-		Thread t = new Thread(new Runnable() {
-			public void run() {
-				try {
-					//System.out.println("starting doSearch type=" + type);
-					doSearch(searchvar, type);
-					//System.out.println("done doSearch type=" + type);
-				} catch (IOException ioe) {
-					//Do nothing
-				}
-			}
-		}, "wholeWordSearch");
-		t.start();
-	}
+// 	/**
+//	 * search for a canonicalised name and return a list of results through callbacks
+//	 * @param search
+//	 * @param type
+//	 */
+//	public synchronized void appendSearch(String search, final int type) {
+//		logger.info("search for  " + search);
+//		stopSearch = true;
+//		newSearch = true;
+//		appendRes = true;
+//		//foundEntries = 0;
+//		//System.out.println("appendSearch: " + search +  " " + type);
+//		this.search = search;
+//		final String searchvar = search;
+//		Thread t = new Thread(new Runnable() {
+//			public void run() {
+//				try {
+//					//System.out.println("starting doSearch type=" + type);
+//					doSearch(searchvar, type);
+//					//System.out.println("done doSearch type=" + type);
+//				} catch (IOException ioe) {
+//					//Do nothing
+//				}
+//			}
+//		}, "wholeWordSearch");
+//		t.start();
+//	}
 
 	/**
 	 * search for a String and create a new search Thread if necessary
