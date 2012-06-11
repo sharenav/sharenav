@@ -725,6 +725,10 @@ public class RouteInstructions {
 		if (forBigNavigationArrow) {
 			if (instruction == RI_DEST_REACHED) {
 				pict=pc.images.IMG_DESTREACHED;
+			} else if (instruction == RI_AREA_CROSS) {
+				pict = pc.images.IMG_AREACROSS;
+			} else if (instruction == RI_AREA_CROSSED) {
+				pict = pc.images.IMG_AREACROSSED;
 			} else if (instruction >= RI_1ST_EXIT && instruction <= RI_6TH_EXIT) {
 				pict = pc.images.IMG_ROUNDABOUT;
 			}
