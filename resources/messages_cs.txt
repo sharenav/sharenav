@@ -1289,3 +1289,5 @@ guiroute.time=Nejkratší čas
 guiroute.distance=Nejkratší trasa
 guidiscovericonmenu.Online=Tady&Online
 traceiconmenu.Online=Tady&Online
+routing.in= za 
+routing.sec= s
