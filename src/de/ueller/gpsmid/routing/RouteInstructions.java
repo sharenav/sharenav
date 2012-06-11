@@ -1413,7 +1413,7 @@ public class RouteInstructions {
 		int iconCount = 0;
 		ConnectionWithNode c;
 		int dist;
-		for (int i=start; i<route.size()-1; i++){
+		for (int i=start; i<route.size(); i++){
 			c = (ConnectionWithNode) route.elementAt(i);
 			name=null;
 			if (c.wayNameIdx != -1) {
