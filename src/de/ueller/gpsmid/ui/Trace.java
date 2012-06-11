@@ -4267,18 +4267,25 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 	
 	/** paint big direction arrows for navigation */
-	public void setRouteIcon(PaintContext pc, int iconNumber, Image origIcon) {
+	public void setRouteIcon(PaintContext pc, int iconNumber, Image origIcon, int roundaboutExitNr) {
 		// FIXME would it be better for this to be an element in TraceLayout?
 		// Probably at least if the distance and optionally streetname
 		// are added to information shown
 		if (origIcon != null) {
 			int height = getHeight() / 7;
 			int width = height;
+			int x = (getHeight() >= 320 ? 5 : 30);
+			int y = 15 + getHeight()/40 + iconNumber * (height + getHeight()/40);
 			Image icon = ImageCache.getScaledImage(origIcon, width, height);
-			pc.g.drawImage(icon, (getHeight() >= 320 ? 5 : 30),
-				       15 + getHeight()/40
-				       + iconNumber * (height + getHeight()/40),
-				       Graphics.TOP|Graphics.LEFT);
+			pc.g.drawImage(icon, x, y, Graphics.TOP|Graphics.LEFT);
+			if (roundaboutExitNr != 0) {
+				pc.g.setColor(0xFFFFFF);
+				Font font = Font.getFont(Font.FACE_MONOSPACE, Font.STYLE_BOLD, Font.SIZE_LARGE);
+				pc.g.setFont(font);
+				int fontHeight = font.getHeight();
+				pc.g.drawString(""  + roundaboutExitNr, x + width / 2, y + height / 2 - fontHeight/2, Graphics.TOP|Graphics.HCENTER);
+			}
+			
 		}
 	}
 

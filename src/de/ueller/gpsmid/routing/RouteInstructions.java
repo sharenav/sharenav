@@ -1437,16 +1437,20 @@ public class RouteInstructions {
 					if (icon == pc.images.IMG_MARK) {
 						icon = null;
 					}
-					trace.setRouteIcon(pc, iconCount, icon);
+					int roundAboutExitNr = 0;
+					if (c.wayRouteInstruction >= RI_1ST_EXIT && c.wayRouteInstruction <= RI_6TH_EXIT) {
+						roundAboutExitNr = c.wayRouteInstruction - RI_1ST_EXIT + 1;
+					}
+					trace.setRouteIcon(pc, iconCount, icon, roundAboutExitNr);
 				}
 				iconCount++;
 			}
 		}
 		if (iconCount < 2) {
-			trace.setRouteIcon(pc, 1, (Image) null);
+			trace.setRouteIcon(pc, 1, (Image) null, 0);
 		}
 		if (iconCount < 1) {
-			trace.setRouteIcon(pc, 0, (Image) null);
+			trace.setRouteIcon(pc, 0, (Image) null, 0);
 		}
 	}
 
