@@ -31,6 +31,8 @@ public class Images {
 	public final Image IMG_TUNNEL_INTO = Image.createImage("/tunnel.png");
 	public final Image IMG_TUNNEL_OUT_OF = Image.createImage("/tunnel_end.png");
 	public final Image IMG_ROUNDABOUT = Image.createImage("/roundabout.png");
+	public final Image IMG_AREACROSS = Image.createImage("/areacross.png");
+	public final Image IMG_AREACROSSED = Image.createImage("/areacrossed.png");
 
 	public Images() throws IOException {
 	}
