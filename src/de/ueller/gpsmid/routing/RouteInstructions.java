@@ -278,13 +278,13 @@ public class RouteInstructions {
 				    	// distance to next instruction or when the next instruction is the destination to the closest point on the destination way
 				    	finalRouteSeg = iNow == route.size() - 1;
 				    	distNow = ProjMath.getDistance(center.radlat, center.radlon, finalRouteSeg ? closestPointOnDestWay.radlat : cNow.to.lat, finalRouteSeg ? closestPointOnDestWay.radlon : cNow.to.lon);
-					if (Configuration.getCfgBitState(Configuration.CFGBIT_NAVI_ARROWS_BIG)) {
-						outputRouteIcons(pc, iNow, (int) distNow);
-					}
-					// if necessary, convert to yards for voice output
-					if (!Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
-						distNow = distNow / 0.9144 + 0.5;
-					}
+						if (Configuration.getCfgBitState(Configuration.CFGBIT_NAVI_ARROWS_BIG)) {
+							outputRouteIcons(pc, iNow, distNow);
+						}
+						// if necessary, convert to yards for voice output
+						if (!Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
+							distNow = distNow / 0.9144 + 0.5;
+						}
 				    	
 						intDistNow=new Double(distNow).intValue();
 						if (iNow < route.size() - 1) {
@@ -1407,50 +1407,40 @@ public class RouteInstructions {
 		iInInstructionSaidArrow = -1;
 	}
 
-	public void outputRouteIcons(PaintContext pc, int start, int firstDist) {
-		String name=null;
+	public void outputRouteIcons(PaintContext pc, int start, double firstDist) {
+		String name = null;
 		RouteSyntax routeSyntax = RouteSyntax.getInstance();
-		int iconCount = 0;
 		ConnectionWithNode c;
-		int dist;
-		for (int i=start; i<route.size(); i++){
-			c = (ConnectionWithNode) route.elementAt(i);
-			name=null;
-			if (c.wayNameIdx != -1) {
-				name=trace.getName(c.wayNameIdx);
+		ConnectionWithNode cPrev;
+		double dist = firstDist;
+		int i = start;
+		c = (ConnectionWithNode) route.elementAt(i);
+		for (int iconCount = 0; iconCount < 2; iconCount++) {
+			name = getInstructionWayName(i);
+			Image icon = getRoutingImage(pc, c.wayRouteInstruction, true);
+			if (icon == pc.images.IMG_MARK) {
+				icon = null;
 			}
-			if (i == start) {
-				dist = firstDist;
-			} else {
-				dist= (int) c.wayDistanceToNext;
+			int roundAboutExitNr = 0;
+			if (c.wayRouteInstruction >= RI_1ST_EXIT && c.wayRouteInstruction <= RI_6TH_EXIT) {
+				roundAboutExitNr = c.wayRouteInstruction - RI_1ST_EXIT + 1;
 			}
-			if ((c.wayRouteFlags & Legend.ROUTE_FLAG_QUIET) != 0
-			    || c.wayRouteInstruction == RouteInstructions.RI_STRAIGHT_ON
-			    || c.wayRouteInstruction == RouteInstructions.RI_SKIPPED
-			    || iconCount > 2) {
-				// do nothing
-			} else {
-				// FIXME name doesn't work well, get from textual routing instructions
-				if (iconCount == 0 || iconCount == 1) {
-					Image icon = getRoutingImage(pc, c.wayRouteInstruction, true);
+			// if necessary, convert to yards
+			if (!Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
+				dist = dist / 0.9144 + 0.5;
+			}
+			trace.setRouteIcon(pc, iconCount, icon, roundAboutExitNr);
 
-					if (icon == pc.images.IMG_MARK) {
-						icon = null;
-					}
-					int roundAboutExitNr = 0;
-					if (c.wayRouteInstruction >= RI_1ST_EXIT && c.wayRouteInstruction <= RI_6TH_EXIT) {
-						roundAboutExitNr = c.wayRouteInstruction - RI_1ST_EXIT + 1;
-					}
-					trace.setRouteIcon(pc, iconCount, icon, roundAboutExitNr);
-				}
-				iconCount++;
+			if (c.wayRouteInstruction == RI_DEST_REACHED) {		
+				trace.setRouteIcon(pc, 1, null, 0);
+				break;
 			}
-		}
-		if (iconCount < 2) {
-			trace.setRouteIcon(pc, 1, (Image) null, 0);
-		}
-		if (iconCount < 1) {
-			trace.setRouteIcon(pc, 0, (Image) null, 0);
+			
+			// calculate parameters for next instruction
+			i = idxNextInstructionArrow(i + 1);
+			cPrev = c;
+			c = (ConnectionWithNode) route.elementAt(i);
+			dist = ProjMath.getDistance(cPrev.to.lat, cPrev.to.lon, c.to.lat, c.to.lon);
 		}
 	}
 
