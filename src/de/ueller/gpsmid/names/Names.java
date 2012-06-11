@@ -135,21 +135,21 @@ public class Names implements Runnable {
 		return true;
 	}
 
-	public String getFirstWord(int fid) {
-		try {
-//			System.out.println("readFirstWord: /names-" + fid + ".dat");
-			InputStream is = Configuration.getMapResource("/names-" + fid + ".dat");
-			DataInputStream ds = new DataInputStream(is);
-			ds.readByte();
-			String firstWord = ds.readUTF();
-			ds.close();
-			return firstWord;
-		} catch (IOException e) {
-			// TODO Should the user be alerted or does this never happen?
-			e.printStackTrace();
-		}
-		return ("");
-	}
+//	public String getFirstWord(int fid) {
+//		try {
+////			System.out.println("readFirstWord: /names-" + fid + ".dat");
+//			InputStream is = Configuration.getMapResource("/names-" + fid + ".dat");
+//			DataInputStream ds = new DataInputStream(is);
+//			ds.readByte();
+//			String firstWord = ds.readUTF();
+//			ds.close();
+//			return firstWord;
+//		} catch (IOException e) {
+//			// TODO Should the user be alerted or does this never happen?
+//			e.printStackTrace();
+//		}
+//		return ("");
+//	}
 
 	private void readData(IntTree queue) throws IOException {
 		int idx = queue.popFirstKey();
