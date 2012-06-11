@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="31.709036"
+   height="32.292728"
+   id="svg5359"
+   version="1.1"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="roundabout.svg"
+   inkscape:export-filename="D:\GpsMid\icon\mapscreen\roundabout.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs5361" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="1"
+     inkscape:pageshadow="2"
+     inkscape:zoom="5.598901"
+     inkscape:cx="65.027798"
+     inkscape:cy="-3.1069667"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:grid-bbox="true"
+     inkscape:document-units="px"
+     inkscape:window-width="1680"
+     inkscape:window-height="925"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     showborder="false"
+     inkscape:showpageshadow="false"
+     inkscape:snap-nodes="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     borderlayer="false" />
+  <metadata
+     id="metadata5364">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     transform="translate(-0.22388715,-0.09244373)">
+    <circle
+       sodipodi:ry="237.59"
+       sodipodi:rx="237.59"
+       sodipodi:cy="254.70599"
+       sodipodi:cx="254.707"
+       d="m 492.297,254.70599 c 0,131.21734 -106.37267,237.59 -237.59,237.59 -131.21733,0 -237.589996,-106.37266 -237.589996,-237.59 0,-131.21733 106.372666,-237.589993 237.589996,-237.589993 131.21733,0 237.59,106.372663 237.59,237.589993 z"
+       id="path1883"
+       style="fill:#0042c8;fill-opacity:0.64724917"
+       r="237.59"
+       cy="254.70599"
+       cx="254.707"
+       transform="matrix(0.06673058,0,0,0.06795894,-0.91834048,-1.0707413)"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <g
+       id="g5286"
+       transform="matrix(0.06948851,0,0,0.07076762,-1.7736827,-1.5855928)"
+       inkscape:export-filename="D:\GpsMid\icon\mapscreen\path1883.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <path
+         inkscape:connector-curvature="0"
+         d="m 253.06329,111.26614 c 39.15572,0 75.72136,15.15474 101.6075,40.58665 l 31.16862,-27.9213 C 352.3428,91.022597 303.18967,68.017709 252.52462,68.017709 c 0.98087,18.625697 -1.77588,43.523771 0.53867,43.248431 z"
+         style="fill:#ffffff"
+         id="path7297" />
+      <path
+         sodipodi:nodetypes="ccccc"
+         d="m 254.178,111.509 c -39.15572,0 -75.72136,15.15474 -101.60749,40.58665 l -31.16862,-27.9213 c 33.49661,-32.9089 82.64973,-55.91379 133.31478,-55.91379 -0.98087,18.6257 1.77588,43.52378 -0.53867,43.24844 z"
+         style="fill:#ffffff"
+         id="path7297-3"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       id="g5286-1"
+       transform="matrix(-0.03474424,0.06128658,-0.0601788,-0.03538382,39.432376,8.9677966)"
+       inkscape:transform-center-x="5.874206"
+       inkscape:transform-center-y="-24.606362"
+       inkscape:export-filename="D:\GpsMid\icon\mapscreen\path1883.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <path
+         inkscape:connector-curvature="0"
+         d="m 253.06329,111.26614 c 39.15572,0 75.72136,15.15474 101.6075,40.58665 l 31.16862,-27.9213 C 352.3428,91.022597 303.18967,68.017709 252.52462,68.017709 c 0.98087,18.625697 -1.77588,43.523771 0.53867,43.248431 z"
+         style="fill:#ffffff"
+         id="path7297-6" />
+      <path
+         sodipodi:nodetypes="ccccc"
+         d="m 254.178,111.509 c -39.15572,0 -75.72136,15.15474 -101.60749,40.58665 l -31.16862,-27.9213 c 33.49661,-32.9089 82.64973,-55.91379 133.31478,-55.91379 -0.98087,18.6257 1.77588,43.52378 -0.53867,43.24844 z"
+         style="fill:#ffffff"
+         id="path7297-3-8"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       id="g5286-1-8"
+       transform="matrix(0.03474424,0.06128658,0.0601788,-0.03538382,-7.4317804,8.7162781)"
+       inkscape:transform-center-x="-5.8742051"
+       inkscape:transform-center-y="-24.606367"
+       inkscape:export-filename="D:\GpsMid\icon\mapscreen\path1883.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <path
+         inkscape:connector-curvature="0"
+         d="m 253.06329,111.26614 c 39.15572,0 75.72136,15.15474 101.6075,40.58665 l 31.16862,-27.9213 C 352.3428,91.022597 303.18967,68.017709 252.52462,68.017709 c 0.98087,18.625697 -1.77588,43.523771 0.53867,43.248431 z"
+         style="fill:#ffffff"
+         id="path7297-6-2" />
+      <path
+         sodipodi:nodetypes="ccccc"
+         d="m 254.178,111.509 c -39.15572,0 -75.72136,15.15474 -101.60749,40.58665 l -31.16862,-27.9213 c 33.49661,-32.9089 82.64973,-55.91379 133.31478,-55.91379 -0.98087,18.6257 1.77588,43.52378 -0.53867,43.24844 z"
+         style="fill:#ffffff"
+         id="path7297-3-8-7"
+         inkscape:connector-curvature="0" />
+    </g>
+  </g>
+</svg>

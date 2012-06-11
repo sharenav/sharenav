@@ -17,6 +17,7 @@ public class Images {
 	public final Image IMG_POS_BG = Image.createImage("/posbg.png");
 	public final Image IMG_POS_BG_STALE = Image.createImage("/posbgstale.png");
 	public final Image IMG_DEST = Image.createImage("/destination.png");
+	public final Image IMG_DESTREACHED = Image.createImage("/destreached.png");
 	public final Image IMG_STRAIGHTON=Image.createImage("/straighton.png");
 	public final Image IMG_LEFT = Image.createImage("/left.png");
 	public final Image IMG_RIGHT = Image.createImage("/right.png");
@@ -29,6 +30,7 @@ public class Images {
 	public final Image IMG_MOTORWAYLEAVE = Image.createImage("/motorway_exit.png");
 	public final Image IMG_TUNNEL_INTO = Image.createImage("/tunnel.png");
 	public final Image IMG_TUNNEL_OUT_OF = Image.createImage("/tunnel_end.png");
+	public final Image IMG_ROUNDABOUT = Image.createImage("/roundabout.png");
 
 	public Images() throws IOException {
 	}

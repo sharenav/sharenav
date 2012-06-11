@@ -386,7 +386,7 @@ public class RouteInstructions {
 						}
 	
 						aPaint = c.wayRouteInstruction;
-						Image pict = getRoutingImage(pc, aPaint);
+						Image pict = getRoutingImage(pc, aPaint, false);
 						if (trace.atDest) {
 							aPaint = RI_DEST_REACHED;
 						}
@@ -678,7 +678,7 @@ public class RouteInstructions {
 		}
 	}
 
-	private Image getRoutingImage(PaintContext pc, int instruction) {
+	private Image getRoutingImage(PaintContext pc, int instruction, boolean forBigNavigationArrow) {
 		Image pict = pc.images.IMG_MARK;
 		switch (instruction) {
 		case RI_HARD_RIGHT:		pict=pc.images.IMG_HARDRIGHT; break;
@@ -720,6 +720,14 @@ public class RouteInstructions {
 			pict=pc.images.IMG_MOTORWAYLEAVE; break;					
 		case RI_INTO_TUNNEL:	pict=pc.images.IMG_TUNNEL_INTO; break;
 		case RI_OUT_OF_TUNNEL:	pict=pc.images.IMG_TUNNEL_OUT_OF; break;					
+		}
+
+		if (forBigNavigationArrow) {
+			if (instruction == RI_DEST_REACHED) {
+				pict=pc.images.IMG_DESTREACHED;
+			} else if (instruction >= RI_1ST_EXIT && instruction <= RI_6TH_EXIT) {
+				pict = pc.images.IMG_ROUNDABOUT;
+			}
 		}
 						
 		return pict;
@@ -1424,7 +1432,8 @@ public class RouteInstructions {
 			} else {
 				// FIXME name doesn't work well, get from textual routing instructions
 				if (iconCount == 0 || iconCount == 1) {
-					Image icon = getRoutingImage(pc, c.wayRouteInstruction);
+					Image icon = getRoutingImage(pc, c.wayRouteInstruction, true);
+
 					if (icon == pc.images.IMG_MARK) {
 						icon = null;
 					}
