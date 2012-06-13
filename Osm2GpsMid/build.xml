@@ -79,6 +79,7 @@
 
    	<propertyfile file="${resources.dir}/version.properties">
    		<entry key="app" value="${app}"/>
+   		<entry key="addToManifest" value=""/>
    		<entry key="version" value="${version}"/>
         <entry key="useRouting" value="true"/>
         <entry key="useExtraMainstreetNet" value="false"/>

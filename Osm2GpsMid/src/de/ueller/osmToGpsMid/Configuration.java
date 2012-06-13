@@ -348,6 +348,9 @@ public class Configuration {
 
 		/** Full name of the jar file of the base midlet */
 		private String appJarFileName = null;
+
+		/** Defines string to add to Manifest / .jad file*/
+		public String addToManifest = "";
 		
 		/** Defines whether to write an extra mainstreet net for routing */
 		public String useExtraMainstreetNet = "false";
@@ -675,6 +678,9 @@ public class Configuration {
 				System.exit(1);
 			}
 
+			setAddToManifest(getString("addToManifest"));
+			System.out.println("addToManifest: " + addToManifest);
+			
 			setSounds(getString("useSounds"));
 
 			// don't override map source set by command line with one from .properties
@@ -1339,6 +1345,15 @@ public class Configuration {
 			return useIcons;
 		}
 
+
+		public void setAddToManifest(String line) {
+			addToManifest = line.trim();
+		}
+
+		public String getAddToManifest() {
+			return addToManifest;
+		}
+		
 		public void setSounds(String sounds) {
 			if (attrToBoolean(sounds) > 0) {
 				useSounds = "amr";
@@ -1520,6 +1535,9 @@ public class Configuration {
 				confString += "  Map file name: " + getMapFileName() + "\n";
 			}
 			confString += "  Code base: " + appParam + "\n";
+			if (addToManifest.length() > 0) {
+				confString += "  Add line to manifest: " + addToManifest + "\n";				
+			}
 			confString += "  Keeping map files after .jar creation: " + !cleanupTmpDirAfterUse() + "\n";
 			confString += "  Enable routing: " + useRouting + "\n";
 			confString += "  Generate Extra MainstreetNet: " + useExtraMainstreetNet + "\n";

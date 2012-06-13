@@ -1119,6 +1119,12 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			}
 			fw.write("\r\n");
 
+			fw.write("# Add this line to .manifest / .jad.\r\n");
+			fw.write("# e.g. MIDlet-Touch-Support:true to hide keyboard on Samsung Bada mobiles\r\n");				
+			fw.write("# or LGE-MIDlet-Display-Nav-Keypad:no on LG mobiles\r\n");				
+			fw.write("addToManifest = " + config.getAddToManifest() + "\r\n");
+			fw.write("\r\n");			
+			
 			fw.write("# File endings of files to not compress.\r\n");
 			fw.write("# e.g. for Android and WinCE uncompressed WAV files are required\r\n");
 			fw.write("# Example to not compress files ending with wav: dontCompress = wav\r\n");
