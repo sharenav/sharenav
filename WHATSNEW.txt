@@ -92,6 +92,8 @@
     - eliminate delay in showing results
     - filter results (or most of them at least) when using qwerty keyboard
     - sort by distance is now the default for map data search
+    - the state of sort by distance or sort by name is remembered separately for
+      favorite search & map data search
     *** Routing ***
     - fixes and improvements for mainstreet net. In motorcar transport mode
       this speeds up route calculation and reduces memory requirements for far distances.
