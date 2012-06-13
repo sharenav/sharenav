@@ -2398,6 +2398,7 @@ public class Configuration {
 		dos.writeInt(getProjDefault());
 		dos.writeInt(getSearchMax());
 		dos.writeInt(getDestLineWidth());
+		dos.writeInt(getTimeDiff());
 		dos.writeInt(getAltitudeCorrection());
 		/*
 		 * Don't store destpos in export - perhaps later add a function for "move the app" which would store also destpos
