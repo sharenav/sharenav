@@ -698,6 +698,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	 * method to allow proper saving of data.
 	 */
 	private void exitApplication() {
+		updateSettings(true);
 		writeProperties("last.properties");
 		
 		// Update persistent settings for next program run
