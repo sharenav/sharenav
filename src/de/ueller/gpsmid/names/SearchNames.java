@@ -64,12 +64,12 @@ public class SearchNames implements Runnable {
 			    // refresh display to give chance to fetch the names
 			    for (int i = 8; i != 0; i--) {
 					try {
-					    synchronized (this) {
-						    wait(300);
-					    }
 					    // repaint moved out of if(stopSearch), caused results to not be updated
 					    // when letters were typed rapidly which triggered frequent reSearch()es
 					    gui.triggerRepaint();
+					    synchronized (this) {
+						    wait(300);
+					    }
 					    if (stopSearch) {
 						    break;
 					    }
