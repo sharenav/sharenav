@@ -1169,13 +1169,17 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("useSounds = " + config.getUseSounds() + "\r\n");
 			fw.write("\r\n");
 
-			fw.write("# Languages to be included in the midlet\r\n");
-			fw.write("lang = " + useLang + "\r\n");
-			fw.write("\r\n");
+			if (useLang != null) {
+				fw.write("# Languages to be included in the midlet\r\n");
+				fw.write("lang = " + useLang + "\r\n");
+				fw.write("\r\n");
+			}
 
-			fw.write("# Language names to be included in the midlet\r\n");
-			fw.write("langName = " + useLangName + "\r\n");
-			fw.write("\r\n");
+			if (useLangName != null) {
+				fw.write("# Language names to be included in the midlet\r\n");
+				fw.write("langName = " + useLangName + "\r\n");
+				fw.write("\r\n");
+			}
 
 			fw.write("# Directory/Directories with sound files and syntax.cfg, default is useSoundFilesWithSyntax=sound\r\n");
 			fw.write("#  syntax.cfg is a text file defining which sound files\r\n");
