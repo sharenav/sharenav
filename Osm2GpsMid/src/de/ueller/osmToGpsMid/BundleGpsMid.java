@@ -211,6 +211,11 @@ public class BundleGpsMid implements Runnable {
 					} else {
 						fw.write(line + "\n");
 					}
+					if (line.startsWith("MicroEdition-Profile: ") ) {
+						if (config.getAddToManifest().length() != 0) {
+							fw.write(config.getAddToManifest() + "\n");
+						}
+					}
 				}
 				fr.close();
 			}
@@ -250,7 +255,7 @@ public class BundleGpsMid implements Runnable {
 					line += nextline.substring(1);
 					continue;
 				}
-				if (line.startsWith("MIDlet") || line.startsWith("MicroEdition")) {
+				if (line.startsWith("MIDlet") || line.startsWith("MicroEdition") || (config.getAddToManifest().length() != 0 && line.startsWith(config.getAddToManifest())) ) {
 					fw.write(line + "\n");
 				}
 				line = nextline;

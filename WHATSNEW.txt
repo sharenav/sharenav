@@ -149,6 +149,9 @@
       are switchable on & off in setup / sounds & alerts.
     *** Phone models ***
     - make photos work on Samsung Xcover B271 (and probably some other Samsungs too)
+    - new .properties entry "addToManifest" to add a line to manifest.mf and .jad,
+      e.g. MIDlet-Touch-Support:true to hide keyboard on Samsung Bada mobiles
+      or  LGE-MIDlet-Display-Nav-Keypad:no on LG mobiles
 
 GpsMid 0.7.7
     *** Map display ***
