@@ -764,6 +764,23 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 	//#endif
 
+	private void addToResult(SearchResult srNew) {
+		if (!sortByDist) {
+			result.addElement(srNew);
+		} else {
+			SearchResult sr = null;
+			int i = 0;
+			// FIXME use a binary search or some other more efficient algorithm
+			for (i=0; i<result.size(); i++) {
+				sr = (SearchResult) result.elementAt(i);
+				if (srNew.dist < sr.dist) {
+					break;
+				}
+			}
+			result.insertElementAt(srNew, i);
+		}
+	}
+
 	// insert new results from search thread 
 	private void insertResults() {
 		if (result2.size() > 0) {
@@ -806,10 +823,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 							    (((Integer) matchIdx.get(id)).intValue() != res.nameIdx
 							     || Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH))) {
 								res.preMatchIdx = ((Integer) matchIdx.get(id)).intValue();
-								result.addElement(res);
+								addToResult(res);
 							}
 						} else {
-							result.addElement(res);
+							addToResult(res);
 							if (resultAtCursor != 0) {
 								int cursorCandidate = findResult(resultAtCursor);
 								System.out.println("findResult returned " + cursorCandidate);
@@ -820,7 +837,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 							}
 						}
 						//#else
-						result.addElement(res);
+						addToResult(res);
 						//#endif
 					}
 				}
@@ -2091,19 +2108,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		    matchMode() ||
 		    !searchAlpha || name == null ||
 		    searchCanon.toString().equalsIgnoreCase(name.substring(0, len))) {
-			if (!sortByDist) {
-				result2.addElement(srNew);
-			} else {
-				SearchResult sr = null;
-				int i = 0;
-				for (i=0; i<result2.size(); i++) {
-					sr = (SearchResult) result2.elementAt(i);
-					if (srNew.dist < sr.dist) {
-						break;
-					}
-				}
-				result2.insertElementAt(srNew, i);
-			}
+			result2.addElement(srNew);
 			needsPainting = true;
 			return true;
 		}
