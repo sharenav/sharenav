@@ -301,7 +301,6 @@ guisearch.SearchForNamesStarting=Search for names starting with:
 guisearch.SearchingdotsForm=Searching...
 guisearch.searchingdots=searching...
 guisearch.SearchResults=Search results:
-guisearch.Sort=Toggle sort order (exper.)
 guisearch.Waypoints=Waypoints
 guisearch.FailedToSelectPOIType=Failed to select POI type
 guisearch.NearestPOISearchOOM=Thread for nearest POI search ran out of memory 
