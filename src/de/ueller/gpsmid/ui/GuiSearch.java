@@ -788,10 +788,13 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (name != null && name.length() < len) {
 			len = name.length();
 		}
-		return (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ||
-		    matchMode() ||
+		return (matchMode() ||
 		    !searchAlpha || name == null ||
-			searchCanon.toString().equalsIgnoreCase(name.substring(0, len)));
+			(Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+			 // FIXME this gives some extra matches, as it matches to strings in the middle of the name also
+			 // Should instead break the name into words, and then match each of the words.
+			 name.toLowerCase().indexOf(searchCanon.toString().toLowerCase()) >= 0 :
+			 searchCanon.toString().equalsIgnoreCase(name.substring(0, len))));
 	}
 
 	// insert new results from search thread 

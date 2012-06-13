@@ -90,6 +90,7 @@
       the "*" key function moved to the cursor keyboard
     - fix bug with sort by proximity
     - eliminate delay in showing results
+    - filter results (or most of them at least) when using qwerty keyboard
     *** Routing ***
     - fixes and improvements for mainstreet net. In motorcar transport mode
       this speeds up route calculation and reduces memory requirements for far distances.
