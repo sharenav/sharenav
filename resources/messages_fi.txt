@@ -883,3 +883,5 @@ splash.disable=Ei näytetä käynnistymisikkunaa
 traceiconmenu.Online=Tässä&Yhteydet
 routing.in= kesti 
 routing.sec= sek.
+guimapfeatures.DrawNonTravelModeWaysDarker=Piirrä ei-kuljettavat tiet tummempina
+trace.ToggleUnuseableWaysDarker=Ei-kuljettavien teiden näyttö päälle/pois
