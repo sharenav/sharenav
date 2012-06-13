@@ -1272,18 +1272,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	}
 
 
-	/** Handles the case that the button "Create Midlet" was clicked.
-	 */
-	private void handleCreateClicked(boolean midlet) {
-		if (((String)jcbPlanet.getSelectedItem()).equalsIgnoreCase(CHOOSE_SRC)) {
-			if (askOsmFile() == false) {
-				JOptionPane.showMessageDialog(this,
-					"Osm2GpsMid can't create a map without suitable OpenStreetMap data.\n" +
-					"Please choose an appropriate OpenStreetMap data source. See help for more details.",
-					"OpenStreetMap data", JOptionPane.PLAIN_MESSAGE);
-				return;
-			}
-		}
+	private void updateSettings(boolean midlet) {
 		String soundFiles = "sound";
 		useLang = langList[1];
 		useLangName = langNameList[1];
@@ -1311,10 +1300,25 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		config.setMidletName(jtfName.getText());
 		config.setRouting(jtfRouting.getText());
 		config.setCodeBase((String)jcbPhone.getSelectedItem());
+		config.mapzip = !midlet;
+	}
+
+	/** Handles the case that the button "Create Midlet" was clicked.
+	 */
+	private void handleCreateClicked(boolean midlet) {
+		if (((String)jcbPlanet.getSelectedItem()).equalsIgnoreCase(CHOOSE_SRC)) {
+			if (askOsmFile() == false) {
+				JOptionPane.showMessageDialog(this,
+					"Osm2GpsMid can't create a map without suitable OpenStreetMap data.\n" +
+					"Please choose an appropriate OpenStreetMap data source. See help for more details.",
+					"OpenStreetMap data", JOptionPane.PLAIN_MESSAGE);
+				return;
+			}
+		}
+		updateSettings(midlet);
 		System.out.println("Create Map or Midlet clicked");
 
 		dialogFinished = true;
-		config.mapzip = !midlet;
 		writeProperties("last.properties");
 	}
 
