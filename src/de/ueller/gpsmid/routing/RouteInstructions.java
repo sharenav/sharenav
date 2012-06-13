@@ -1018,6 +1018,7 @@ public class RouteInstructions {
 				for (int i3=i2-1; i3>i; i3--) {
 					c2 = getRouteElement(i3);
 					c2.wayRouteInstruction=ri;					
+					c2.wayRouteFlags |= Legend.ROUTE_FLAG_QUIET;
 				}
 				i=i2-1;				
 			}
