@@ -781,6 +781,19 @@ public class GuiSearch extends Canvas implements CommandListener,
 		}
 	}
 
+	// return true if name is a match to searchCanon, false otherwise
+	private boolean canonMatches(StringBuffer searchCanon, String name) {
+		// avoid string index out of bound
+		int len = searchCanon.length();
+		if (name != null && name.length() < len) {
+			len = name.length();
+		}
+		return (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ||
+		    matchMode() ||
+		    !searchAlpha || name == null ||
+			searchCanon.toString().equalsIgnoreCase(name.substring(0, len)));
+	}
+
 	// insert new results from search thread 
 	private void insertResults() {
 		if (result2.size() > 0) {
@@ -805,16 +818,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					//System.out.println ("MatchMode: " + matchMode());
 					//System.out.println ("insertresults name: " + name);
 					//System.out.println ("parent.getName: " + parent.getName(res.nameIdx));
-					// FIXME repeating code, combine
-					// avoid string index out of bound
-					int len = searchCanon.length();
-					if (name != null && name.length() < len) {
-						len = name.length();
-					}
-					if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ||
-					    matchMode() ||
-					    !searchAlpha || name == null ||
-					    searchCanon.toString().equalsIgnoreCase(name.substring(0, len))) {
+					if (canonMatches(searchCanon, name)) {
 						//#if polish.api.bigsearch
 						// match multiword search or housenumber search
 						//System.out.println ("MatchMode: " + matchMode() + " matchSources: " + matchSources);
@@ -2101,13 +2105,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		int len = searchCanon.length();
 		//System.out.println ("name: " + name);
 		//System.out.println ("parent.getName: " + parent.getName(srNew.nameIdx));
-		if (name != null && name.length() < len) {
-			len = name.length();
-		}
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ||
-		    matchMode() ||
-		    !searchAlpha || name == null ||
-		    searchCanon.toString().equalsIgnoreCase(name.substring(0, len))) {
+		if (canonMatches(searchCanon, name)) {
 			result2.addElement(srNew);
 			needsPainting = true;
 			return true;
