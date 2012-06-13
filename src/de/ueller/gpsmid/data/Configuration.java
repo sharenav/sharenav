@@ -345,6 +345,10 @@ public class Configuration {
 	public final static short CFGBIT_ROUTE_ESTIMATION_120KMH = 137;
 	// bit 138: Ignore turn angles in route estimation heuristic
 	public final static short CFGBIT_ROUTE_ESTIMATION_NO_ANGLES = 138;
+	// bit 139: true if favorite search is sorted by distance (default is by name)
+	public final static short CFGBIT_SEARCH_FAVORITES_BY_DISTANCE = 139;
+	// bit 140: true if mapdata search result are sorted by name (default is by distance)
+	public final static short CFGBIT_SEARCH_MAPDATA_BY_NAME = 140;
 	
 	/**
 	 * These are the database record IDs for each configuration option

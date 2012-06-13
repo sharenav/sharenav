@@ -114,7 +114,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 	// this array is used to get a copy of the waypoints for the favorites
 	public PositionMark[] wayPts = null;
 	public boolean showAllWayPts = false;
-	public boolean sortByDist = false;
 	
 	public static GuiSearchLayout gsl = null;
 
@@ -602,9 +601,14 @@ public class GuiSearch extends Canvas implements CommandListener,
 			showPoiTypeForm();
 		}
 		if (c == SORT_CMD) {
-				sortByDist = !sortByDist;
-				reSearch();
-				return;
+			short bit = (state == STATE_FAVORITES) ?
+				Configuration.CFGBIT_SEARCH_FAVORITES_BY_DISTANCE
+				: Configuration.CFGBIT_SEARCH_MAPDATA_BY_NAME;
+			
+			Configuration.setCfgBitState(bit,
+						     !Configuration.getCfgBitState(bit), false);
+			reSearch();
+			return;
 		}
 		if (c == FULLT_CMD) {
 			Form fulltextForm = new Form(Locale.get("guisearch.Fulltext")/*Fulltext search*/);
@@ -764,8 +768,20 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 	//#endif
 
+	public boolean sortByDist() {
+		return sortByDist(state);
+	}
+
+	public boolean sortByDist(byte state) {
+		if (state == STATE_FAVORITES) {
+			return Configuration.getCfgBitState(Configuration.CFGBIT_SEARCH_FAVORITES_BY_DISTANCE);
+		} else {
+			return !Configuration.getCfgBitState(Configuration.CFGBIT_SEARCH_MAPDATA_BY_NAME);
+		}
+	}
+
 	private void addToResult(SearchResult srNew) {
-		if (!sortByDist) {
+		if (!sortByDist()) {
 			result.addElement(srNew);
 		} else {
 			SearchResult sr = null;
@@ -1209,8 +1225,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 					//#endif
 				}
 				if (keyCode == KEY_POUND && state == STATE_FAVORITES) {
-					// FIXME check if this works
-					sortByDist = !sortByDist;
+					short bit = Configuration.CFGBIT_SEARCH_FAVORITES_BY_DISTANCE;
+					Configuration.toggleCfgBitState(bit, false);
 					reSearch();
 					return;
 				}
@@ -2022,7 +2038,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				if (searchCanon.length() > 0) {
 					sb.append(" (" + Locale.get("guisearch.key")/*key*/ + " " + searchCanon.toString() + ")");
 				} else {
-					if (sortByDist) {
+					if (sortByDist()) {
 						sb.append(" (" + Locale.get("guisearch.distance")/*distance*/ + ")");
 					} else {
 						sb.append(" (" + Locale.get("guisearch.name")/*name*/ + ")");
@@ -2038,7 +2054,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				if (searchCanon.length() > 0) {
 					sb.append(" (key " + searchCanon.toString() + ")");
 				} else {
-					if (sortByDist) {
+					if (sortByDist()) {
 						sb.append(Locale.get("guisearch.bydistance")/* by distance*/);
 					} else {
 						sb.append(Locale.get("guisearch.byname")/* by name*/);
@@ -2125,9 +2141,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 		for (i=0; i<result2.size(); i++) {
 			sr = (SearchResult) result2.elementAt(i);
 			if (
-				!sortByDist && wpts[srNew.nameIdx].displayName.compareTo(wpts[sr.nameIdx].displayName) < 0
+				!sortByDist(STATE_FAVORITES) && wpts[srNew.nameIdx].displayName.compareTo(wpts[sr.nameIdx].displayName) < 0
 				||				
-				sortByDist && srNew.dist < sr.dist
+				sortByDist(STATE_FAVORITES) && srNew.dist < sr.dist
 			) {
 				break;
 			}
