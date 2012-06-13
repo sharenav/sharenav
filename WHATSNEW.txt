@@ -88,6 +88,8 @@
     - allow to save result as a favorite
     - fulltext search now easily accessible on touch screen phones;
       the "*" key function moved to the cursor keyboard
+    - fix bug with sort by proximity
+    - eliminate delay in showing results
     *** Routing ***
     - fixes and improvements for mainstreet net. In motorcar transport mode
       this speeds up route calculation and reduces memory requirements for far distances.
