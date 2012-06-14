@@ -1127,13 +1127,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				}
 				for (int i = 0; i < 15 ; i++) {
 					if (!hideKeypad || i == 1) {
-						// hide sort when more than 2 chars typed
-						if (i == GuiSearchLayout.KEY_9 /* sort */
-						    && cursorKeypad && carret > 2) {
-							gsl.ele[i].setText(" ");
-						} else {
-							gsl.ele[i].setText(letters[i]);
-						}
+						gsl.ele[i].setText(letters[i]);
 					}
 				}
 				gsl.paint(gc);
@@ -1800,7 +1794,17 @@ public class GuiSearch extends Canvas implements CommandListener,
 						keyPressed('8');
 					}
 				} else if (touchedElementId == GuiSearchLayout.KEY_9) {
-					keyPressed('9');
+					if (cursorKeypad) {
+						short bit = (state == STATE_FAVORITES) ?
+							Configuration.CFGBIT_SEARCH_FAVORITES_BY_DISTANCE
+							: Configuration.CFGBIT_SEARCH_MAPDATA_BY_NAME;
+			
+						Configuration.setCfgBitState(bit,
+									     !Configuration.getCfgBitState(bit), false);
+						reSearch();
+					} else {
+						keyPressed('9');
+					}
 				} else if (touchedElementId == GuiSearchLayout.KEY_0) {
 					if (cursorKeypad) {
 						defaultAction = ACTION_NEARBY_POI;
@@ -1818,7 +1822,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					} else {
 						commandAction(FULLT_CMD, (Displayable) null);
 					}
-				} else if (touchedElementId == GuiSearchLayout.KEY_POUND || (cursorKeypad && touchedElementId == GuiSearchLayout.KEY_9)) {
+				} else if (touchedElementId == GuiSearchLayout.KEY_POUND) {
 					keyPressed(KEY_POUND);
 				} else if (touchedElementId == GuiSearchLayout.KEY_BACKSPACE) {
 					keyPressed(8);
