@@ -171,7 +171,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	protected static final int SHOW_DEST_CMD = 54;
 	protected static final int EDIT_ADDR_CMD = 55;
 	protected static final int OPEN_URL_CMD = 56;
-	shprotected static final int SHOW_PREVIOUS_POSITION_CMD = 57;
+	protected static final int SHOW_PREVIOUS_POSITION_CMD = 57;
 	protected static final int TOGGLE_GPS_CMD = 58;
 	protected static final int CELLID_LOCATION_CMD = 59;
 	protected static final int MANUAL_LOCATION_CMD = 60;
@@ -1655,18 +1655,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				th.show();
 				return;
 			}
-			if (c == CMDS[ROTATE_TRAVEL_MODE_CMD]) {
-				int mode = Configuration.getTravelModeNr();
-				mode++;
-				if (mode >= Legend.getTravelModes().length) {
-					mode = 0;
-				}
-				Configuration.setTravelMode(mode);
-				if (Configuration.getCfgBitState(Configuration.CFGBIT_DRAW_NON_TRAVELMODE_WAYS_DARKER)) {
-						newDataReady();
-				}
-				return;
-			}
 			if (c == CMDS[NORTH_UP_CMD]) {
 				course = 0;
 				invalidateCourse();
@@ -1949,6 +1937,18 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				}
 				if (c == CMDS[CLEAR_DEST_CMD]) {
 					setDestination(null);
+					return;
+				}
+				if (c == CMDS[ROTATE_TRAVEL_MODE_CMD]) {
+					int mode = Configuration.getTravelModeNr();
+					mode++;
+					if (mode >= Legend.getTravelModes().length) {
+						mode = 0;
+					}
+					Configuration.setTravelMode(mode);
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_DRAW_NON_TRAVELMODE_WAYS_DARKER)) {
+							newDataReady();
+					}
 					return;
 				}
 			} else {
