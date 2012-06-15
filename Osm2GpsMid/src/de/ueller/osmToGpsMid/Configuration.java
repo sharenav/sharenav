@@ -679,7 +679,6 @@ public class Configuration {
 			}
 
 			setAddToManifest(getString("addToManifest"));
-			System.out.println("addToManifest: " + addToManifest);
 			
 			setSounds(getString("useSounds"));
 
