@@ -171,7 +171,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	protected static final int SHOW_DEST_CMD = 54;
 	protected static final int EDIT_ADDR_CMD = 55;
 	protected static final int OPEN_URL_CMD = 56;
-	protected static final int SHOW_PREVIOUS_POSITION_CMD = 57;
+	shprotected static final int SHOW_PREVIOUS_POSITION_CMD = 57;
 	protected static final int TOGGLE_GPS_CMD = 58;
 	protected static final int CELLID_LOCATION_CMD = 59;
 	protected static final int MANUAL_LOCATION_CMD = 60;
@@ -1763,6 +1763,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	
 					updatePosition();
 				}
+				return;
 			}
 			if (c == CMDS[CMS_CMD]) {
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)
