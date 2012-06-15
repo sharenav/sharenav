@@ -169,7 +169,7 @@ public class TraceLayout extends LayoutManager {
 		);
 		e.setColor(Legend.COLORS[Legend.COLOR_WAYNAME_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_WAYNAME_BACKGROUND]);
-		e.setActionID(Trace.ICON_MENU + (Trace.SEARCH_CMD << 8));
+		e.setActionID(Trace.ICON_MENU);
 		
 		e = ele[ROUTE_INTO]; addElement(e,
 			LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
