@@ -1,4 +1,4 @@
-# Copy this file (android.properties.template) to android.properties and edit paths to be correct
+# Copy this file (android.properties.default) to android.propertise and edit paths to be correct
 # Then use ant -propertyfile android.properties to build GpsMid for android
 
 # To bundle a map within the .apk, use something like
@@ -9,11 +9,9 @@
 #containing the Android SDK.
 #Generally it's better to set this in J2MEPolish (at J2MEPolish install time)
 #android.home=/path/to/android-sdk/set/in/build.properties
-#android.home=C:/Program Files (x86)/Android/android-sdk
 
 #Building for android requires a newer J2ME-Polish than
 #2.1.4, set path to it here. Moslty obsolete now when 2.2.1 supports android
 #polish.home=/set/path/to/J2ME-Polish-2.2.1-or-nightly/in/android.properties
-#polish.home=D:/J2ME/J2MEPolish
 
 #gpsmid.test_device=Generic/android2.1-hiresonline
