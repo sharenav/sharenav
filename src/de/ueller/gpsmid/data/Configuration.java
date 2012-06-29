@@ -349,6 +349,8 @@ public class Configuration {
 	public final static short CFGBIT_SEARCH_FAVORITES_BY_DISTANCE = 139;
 	// bit 140: true if mapdata search result are sorted by name (default is by distance)
 	public final static short CFGBIT_SEARCH_MAPDATA_BY_NAME = 140;
+	// bit 141: true if application can be quit with Back-Button on the map screen
+	public final static short CFGBIT_EXIT_APPLICATION_WITH_BACK_BUTTON = 141;
 	
 	/**
 	 * These are the database record IDs for each configuration option

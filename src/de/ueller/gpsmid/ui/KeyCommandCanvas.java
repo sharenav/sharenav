@@ -22,6 +22,7 @@ import android.view.KeyEvent;
 
 import de.ueller.util.IntTree;
 import de.ueller.util.Logger;
+import de.ueller.gpsmid.data.Configuration;
 import de.ueller.midlet.iconmenu.IconActionPerformer;
 
 public abstract class KeyCommandCanvas extends Canvas implements
@@ -171,8 +172,10 @@ public abstract class KeyCommandCanvas extends Canvas implements
 			if (Trace.getInstance().isShowingSplitScreen()) {
 				Trace.getInstance().performIconAction(IconActionPerformer.BACK_ACTIONID, "Back");
 			} else {			
-				logger.debug("  Turning BACK key into EXIT_CMD");
-				commandAction(Trace.getInstance().getCommand(Trace.EXIT_CMD), (Displayable) null);
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_EXIT_APPLICATION_WITH_BACK_BUTTON)) {
+					logger.debug("  Turning BACK key into EXIT_CMD");
+					commandAction(Trace.getInstance().getCommand(Trace.EXIT_CMD), (Displayable) null);
+				}
 			}
 			return;
 		}

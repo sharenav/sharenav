@@ -17,6 +17,7 @@ public class GuiSetupGui extends Form implements CommandListener {
 	private ChoiceGroup mapTapFeatures;
 	private ChoiceGroup searchSettings;
 	private ChoiceGroup searchLayoutGroup;
+	private ChoiceGroup otherGroup;
 
 	// commands
 	private static final Command CMD_SAVE = new Command(Locale.get("generic.Save")/*Save*/, 
@@ -127,6 +128,12 @@ public class GuiSetupGui extends Form implements CommandListener {
 			poiSearchDistance = new TextField(Locale.get("guisetupgui.PoiDistance")/*POI Distance: */,
 							  Float.toString(dist), 8, TextField.ANY);
 			append(poiSearchDistance);
+
+			String [] otherSettings = new String[1];
+			otherSettings[0] = Locale.get("guisetupgui.ExitWithBackButton")/* Back button exits application*/;
+			otherGroup = new ChoiceGroup(Locale.get("guisetupgui.otherOptions")/* Other options */, Choice.MULTIPLE, otherSettings, null);
+			otherGroup.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_EXIT_APPLICATION_WITH_BACK_BUTTON) );
+			append(otherGroup);
 			
 			addCommand(CMD_SAVE);
 			addCommand(CMD_CANCEL);
@@ -222,6 +229,8 @@ public class GuiSetupGui extends Form implements CommandListener {
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTAP_SINGLE, mapTapFeatures.isSelected(i++));
 			}
 
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_EXIT_APPLICATION_WITH_BACK_BUTTON, otherGroup.isSelected(0));
+			
 			parent.show();
 			return;
 		}
