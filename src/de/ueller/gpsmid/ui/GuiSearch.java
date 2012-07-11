@@ -1726,7 +1726,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					if (cursorKeypad) {
 						destroy();
 						if (parent.isShowingSplitSearch()) {
-							parent.showIconMenu();
+							parent.stopShowingSplitScreen();
 						} else {
 							parent.show();
 						}
