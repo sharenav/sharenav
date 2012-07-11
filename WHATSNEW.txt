@@ -1,19 +1,3 @@
-    *** Android Support ***
-    - many stability / usability improvements
-    - huge icon menu images are used by default which makes the icons look much better
-    - new option for backlight setting: Android WindowManager (KEEP_SCREEN_ON)
-    - new Android native location provider which can be used instead of JSR179
-    - reduced the number of build targets to simplify builds & distribution; different
-      targets (2.1, 2.2, 2.3 etc.) can be uncommented in build.xml if needed
-    - some minor adjustments due to upgrading to J2MEPolish 2.3, related to file dialogue
-    - various UI improvements and fixes with back key handling
-    - audio recording now works (n.b.: the location is currently always /sdcard directory)
-    - first incomplete try at taking photos - the preview doesn't work yet, so user has to aim blind,
-      and apparently the default preferences for picture quality are always not so good.
-      Works only for target android-online.
-    - For easier support of sounds for routing by default WAV and AMR files
-      are stored uncompressed in the map data as required for Android
-      (.properties parameter default dontCompress = wav,amr)
     *** Touchscreen / User Interface ***
     - On the map screen long tap * to toggle track recording
     - During track recording long tap recorded trackpoints on the map screen to suspend/resume track recording
@@ -156,6 +140,24 @@
     - new .properties entry "addToManifest" to add a line to manifest.mf and .jad,
       e.g. MIDlet-Touch-Support:true to hide keyboard on Samsung Bada mobiles
       or  LGE-MIDlet-Display-Nav-Keypad:no on LG mobiles
+    *** Android Support ***
+    - many stability / usability improvements
+    - huge icon menu images are used by default which makes the icons look much better
+    - new option for backlight setting: Android WindowManager (KEEP_SCREEN_ON)
+    - new Android native location provider which can be used instead of JSR179
+    - reduced the number of build targets to simplify builds & distribution; different
+      targets (2.1, 2.2, 2.3 etc.) can be uncommented in build.xml if needed
+    - some minor adjustments due to upgrading to J2MEPolish 2.3, related to file dialogue
+    - various UI improvements and fixes with back key handling
+    - audio recording now works (n.b.: the location is currently always /sdcard directory)
+    - first incomplete try at taking photos - the preview doesn't work yet, so user has to aim blind,
+      and apparently the default preferences for picture quality are always not so good.
+      Works only for target android-online.
+    - For easier support of sounds for routing by default WAV and AMR files
+      are stored uncompressed in the map data as required for Android
+      (.properties parameter default dontCompress = wav,amr)
+    - back key now by default required twice for exiting GpsMid, the old
+      behaviour of exiting with one press of back key is optional
 
 GpsMid 0.7.7
     *** Map display ***
