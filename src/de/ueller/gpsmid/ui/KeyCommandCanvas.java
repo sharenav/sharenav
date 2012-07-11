@@ -189,11 +189,13 @@ public abstract class KeyCommandCanvas extends Canvas implements
 			previousBackPress = false;
 		}
 		// interpret menu key on key up
-		if (keyCode == -111) {
-			commandAction(Trace.getInstance().getCommand(Trace.ICON_MENU), (Displayable) null);
-			ignoreKeyCode = keyCode;
-			return;
-		}
+		// done instead by onKey() in Trace
+		// if (keyCode == -111) {
+		//commandAction(Trace.getInstance().getCommand(Trace.ICON_MENU), (Displayable) null);
+		//	Trace.getInstance().commandAction(Trace.ICON_MENU);
+		//	ignoreKeyCode = keyCode;
+		//	return;
+		//}
 		//#endif
 		final Command doubleC = (Command) doubleKeyPressCommand.get(keyCode);
 		// key was pressed twice quickly

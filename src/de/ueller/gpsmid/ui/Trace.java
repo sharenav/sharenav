@@ -32,6 +32,9 @@ import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextField;
 //#if polish.android
 import android.os.Looper;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.View.OnKeyListener;
 import android.view.WindowManager;
 //#else
 import javax.microedition.lcdui.game.GameCanvas;
@@ -105,6 +108,7 @@ import de.ueller.util.MoreMath;
 import de.ueller.util.ProjMath;
 
 //#if polish.android
+import de.enough.polish.android.lcdui.CanvasBridge;
 import de.enough.polish.android.midlet.MidletBridge;
 //#endif
 
@@ -559,6 +563,29 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 		addAllCommands();
 		
+		//#if polish.android
+		View androidView = (View) CanvasBridge.current();
+		androidView.setOnKeyListener(new OnKeyListener()
+		{
+			public boolean onKey(View v, int keyCode, KeyEvent event)
+			{
+				if (event.getAction() == KeyEvent.ACTION_DOWN
+				    || event.getAction() == KeyEvent.ACTION_UP)
+				{
+					//eat menu code so the system won't handle it
+					if (keyCode == KeyEvent.KEYCODE_MENU)
+					{
+						if (event.getAction() == KeyEvent.ACTION_UP) {
+							commandAction(Trace.ICON_MENU);
+						}
+						return true;
+					}
+				}
+				return false;
+			}
+		});
+		//#endif
+
 		if (Legend.isValid) {
 			Configuration.loadKeyShortcuts(gameKeyCommand, singleKeyPressCommand,
 						       repeatableKeyPressCommand, doubleKeyPressCommand, longKeyPressCommand,
