@@ -3476,6 +3476,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 
 	public void pointerPressed(int x, int y) {
+		//#if polish.android
+		previousBackPress = false;
+		//#endif
+	    
 		if (coordsForOthers(x, y)) {
 			// for icon menu
 			if (isShowingSplitTraceIconMenu() && traceIconMenu != null) {

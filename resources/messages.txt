@@ -1340,5 +1340,6 @@ routing.sec=sec
 guimapfeatures.DrawNonTravelModeWaysDarker=Draw non-travelmode ways darker
 trace.ToggleUnuseableWaysDarker=Toggle unusable ways darker 
 routing.RouteFoundIn=Route found in
-guisetupgui.ExitWithBackButton=Back button in map screen exits GpsMid
+guisetupgui.ExitWithBackButton=Single back button in map screen exits GpsMid
 guisetupgui.otherOptions=Other options
+keycommandcanvas.BackAgainToExit=Press the back key again to exit GpsMid

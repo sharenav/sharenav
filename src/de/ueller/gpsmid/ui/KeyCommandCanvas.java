@@ -18,6 +18,8 @@ import javax.microedition.lcdui.Displayable;
 
 //#if polish.android
 import android.view.KeyEvent;
+import android.widget.Toast;
+import de.enough.polish.android.midlet.MidletBridge;
 //#endif
 
 import de.ueller.util.IntTree;
@@ -44,6 +46,8 @@ public abstract class KeyCommandCanvas extends Canvas implements
 	protected IntTree gameKeyCommand = new IntTree();
 	protected IntTree nonReleasableKeyPressCommand = new IntTree();
 
+	protected static boolean previousBackPress = false;
+
 	/*
 	 * Explicitly make this function static, as otherwise some JVM implementations
 	 * can't find the commandAction method in the inherited object.
@@ -56,6 +60,12 @@ public abstract class KeyCommandCanvas extends Canvas implements
 	protected void keyPressed(int keyCode) {
 		logger.debug("keyPressed " + keyCode);
 		
+		//#if polish.android
+		if (keyCode != KeyEvent.KEYCODE_BACK) {
+			previousBackPress = false;
+		}
+		//#endif
+
 		ignoreKeyCode = 0;
 		pressedKeyCode = keyCode;
 		pressedKeyTime = System.currentTimeMillis();
@@ -161,22 +171,27 @@ public abstract class KeyCommandCanvas extends Canvas implements
 			return;
 		}
 		//#if polish.android
-		// interpret menu key on key up
-		if (keyCode == -111) {
-			commandAction(Trace.getInstance().getCommand(Trace.ICON_MENU), (Displayable) null);
-			ignoreKeyCode = keyCode;
-			return;
-		}
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			// #debug debug
 			if (Trace.getInstance().isShowingSplitScreen()) {
 				Trace.getInstance().performIconAction(IconActionPerformer.BACK_ACTIONID, "Back");
 			} else {			
-				if (Configuration.getCfgBitState(Configuration.CFGBIT_EXIT_APPLICATION_WITH_BACK_BUTTON)) {
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_EXIT_APPLICATION_WITH_BACK_BUTTON) || previousBackPress) {
 					logger.debug("  Turning BACK key into EXIT_CMD");
 					commandAction(Trace.getInstance().getCommand(Trace.EXIT_CMD), (Displayable) null);
+				} else {
+					Toast.makeText(MidletBridge.getInstance(), Locale.get("keycommandcanvas.BackAgainToExit")/*Press the back key again to exit GpsMid*/, Toast.LENGTH_LONG).show();				
+					previousBackPress = true;
 				}
 			}
+			return;
+		} else {
+			previousBackPress = false;
+		}
+		// interpret menu key on key up
+		if (keyCode == -111) {
+			commandAction(Trace.getInstance().getCommand(Trace.ICON_MENU), (Displayable) null);
+			ignoreKeyCode = keyCode;
 			return;
 		}
 		//#endif
