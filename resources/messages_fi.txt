@@ -885,4 +885,5 @@ guimapfeatures.DrawNonTravelModeWaysDarker=Piirrä ei-kuljettavat tiet tummempin
 trace.ToggleUnuseableWaysDarker=Ei-kuljettavien teiden näyttö päälle/pois
 routing.RouteFoundIn=Reitti löytyi, kesti 
 guisetupgui.otherOptions=Muut asetukset
-guisetupgui.ExitWithBackButton=Takaisin -nappi poistuu GpsMidistä
+guisetupgui.ExitWithBackButton=Ensimmäinen takaisin -nappi poistuu GpsMidistä
+keycommandcanvas.BackAgainToExit=Paina takaisin uudelleen poistuaksesi GpsMidistä
