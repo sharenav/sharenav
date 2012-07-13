@@ -4,9 +4,9 @@
 #
 
 user=YOUR_SOURCEFORGE_USERNAME_HERE
-numver=0.7.45
-rcver=rc-v0.7.5
-ver=$numver-map66
+numver=0.7.75
+rcver=rc-v0.7.8
+ver=$numver-map71
 
 ant clean
 #
@@ -21,7 +21,7 @@ cd Osm2GpsMid
 ant clean
 ant
 cd ..
-cp -p Osm2GpsMid/dist/Osm2GpsMid-$ver.jar .
+cp -p dist/Osm2GpsMid-$ver.jar .
 
 # debug version build
 ant clean
@@ -32,7 +32,7 @@ cd Osm2GpsMid
 ant clean
 ant
 cd ..
-cp -p Osm2GpsMid/dist/Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar
+cp -p dist/Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar
 
 # 
 
