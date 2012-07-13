@@ -146,6 +146,7 @@
             debug="on"
             optimize="on"
             deprecation="on"
+			source="1.5"
 			target="1.5"
             compiler="${compiler}" encoding="UTF8">
      	<classpath>
