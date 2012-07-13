@@ -9,6 +9,7 @@
 #containing the Android SDK.
 #Generally it's better to set this in J2MEPolish (at J2MEPolish install time)
 #android.home=/path/to/android-sdk/set/in/build.properties
+#android.home=C:/Program Files (x86)/Android/android-sdk
 
 #Building for android requires a newer J2ME-Polish than
 #2.1.4, set path to it here. Moslty obsolete now when 2.2.1 supports android
