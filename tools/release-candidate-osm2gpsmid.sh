@@ -18,7 +18,7 @@ ant -Ddevice=Generic/blackberry
 
 ant
 cd Osm2GpsMid
-ant clean
+#ant clean
 ant
 cd ..
 cp -p dist/Osm2GpsMid-$ver.jar .
@@ -29,7 +29,7 @@ ant debug -Ddevice=Generic/blackberry
 ant debug j2mepolish
 
 cd Osm2GpsMid
-ant clean
+#ant clean
 ant
 cd ..
 cp -p dist/Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar
