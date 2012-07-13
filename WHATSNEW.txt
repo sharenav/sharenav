@@ -1,3 +1,4 @@
+GpsMid 0.7.8
     *** Touchscreen / User Interface ***
     - On the map screen long tap * to toggle track recording
     - During track recording long tap recorded trackpoints on the map screen to suspend/resume track recording
