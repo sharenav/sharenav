@@ -572,8 +572,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				if (event.getAction() == KeyEvent.ACTION_DOWN
 				    || event.getAction() == KeyEvent.ACTION_UP)
 				{
-					//eat menu code so the system won't handle it
-					if (keyCode == KeyEvent.KEYCODE_MENU)
+					//eat menu code in the map screen so the system won't handle it
+					if (keyCode == KeyEvent.KEYCODE_MENU && imageCollector != null && imageCollector.isRunning())
 					{
 						if (event.getAction() == KeyEvent.ACTION_UP) {
 							commandAction(Trace.ICON_MENU);

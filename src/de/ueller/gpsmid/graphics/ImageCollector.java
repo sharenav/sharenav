@@ -445,6 +445,12 @@ public class ImageCollector implements Runnable {
 		}
 	}
 	
+	public boolean isRunning() {
+		return !suspended && !shutdown;
+	}
+
+	/** copy the last created image to the real screen
+
 	public void restart() {
 		processorThread = new Thread(this, "ImageCollector");
 		processorThread.setPriority(Thread.MIN_PRIORITY);
