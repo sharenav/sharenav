@@ -859,9 +859,9 @@ public class Configuration {
 		}
 		if (configVersionStored < 23) {
 			//#if polish.api.bigsearch
-			setSearchMax(500);
+			setSearchMax(5000);
 			//#else
-			setSearchMax(50);
+			setSearchMax(500);
 			//#endif
 		}
 		if (configVersionStored < 24) {
