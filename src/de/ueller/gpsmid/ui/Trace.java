@@ -667,7 +667,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return true;
 			case MotionEvent.ACTION_POINTER_DOWN:
 				pinchZoomDistance = dist(event);
-				pinchZoomRotation = angle(event);
+				pinchZoomRotation = course + angle(event);
 				pinchZoomScale = scale;
 				mtPointerId = event.getPointerId(1);
 				pointerActionDone = true;
@@ -688,7 +688,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				if (imageCollector != null && imageCollector.isRunning() && mCount > 1 && mtPointerId != INVALID_POINTER_ID) {
 					mtPointerDragged(pinchZoomDistance / dist(event) * pinchZoomScale);
 					// possible FIXME should we skip this if we're getting compass readings?
-					mtPointerRotated((720 + pinchZoomRotation - angle(event)) % 360);
+					mtPointerRotated((360*3 + pinchZoomRotation - angle(event)) % 360);
 				}
 				CanvasBridge.current().onTouch(view, event);
 				return true;
