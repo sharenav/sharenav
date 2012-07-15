@@ -32,10 +32,15 @@ import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextField;
 //#if polish.android
 import android.os.Looper;
+import android.util.FloatMath;
+import android.view.InputEvent;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
+import android.view.View.OnTouchListener;
 import android.view.WindowManager;
+import android.widget.Toast;
 //#else
 import javax.microedition.lcdui.game.GameCanvas;
 //#endif
@@ -118,6 +123,9 @@ import de.enough.polish.android.midlet.MidletBridge;
  * 
  */
 public class Trace extends KeyCommandCanvas implements LocationMsgReceiver,
+//#if polish.android
+View.OnTouchListener,
+//#endif
 CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	/** Soft button for exiting the map screen */
 	protected static final int EXIT_CMD = 1;
@@ -475,6 +483,16 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	private GuiSearch guiSearch;
 
+	//#if polish.android
+	private static final int INVALID_POINTER_ID = -1;
+	private int pointerId = INVALID_POINTER_ID;
+	private int mtPointerId = INVALID_POINTER_ID;
+	private float pinchZoomDistance = 0f;
+	private float pinchZoomScale = 0;
+	private float pinchZoomRotation = 0;
+	private CanvasBridge canvas;
+	//#endif
+
 	public class ClickableCoords {
 		int x;
 		int y;
@@ -584,6 +602,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return false;
 			}
 		});
+		androidView.setOnTouchListener(this);
 		//#endif
 
 		if (Legend.isValid) {
@@ -629,6 +648,74 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		traceInstance = this;
 	}
 	
+	//#if polish.android
+	@Override
+	public boolean onTouch(View view, MotionEvent event) {
+		// modeled after J2MEPolish source, multitouch added
+		float x = event.getX();
+		float y = event.getY();
+		int truncatedX = (int)x;
+		int truncatedY = (int)y;
+
+		int action = event.getAction();
+		CanvasBridge.current().requestFocus();
+		switch(action & MotionEvent.ACTION_MASK) {
+			case MotionEvent.ACTION_DOWN:
+				CanvasBridge.current().onTouch(view, event);
+				pointerId = event.getPointerId(0);
+				mtPointerId = INVALID_POINTER_ID;
+				return true;
+			case MotionEvent.ACTION_POINTER_DOWN:
+				pinchZoomDistance = dist(event);
+				pinchZoomRotation = angle(event);
+				pinchZoomScale = scale;
+				mtPointerId = event.getPointerId(1);
+				pointerActionDone = true;
+				return true;
+			case MotionEvent.ACTION_POINTER_UP:
+				// FIXME don't just assume it's the second, but check it
+				mtPointerId = INVALID_POINTER_ID;
+				return true;
+			case MotionEvent.ACTION_UP:
+				CanvasBridge.current().onTouch(view, event);
+				pointerId = INVALID_POINTER_ID;
+				mtPointerId = INVALID_POINTER_ID;
+				return true;
+			case MotionEvent.ACTION_MOVE:
+				final int pointerIndex = event.findPointerIndex(mtPointerId);
+				int mCount = event.getPointerCount();
+				// pinch zoom when at map screen but not in other screens
+				if (imageCollector != null && imageCollector.isRunning() && mCount > 1 && mtPointerId != INVALID_POINTER_ID) {
+					mtPointerDragged(pinchZoomDistance / dist(event) * pinchZoomScale);
+					// possible FIXME should we skip this if we're getting compass readings?
+					mtPointerRotated((720 + pinchZoomRotation - angle(event)) % 360);
+				}
+				CanvasBridge.current().onTouch(view, event);
+				return true;
+			default: return view.onTouchEvent(event);
+		}
+	}
+	private float dist(MotionEvent event) {
+		float x = event.getX(0) - event.getX(1);
+		float y = event.getY(0) - event.getY(1);
+		return FloatMath.sqrt(x * x + y * y);
+	}
+	private float angle(MotionEvent event) {
+		float x = event.getX(0) - event.getX(1);
+		float y = event.getY(0) - event.getY(1);
+		if (event.getPointerId(0) != pointerId) {
+			x = 0 - x;
+			y = 0 - y;
+		}
+		float r = MoreMath.atan(y/x) * MoreMath.FAC_RADTODEC;
+		if (x < 0) {
+			r = r + 180;
+		}
+		return r;
+	}
+	//#endif
+
+
 	public Command getCommand(int command) {
 		return CMDS[command];
 	}
@@ -3655,6 +3742,23 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 	}
 	
+	//#if polish.android
+	public void mtPointerDragged (float newscale) {
+		scale = newscale;
+		autoZoomed = false;
+		updateLastUserActionTime();
+		repaint();
+		return;
+	}
+	public void mtPointerRotated (float newangle) {
+		course = (int) newangle;
+		updateLastUserActionTime();
+		updatePosition();
+		repaint();
+		return;
+	}
+	//#endif
+
 	public void pointerDragged (int x, int y) {
 		if (coordsForOthers(x, y)) {
 			// for icon menu
