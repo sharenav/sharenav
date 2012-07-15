@@ -692,7 +692,6 @@ discovergps.CantInitBluetooth=Can't initialize bluetooth:
 fileexportsession.CouldNotObtainConnection=Could not obtain connection with 
 fileexportsession.FailedToCloseConnection=Failed to close connection after storing to file
 filegpximportsession.CouldNotOpenGPXImport=Could not open GPX file for import
-filegpximportsession.UnknownUrlType=Unknown url type to load from: 
 fsdiscover.NoElementSelected=No element selected
 fsdiscover.StillBusyTryAgain=Still busy, try again later
 getcompass.CompassFail=Can't use compass for direction
