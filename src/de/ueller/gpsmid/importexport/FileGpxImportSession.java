@@ -7,7 +7,6 @@ package de.ueller.gpsmid.importexport;
 
 import java.io.IOException;
 
-//import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
 import javax.microedition.io.InputConnection;
 import javax.microedition.lcdui.Displayable;
