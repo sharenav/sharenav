@@ -7,10 +7,13 @@ package de.ueller.gpsmid.importexport;
 
 import java.io.IOException;
 
-import javax.microedition.io.Connection;
+//import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
 import javax.microedition.io.InputConnection;
 import javax.microedition.lcdui.Displayable;
+//#if polish.api.fileconnection
+import javax.microedition.io.file.FileConnection;
+//#endif
 
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.ui.FsDiscover;
@@ -67,14 +70,12 @@ public class FileGpxImportSession implements GpxImportSession, SelectionListener
 				try {
 					//#debug info
 					logger.info("Receiving gpx: " + url);
-					Connection conn = Connector.open(url, Connector.READ);
-					if (conn instanceof InputConnection) {
-						InputConnection inConn = ((InputConnection)conn);
-						Trace.getInstance().gpx.receiveGpx(inConn.openInputStream(), 
-								feedbackListener, maxDistance);
-						return;
-					}
-					logger.error(Locale.get("filegpximportsession.UnknownUrlType")/*Unknown url type to load from: */ + url);
+					FileConnection fc = (FileConnection) Connector.open(url, Connector.READ);
+					Trace.getInstance().gpx.receiveGpx(fc.openInputStream(), 
+							feedbackListener, maxDistance);
+					return;
+					//TODO: remove this string from translations in messages_*.txt
+					//logger.error(Locale.get("filegpximportsession.UnknownUrlType")/*Unknown url type to load from: */ + url);
 				} catch (IOException e) {
 					logger.exception(Locale.get("filegpximportsession.CouldNotOpenGPXImport")/*Could not open GPX file for import*/,e);
 				} catch (SecurityException se) {
