@@ -270,8 +270,8 @@ public class ImageCollector implements Runnable {
 				 * have no osm layer tag or layer = 0.
 				 */
 				for (byte layer = 0; layer < layersToRender.length; layer++) {
-					if ((needRedraw &&
-					    Configuration.getCfgBitState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY) &&
+					if (needRedraw &&
+					    (Configuration.getCfgBitState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY) &&
 					    ((layer < 5 && layer > 1)
 					    //#if polish.api.finland
 					    // don't skip node layer where speed camera is if camera alert is on
