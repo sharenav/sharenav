@@ -54,6 +54,7 @@ public class FileGpxImportSession implements GpxImportSession, SelectionListener
 	}
 
 	public void selectedFile(final String url) {
+		//#if polish.api.fileconnection
 		/**
 		 * This method gets called from the UI thread,
 		 * so we need to perform the slow, potentially blocking,
@@ -85,6 +86,7 @@ public class FileGpxImportSession implements GpxImportSession, SelectionListener
 		} );
 		importThread.setPriority(Thread.MIN_PRIORITY);
 		importThread.start();
+		//#endif
 	}
 
 	public void show() {
