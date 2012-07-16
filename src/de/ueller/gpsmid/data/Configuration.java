@@ -1587,7 +1587,7 @@ public class Configuration {
 			//#if polish.android
 			//#debug debug
 			logger.debug("Opening file as android asset: " + name);
-			is = MidletBridge.instance.getResources().getAssets().open(name.substring(1));
+			is = MidletBridge.instance.getAssets().open(name.substring(1));
 			//#else
 			//#debug debug
 			logger.debug("Opening file from JAR: " + name);
