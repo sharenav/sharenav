@@ -2234,11 +2234,26 @@ public class GuiSearch extends Canvas implements CommandListener,
 						}
 					}
 					state = STATE_MAIN;
+					//#if polish.android
+					// FIXME would be better to use AsyncTask,
+					// see http://developer.android.com/resources/articles/painless-threading.html
+					MidletBridge.instance.runOnUiThread(
+						new Runnable() {
+							public void run() {
+								if (parent.isShowingSplitSearch()) {
+									parent.show();
+								} else {
+									show();
+								}
+							}
+						});
+					//#else
 					if (parent.isShowingSplitSearch()) {
 						parent.show();
 					} else {
 						show();
 					}
+					//#endif
 					synchronized(this) {
 						try {
 							//Wait for the Names to be resolved
