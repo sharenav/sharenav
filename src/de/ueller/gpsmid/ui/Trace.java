@@ -597,7 +597,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					if (keyCode == KeyEvent.KEYCODE_MENU && imageCollector != null && imageCollector.isRunning())
 					{
 						if (event.getAction() == KeyEvent.ACTION_UP) {
-							commandAction(Trace.ICON_MENU);
+							if (keyboardLocked) {
+								// show alert in keypressed() that keyboard is locked
+								keyPressed(0);
+							} else {
+								commandAction(Trace.ICON_MENU);
+							}
 						}
 						return true;
 					}
