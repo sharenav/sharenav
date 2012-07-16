@@ -249,6 +249,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	/** Flag if the map is autoZoomed
 	 */
 	public boolean autoZoomed = true;
+	/** Flag if we're manually panning, zooming or rotating the map
+	 */
+	public boolean mapBrowsing = false;
 	
 	private Position pos = new Position(0.0f, 0.0f,
 			PositionMark.INVALID_ELEVATION, 0.0f, 0.0f, 1,
@@ -666,6 +669,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				mtPointerId = INVALID_POINTER_ID;
 				return true;
 			case MotionEvent.ACTION_POINTER_DOWN:
+				mapBrowsing = true;
 				pinchZoomDistance = dist(event);
 				pinchZoomRotation = course + angle(event);
 				pinchZoomScale = scale;
@@ -675,11 +679,15 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			case MotionEvent.ACTION_POINTER_UP:
 				// FIXME don't just assume it's the second, but check it
 				mtPointerId = INVALID_POINTER_ID;
+				mapBrowsing = false;
+				repaint();
 				return true;
 			case MotionEvent.ACTION_UP:
 				CanvasBridge.current().onTouch(view, event);
 				pointerId = INVALID_POINTER_ID;
 				mtPointerId = INVALID_POINTER_ID;
+				mapBrowsing = false;
+				repaint();
 				return true;
 			case MotionEvent.ACTION_MOVE:
 				final int pointerIndex = event.findPointerIndex(mtPointerId);
@@ -3780,6 +3788,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 		}
 
+		mapBrowsing = true;
 		updateLastUserActionTime();
 		LayoutElement e = tl.getElementAtPointer(x, y);
 		if (tl.getTouchedElement() != e) {

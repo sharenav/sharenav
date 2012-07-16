@@ -270,7 +270,7 @@ public class ImageCollector implements Runnable {
 				 * have no osm layer tag or layer = 0.
 				 */
 				for (byte layer = 0; layer < layersToRender.length; layer++) {
-					if (needRedraw &&
+					if ((needRedraw &&
 					    Configuration.getCfgBitState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY) &&
 					    ((layer < 5 && layer > 1)
 					    //#if polish.api.finland
@@ -279,6 +279,7 @@ public class ImageCollector implements Runnable {
 					    //#else
 					    || (layer == 14)
 					    //#endif
+						    ) || Trace.getInstance().mapBrowsing && layer < 5
 					     )) {
 						// EXPERIMENTAL
 						// skip update if next
