@@ -112,6 +112,14 @@ public class Names implements Runnable {
 			} catch (EOFException eofe) {
 				ds.close();
 				break;
+			//#if polish.android
+			} catch (IOException ioe) {
+				ds.close();
+				break;
+			} catch (Exception e) {
+				ds.close();
+				break;
+			//#endif
 			}
 			if (count >= nameIdxs.length) {
 				int[] tmp = new int[count + 255];
@@ -217,6 +225,14 @@ public class Names implements Runnable {
 		} catch (EOFException eofe) {
 			name.setLength(0);
 			return -1;
+		//#if polish.android
+		} catch (IOException ioe) {
+			name.setLength(0);
+			return -1;
+		} catch (Exception e) {
+			name.setLength(0);
+			return -1;
+		//#endif
 		}
 		pos += delta;
 		if (pos < 0) {
