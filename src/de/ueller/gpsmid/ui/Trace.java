@@ -2138,7 +2138,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				}
 			}
 		} else {
-			logger.fatal(Locale.get("legend.bigstyleserrtitle")/*Map format error*/ + " " + Configuration.getMapUrl());
+			if (Configuration.usingBuiltinMap()) {
+				logger.fatal(Locale.get("legend.bigstyleserrtitle")/*Map format error*/);
+			} else {
+				logger.fatal(Locale.get("legend.bigstyleserrtitle")/*Map format error*/ + " " + Configuration.getMapUrl());
+			}
 			commandAction(SETUP_CMD);
 		}
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTO_START_GPS)) {
