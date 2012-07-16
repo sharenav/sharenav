@@ -156,7 +156,7 @@ public class LayoutManager extends Vector {
 		LayoutElement e;
 		for (int i = this.size() - 1; i >= 0 ; i--){
 			e = getElementAt(i);
-			if (e.isInElement(x, y)) {
+			if (e.isInElement(x, y) && e.hasAnyValidActionId()) {
 				return i;
 			}
 		}
@@ -212,10 +212,7 @@ public class LayoutManager extends Vector {
 	public boolean isAnyActionIdAtPointer(int x, int y) {
 		int i = getElementIdAtPointer(x, y);
 		if (i != -1) {			
-			i = this.getElementAt(i).actionID;
-			if (i != -1) {
-				return true;
-			}
+			return this.getElementAt(i).hasAnyValidActionId();
 		}
 		return false;
 	}
