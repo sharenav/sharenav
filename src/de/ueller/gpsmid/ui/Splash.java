@@ -216,7 +216,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
         }
         if (c == BACK_CMD) {
         	shutdown = true;
-        	GpsMid.showMapScreen();
+		exitSplash();
         	return;
         }
         if (c == EXIT_CMD) {
@@ -251,6 +251,14 @@ public class Splash extends Canvas implements CommandListener,Runnable{
         }
 	}
 
+	private void exitSplash() {
+		if (Legend.isValid) {
+			GpsMid.showMapScreen();
+		} else {
+			Trace.getInstance().commandAction(Trace.SETUP_CMD);
+		}
+	}
+		
 	public void show() {
 		GpsMid.getInstance().show(this);
 	}
@@ -308,8 +316,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 				show();
 			} else {
 				if (initDone) {
-					shutdown = true;
-					GpsMid.showMapScreen();
+					exitSplash();
 					return;
 				} else {
 					shutdown = true;

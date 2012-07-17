@@ -270,7 +270,8 @@ public class GpsMid extends MIDlet implements CommandListener {
 				new Splash(this, initDone);
 			}
 		} else {
-			Trace.getInstance().commandAction(Trace.SETUP_CMD);
+			// Legend is not valid
+			new Splash(this, initDone);
 		}
 		// RouteNodeTools.initRecordStore();
 		startBackLightTimer();
