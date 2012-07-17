@@ -584,35 +584,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 		addAllCommands();
 		
-		//#if polish.android
-		View androidView = (View) CanvasBridge.current();
-		androidView.setOnKeyListener(new OnKeyListener()
-		{
-			public boolean onKey(View v, int keyCode, KeyEvent event)
-			{
-				if (event.getAction() == KeyEvent.ACTION_DOWN
-				    || event.getAction() == KeyEvent.ACTION_UP)
-				{
-					//eat menu code in the map screen so the system won't handle it
-					if (keyCode == KeyEvent.KEYCODE_MENU && imageCollector != null && imageCollector.isRunning())
-					{
-						if (event.getAction() == KeyEvent.ACTION_UP) {
-							if (keyboardLocked) {
-								// show alert in keypressed() that keyboard is locked
-								keyPressed(0);
-							} else {
-								commandAction(Trace.ICON_MENU);
-							}
-						}
-						return true;
-					}
-				}
-				return false;
-			}
-		});
-		androidView.setOnTouchListener(this);
-		//#endif
-
 		if (Legend.isValid) {
 			Configuration.loadKeyShortcuts(gameKeyCommand, singleKeyPressCommand,
 						       repeatableKeyPressCommand, doubleKeyPressCommand, longKeyPressCommand,
@@ -4203,6 +4174,35 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 
 	public void show() {
+		//#if polish.android
+		View androidView = (View) CanvasBridge.current();
+		androidView.setOnKeyListener(new OnKeyListener()
+		{
+			public boolean onKey(View v, int keyCode, KeyEvent event)
+			{
+				if (event.getAction() == KeyEvent.ACTION_DOWN
+				    || event.getAction() == KeyEvent.ACTION_UP)
+				{
+					//eat menu code in the map screen so the system won't handle it
+					if (keyCode == KeyEvent.KEYCODE_MENU && imageCollector != null && imageCollector.isRunning())
+					{
+						if (event.getAction() == KeyEvent.ACTION_UP) {
+							if (keyboardLocked) {
+								// show alert in keypressed() that keyboard is locked
+								keyPressed(0);
+							} else {
+								commandAction(Trace.ICON_MENU);
+							}
+						}
+						return true;
+					}
+				}
+				return false;
+			}
+		});
+		androidView.setOnTouchListener(this);
+		//#endif
+
 		//Display.getDisplay(parent).setCurrent(this);
 		Legend.freeDrawnWayAndAreaSearchImages();
 		GpsMid.getInstance().show(this);

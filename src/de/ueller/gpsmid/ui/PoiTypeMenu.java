@@ -10,6 +10,7 @@ import de.enough.polish.util.Locale;
 
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.names.NumberCanon;
+import de.ueller.gpsmid.ui.Trace;
 import de.ueller.midlet.ui.KeySelectMenuItem;
 
 import javax.microedition.lcdui.Command;
@@ -40,6 +41,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
+import de.enough.polish.android.lcdui.CanvasBridge;
 import de.enough.polish.android.lcdui.ViewItem;
 import de.enough.polish.android.midlet.MidletBridge;
 import de.ueller.gpsmid.ui.SaveButtonListener;
@@ -54,7 +56,8 @@ public class PoiTypeMenu extends ViewItem {
 	public PoiTypeMenu(final KeySelectMenuReducedListener caller) {
 		super(new ListView(MidletBridge.getInstance()));
 		ListView listView = (ListView) this._androidView;
-		listView.setOnKeyListener(new OnKeyListener()
+		View androidView = (View) CanvasBridge.current();
+		androidView.setOnKeyListener(new OnKeyListener()
 		{
 			public boolean onKey(View v, int keyCode, KeyEvent event)
 			{
@@ -63,6 +66,7 @@ public class PoiTypeMenu extends ViewItem {
 					//check if the right key was pressed
 					if (keyCode == KeyEvent.KEYCODE_BACK)
 					{
+						//Trace.getInstance().commandAction(Trace.BACK_CMD);
 						caller.keySelectMenuCancel();
 						return true;
 					}

@@ -2180,7 +2180,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	public void keySelectMenuCancel() {
 		state = STATE_MAIN;
-		show();
+		parent.show();
 	}
 
 	public void keySelectMenuItemSelected(final short poiType) {
