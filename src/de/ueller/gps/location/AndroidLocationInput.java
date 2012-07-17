@@ -193,7 +193,7 @@ public class AndroidLocationInput
 		}
 		lastFixTimestamp = System.currentTimeMillis();
 		hasFix = true;
-		if (currentState != LocationProvider.AVAILABLE) {
+		if (currentState != LocationProvider.AVAILABLE && currentState != LocationProvider.OUT_OF_SERVICE) {
 			updateSolution(LocationProvider.AVAILABLE);
 		}
 		//#debug debug
@@ -268,7 +268,8 @@ public class AndroidLocationInput
 
 	public void invalidateFix() {
 		hasFix = false;
-		if (currentState != LocationProvider.TEMPORARILY_UNAVAILABLE) {
+		if (currentState != LocationProvider.TEMPORARILY_UNAVAILABLE
+			&& currentState != LocationProvider.OUT_OF_SERVICE) {
 			updateSolution(LocationProvider.TEMPORARILY_UNAVAILABLE);
 		}
 	}
@@ -324,7 +325,11 @@ public class AndroidLocationInput
 						// disable for now if we have a fix; could be this is incorrect for devices with GPS & GLONASS, and we get this from getGpsStatus()
 						if (!hasFix) {
 							numSatellites = smsg.getMAllSatellites();
-							updateSolution(LocationProvider.TEMPORARILY_UNAVAILABLE);
+							if (currentState == LocationProvider.OUT_OF_SERVICE) {
+								updateSolution(LocationProvider.OUT_OF_SERVICE);
+							} else {
+								updateSolution(LocationProvider.TEMPORARILY_UNAVAILABLE);
+							}
 						}
 					}
 				}
