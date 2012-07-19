@@ -151,6 +151,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		ePrevTab.setBackgroundColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_BORDER]);
 		ePrevTab.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]);
 		ePrevTab.setText( " < ");
+		ePrevTab.setActionID(0);
 		eNextTab = tabDirectionButtonManager.createAndAddElement(
 				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_TOP |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
@@ -159,6 +160,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		eNextTab.setBackgroundColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_BORDER]);
 		eNextTab.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]);
 		eNextTab.setText( " > ");
+		eNextTab.setActionID(0);
 		eStatusBar = tabDirectionButtonManager.createAndAddElement(
 				LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_BOTTOM |
 				LayoutElement.FLAG_BACKGROUND_BOX | LayoutElement.FLAG_BACKGROUND_FULL_WIDTH |
@@ -206,6 +208,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 			e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_BORDER]);
 			e.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]);
 			e.setText(imp.title);
+			e.setActionID(0);
 		}
 		setActiveTab(tabNr);
 		recreateTabButtonsRequired = false;
