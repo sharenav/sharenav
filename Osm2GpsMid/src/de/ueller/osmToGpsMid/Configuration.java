@@ -620,12 +620,13 @@ public class Configuration {
 		}
 		
 		private void initialiseTileSize() {
-			tileSize = new TileSizeDescription[4];
+			tileSize = new TileSizeDescription[5];
 			tileSize[0] = new TileSizeDescription(7, 255, 255, 255, 255, 20000, 3000);
 			tileSize[1] = new TileSizeDescription(12, 1000, 1000, 1000, 1000, 20000, 6000);
 			tileSize[2] = new TileSizeDescription(19, 2000, 3000, 3000, 3000, 30000, 15000);
+			tileSize[3] = new TileSizeDescription(30, 2000, 5000, 5000, 5000, 40000, 25000);
 			// last tileSize is custom setting from .properties
-			tileSize[3] = new TileSizeDescription(7, 255, 255, 255, 255, 20000, 3000);
+			tileSize[4] = new TileSizeDescription(7, 255, 255, 255, 255, 20000, 3000);
 		}
 		
 		public void resetConfig() {

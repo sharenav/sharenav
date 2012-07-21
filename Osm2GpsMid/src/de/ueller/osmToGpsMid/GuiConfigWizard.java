@@ -511,6 +511,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		vTileSize.addElement("Many small map tile files");
 		vTileSize.addElement("Average map tile file size and count");
 		vTileSize.addElement("Fewer but big map tile files");
+		vTileSize.addElement("Even fewer and large map tile files");
 		vTileSize.addElement("Custom - loaded from .properties");
 		jcbTileSize = new JComboBox(vTileSize);
 		jcbTileSize.setToolTipText("Some devices do not support many files in the jar, other require small map tile files to be able to load them into their limited RAM");
