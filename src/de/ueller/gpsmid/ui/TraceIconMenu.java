@@ -42,7 +42,6 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 	public PositionMark[] wayPts;
 	
 	// FIXME read from config file and/or add a UI to change these
-	//#if polish.android
 	//#if polish.api.finland
 	private final static String[] predefs = 
 	{ "N30", "N40", "N50", "N60", "N70", "N80", "N100", "N120", "Nvaiht", "Tievalot", "Tievalotpois", "2kaist", "1kaist", "aita", "aitapois", "b", "bvas", "kam", "N %f", "b %s", "tie %s", "tieoik", "tievas" };
@@ -62,8 +61,6 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 		"Path %s",
 		"Back" };
 	//#endif
-	//#endif
-
 	private String[] predefsToShow = { };
 
 	public TraceIconMenu(GpsMidDisplayable parent, IconActionPerformer actionPerformer) {
@@ -125,12 +122,10 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 	private void createAndAddRecordingMenu() {
 		IconMenuPage mp;
 		// Recordings
-		//#if polish.android
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF)) {
 			// FIXME read from config file and/or add a UI to change these
 			predefsToShow = predefs;
 		}
-		//#endif
 		mp = createAndAddMenuPage((this.getWidth() >= 176) 
 				? Locale.get("traceiconmenu.RecordTop")/* Recordings */
 				: Locale.get("traceiconmenu.RecTop")/* Rec */, 3,
