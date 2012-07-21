@@ -112,10 +112,14 @@ GpsMid 0.7.8
     - new attribute 'allowedForRoutableWays' in style-file.xml for configuring if a tile scale level is allowed
       to contain routable ways (default is "true"). If a tile scale level does not contain
       any routable ways, it e.g. does not have to be searched for route line creation which results in better performance.
-    *** Osm2GpsMid GUI ***
+    *** Osm2GpsMid / Osm2GpsMid GUI ***
     - Route destinations for the route corridor are saved in last.properties. After loading
       a .properties file with route destinations you can press "Calculate Route Corridor"
       to (re-)generate the route corridor.
+    - new tile size/count preset "even fewer and large map tiles" to generate maps for powerful mobiles
+      while keeping the number of files in map data not very high. This might be useful for most
+      Android devices but also to be able to install e.g. on Nokia 5800 very big jars (~200 MB)
+    - new default for tile size/count in generated maps is now "average tile file size and count" 
     *** Predefined waypoints ***
     - An option for predefined waypoints (entered via the icon menu) is now available.
       Currently the predefined waypoints are fixed in the program, in the future they
