@@ -4454,6 +4454,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				pc.g.setColor(0xFFFFFF);
 				pc.g.drawString(""  + roundaboutExitNr, x + width / 2, y + height / 2 - fontHeight/2, Graphics.TOP|Graphics.HCENTER);
 			}
+			/*
+			// output distances
  			if (fontRouteIcon == null) {
 				fontRouteIcon = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, Font.SIZE_SMALL);
 			}
@@ -4466,7 +4468,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				img = ImageCache.getOneColorImage(0x80FFFFFF, distWidth > width ? distWidth : width, fontHeight);
 				pc.g.drawImage(img, x, y + height - fontHeight, Graphics.TOP|Graphics.LEFT);			
 				pc.g.drawString(dist, x + (width-distWidth) / 2, y +height - fontHeight , Graphics.TOP|Graphics.LEFT);
-			}
+			}			
+			*/
 		}
 	}
 
