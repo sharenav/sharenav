@@ -4438,9 +4438,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			int y = 15 + getHeight()/40 + iconNumber * (height + getHeight()/40);
 			Image img = ImageCache.getScaledImage(origIcon, width, height);
 			pc.g.drawImage(img, x, y, Graphics.TOP|Graphics.LEFT);
-			Font font = Font.getFont(Font.FACE_MONOSPACE, Font.STYLE_BOLD, Font.SIZE_LARGE);
 			int fontHeight;
 			if (roundaboutExitNr != 0) {
+				Font font = Font.getFont(Font.FACE_MONOSPACE, Font.STYLE_BOLD, Font.SIZE_LARGE);
 				pc.g.setFont(font);
 				fontHeight = font.getHeight();
 				pc.g.setColor(0xFFFFFF);
