@@ -861,7 +861,7 @@ public class Configuration {
 			//#if polish.api.bigsearch
 			setSearchMax(5000);
 			//#else
-			setSearchMax(500);
+			setSearchMax(isAndroid() ? 5000 : 500);
 			//#endif
 		}
 		if (configVersionStored < 24) {
@@ -1953,6 +1953,14 @@ public class Configuration {
 	
 	public static boolean isSamsungS8000() {
 		return isSamsungS8000;
+	}
+	
+	public final static boolean isAndroid() {
+		//#if polish.android
+			return true;
+		//#else
+			return false;
+		//#endif
 	}
 	
 	public static String getPhoneModel() {
