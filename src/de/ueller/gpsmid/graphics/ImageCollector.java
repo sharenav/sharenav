@@ -269,25 +269,23 @@ public class ImageCollector implements Runnable {
 				 * So e. g. layer 7 corresponds to all streets that
 				 * have no osm layer tag or layer = 0.
 				 */
-				boolean simplifyMap = Configuration.getCfgBitState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY);
 				for (byte layer = 0; layer < layersToRender.length; layer++) {
-					if (simplifyMap) {
-						if ((needRedraw &&
-						    ((layer < 5 && layer > 1)
-						    //#if polish.api.finland
-						    // don't skip node layer where speed camera is if camera alert is on
-						     || (layer == 14 && !Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDCAMERA_ALERT))
-						    //#else
-						    || (layer == 14)
-						    //#endif
-							    ) || Trace.getInstance().mapBrowsing && layer < 5
-						     )) {
-							// EXPERIMENTAL
-							// skip update if next
-							// is queued
-							continue;
-						}
-					}e
+					if ((needRedraw &&
+					    Configuration.getCfgBitState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY) &&
+					    ((layer < 5 && layer > 1)
+					    //#if polish.api.finland
+					    // don't skip node layer where speed camera is if camera alert is on
+					     || (layer == 14 && !Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDCAMERA_ALERT))
+					    //#else
+					    || (layer == 14)
+					    //#endif
+						    ) || Trace.getInstance().mapBrowsing && layer < 5
+					     )) {
+						// EXPERIMENTAL
+						// skip update if next
+						// is queued
+						continue;
+					}
 
 					// render only highlight layers which actually have highlighted path segments
 					if (
