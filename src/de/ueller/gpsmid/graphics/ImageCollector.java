@@ -281,7 +281,7 @@ public class ImageCollector implements Runnable {
 						    //#else
 						     || (layer == 14)
 						    //#endif
-						     || (Trace.getInstance().mapBrowsing && layer < 5 && layer > 1)
+						     || (Trace.getInstance().mapBrowsing && (layer < 5 && layer > 1) || layer == 14)
 							    );
 						// skip update if a new one is queued
 						if (needRedraw && skippableLayer) {
