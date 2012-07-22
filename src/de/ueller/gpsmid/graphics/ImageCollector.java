@@ -275,13 +275,17 @@ public class ImageCollector implements Runnable {
 					if (simplifyMap) {
 						skippableLayer = 
 						    ((layer < 5 && layer > 1)
-						    //#if polish.api.finland
-						    // don't skip node layer where speed camera is if camera alert is on
+						     //#if polish.api.finland
+						     // don't skip node layer where speed camera is if camera alert is on
 						     || (layer == 14 && !Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDCAMERA_ALERT))
-						    //#else
+						     //#else
 						     || (layer == 14)
-						    //#endif
-						     || (Trace.getInstance().mapBrowsing && (layer < 5 && layer > 1) || layer == 14)
+						     //#endif
+						     //#if polish.android
+						     || (Trace.getInstance().mapBrowsing && ((layer < 5) || layer == 14))
+						     //#else
+						     || (Trace.getInstance().mapBrowsing && ((layer < 5 && layer > 1) || layer == 14))
+						     //#endif
 							    );
 						// skip update if a new one is queued
 						if (needRedraw && skippableLayer) {
