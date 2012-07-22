@@ -252,6 +252,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	/** Flag if we're manually panning, zooming or rotating the map
 	 */
 	public boolean mapBrowsing = false;
+	/** Is touchscreen pointer pressed
+	 */
+	public boolean pointerDown = false;
 	
 	private Position pos = new Position(0.0f, 0.0f,
 			PositionMark.INVALID_ELEVATION, 0.0f, 0.0f, 1,
@@ -3582,6 +3585,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		//#if polish.android
 		previousBackPress = false;
 		//#endif
+		pointerDown = true;
 	    
 		if (coordsForOthers(x, y)) {
 			// for icon menu
@@ -3675,6 +3679,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 	
 	public void pointerReleased(int x, int y) {	
+		pointerDown = false;
+		mapBrowsing = false;
 		if (coordsForOthers(x, y)) {
 			// for icon menu
 			if (isShowingSplitTraceIconMenu() && traceIconMenu != null) {
@@ -3769,7 +3775,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 		}
 
-		mapBrowsing = true;
+		if (pointerDown) {
+			mapBrowsing = true;
+		}
 		updateLastUserActionTime();
 		LayoutElement e = tl.getElementAtPointer(x, y);
 		if (tl.getTouchedElement() != e) {
