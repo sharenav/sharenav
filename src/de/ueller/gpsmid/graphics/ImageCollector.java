@@ -289,6 +289,7 @@ public class ImageCollector implements Runnable {
 							    );
 						// skip update if a new one is queued
 						if (needRedraw && skippableLayer) {
+							Thread.yield();
 							continue;
 						}
 					}
@@ -338,39 +339,47 @@ public class ImageCollector implements Runnable {
 					
 					if (t[0] != null) {
 						if (needRedraw && skippableLayer) {
+							Thread.yield();
 							continue;
 						}
 						t[0].paint(createPC, layersToRender[layer]);
 						if (needRedraw && skippableLayer) {
+							Thread.yield();
 							continue;
 						}
 					}
 					if ((minTile >= 1) && (t[1] != null)) {
 						if (needRedraw && skippableLayer) {
+							Thread.yield();
 							continue;
 						}
 						t[1].paint(createPC, layersToRender[layer]);
 						if (needRedraw && skippableLayer) {
+							Thread.yield();
 							continue;
 						}
 						Thread.yield();
 					}
 					if ((minTile >= 2) && (t[2] != null)) {
 						if (needRedraw && skippableLayer) {
+							Thread.yield();
 							continue;
 						}
 						t[2].paint(createPC, layersToRender[layer]);
 						if (needRedraw && skippableLayer) {
+							Thread.yield();
 							continue;
 						}
 						Thread.yield();
 					}
 					if ((minTile >= 3) && (t[3] != null)) {
 						if (needRedraw && skippableLayer) {
+							Thread.yield();
 							continue;
 						}
 						t[3].paint(createPC, layersToRender[layer]);
 						if (needRedraw && skippableLayer) {
+							Thread.yield();
 							continue;
 						}
 						Thread.yield();
