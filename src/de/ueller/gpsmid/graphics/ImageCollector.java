@@ -272,16 +272,16 @@ public class ImageCollector implements Runnable {
 				boolean simplifyMap = Configuration.getCfgBitState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY);
 				for (byte layer = 0; layer < layersToRender.length; layer++) {
 					if (simplifyMap) {
-						if ((needRedraw &&
+						if (needRedraw &&
 						    ((layer < 5 && layer > 1)
 						    //#if polish.api.finland
 						    // don't skip node layer where speed camera is if camera alert is on
 						     || (layer == 14 && !Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDCAMERA_ALERT))
 						    //#else
-						    || (layer == 14)
+						     || (layer == 14)
 						    //#endif
-							    ) || Trace.getInstance().mapBrowsing && layer < 5
-						     )) {
+						     || (Trace.getInstance().mapBrowsing && layer < 5)
+							    )) {
 							// EXPERIMENTAL
 							// skip update if next
 							// is queued
