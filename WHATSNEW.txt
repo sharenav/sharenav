@@ -6,7 +6,8 @@
       Android devices but also to be able to install e.g. on Nokia 5800 very big jars (~200 MB)
     - new default for tile size/count in generated maps is now "average tile file size and count"
     *** Routing ***
-    - more similiar color for u-turn icons
+    - more consistent color for u-turn big navigation icons
+    - show distance below big navigation icons if space permits
     *** Usability ***
     - increased defaults for maximum search results in new midlets
     *** Bug fixes ***

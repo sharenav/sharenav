@@ -4444,9 +4444,30 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			int width = height;
 			int x = (getHeight() >= 320 ? 5 : 30);
 			int y = 15 + getHeight()/40 + iconNumber * (height + getHeight()/40);
-			Image img = ImageCache.getScaledImage(origIcon, width, height);
-			pc.g.drawImage(img, x, y, Graphics.TOP|Graphics.LEFT);
 			int fontHeight;
+			Image img;
+
+			if (Configuration.showNaviArrowsDistance(maxX - minX, maxY - minY)) {
+				// output distances
+				if (fontRouteIcon == null) {
+					fontRouteIcon = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, Font.SIZE_SMALL);
+				}
+				pc.g.setFont(fontRouteIcon);
+				fontHeight = fontRouteIcon.getHeight();
+				if (iconNumber == 1 || distance > 1) {
+					pc.g.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
+					String dist = HelperRoutines.formatDistance(distance);
+					int distWidth = fontRouteIcon.stringWidth(dist);
+					img = ImageCache.getOneColorImage(0x80FFFFFF, distWidth > width ? distWidth : width, fontHeight);
+					pc.g.drawImage(img, x, y + height + iconNumber * fontHeight, Graphics.TOP|Graphics.LEFT);			
+					pc.g.drawString(dist, x + (width-distWidth) / 2, y +height + iconNumber * fontHeight , Graphics.TOP|Graphics.LEFT);
+				}			
+				// increase icon spacing to fit distances
+				y += iconNumber * fontHeight;
+			}
+
+			img = ImageCache.getScaledImage(origIcon, width, height);
+			pc.g.drawImage(img, x, y, Graphics.TOP|Graphics.LEFT);
 			if (roundaboutExitNr != 0) {
 				Font font = Font.getFont(Font.FACE_MONOSPACE, Font.STYLE_BOLD, Font.SIZE_LARGE);
 				pc.g.setFont(font);
@@ -4454,22 +4475,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				pc.g.setColor(0xFFFFFF);
 				pc.g.drawString(""  + roundaboutExitNr, x + width / 2, y + height / 2 - fontHeight/2, Graphics.TOP|Graphics.HCENTER);
 			}
-			/*
-			// output distances
- 			if (fontRouteIcon == null) {
-				fontRouteIcon = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, Font.SIZE_SMALL);
-			}
-			pc.g.setFont(fontRouteIcon);
-			fontHeight = fontRouteIcon.getHeight();
-			if (iconNumber == 1 || distance > 1) {
-				pc.g.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
-				String dist = HelperRoutines.formatDistance(distance);
-				int distWidth = fontRouteIcon.stringWidth(dist);
-				img = ImageCache.getOneColorImage(0x80FFFFFF, distWidth > width ? distWidth : width, fontHeight);
-				pc.g.drawImage(img, x, y + height - fontHeight, Graphics.TOP|Graphics.LEFT);			
-				pc.g.drawString(dist, x + (width-distWidth) / 2, y +height - fontHeight , Graphics.TOP|Graphics.LEFT);
-			}			
-			*/
 		}
 	}
 
