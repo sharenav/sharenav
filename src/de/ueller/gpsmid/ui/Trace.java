@@ -4447,7 +4447,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				pc.g.drawString(""  + roundaboutExitNr, x + width / 2, y + height / 2 - fontHeight/2, Graphics.TOP|Graphics.HCENTER);
 			}
  			if (fontRouteIcon == null) {
-				fontRouteIcon = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_MEDIUM);
+				fontRouteIcon = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, Font.SIZE_SMALL);
 			}
 			pc.g.setFont(fontRouteIcon);
 			fontHeight = fontRouteIcon.getHeight();
@@ -4455,7 +4455,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				pc.g.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 				String dist = HelperRoutines.formatDistance(distance);
 				int distWidth = fontRouteIcon.stringWidth(dist);
-				img = ImageCache.getOneColorImage(0x80FFFFFF, width, fontHeight);
+				img = ImageCache.getOneColorImage(0x80FFFFFF, distWidth > width ? distWidth : width, fontHeight);
 				pc.g.drawImage(img, x, y + height - fontHeight, Graphics.TOP|Graphics.LEFT);			
 				pc.g.drawString(dist, x + (width-distWidth) / 2, y +height - fontHeight , Graphics.TOP|Graphics.LEFT);
 			}
