@@ -270,9 +270,10 @@ public class ImageCollector implements Runnable {
 				 * have no osm layer tag or layer = 0.
 				 */
 				boolean simplifyMap = Configuration.getCfgBitState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY);
+				boolean skippableLayer = false;
 				for (byte layer = 0; layer < layersToRender.length; layer++) {
 					if (simplifyMap) {
-						if (needRedraw &&
+						skippableLayer = 
 						    ((layer < 5 && layer > 1)
 						    //#if polish.api.finland
 						    // don't skip node layer where speed camera is if camera alert is on
@@ -280,11 +281,10 @@ public class ImageCollector implements Runnable {
 						    //#else
 						     || (layer == 14)
 						    //#endif
-						     || (Trace.getInstance().mapBrowsing && layer < 5)
-							    )) {
-							// EXPERIMENTAL
-							// skip update if next
-							// is queued
+						     || (Trace.getInstance().mapBrowsing && (layer < 5 && layer > 1) || layer == 14)
+							    );
+						// skip update if a new one is queued
+						if (needRedraw && skippableLayer) {
 							continue;
 						}
 					}
@@ -333,18 +333,42 @@ public class ImageCollector implements Runnable {
 					byte minTile = Legend.scaleToTile((int)(createPC.scale / (boost * overviewTileScaleBoost) ));
 					
 					if (t[0] != null) {
+						if (needRedraw && skippableLayer) {
+							continue;
+						}
 						t[0].paint(createPC, layersToRender[layer]);
+						if (needRedraw && skippableLayer) {
+							continue;
+						}
 					}
 					if ((minTile >= 1) && (t[1] != null)) {
+						if (needRedraw && skippableLayer) {
+							continue;
+						}
 						t[1].paint(createPC, layersToRender[layer]);
+						if (needRedraw && skippableLayer) {
+							continue;
+						}
 						Thread.yield();
 					}
 					if ((minTile >= 2) && (t[2] != null)) {
+						if (needRedraw && skippableLayer) {
+							continue;
+						}
 						t[2].paint(createPC, layersToRender[layer]);
+						if (needRedraw && skippableLayer) {
+							continue;
+						}
 						Thread.yield();
 					}
 					if ((minTile >= 3) && (t[3] != null)) {
+						if (needRedraw && skippableLayer) {
+							continue;
+						}
 						t[3].paint(createPC, layersToRender[layer]);
+						if (needRedraw && skippableLayer) {
+							continue;
+						}
 						Thread.yield();
 					}
 
