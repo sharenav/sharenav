@@ -467,6 +467,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private static Font smallBoldFont;
 	private static int smallBoldFontHeight;
 	*/
+	private static Font fontRouteIcon = null;
 	
 	public boolean manualRotationMode = false;
 	
@@ -4425,7 +4426,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 	
 	/** paint big direction arrows for navigation */
-	public void setRouteIcon(PaintContext pc, int iconNumber, Image origIcon, int roundaboutExitNr) {
+	public void setRouteIcon(PaintContext pc, int iconNumber, Image origIcon, int roundaboutExitNr, int distance) {
 		// FIXME would it be better for this to be an element in TraceLayout?
 		// Probably at least if the distance and optionally streetname
 		// are added to information shown
@@ -4435,16 +4436,29 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			int width = height;
 			int x = (getHeight() >= 320 ? 5 : 30);
 			int y = 15 + getHeight()/40 + iconNumber * (height + getHeight()/40);
-			Image icon = ImageCache.getScaledImage(origIcon, width, height);
-			pc.g.drawImage(icon, x, y, Graphics.TOP|Graphics.LEFT);
+			Image img = ImageCache.getScaledImage(origIcon, width, height);
+			pc.g.drawImage(img, x, y, Graphics.TOP|Graphics.LEFT);
+			Font font = Font.getFont(Font.FACE_MONOSPACE, Font.STYLE_BOLD, Font.SIZE_LARGE);
+			int fontHeight;
 			if (roundaboutExitNr != 0) {
-				pc.g.setColor(0xFFFFFF);
-				Font font = Font.getFont(Font.FACE_MONOSPACE, Font.STYLE_BOLD, Font.SIZE_LARGE);
 				pc.g.setFont(font);
-				int fontHeight = font.getHeight();
+				fontHeight = font.getHeight();
+				pc.g.setColor(0xFFFFFF);
 				pc.g.drawString(""  + roundaboutExitNr, x + width / 2, y + height / 2 - fontHeight/2, Graphics.TOP|Graphics.HCENTER);
 			}
-			
+ 			if (fontRouteIcon == null) {
+				fontRouteIcon = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_MEDIUM);
+			}
+			pc.g.setFont(fontRouteIcon);
+			fontHeight = fontRouteIcon.getHeight();
+			if (iconNumber == 1 || distance > 1) {
+				pc.g.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
+				String dist = HelperRoutines.formatDistance(distance);
+				int distWidth = fontRouteIcon.stringWidth(dist);
+				img = ImageCache.getOneColorImage(0x80FFFFFF, width, fontHeight);
+				pc.g.drawImage(img, x, y + height - fontHeight, Graphics.TOP|Graphics.LEFT);			
+				pc.g.drawString(dist, x + (width-distWidth) / 2, y +height - fontHeight , Graphics.TOP|Graphics.LEFT);
+			}
 		}
 	}
 

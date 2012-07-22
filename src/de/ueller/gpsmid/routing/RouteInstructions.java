@@ -1430,14 +1430,18 @@ public class RouteInstructions {
 			if (c.wayRouteInstruction >= RI_1ST_EXIT && c.wayRouteInstruction <= RI_6TH_EXIT) {
 				roundAboutExitNr = c.wayRouteInstruction - RI_1ST_EXIT + 1;
 			}
+			// output no distance when close to the arrow
+			if( dist < 25 && iconCount == 0) {
+				dist = 0;
+			}
 			// if necessary, convert to yards
 			if (!Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
 				dist = dist / 0.9144 + 0.5;
 			}
-			trace.setRouteIcon(pc, iconCount, icon, roundAboutExitNr);
+			trace.setRouteIcon(pc, iconCount, icon, roundAboutExitNr, (int) dist);
 
 			if (c.wayRouteInstruction == RI_DEST_REACHED) {		
-				trace.setRouteIcon(pc, 1, null, 0);
+				trace.setRouteIcon(pc, 1, null, 0, (int) dist);
 				break;
 			}
 			
@@ -1445,7 +1449,8 @@ public class RouteInstructions {
 			i = idxNextInstructionArrow(i + 1);
 			cPrev = c;
 			c = (ConnectionWithNode) route.elementAt(i);
-			dist = ProjMath.getDistance(cPrev.to.lat, cPrev.to.lon, c.to.lat, c.to.lon);
+			boolean finalInstruction = (c.wayRouteInstruction == RI_DEST_REACHED);		
+			dist = ProjMath.getDistance(cPrev.to.lat, cPrev.to.lon, finalInstruction ? closestPointOnDestWay.radlat : c.to.lat, finalInstruction ? closestPointOnDestWay.radlon : c.to.lon);
 		}
 	}
 
