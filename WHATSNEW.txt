@@ -1,6 +1,17 @@
-    *** Android Support ***
+	*** Android Support ***
     - multitouch two-finger rotate & pinch zoom 
-
+	*** Osm2GpsMid / Osm2GpsMid GUI ***
+    - new tile size/count preset "even fewer and large map tiles" to generate maps for powerful mobiles
+      while keeping the number of files in map data not very high. This might be useful for most
+      Android devices but also to be able to install e.g. on Nokia 5800 very big jars (~200 MB)
+    - new default for tile size/count in generated maps is now "average tile file size and count"
+    *** Routing ***
+    - more similiar color for u-turn icons
+    *** Usability ***
+    - increased defaults for maximum search results in new midlets
+    *** Bug fixes ***
+    - fixed an error that prevented to load all route / map tiles of the Germany map from thju
+     
 GpsMid 0.7.8
     *** Touchscreen / User Interface ***
     - On the map screen long tap * to toggle track recording
@@ -116,10 +127,6 @@ GpsMid 0.7.8
     - Route destinations for the route corridor are saved in last.properties. After loading
       a .properties file with route destinations you can press "Calculate Route Corridor"
       to (re-)generate the route corridor.
-    - new tile size/count preset "even fewer and large map tiles" to generate maps for powerful mobiles
-      while keeping the number of files in map data not very high. This might be useful for most
-      Android devices but also to be able to install e.g. on Nokia 5800 very big jars (~200 MB)
-    - new default for tile size/count in generated maps is now "average tile file size and count" 
     *** Predefined waypoints ***
     - An option for predefined waypoints (entered via the icon menu) is now available.
       Currently the predefined waypoints are fixed in the program, in the future they
