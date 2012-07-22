@@ -46,7 +46,7 @@ public class RouteTile extends RouteBaseTile {
 		maxLon = dis.readFloat();
     	minId=dis.readInt();
     	maxId=dis.readInt();
-		fileId = (short) dis.readInt();
+		fileId = dis.readInt();
 		//#debug error
 		logger.debug("created RouteTile deep:" + deep + ":RT Nr=" + fileId + "id("+minId+"/"+maxId+")");
 	}

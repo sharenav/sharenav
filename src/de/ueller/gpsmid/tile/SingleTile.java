@@ -100,7 +100,7 @@ public class SingleTile extends Tile implements QueueableTile {
 		minLon = dis.readFloat();
 		maxLat = dis.readFloat();
 		maxLon = dis.readFloat();
-		fileId = (short) dis.readInt();
+		fileId = dis.readInt();
 	
 //		 logger.debug("ready " + deep + ":ST Nr=" + fileId);
 	}

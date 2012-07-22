@@ -47,7 +47,7 @@ public abstract class Tile {
 	public float centerLat;
 	public float centerLon;
 	
-	public short fileId = 0;
+	public int fileId = 0;
 	public byte	lastUse	= 0;
 
 	/**
