@@ -168,8 +168,11 @@ true ?
 	private void createAndAddRoutingMenu() {
 		IconMenuPage mp;
 		// Route
+		//mp = createAndAddMenuPage(Locale.get("traceiconmenu.RoutePage")/* Route */, 3,
+		//			  Configuration.getCfgBitSavedState(Configuration.CFGBIT_FAVORITES_IN_ROUTE_ICON_MENU) ? 
+		//			  (countFavorites() - 2) / 3 + 3 : 3);
 		mp = createAndAddMenuPage(Locale.get("traceiconmenu.RoutePage")/* Route */, 3,
-					  Configuration.getCfgBitSavedState(Configuration.CFGBIT_FAVORITES_IN_ROUTE_ICON_MENU) ? 
+					  (false && Configuration.getCfgBitSavedState(Configuration.CFGBIT_FAVORITES_IN_ROUTE_ICON_MENU)) ? 
 					  (countFavorites() - 2) / 3 + 3 : 3);
 		iconToggleRoute = mp.createAndAddIcon(Locale.get("traceiconmenu.Calc")/*Calculate*/, "i_calc", Trace.ROUTING_TOGGLE_CMD);
 		iconToggleRoute.setFlag(LayoutElement.FLAG_IMAGE_TOGGLEABLE);

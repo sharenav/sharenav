@@ -49,6 +49,11 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	private int renderDiff = 0;
 	public volatile int tabNr = 0;
 	private volatile int leftMostTabNr = 0;
+	private final static int dragModeUnset = 0;
+	private final static int dragModeX = 1;
+	private final static int dragModeY = 2;
+	private volatile int dragMode = dragModeUnset;
+
 	private boolean inTabRow = false;
 	/** LayoutManager for the prev / next direction buttons */
 	private LayoutManager tabDirectionButtonManager;
@@ -478,20 +483,27 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 					} else {
 						if (getActiveMenuPage().getElementAtPointer(x, y) == eStatusBar) {
 						} else {
-							int actionId = getActiveMenuPage().getActionIdAtPointer(x, y);
-							String choiceName = getActiveMenuPage().getChoiceNameAtPointer(x, y);
-							if (actionId >= 0) {
-								performIconAction(actionId, choiceName);
-								return;
+							// check that we're on an icon
+							if (getActiveMenuPage().getActionIdAtPointer(x, y) >= 0) {
+								performIconAction(getActiveMenuPage().getActiveEleActionId(),
+										  getActiveMenuPage().getActiveEleChoiceName());
 							}
+							return;
+							//int actionId = getActiveMenuPage().getActionIdAtPointer(x, y);
+							//String choiceName = getActiveMenuPage().getChoiceNameAtPointer(x, y);
+							//if (actionId >= 0) {
+							//	performIconAction(actionId, choiceName);
+							//return;
+							//}
 						}					
 					}
 				}
 			}
 		}
 
-		// reset the dragOffsX of the current tab when releasing the pointer
+		// reset the dragOffsX & Y of the current tab when releasing the pointer
 		getActiveMenuPage().dragOffsX = 0;
+		getActiveMenuPage().dragOffsY = 0;
 		
 		// sliding to the right at least a quarter of the display will show the previous menu page
 		if ( (x - touchX) > (maxX - minX) / 4) {
@@ -500,6 +512,24 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		} else if ( (touchX - x) > (maxX - minX) / 4) {
 			nextTab();
 		}
+
+		// scroll menu vertically if needed
+		if (dragMode == dragModeY) {
+			if (y > touchY) {
+				if (getActiveMenuPage().scrollOffsY > 0) {
+					getActiveMenuPage().scrollOffsY -= 1;
+					getActiveMenuPage().recalcPositions();
+					getActiveMenuPage().updateRememberEleId();
+				}
+			} else {
+				if (getActiveMenuPage().scrollOffsY < (getActiveMenuPage().size() + getActiveMenuPage().numCols - 1) / getActiveMenuPage().numCols - getActiveMenuPage().numRows) {
+					getActiveMenuPage().scrollOffsY += 1;
+					getActiveMenuPage().recalcPositions();
+					getActiveMenuPage().updateRememberEleId();
+				}
+			}
+		}
+		dragMode = dragModeUnset;
 
 		doRepaint();
 	}
@@ -542,7 +572,24 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		} else {
 			getActiveMenuPage().clearTouchedElement();
 		}
-		getActiveMenuPage().dragOffsX = x - touchX;
+		if (dragMode == dragModeUnset) {
+			// allow to drag only in one direction
+			if (Math.abs(x - touchX) >= 15) {
+				dragMode = dragModeX;
+			} else if (Math.abs(y - touchY) >= 15) {
+				dragMode = dragModeY;
+			} else {
+				getActiveMenuPage().dragOffsX = x - touchX;
+				getActiveMenuPage().dragOffsY = y - touchY;
+			}
+		}
+		if (dragMode == dragModeX) {
+			getActiveMenuPage().dragOffsX = x - touchX;
+			getActiveMenuPage().dragOffsY = 0;
+		} else if (dragMode == dragModeY) {
+			getActiveMenuPage().dragOffsX = 0;
+			getActiveMenuPage().dragOffsY = y - touchY;
+		}
 		doRepaint();
 	}
 	

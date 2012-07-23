@@ -42,6 +42,12 @@ public class IconMenuPage extends LayoutManager {
 	
 	/** the horizontal offset the icons on this page should be drawn at */
 	public volatile int dragOffsX = 0;
+
+	/** the vertical offset the icons on this page should be drawn at */
+	public volatile int dragOffsY = 0;
+
+	/** how many icon rows the menu is scrolled down */
+	public volatile int scrollOffsY = 0;
 	
 	
 	public IconMenuPage(String title, IconActionPerformer actionPerformer, int numCols, int numRows, int minX, int minY, int maxX, int maxY) {
@@ -83,6 +89,7 @@ public class IconMenuPage extends LayoutManager {
 	public void setCursor(int eleId) {
 		this.currentCol = eleId % numCols;
 		this.currentRow = eleId / numCols;
+		this.scrollOffsY = 0;
 		if (numCols == 4) {
 			// numCols == 4 - arrange elements similarly as they are arranged in the 3-column setup
 			this.currentCol = eleId % 3;
@@ -93,6 +100,18 @@ public class IconMenuPage extends LayoutManager {
 			}
 		}
 		rememberEleId = eleId;
+		if (this.currentRow >= numRows) {
+			int diff = this.currentRow - numRows + 1;
+			this.currentRow -= diff;
+			this.scrollOffsY += diff;
+			recalcPositions();
+		} else {
+			if (this.scrollOffsY != 0) {
+				this.currentRow += this.scrollOffsY;
+				this.scrollOffsY = 0;
+				recalcPositions();
+			}
+		}
 	}
 	
 	public LayoutElement createAndAddIcon(String label, String imageName, int actionId) {
@@ -149,27 +168,41 @@ public class IconMenuPage extends LayoutManager {
 			return false;
 		}
 		
-		if (currentRow + offsRow < 0) { // bottom boundary
-			return false;
-		}
-		if (currentRow + offsRow >= numRows) { // Bottom boundary coming from top
-			return false;
-		}
-//		if (currentY + offsY >= numRows) { // Bottom boundary coming from top
-//			return false;
-//		}
-		// don't go to fourth column in 3 rows, 4 columns mode, when going down from first column
-		System.out.println("numRows: " + numRows + " currentRow: " + currentRow);
-		if (getEleId(currentCol, currentRow + offsRow) < this.size() && (currentRow + offsRow) < numRows) {
+		if (currentRow == 0 && scrollOffsY > 0 && offsRow == -1) {
+			scrollOffsY += offsRow;
+			recalcPositions();
+		} else if (currentRow + offsRow < 0) { // bottom boundary
+                       return false;
+		} else if (currentRow + offsRow >= numRows) { // Bottom boundary coming from top
+			if (scrollOffsY + numRows - 1 + offsRow < (this.size() + numCols - 1) / numCols) {
+				scrollOffsY += offsRow;
+				if (getEleId(currentCol, currentRow + offsRow + scrollOffsY) >= this.size()) {
+					currentRow -= 1;
+				}
+				recalcPositions();
+			} else {
+				return false;
+			}
+		} else if (getEleId(currentCol, currentRow + offsRow + scrollOffsY) < this.size()) {
 			currentRow += offsRow;
+		} else {
+			return false;
 		}
+		// don't go to fourth column in 3 rows, 4 columns mode, when going down from first column
+		//if (getEleId(currentCol, currentRow + offsRow) < this.size() && (currentRow + offsRow) < numRows) {
+		//	currentRow += offsRow;
+		//}
 //		else {  // after last element coming from above
 //			return false;
 //		}
-		rememberEleId = getEleId(currentCol, currentRow);
+		updateRememberEleId();
 		return true;
 	}
 	
+	public void updateRememberEleId() {
+		rememberEleId = getEleId(currentCol, currentRow, scrollOffsY);
+	}
+
 	private int getEleId(int col, int row) {
 		if (numCols != 4) { // 3 or more than 4
 			return col + row * numCols;
@@ -182,6 +215,18 @@ public class IconMenuPage extends LayoutManager {
 		}
 	}
 	
+	private int getEleId(int col, int row, int scrollOffset) {
+		if (numCols != 4) { // 3 or more than 4
+			return col + (row + scrollOffset) * numCols;
+		} else { // numCols == 4 - arrange elements similarly as they are arranged in the 3-column setup
+			if (col == 3) {
+				return 9 + row;
+			} else {
+				return (row + scrollOffset) * 4 + (col-row);
+			}
+		}
+	}
+	
 	protected int getActiveEleActionId() {
 		return this.getElementAt(rememberEleId).actionID;
 	}
@@ -190,7 +235,32 @@ public class IconMenuPage extends LayoutManager {
 		return this.getElementAt(rememberEleId).getText();
 	}
 	
-	
+	// @Override
+	public void recalcPositions() {
+		LayoutElement e;
+		for (int i=scrollOffsY * numRows; i < this.size() && i < scrollOffsY * numRows + numRows * numCols; i++){
+			e = (LayoutElement) this.elementAt(i);
+			e.setEleNr(i-scrollOffsY*numRows);
+			//#debug debug
+			logger.trace("calc positions for element " + i);
+			e.calcSizeAndPosition();
+		}
+		recalcPositionsRequired = false;
+	}
+
+	// @Override
+	public int getElementIdAtPointer(int x, int y) {
+		LayoutElement e;
+		for (int i=scrollOffsY * numRows; i < this.size() && i < scrollOffsY * numRows + numRows * numCols; i++){
+			//for (int i = this.size() - 1; i >= 0 ; i--){
+			e = getElementAt(i);
+			if (e.isInElement(x, y) && e.hasAnyValidActionId()) {
+				return i;
+			}
+		}
+		return -1;	
+	}
+
 	/**
 	 * Paints the icons
 	 */
@@ -201,28 +271,36 @@ public class IconMenuPage extends LayoutManager {
 		LayoutElement e;
 		// draw to boxes under the still to be drawn active icon to create a border
 		if (showCursor) {
-			e = (LayoutElement) this.elementAt(getEleId(currentCol, currentRow));
+			e = (LayoutElement) this.elementAt(getEleId(currentCol, currentRow, scrollOffsY));
 			g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT]);
-			g.fillRect(e.left + dragOffsX - 2, e.top - 2, e.right - e.left + 4, e.bottom - e.top + 4);
+			g.fillRect(e.left + dragOffsX - 2, e.top - 2 + dragOffsY, e.right - e.left + 4, e.bottom - e.top + 4);
 			g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_BACKGROUND]);
-			g.fillRect(e.left + dragOffsX, e.top, e.right - e.left, e.bottom - e.top);
+			g.fillRect(e.left + dragOffsX, e.top + dragOffsY, e.right - e.left, e.bottom - e.top);
 		}
 		int orgLeft;
 		int orgTextLeft;
-		// draw all icons
-		for (int i=0; i<this.size(); i++){
+		int orgTop;
+		int orgTextTop;
+		// draw all visible icons
+		for (int i=scrollOffsY * numRows; i < this.size() && i < scrollOffsY * numRows + numRows * numCols; i++){
 			e = (LayoutElement) this.elementAt(i);
-			if (dragOffsX == 0) {
+			if (dragOffsX == 0 && dragOffsY == 0) {
 				e.paint(g);				
 			} else {
 				// paint with drag offset
 				orgTextLeft = e.textLeft;
 				orgLeft = e.left;
+				orgTextTop = e.textTop;
+				orgTop = e.top;
 				e.left += dragOffsX;
 				e.textLeft += dragOffsX;
+				e.top = e.top + dragOffsY;
+				e.textTop = e.textTop + dragOffsY;
 				e.paint(g);
 				e.left = orgLeft;
 				e.textLeft = orgTextLeft;
+				e.top = orgTop;
+				e.textTop = orgTextTop;
 			}
 		}
 	}
