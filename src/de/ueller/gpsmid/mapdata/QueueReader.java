@@ -7,6 +7,9 @@ package de.ueller.gpsmid.mapdata;
 import java.io.IOException;
 import java.util.Vector;
 
+import de.ueller.gpsmid.data.Legend;
+import de.ueller.gpsmid.graphics.ImageCollector;
+import de.ueller.gpsmid.tile.SingleTile;
 import de.ueller.gpsmid.tile.Tile;
 import de.ueller.gpsmid.ui.GpsMid;
 import de.ueller.gpsmid.ui.Trace;
@@ -95,6 +98,52 @@ public abstract class QueueReader implements Runnable {
 		}		
 	}
 
+	/**
+	 * Removes tile requests for SingleTiles which contain data that is not rendered by ImageCollector because zoomed out too far,
+	 * also removes tile requests for SingleTiles that are offScreen for ImageCollector because zoomed in too far.
+	 * 
+	 * This allows zooming out, panning around and zooming in without having to wait ages for obsolete tile requests.
+	 */
+	private void cleanupUnnecessarySingleTileRequests() {
+		Tile tt;
+		SingleTile st;
+		int droppedCountZoomedOut = 0;
+		int droppedCountZoomedIn = 0;
+		Trace trace = Trace.getInstance();
+		for (int loop = 0; loop < requestQueue.size(); loop++) {
+			tt = (Tile) requestQueue.elementAt(loop);
+			if (tt instanceof SingleTile) {
+				st = (SingleTile) tt;
+				if ( (st.zl > ImageCollector.minTile || !trace.isTileRequiredByImageCollector(tt)) && tt.cleanup(0)) {
+					if (st.zl > ImageCollector.minTile) {
+						droppedCountZoomedOut++;
+					} else {
+						droppedCountZoomedIn++;						
+					}
+					synchronized (this) {
+						notificationQueue.removeElementAt(loop);
+						requestQueue.removeElementAt(loop--);
+					}
+				}
+			}
+		}
+		if (droppedCountZoomedOut > 0 || droppedCountZoomedIn > 0) {
+			StringBuffer sb = new StringBuffer();
+			if (droppedCountZoomedOut > 0) {
+				sb.append(droppedCountZoomedOut + " zl>" + ImageCollector.minTile);
+			}
+			if (droppedCountZoomedIn > 0) {
+				if (sb.length() > 0) {
+					sb.append(", ");
+				}
+				sb.append(droppedCountZoomedIn + " offScreen");
+			}
+			sb.append(" tile requests dropped");
+			trace.receiveMessage(sb.toString());
+		}
+	}
+
+	
 	private int cleanOldLivingTiles(int age) {
 		int loop;
 		Tile tt;
@@ -134,6 +183,7 @@ public abstract class QueueReader implements Runnable {
 					// logger.info(toString());
 					
 					cleanupUnused();
+					cleanupUnnecessarySingleTileRequests();
 					
 					try {
 						final Runtime runtime = Runtime.getRuntime();

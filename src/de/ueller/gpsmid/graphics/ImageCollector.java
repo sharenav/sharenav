@@ -77,6 +77,7 @@ public class ImageCollector implements Runnable {
 	private final Trace tr;
 	/** additional scale boost for Overview/Filter Map, bigger values load the tiles already when zoomed more out */
 	public static float overviewTileScaleBoost = 1.0f;
+	public static volatile int minTile = 0;
 	boolean collectorReady=false;
 	
 	public int iDrawState = 0;
@@ -335,7 +336,7 @@ public class ImageCollector implements Runnable {
 							continue;
 						}
 					}
-					byte minTile = Legend.scaleToTile((int)(createPC.scale / (boost * overviewTileScaleBoost) ));
+					minTile = Legend.scaleToTile((int)(createPC.scale / (boost * overviewTileScaleBoost) ));
 					
 					if (t[0] != null) {
 						if (needRedraw && skippableLayer) {
@@ -801,6 +802,10 @@ public class ImageCollector implements Runnable {
 	public Projection getCurrentProjection(){
 		return pc[nextPaint].getP();
 //		return currentVisibleSc.getP();
+	}
+	
+	public synchronized ScreenContext getScreenContext() {
+		return (ScreenContext) pc[0];
 	}
 	
 }

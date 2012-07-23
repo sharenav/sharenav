@@ -76,6 +76,7 @@ import de.ueller.gpsmid.data.Position;
 import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.gpsmid.data.RoutePositionMark;
 import de.ueller.gpsmid.data.SECellLocLogger;
+import de.ueller.gpsmid.data.ScreenContext;
 import de.ueller.gpsmid.data.TrackPlayer;
 import de.ueller.gpsmid.graphics.ImageCollector;
 import de.ueller.gpsmid.graphics.Images;
@@ -2100,6 +2101,17 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 		System.gc();
 	}
+	
+	public boolean isTileRequiredByImageCollector(Tile t) {
+		if (imageCollector != null ) {
+			ScreenContext sc = imageCollector.getScreenContext(); 
+			if (sc != null && t.contain(sc)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 
 	public void startup() throws Exception {
 //		logger.info("reading Data ...");

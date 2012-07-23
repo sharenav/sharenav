@@ -59,7 +59,7 @@ public abstract class Tile {
 	public abstract void walk(PaintContext pc,int opt);
 	public abstract boolean cleanup(int level);
 		
-	boolean contain(ScreenContext pc) {
+	public boolean contain(ScreenContext pc) {
 //		System.out.println(this);
 //		System.out.println(pc.screenLD + "   " + pc.screenRU);
 		//TODO: HMU there must be a better way
