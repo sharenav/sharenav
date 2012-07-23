@@ -183,7 +183,7 @@ public abstract class QueueReader implements Runnable {
 					// logger.info(toString());
 					
 					cleanupUnused();
-					cleanupUnnecessarySingleTileRequests();
+					// cleanupUnnecessarySingleTileRequests();
 					
 					try {
 						final Runtime runtime = Runtime.getRuntime();
