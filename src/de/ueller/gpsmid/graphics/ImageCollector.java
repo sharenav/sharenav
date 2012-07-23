@@ -126,7 +126,11 @@ public class ImageCollector implements Runnable {
 		nextSc.setP(ProjFactory.getInstance(mapCenter, 
 						nextSc.course, nextSc.scale, xSize, ySize));
 		processorThread = new Thread(this, "ImageCollector");
+		//#if polish.android
+		processorThread.setPriority(Thread.MAX_PRIORITY);
+		//#else
 		processorThread.setPriority(Thread.MIN_PRIORITY);
+		//#endif
 		processorThread.start();
 	}
 
@@ -493,7 +497,11 @@ public class ImageCollector implements Runnable {
 
 	public void restart() {
 		processorThread = new Thread(this, "ImageCollector");
+		//#if polish.android
+		processorThread.setPriority(Thread.MAX_PRIORITY);
+		//#else
 		processorThread.setPriority(Thread.MIN_PRIORITY);
+		//#endif
 		processorThread.start();
 	}
 
