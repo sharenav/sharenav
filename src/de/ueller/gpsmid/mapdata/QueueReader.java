@@ -114,7 +114,7 @@ public abstract class QueueReader implements Runnable {
 			tt = (Tile) requestQueue.elementAt(loop);
 			if (tt instanceof SingleTile) {
 				st = (SingleTile) tt;
-				if ( (st.zl > ImageCollector.minTile || !trace.isTileRequiredByImageCollector(tt)) && tt.cleanup(0)) {
+				if ( (st.zl > ImageCollector.minTile || !trace.isTileRequiredByImageCollector(tt)) && tt.cleanup(1)) {
 					if (st.zl > ImageCollector.minTile) {
 						droppedCountZoomedOut++;
 					} else {
@@ -183,7 +183,7 @@ public abstract class QueueReader implements Runnable {
 					// logger.info(toString());
 					
 					cleanupUnused();
-					// cleanupUnnecessarySingleTileRequests();
+					cleanupUnnecessarySingleTileRequests();
 					
 					try {
 						final Runtime runtime = Runtime.getRuntime();
