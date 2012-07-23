@@ -2248,11 +2248,18 @@ public class Way extends Entity {
 				FilledTriangle.fillTriangle(pc, p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
 			} else {
 				pc.g.fillTriangle(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
-// Without these, there are ugly light-color gaps in filled areas on Android devices
+// Without these, there are ugly light-color gaps in filled areas on Android devices - but this cuts down on performance, remove for now on 2012-07-23
+// possibly could be helped by antialiasing or some other tweaks in J2MEPolish code:
+//
+// https://github.com/Enough-Software/j2mepolish/blob/4718fe3b9f55eb8a2c8172316ed416d87f9bf86c/enough-polish-j2me/source/src/de/enough/polish/android/lcdui/Graphics.java
+//
+// see also http://stackoverflow.com/questions/7608362/how-to-draw-smooth-rounded-path
+// though better yet would be to use direct polygons without triangulation
+//
 //#if polish.android
-				pc.g.drawLine(p1.x,p1.y,p2.x,p2.y);
-				pc.g.drawLine(p2.x,p2.y,p3.x,p3.y);
-				pc.g.drawLine(p1.x,p1.y,p3.x,p3.y);
+//				pc.g.drawLine(p1.x,p1.y,p2.x,p2.y);
+//				pc.g.drawLine(p2.x,p2.y,p3.x,p3.y);
+//				pc.g.drawLine(p1.x,p1.y,p3.x,p3.y);
 //#endif
 			}			
 		}
