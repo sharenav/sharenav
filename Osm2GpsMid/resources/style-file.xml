@@ -2443,7 +2443,7 @@ end -->
 	-->
 	<tileScaleLevels>
 		<tileScaleLevel level="3" minScale ="21" allowedForRoutableWays = "false" />
-		<tileScaleLevel level="2" minScale ="19" allowedForRoutableWays = "false" />
+		<tileScaleLevel level="2" minScale ="19" />
 		<tileScaleLevel level="1" minScale ="17" />
 		<!-- lower scales will be included in tile level 0 -->
 	</tileScaleLevels>
