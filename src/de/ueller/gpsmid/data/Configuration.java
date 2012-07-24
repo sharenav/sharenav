@@ -1963,11 +1963,6 @@ public class Configuration {
 		//#endif
 	}
 	
-	// do we show distance below big navi arrows
-	public static boolean showNaviArrowsDistance(int width, int height) {
-		return height > 400;
-	}
-	
 	public static String getPhoneModel() {
 		String  model = null;
 		try {

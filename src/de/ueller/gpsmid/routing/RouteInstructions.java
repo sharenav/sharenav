@@ -1438,10 +1438,9 @@ public class RouteInstructions {
 			if (!Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
 				dist = dist / 0.9144 + 0.5;
 			}
-			trace.setRouteIcon(pc, iconCount, icon, roundAboutExitNr, (int) dist);
+			trace.tl.setRouteIcon(iconCount, icon, roundAboutExitNr, (int) dist);
 
 			if (c.wayRouteInstruction == RI_DEST_REACHED) {		
-				trace.setRouteIcon(pc, 1, null, 0, (int) dist);
 				break;
 			}
 			
