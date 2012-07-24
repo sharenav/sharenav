@@ -104,6 +104,7 @@ public class Way extends Entity {
 	/** http://wiki.openstreetmap.org/wiki/WikiProject_Haiti */
 	public static final int WAY_DAMAGED = 64 << ModShift;
 	public static final int WAY_NAMEASFORAREA = 128 << ModShift;
+	public static final int WAY_RATHER_BIG = 256 << ModShift;
 
 	public static final byte PAINTMODE_COUNTFITTINGCHARS = 0;
 	public static final byte PAINTMODE_DRAWCHARS = 1;
@@ -233,7 +234,7 @@ public class Way extends Entity {
 		minLon = is.readShort();
 		maxLat = is.readShort();
 		maxLon = is.readShort();
-
+		
 		//#if polish.api.bigstyles
 		if (Legend.enableBigStyles) {
 			type = is.readShort();
@@ -256,6 +257,13 @@ public class Way extends Entity {
 		if ((f & WAY_FLAG_MAXSPEED) == WAY_FLAG_MAXSPEED) {
 //			logger.debug("read maxspeed");
 			flags = is.readByte() & 0xff; // apply an 8 bit mask to the maxspeed byte read so values >127 won't result in a negative integer with wrong bits set for the flags
+		}
+		
+		/* calculate diameter of the rectangle around the way to see if this is a rather big way that is worth to be rendered in lower zoom levels
+		 * (used coordinates do not represent exactly the real ones but should be close enough for calculating the approximate diameter)
+		*/ 
+		if (ProjMath.getDistance(minLat * MoreMath.FIXPT_MULT_INV + t.centerLat, minLon * MoreMath.FIXPT_MULT_INV + t.centerLon, maxLat * MoreMath.FIXPT_MULT_INV + t.centerLat, maxLon * MoreMath.FIXPT_MULT_INV + t.centerLon) > 500) {
+			flags |= WAY_RATHER_BIG;
 		}
 		
 		byte f2=0;
@@ -2484,9 +2492,13 @@ public class Way extends Entity {
 		return ((flags & WAY_AREA) > 0);
 	}
 
-       public boolean nameAsForArea() {
+	public boolean isRatherBig() {
+		return ((flags & WAY_RATHER_BIG) > 0);
+	}
+	
+    public boolean nameAsForArea() {
                return ((flags & WAY_NAMEASFORAREA) > 0);
-       }
+    }
 
 	public boolean isRoundAbout() {
 		return ((flags & WAY_ROUNDABOUT) > 0);
