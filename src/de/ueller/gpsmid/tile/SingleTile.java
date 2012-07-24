@@ -219,6 +219,9 @@ public class SingleTile extends Tile implements QueueableTile {
 					return;
 				}
 
+				// are we zoomed out to tile level 0 ?
+				boolean zoomedOutFar = (Legend.scaleToTile((int) pc.scale) == 0);
+				
 				for (int l = 0; l < getWays().length; l++) {
 					if (((relLayer != l) && !renderAll) || (getWays()[l] == null)) {
 						continue;
@@ -238,6 +241,13 @@ public class SingleTile extends Tile implements QueueableTile {
 
 						// logger.debug("test Bounds of way");
 						if (!w.isOnScreen(pcLDlat, pcLDlon, pcRUlat, pcRUlon)) continue; 
+						
+						// skip rendering small areas when zoomed out to tile level 0
+						if (zoomedOutFar && w.isArea() && !w.isRatherBig()) {
+							// if (w.nameIdx != -1) System.out.println("Skip rendering " + w.toString());
+							continue;
+						}
+												
 						/**
 						 * In addition to rendering we also check for which way
 						 * corresponds to the destination set in the paint context identified
