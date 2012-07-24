@@ -244,7 +244,7 @@ public class SingleTile extends Tile implements QueueableTile {
 						
 						// skip rendering small areas when zoomed out to tile level 0
 						if (zoomedOutFar && w.isArea() && !w.isRatherBig()) {
-							if (w.nameIdx != -1) System.out.println("Skip rendering " + w.toString());
+							// if (w.nameIdx != -1) System.out.println("Skip rendering " + w.toString());
 							continue;
 						}
 												
