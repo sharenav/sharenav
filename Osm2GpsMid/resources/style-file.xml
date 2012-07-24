@@ -1607,7 +1607,7 @@ in the main index as well as in housenumber index.
    				<description desc = "tram"/>
  				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "18"/>
+  				<scale scale = "19"/>
   				<lineColor color = "00000070" colorAtNight="00037412" />
 				<borderColor color="00000070" colorAtNight="00037412" />
   				<lineStyle dashed = "true" />
@@ -1617,7 +1617,7 @@ in the main index as well as in housenumber index.
   				<description desc = "tube"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "16"/>
+  				<scale scale = "19"/>
   				<lineColor color = "00FFA000" colorAtNight="00037412" />
 				<borderColor color="00FFA000" colorAtNight="00037412" />
   				<lineStyle dashed = "true" />
