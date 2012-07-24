@@ -1699,7 +1699,7 @@ in the main index as well as in housenumber index.
 				<image src = "park.png"/>
   				<namekey tag = "name"/>
   				<isArea area = "true"/>
-  				<scale scale = "19"/>
+  				<scale scale = "17"/>
   				<lineColor color = "0000FF00" colorAtNight="00147414"/>
 				<force_to layer = "-2"/>
   			</Wvalue>
@@ -1707,7 +1707,7 @@ in the main index as well as in housenumber index.
   				<description desc = "Stadium"/>
   				<namekey tag = "name"/>
   				<isArea area = "true"/>
-  				<scale scale = "19"/>
+  				<scale scale = "17"/>
   				<lineColor color = "00FFFFBB"  colorAtNight="00636300"/>
   			</Wvalue>
   			<Wvalue name = "pitch">
@@ -2030,7 +2030,7 @@ end -->
   				<description desc = "Forest"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "19"/>
+  				<scale scale = "17"/>
 				<lineColor color="00196618" colorAtNight="002D552D" />	  				
 				<force_to layer = "-2"/>
   			</Wvalue>
@@ -2276,7 +2276,7 @@ end -->
   				<description desc = "Natural wood"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "19"/>
+  				<scale scale = "17"/>
   				<lineColor color = "00196618" colorAtNight="00074A07"/>				
 				<force_to layer = "-2"/>
 			</Wvalue>  			
