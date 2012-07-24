@@ -1234,7 +1234,7 @@ in the main index as well as in housenumber index.
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
-  				<scale scale = "14"/>
+  				<scale scale = "12"/>
   				<lineColor color = "00FF7375" colorAtNight="00C4BD00"/>
   				<wayWidth width="6" />
   				<routing with="motorcar" accessible="true" speed="80" />
@@ -1258,7 +1258,7 @@ in the main index as well as in housenumber index.
   				<namekey tag = "name"/>
 				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
-  				<scale scale = "17"/>
+  				<scale scale = "13"/>
 				<lineColor color="00FDBF6F" colorAtNight="00598798" />
   				<wayWidth width="5" />
   				<routing with="motorcar" accessible="true" speed="80" />
