@@ -1234,7 +1234,7 @@ in the main index as well as in housenumber index.
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
-  				<scale scale = "15"/>
+  				<scale scale = "14"/>
   				<lineColor color = "00FF7375" colorAtNight="00C4BD00"/>
   				<wayWidth width="6" />
   				<routing with="motorcar" accessible="true" speed="80" />
@@ -1246,7 +1246,7 @@ in the main index as well as in housenumber index.
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
-  				<scale scale = "15"/>
+  				<scale scale = "14"/>
   				<lineColor color = "00FF7375" colorAtNight="00C4BD00"/>
   				<wayWidth width="6" />
   				<routing with="motorcar" accessible="true" speed="60" />
@@ -1258,7 +1258,7 @@ in the main index as well as in housenumber index.
   				<namekey tag = "name"/>
 				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
-  				<scale scale = "15"/>
+  				<scale scale = "17"/>
 				<lineColor color="00FDBF6F" colorAtNight="00598798" />
   				<wayWidth width="5" />
   				<routing with="motorcar" accessible="true" speed="80" />
@@ -1270,7 +1270,7 @@ in the main index as well as in housenumber index.
   				<namekey tag = "name"/>
 				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
-  				<scale scale = "15"/>
+  				<scale scale = "17"/>
 				<lineColor color="00FDBF6F" colorAtNight="00598798" />
   				<wayWidth width="5" />
   				<routing with="motorcar" accessible="true" speed="60" />
@@ -1282,7 +1282,7 @@ in the main index as well as in housenumber index.
   				<namekey tag = "name"/>  				
 				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
-  				<scale scale = "15"/>
+  				<scale scale = "17"/>
   				<lineColor color = "00FFFF60" colorAtNight="008176BA" />
   				<wayWidth width="4" />
   				<routing with="motorcar" accessible="true" speed="50" />
@@ -1294,7 +1294,7 @@ in the main index as well as in housenumber index.
   				<namekey tag = "name"/>
 				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
-  				<scale scale = "15"/>
+  				<scale scale = "17"/>
 				<lineColor color="00FDBF6F" colorAtNight="00598798" />
   				<wayWidth width="4" />
   				<routing with="motorcar" accessible="true" speed="40" />
@@ -1607,7 +1607,7 @@ in the main index as well as in housenumber index.
    				<description desc = "tram"/>
  				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "18"/>
+  				<scale scale = "19"/>
   				<lineColor color = "00000070" colorAtNight="00037412" />
 				<borderColor color="00000070" colorAtNight="00037412" />
   				<lineStyle dashed = "true" />
@@ -1617,7 +1617,7 @@ in the main index as well as in housenumber index.
   				<description desc = "tube"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "16"/>
+  				<scale scale = "19"/>
   				<lineColor color = "00FFA000" colorAtNight="00037412" />
 				<borderColor color="00FFA000" colorAtNight="00037412" />
   				<lineStyle dashed = "true" />
@@ -2443,7 +2443,7 @@ end -->
 	-->
 	<tileScaleLevels>
 		<tileScaleLevel level="3" minScale ="21" allowedForRoutableWays = "false" />
-		<tileScaleLevel level="2" minScale ="19" allowedForRoutableWays = "false" />
+		<tileScaleLevel level="2" minScale ="19" />
 		<tileScaleLevel level="1" minScale ="17" />
 		<!-- lower scales will be included in tile level 0 -->
 	</tileScaleLevels>
