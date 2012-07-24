@@ -1,6 +1,6 @@
-	*** Android Support ***
+    *** Android Support ***
     - multitouch two-finger rotate & pinch zoom 
-	*** Osm2GpsMid / Osm2GpsMid GUI ***
+    *** Osm2GpsMid / Osm2GpsMid GUI ***
     - new tile size/count preset "even fewer and large map tiles" to generate maps for powerful mobiles
       while keeping the number of files in map data not very high. This might be useful for most
       Android devices but also to be able to install e.g. on Nokia 5800 very big jars (~200 MB)
@@ -9,6 +9,10 @@
     - more consistent color for u-turn big navigation icons
     - show distance below big navigation icons if space permits
     *** Usability ***
+    - reorganized style-file for better performance when zoomed out
+    - increased performance for zooming far out, panning around and zooming somewhere else in.
+      This is achieved by dropping requests for tiles that are off-screen
+      or do not need to be rendered because zoomed to far out  
     - increased defaults for maximum search results in new midlets
     *** Bug fixes ***
     - fixed an error that prevented to load all route / map tiles of the Germany map from thju
