@@ -153,7 +153,7 @@ public class TraceLayout extends LayoutManager {
 			e.setVRelative(ele[SCALEBAR]);
 			e.setHRelative(ele[BIGNAVIICON1]);
 			e.setAdditionalOffsX(3);
-			e.setAdditionalOffsY(getSpecialElementHeight(SE_BIGNAVI_ICON1, 0) / 3 );
+			//e.setAdditionalOffsY(getSpecialElementHeight(SE_BIGNAVI_ICON1, 0) / 3 );
 		}
 		e.setSpecialElementID(SE_BIGNAVI_ICON2);		
 		
@@ -530,7 +530,7 @@ public class TraceLayout extends LayoutManager {
 				return speedingSignWidth;
 			case SE_BIGNAVI_ICON1:
 			case SE_BIGNAVI_ICON2:
-				return getHeight() * (isPortraitLayout ? 12 : 18) / 100;
+				return getHeight() * (isPortraitLayout ? 12 : 22) / 100;
 		}
 		return 0;
 	}
