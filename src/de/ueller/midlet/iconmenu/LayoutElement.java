@@ -63,20 +63,22 @@ public class LayoutElement {
 	/** make the background as wide as a percentage of the LayoutManager area.
 		Specify with setWidthPercent();
 	*/
-	public static final int FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH = (1<<18);
-	public static final int FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT = (1<<19);
+	public static final int FLAG_BACKGROUND_HEIGHTPERCENT_WIDTH = (1<<18);
+	public static final int FLAG_BACKGROUND_HEIGHTPERCENT_HEIGHT = (1<<19);
 
-	public static final int FLAG_FONT_SMALL = (1<<20);
-	public static final int FLAG_FONT_MEDIUM = (1<<21);
-	public static final int FLAG_FONT_LARGE = (1<<22);
-	public static final int FLAG_FONT_BOLD = (1<<23);
+	public static final int FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH = (1<<20);
+	public static final int FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT = (1<<21);
+
+	public static final int FLAG_FONT_SMALL = (1<<22);
+	public static final int FLAG_FONT_MEDIUM = (1<<23);
+	public static final int FLAG_FONT_LARGE = (1<<24);
+	public static final int FLAG_FONT_BOLD = (1<<25);
 	public static final int FONT_FLAGS = FLAG_FONT_BOLD | FLAG_FONT_LARGE | FLAG_FONT_MEDIUM | FLAG_FONT_SMALL;
-	public static final int FLAG_IMAGE_GREY = (1<<24);
-	public static final int FLAG_IMAGE_TOGGLEABLE = (1<<25);
+	public static final int FLAG_IMAGE_GREY = (1<<26);
+	public static final int FLAG_IMAGE_TOGGLEABLE = (1<<27);
 
 
-	public static final int FLAG_TRANSPARENT_BACKGROUND_BOX = (1<<26);
-
+	public static final int FLAG_TRANSPARENT_BACKGROUND_BOX = (1<<28);
 	
 	protected LayoutManager lm = null;
 	private int flags = 0;
@@ -176,7 +178,9 @@ public class LayoutElement {
 			width = 0;
 		}
 				
-		if ( (flags & FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH) > 0 ) {
+		if ( (flags & FLAG_BACKGROUND_HEIGHTPERCENT_WIDTH) > 0 ) {
+			width = ((lm.maxY - lm.minY) * widthPercent) / 100;
+		} else if ( (flags & FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH) > 0 ) {
 			width = (fontHeight * widthPercent) / 100;
 		} else if ( (flags & FLAG_BACKGROUND_FULL_WIDTH) > 0 ) {
 			width = lm.maxX - lm.minX;
@@ -260,7 +264,9 @@ public class LayoutElement {
 		right = left + width;
 		
 		
-		if ( (flags & FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT) > 0 ) {
+		if ( (flags & FLAG_BACKGROUND_HEIGHTPERCENT_HEIGHT) > 0 ) {
+			height = ((lm.maxY - lm.minY) * heightPercent) / 100;
+		} else if ( (flags & FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT) > 0 ) {
 			height = (int) ((float) (fontHeight * heightPercent) / 100);
 		}
 
@@ -284,7 +290,7 @@ public class LayoutElement {
 		top += addOffsY;
 		textTop = top;
 		bottom = top + height;
-		if ( (flags & FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT) > 0 ) {
+		if ( (flags & (FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT + FLAG_BACKGROUND_HEIGHTPERCENT_HEIGHT)) > 0 ) {
 			textTop = top +  (height - fontHeight) / 2;
 		}
 		if ( (flags & FLAG_ICONMENU_ICON) > 0 ) {

@@ -64,6 +64,7 @@ public class TraceLayout extends LayoutManager {
 	private int char0Height = 0;
 	private int speedingSignWidth = 0;
 	private String sOldSpeed = "";
+	private boolean isPortraitLayout = true;
 	
 	
 	public TraceLayout(int minX, int minY, int maxX, int maxY) {
@@ -88,6 +89,8 @@ public class TraceLayout extends LayoutManager {
 	 * Layout
 	 */
 	private void createLayout(boolean isPortraitLayout) {
+		this.isPortraitLayout = isPortraitLayout;
+		
 		LayoutElement e;
 		e = ele[TITLEBAR]; addElement(e,
 			LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_TOP |
@@ -241,8 +244,8 @@ public class TraceLayout extends LayoutManager {
 				LayoutElement.FLAG_FONT_BOLD |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
 				LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
-				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
-				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
+				LayoutElement.FLAG_BACKGROUND_HEIGHTPERCENT_WIDTH |
+				LayoutElement.FLAG_BACKGROUND_HEIGHTPERCENT_HEIGHT
 		);
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
@@ -256,8 +259,8 @@ public class TraceLayout extends LayoutManager {
 				LayoutElement.FLAG_FONT_BOLD |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
 				LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
-				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
-				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
+				LayoutElement.FLAG_BACKGROUND_HEIGHTPERCENT_WIDTH |
+				LayoutElement.FLAG_BACKGROUND_HEIGHTPERCENT_HEIGHT
 		);
 		e.setVRelative(ele[ZOOM_OUT]);
 		e.setAdditionalOffsY(-2);
@@ -273,8 +276,8 @@ public class TraceLayout extends LayoutManager {
 						   LayoutElement.FLAG_FONT_BOLD |
 					       LayoutElement.FLAG_BACKGROUND_BORDER |
 						   LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
-					       LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
-					       LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
+					       LayoutElement.FLAG_BACKGROUND_HEIGHTPERCENT_WIDTH |
+					       LayoutElement.FLAG_BACKGROUND_HEIGHTPERCENT_HEIGHT
 					       );
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
@@ -289,8 +292,8 @@ public class TraceLayout extends LayoutManager {
 						  LayoutElement.FLAG_FONT_BOLD |
 						  LayoutElement.FLAG_BACKGROUND_BORDER |
 						  LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
-						  LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
-						  LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
+						  LayoutElement.FLAG_BACKGROUND_HEIGHTPERCENT_WIDTH |
+						  LayoutElement.FLAG_BACKGROUND_HEIGHTPERCENT_HEIGHT
 						  );
 		e.setVRelative(ele[SHOW_DEST]);
 		e.setAdditionalOffsY(-2);
@@ -307,8 +310,8 @@ public class TraceLayout extends LayoutManager {
 				LayoutElement.FLAG_FONT_BOLD |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
 				LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
-				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
-				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
+				LayoutElement.FLAG_BACKGROUND_HEIGHTPERCENT_WIDTH |
+				LayoutElement.FLAG_BACKGROUND_HEIGHTPERCENT_HEIGHT
 				);
 		if (isPortraitLayout) {		
 			e.setVRelative(ele[SHOW_DEST]);
@@ -331,8 +334,8 @@ public class TraceLayout extends LayoutManager {
 				LayoutElement.FLAG_FONT_BOLD |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
 				LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
-				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
-				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
+				LayoutElement.FLAG_BACKGROUND_HEIGHTPERCENT_WIDTH |
+				LayoutElement.FLAG_BACKGROUND_HEIGHTPERCENT_HEIGHT
 				);
 		if (isPortraitLayout) {
 			e.setVRelative(ele[RECENTER_GPS]);
@@ -397,29 +400,33 @@ public class TraceLayout extends LayoutManager {
 			fontFlag2 = fontFlag;
 		}
 		
+		int buttonPercent = (int) (12 * factor);
+		if (isPortraitLayout) {
+			buttonPercent = (int) (8 * factor);
+		}
 		LayoutElement e = ele[ZOOM_IN];
-		e.setWidthPercent((int) (170 * factor));
-		e.setHeightPercent((int) (170 * factor));
+		e.setWidthPercent(buttonPercent);
+		e.setHeightPercent(buttonPercent);
 		e.setFlag(fontFlag2);
 		e = ele[ZOOM_OUT];
-		e.setWidthPercent((int) (170 * factor));
-		e.setHeightPercent((int) (170 * factor));		
+		e.setWidthPercent(buttonPercent);
+		e.setHeightPercent(buttonPercent);		
 		e.setFlag(fontFlag2);
 		e = ele[SHOW_DEST];
-		e.setWidthPercent((int) (170 * factor));
-		e.setHeightPercent((int) (170 * factor));
+		e.setWidthPercent(buttonPercent);
+		e.setHeightPercent(buttonPercent);
 		e.setFlag(fontFlag2);
 		e = ele[RECENTER_GPS];
-		e.setWidthPercent((int) (170 * factor));
-		e.setHeightPercent((int) (170 * factor));
+		e.setWidthPercent(buttonPercent);
+		e.setHeightPercent(buttonPercent);
 		e.setFlag(fontFlag2);
 		e = ele[RECORDINGS];
-		e.setWidthPercent((int) (170 * factor));
-		e.setHeightPercent((int) (170 * factor));
+		e.setWidthPercent(buttonPercent);
+		e.setHeightPercent(buttonPercent);
 		e.setFlag(fontFlag2);
 		e = ele[SEARCH];
-		e.setWidthPercent((int) (170 * factor));
-		e.setHeightPercent((int) (170 * factor));
+		e.setWidthPercent(buttonPercent);
+		e.setHeightPercent(buttonPercent);
 		e.setFlag(fontFlag2);
 		e = ele[POINT_OF_COMPASS];
 		e.setFlag(fontFlag2);
