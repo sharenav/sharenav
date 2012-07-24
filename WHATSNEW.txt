@@ -1,5 +1,3 @@
-    *** Android Support ***
-    - multitouch two-finger rotate & pinch zoom 
     *** Osm2GpsMid / Osm2GpsMid GUI ***
     - new tile size/count preset "even fewer and large map tiles" to generate maps for powerful mobiles
       while keeping the number of files in map data not very high. This might be useful for most
@@ -16,6 +14,8 @@
     - increased defaults for maximum search results in new midlets
     *** Bug fixes ***
     - fixed an error that prevented to load all route / map tiles of the Germany map from thju
+    *** Android Support ***
+    - multitouch two-finger rotate & pinch zoom 
      
 GpsMid 0.7.8
     *** Touchscreen / User Interface ***
