@@ -132,11 +132,13 @@ public class TraceLayout extends LayoutManager {
 		e.setSpecialElementID(SE_SCALEBAR);
 		e.setActionID(Trace.MAPFEATURES_CMD);
 
+		int bigNaviX = (getHeight() >= 320 ? 5 : 30);
 		e = ele[BIGNAVIICON1]; addElement(e,
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 				LayoutElement.FLAG_FONT_SMALL
 		);
 		e.setVRelative(ele[SCALEBAR]);
+		e.setAdditionalOffsX(bigNaviX);
 		e.setSpecialElementID(SE_BIGNAVI_ICON1);		
 		
 		e = ele[BIGNAVIICON2]; addElement(e,
@@ -145,10 +147,13 @@ public class TraceLayout extends LayoutManager {
 		);
 		if (isPortraitLayout) {
 			e.setVRelative(ele[BIGNAVIICON1]);
+			e.setAdditionalOffsX(bigNaviX);
+			e.setAdditionalOffsY(3);
 		} else {
 			e.setVRelative(ele[SCALEBAR]);
 			e.setHRelative(ele[BIGNAVIICON1]);
-			e.setAdditionalOffsY(getSpecialElementHeight(SE_BIGNAVI_ICON1, 0) / 2 );
+			e.setAdditionalOffsX(3);
+			e.setAdditionalOffsY(getSpecialElementHeight(SE_BIGNAVI_ICON1, 0) / 3 );
 		}
 		e.setSpecialElementID(SE_BIGNAVI_ICON2);		
 		
@@ -525,7 +530,7 @@ public class TraceLayout extends LayoutManager {
 				return speedingSignWidth;
 			case SE_BIGNAVI_ICON1:
 			case SE_BIGNAVI_ICON2:
-				return (maxY - minY) * (isPortraitLayout ? 11 : 17) / 100;
+				return getHeight() * (isPortraitLayout ? 12 : 18) / 100;
 		}
 		return 0;
 	}
@@ -662,7 +667,8 @@ public class TraceLayout extends LayoutManager {
 				int distWidth = e.getFont().stringWidth(dist);
 				int fontHeight = e.getFontHeight();
 				img = ImageCache.getOneColorImage(0x80FFFFFF, distWidth > width ? distWidth : width, fontHeight);
-				g.drawImage(img, x, y + height, Graphics.TOP|Graphics.LEFT);			
+				g.drawImage(img, x, y + height, Graphics.TOP|Graphics.LEFT);
+				g.setFont(e.getFont());
 				g.drawString(	dist,
 								(distWidth > width) ? x : (x + (width-distWidth) / 2),
 								y + height,
