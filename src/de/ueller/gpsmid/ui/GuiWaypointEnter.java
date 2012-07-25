@@ -27,7 +27,7 @@ import de.enough.polish.util.Locale;
 public class GuiWaypointEnter extends Form implements CommandListener {
 	private TextField fldName;
 	// really should be TextField.DECIMAL, but as many platforms have bugs, work around them with TextField.ANY
-	private TextField fldLatDeg = new TextField(Locale.get("guiwaypointenter.LatDeg")/*Lat deg:*/, "", 10, TextField.ANY);
+	private TextField fldLatDeg = new TextField(Locale.get("guiwaypointenter.LatDegOrSMS")/*Lat deg or received SMS:*/, "", 1024, TextField.ANY); // can also be used to paste complete received position SMS 
 	private TextField fldLatMin = new TextField(Locale.get("guiwaypointenter.LatMin")/*Lat min:*/, "", 10, TextField.ANY);
 	private TextField fldLatSec = new TextField(Locale.get("guiwaypointenter.LatSec")/*Lat sec:*/, "", 10, TextField.ANY);
 	private TextField fldLonDeg = new TextField(Locale.get("guiwaypointenter.LonDeg")/*Lon deg:*/, "", 10, TextField.ANY);
@@ -67,10 +67,30 @@ public class GuiWaypointEnter extends Form implements CommandListener {
 
 	public void commandAction(Command cmd, Displayable displayable) {
 		if (cmd == saveCmd) {
+			String s;
 			// parseFloat() doesn't like empty strings...
 			float latDeg = 0.0f;
-			if (fldLatDeg.getString().length() != 0) {
-				latDeg = Float.parseFloat( fldLatDeg.getString() );
+			float lonDeg = 0.0f;
+			s = fldLatDeg.getString();
+			if (s.length() != 0) {
+				// parse pasted received position SMS in format, e. g. lat: 49.1234 lon: 11.56789
+				if (s.indexOf("lat:") >= 0 && s.indexOf("lon:") >= 0) {
+					int begin = s.indexOf("lat:") + 4;
+					int end = s.indexOf(" ", begin + 6);
+					if (end <= 0) {
+						end = s.length();
+					}
+					latDeg = Float.parseFloat( s.substring(begin, end).trim() );
+					begin = s.indexOf("lon:") + 4;
+					end = s.indexOf(" ", begin + 6);
+					if (end <= 0) {
+						end = s.length();
+					}
+					lonDeg = Float.parseFloat( s.substring(begin, end).trim() );
+
+				} else {
+					latDeg = Float.parseFloat( s );
+				}
 			}
 			float latMin = 0.0f;
 			if (fldLatMin.getString().length() != 0) {
@@ -80,7 +100,6 @@ public class GuiWaypointEnter extends Form implements CommandListener {
 			if (fldLatSec.getString().length() != 0) {
 				latSec = Float.parseFloat( fldLatSec.getString() );
 			}
-			float lonDeg = 0.0f;
 			if (fldLonDeg.getString().length() != 0) {
 				lonDeg = Float.parseFloat( fldLonDeg.getString() );
 			}
