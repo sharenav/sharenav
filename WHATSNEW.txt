@@ -10,7 +10,8 @@
     - reorganized style-file for better performance when zoomed out
     - increased performance for zooming far out, panning around and zooming somewhere else in.
       This is achieved by dropping requests for tiles that are off-screen
-      or do not need to be rendered because zoomed to far out  
+      or do not need to be rendered because zoomed to far out, and dropping small & smallish
+      areas (like lakes) when zooming out  
     - increased defaults for maximum search results in new midlets
     *** Bug fixes ***
     - fixed an error that prevented to load all route / map tiles of the Germany map from thju
