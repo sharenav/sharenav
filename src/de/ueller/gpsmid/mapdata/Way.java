@@ -669,10 +669,15 @@ public class Way extends Entity {
 			short from = containsCon1At;
 			short to = containsCon2At;
 			int direction = 1;
-			if (from > to && !(isRoundAbout() || isCircleway) ) {
-				// if this is a oneway but not a roundabout or circle way it can't be 
-				// the route path as we would go against the oneway's direction (if no against oneway rule applies)
-				if (isOneDirectionOnly()) {
+			if (from > to) {
+				/* 
+				 * if from > to and this is a oneway but no circleway it can't be
+				 * the route path as we would go against a oneway's direction
+				 * (if no against oneway rule applies)
+				 * 
+				 * Therefore return because this is no correct match.
+				 */
+				if (isOneDirectionOnly() && (!isCircleway)) {
 					return;
 				}
 				// swap direction
