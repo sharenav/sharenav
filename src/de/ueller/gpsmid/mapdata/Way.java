@@ -2242,7 +2242,8 @@ public class Way extends Entity {
 		IntPoint p1 = pc.lineP2;
 		IntPoint p2 = pc.swapLineP;
 		IntPoint p3 = pc.tempPoint;
-		pc.g.setColor(wayDesc.lineColor);
+		Graphics g = pc.g;
+		g.setColor(wayDesc.lineColor);
 		boolean dashed = (wayDesc.getGraphicsLineStyle() == WayDescription.WDFLAG_LINESTYLE_DOTTED);
 
 		//#if polish.android
@@ -2270,10 +2271,10 @@ public class Way extends Entity {
 				FilledTriangle.fillTriangle(pc, p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
 			} else {
 				if (p1.x != p2.x || p2.x != p3.x || p1.y != p2.y || p2.y != p3.y) {
-					pc.g.fillTriangle(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
+					g.fillTriangle(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
 				} else {
 					// optimisation: render triangles consisting of 3 equal coordinates simply as a dot 
-					pc.g.drawRect(p1.x, p1.y, 0, 0 );
+					g.drawRect(p1.x, p1.y, 0, 0 );
 				}
 				
 // Without these, there are ugly light-color gaps in filled areas on Android devices - but this cuts down on performance,
@@ -2287,9 +2288,9 @@ public class Way extends Entity {
 //
 //#if polish.android
 				if (doNotSimplifyMap) {
-					pc.g.drawLine(p1.x,p1.y,p2.x,p2.y);
-					pc.g.drawLine(p2.x,p2.y,p3.x,p3.y);
-					pc.g.drawLine(p1.x,p1.y,p3.x,p3.y);
+					g.drawLine(p1.x,p1.y,p2.x,p2.y);
+					g.drawLine(p2.x,p2.y,p3.x,p3.y);
+					g.drawLine(p1.x,p1.y,p3.x,p3.y);
 				}
 //#endif
 			}			
