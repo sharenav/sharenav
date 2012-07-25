@@ -2259,7 +2259,7 @@ end -->
   				<description desc = "Water"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "10"/>
+  				<scale scale = "8"/>
   				<lineColor color = "000000CC" colorAtNight="0000009A"/>
 				<force_to layer = "-1"/> 
 			</Wvalue>  			
