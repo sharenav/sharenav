@@ -197,7 +197,7 @@ public class MyMath {
 	 * @param lon2 Longitude of second point in radians
 	 * @return Angular distance in radians
 	 */
-	private static double calcDistance(double lat1, double lon1, double lat2, double lon2) {
+	public static double calcDistance(double lat1, double lon1, double lat2, double lon2) {
 		// Taken from http://williams.best.vwh.net/avform.htm
 		double p1 = Math.sin((lat1 - lat2) / 2);
 		double p2 = Math.sin((lon1 - lon2) / 2);

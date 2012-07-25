@@ -78,6 +78,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 	public static int tileScaleLevel[] = { Integer.MAX_VALUE, 900000, 180000, 45000 };
 	public static boolean tileScaleLevelIsAllowedForRoutableWays[] = {true, true, true, true};
 	public static boolean tileScaleLevelContainsRoutableWays[] = {false, false, false, false};
+	public static int tileLevelAttractsAreasWithSmallerBoundsDiameterThan[] = {0, 0, 0, 0};
 	
 	private static HashSet<String> relevantKeys;
 
@@ -919,6 +920,11 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 					if (allowedForRoutableWays != null) {
 						tileScaleLevelIsAllowedForRoutableWays[level] = allowedForRoutableWays.equalsIgnoreCase("true");
 					}
+					String s = atts.getValue("attractAreasWithSmallerBoundsDiameterThan");
+					if (s != null) {
+						tileLevelAttractsAreasWithSmallerBoundsDiameterThan[level] = Integer.parseInt(atts.getValue("attractAreasWithSmallerBoundsDiameterThan"));
+					}
+					
 				}
 			}
 			break;  // tileScaleLevels

@@ -119,3 +119,4 @@
 <!ATTLIST tileScaleLevel level CDATA #REQUIRED>
 <!ATTLIST tileScaleLevel minScale CDATA #REQUIRED>
 <!ATTLIST tileScaleLevel allowedForRoutableWays CDATA #IMPLIED>
+<!ATTLIST tileScaleLevel attractAreasWithSmallerBoundsDiameterThan CDATA #IMPLIED>

@@ -430,9 +430,33 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 	
 	public byte getZoomlevel(Configuration c) {
+		Bounds b = null;
+		byte tileLevelFromDiameter = 0;
+		
+		// calculate tile level for areas based on diameter
+		if (isArea()) {
+			b = getBounds();
+			int diameter = (int) (MyMath.calcDistance(
+					Math.toRadians(b.minLat),
+					Math.toRadians(b.minLon),
+					Math.toRadians(b.maxLat),
+					Math.toRadians(b.maxLon)
+			) * MyMath.PLANET_RADIUS);
+//			if (getName().indexOf("Volksbad") >= 0) {
+//				System.out.println ("lat: " + b.minLat + " lon: " + b.minLon + " : " + diameter + "  " + getName());
+//			}
+			if (diameter < LegendParser.tileLevelAttractsAreasWithSmallerBoundsDiameterThan[3]) {
+				tileLevelFromDiameter = 3;
+			} else if (diameter < LegendParser.tileLevelAttractsAreasWithSmallerBoundsDiameterThan[2]) {
+				tileLevelFromDiameter = 2;
+			} else if (diameter < LegendParser.tileLevelAttractsAreasWithSmallerBoundsDiameterThan[1]) {
+				tileLevelFromDiameter = 1;
+			}
+		}
+
 		// polish.api.bigstyles
 		short type = getType(c);
-
+		
 		if (type < 0) {
 			// System.out.println("unknown type for node " + toString());
 			return 3;
@@ -445,13 +469,22 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 		if (maxScale < LegendParser.tileScaleLevel[2]) { // 180000 in GpsMid 0.5.0
 			if (LegendParser.tileScaleLevelIsAllowedForRoutableWays[2]|| !isAccessForAnyRouting()) {
+				if (tileLevelFromDiameter > 2) { // if based on diameter the area would be in a higher zoom level put it there
+					return tileLevelFromDiameter;
+				}
 				return 2;
 			}
 		}
 		if (maxScale < LegendParser.tileScaleLevel[1]) { // 900000 in GpsMid 0.5.0
 			if (LegendParser.tileScaleLevelIsAllowedForRoutableWays[1] || !isAccessForAnyRouting()) {
+				if (tileLevelFromDiameter > 1) { // if based on diameter the area would be in a higher zoom level put it there
+					return tileLevelFromDiameter;
+				}
 				return 1;
 			}
+		}
+		if (tileLevelFromDiameter > 0) {  // if based on diameter the area would be in a higher zoom level put it there
+			return tileLevelFromDiameter;
 		}
 		return 0;
 	}

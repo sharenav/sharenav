@@ -2442,9 +2442,9 @@ end -->
 	save memory and performance.
 	-->
 	<tileScaleLevels>
-		<tileScaleLevel level="3" minScale ="21" allowedForRoutableWays = "false" />
-		<tileScaleLevel level="2" minScale ="19" />
-		<tileScaleLevel level="1" minScale ="17" />
+		<tileScaleLevel level="3" minScale ="21" allowedForRoutableWays = "false" attractAreasWithSmallerBoundsDiameterThan = "50" />
+		<tileScaleLevel level="2" minScale ="19" attractAreasWithSmallerBoundsDiameterThan = "150"/>
+		<tileScaleLevel level="1" minScale ="17" attractAreasWithSmallerBoundsDiameterThan = "500" />
 		<!-- lower scales will be included in tile level 0 -->
 	</tileScaleLevels>
 
