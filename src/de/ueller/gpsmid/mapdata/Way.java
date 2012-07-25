@@ -105,6 +105,7 @@ public class Way extends Entity {
 	public static final int WAY_DAMAGED = 64 << ModShift;
 	public static final int WAY_NAMEASFORAREA = 128 << ModShift;
 	public static final int WAY_RATHER_BIG = 256 << ModShift;
+	public static final int WAY_EVEN_BIGGER = 512 << ModShift;
 
 	public static final byte PAINTMODE_COUNTFITTINGCHARS = 0;
 	public static final byte PAINTMODE_DRAWCHARS = 1;
@@ -262,8 +263,12 @@ public class Way extends Entity {
 		/* calculate diameter of the rectangle around the way to see if this is a rather big way that is worth to be rendered in lower zoom levels
 		 * (used coordinates do not represent exactly the real ones but should be close enough for calculating the approximate diameter)
 		*/ 
-		if (ProjMath.getDistance(minLat * MoreMath.FIXPT_MULT_INV + t.centerLat, minLon * MoreMath.FIXPT_MULT_INV + t.centerLon, maxLat * MoreMath.FIXPT_MULT_INV + t.centerLat, maxLon * MoreMath.FIXPT_MULT_INV + t.centerLon) > 500) {
+		float diameter = ProjMath.getDistance(minLat * MoreMath.FIXPT_MULT_INV + t.centerLat, minLon * MoreMath.FIXPT_MULT_INV + t.centerLon, maxLat * MoreMath.FIXPT_MULT_INV + t.centerLat, maxLon * MoreMath.FIXPT_MULT_INV + t.centerLon);
+		if (diameter > 500) {
 			flags |= WAY_RATHER_BIG;
+		}
+		if (diameter > 5000) {
+			flags |= WAY_EVEN_BIGGER;
 		}
 		
 		byte f2=0;
@@ -2494,6 +2499,10 @@ public class Way extends Entity {
 
 	public boolean isRatherBig() {
 		return ((flags & WAY_RATHER_BIG) > 0);
+	}
+
+	public boolean isEvenBigger() {
+		return ((flags & WAY_EVEN_BIGGER) > 0);
 	}
 	
     public boolean nameAsForArea() {

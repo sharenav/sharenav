@@ -242,8 +242,8 @@ public class SingleTile extends Tile implements QueueableTile {
 						// logger.debug("test Bounds of way");
 						if (!w.isOnScreen(pcLDlat, pcLDlon, pcRUlat, pcRUlon)) continue; 
 						
-						// skip rendering small areas when zoomed out to tile level 0
-						if (zoomedOutFar && w.isArea() && !w.isRatherBig()) {
+						// skip rendering small areas when zoomed out to tile level 0 and zoom level is small
+						if (zoomedOutFar && w.isArea() && (!((w.isRatherBig() && pc.scale < 1100000 ) || w.isEvenBigger()))) {
 							// if (w.nameIdx != -1) System.out.println("Skip rendering " + w.toString());
 							continue;
 						}
