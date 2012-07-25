@@ -92,7 +92,7 @@ scale alias 1: zoomed out 21x
 		<description desc = "Town"/>
 		<searchIcon src="city.png"/>
 		<namekey tag="name"/>
-		<scale scale = "15"/>
+		<scale scale = "13"/>
 		<hideable hideable="false"/>
 	  </value>
 	  <value name="village">
