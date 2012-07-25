@@ -2269,7 +2269,12 @@ public class Way extends Entity {
 			if (dashed) {
 				FilledTriangle.fillTriangle(pc, p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
 			} else {
-				pc.g.fillTriangle(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
+				if (p1.x != p2.x || p2.x != p3.x || p1.y != p2.y || p2.y != p3.y) {
+					pc.g.fillTriangle(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
+				} else {
+					// optimisation: render triangles consisting of 3 equal coordinates simply as a dot 
+					pc.g.drawRect(p1.x, p1.y, 0, 0 );
+				}
 				
 // Without these, there are ugly light-color gaps in filled areas on Android devices - but this cuts down on performance,
 // remove for now on 2012-07-23 for configurations with "simplify map when busy" turned on
