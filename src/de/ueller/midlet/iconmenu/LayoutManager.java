@@ -193,6 +193,10 @@ public class LayoutManager extends Vector {
 		return getActionIdShiftedAtPointer(x, y, 0);
 	}
 	
+	public int getHeight() {
+		return maxY - minY + 1;
+	}
+	
 	public String getChoiceNameAtPointer(int x, int y) {
 		int i = getElementIdAtPointer(x, y);
 		if (i != -1) {

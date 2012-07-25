@@ -11,11 +11,14 @@ import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.PaintContext;
 import de.ueller.midlet.iconmenu.LayoutElement;
 import de.ueller.midlet.iconmenu.LayoutManager;
+import de.ueller.midlet.util.ImageCache;
+import de.ueller.util.HelperRoutines;
 import de.ueller.util.MoreMath;
 import de.ueller.util.ProjMath;
 
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.Image;
 
 
 public class TraceLayout extends LayoutManager {
@@ -45,11 +48,15 @@ public class TraceLayout extends LayoutManager {
 	public static final int SPEEDING_SIGN = 22;
 	public static final int REQUESTED_TILES = 23;
 	public static final int TRAVEL_MODE = 24;
-	public static final int ELE_COUNT = 25;
+	public static final int BIGNAVIICON1 = 25;
+	public static final int BIGNAVIICON2 = 26;
+	public static final int ELE_COUNT = 27;
 
 	// special element ids
 	public static final byte SE_SCALEBAR = 1;
 	public static final byte SE_SPEEDING_SIGN = 2;
+	public static final byte SE_BIGNAVI_ICON1 = 3;
+	public static final byte SE_BIGNAVI_ICON2 = 4;
 	
 	public static boolean bigOnScreenButtons = false;
 	
@@ -65,10 +72,24 @@ public class TraceLayout extends LayoutManager {
 	private int speedingSignWidth = 0;
 	private String sOldSpeed = "";
 	private boolean isPortraitLayout = true;
+
+	class RouteIcon {
+		Image origIcon;
+		int roundaboutExitNr;
+		int distance;
+		
+		public RouteIcon() {
+		}
+		
+	}
 	
+	RouteIcon routeIcon[] = new RouteIcon[2];
 	
 	public TraceLayout(int minX, int minY, int maxX, int maxY) {
 		super(minX, minY, maxX, maxY, Legend.COLORS[Legend.COLOR_MAP_TOUCHED_BUTTON_BACKGROUND]);
+		
+		routeIcon[0] = new RouteIcon();
+		routeIcon[1] = new RouteIcon();
 		
 		for (int i = 0; i < ELE_COUNT; i++) {
 			ele[i] = new LayoutElement(this);
@@ -111,6 +132,31 @@ public class TraceLayout extends LayoutManager {
 		e.setSpecialElementID(SE_SCALEBAR);
 		e.setActionID(Trace.MAPFEATURES_CMD);
 
+		int bigNaviX = (getHeight() >= 320 ? 5 : 30);
+		e = ele[BIGNAVIICON1]; addElement(e,
+				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
+				LayoutElement.FLAG_FONT_SMALL
+		);
+		e.setVRelative(ele[SCALEBAR]);
+		e.setAdditionalOffsX(bigNaviX);
+		e.setSpecialElementID(SE_BIGNAVI_ICON1);		
+		
+		e = ele[BIGNAVIICON2]; addElement(e,
+				(isPortraitLayout ? LayoutElement.FLAG_HALIGN_LEFT : LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE) | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
+				LayoutElement.FLAG_FONT_SMALL
+		);
+		if (isPortraitLayout) {
+			e.setVRelative(ele[BIGNAVIICON1]);
+			e.setAdditionalOffsX(bigNaviX);
+			e.setAdditionalOffsY(3);
+		} else {
+			e.setVRelative(ele[SCALEBAR]);
+			e.setHRelative(ele[BIGNAVIICON1]);
+			e.setAdditionalOffsX(3);
+			//e.setAdditionalOffsY(getSpecialElementHeight(SE_BIGNAVI_ICON1, 0) / 3 );
+		}
+		e.setSpecialElementID(SE_BIGNAVI_ICON2);		
+		
 		e = ele[POINT_OF_COMPASS]; addElement(e,
 			LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_FONT_MEDIUM |
@@ -454,15 +500,24 @@ public class TraceLayout extends LayoutManager {
 			case SE_SPEEDING_SIGN:
 				showSpeedingSign(g, text, left, top);
 				break;
+			case SE_BIGNAVI_ICON1:
+				showRouteIcon(g, 0, left, top);
+				break;
+			case SE_BIGNAVI_ICON2:
+				showRouteIcon(g, 1, left, top);
+				break;
 		}
 	}
 	
 	protected int getSpecialElementWidth(byte id, String text, Font font) {
 		switch(id) {
-		case SE_SCALEBAR:
-			return scalePx + 1;
-		case SE_SPEEDING_SIGN:
-			return getSpeedingSignWidth(font, text);
+			case SE_SCALEBAR:
+				return scalePx + 1;
+			case SE_SPEEDING_SIGN:
+				return getSpeedingSignWidth(font, text);
+			case SE_BIGNAVI_ICON1:
+			case SE_BIGNAVI_ICON2:
+				return getSpecialElementHeight(id, 0);
 		}
 		return 0;
 	}
@@ -473,6 +528,9 @@ public class TraceLayout extends LayoutManager {
 				return fontHeight + 4;
 			case SE_SPEEDING_SIGN:
 				return speedingSignWidth;
+			case SE_BIGNAVI_ICON1:
+			case SE_BIGNAVI_ICON2:
+				return getHeight() * (isPortraitLayout ? 12 : 22) / 100;
 		}
 		return 0;
 	}
@@ -579,7 +637,47 @@ public class TraceLayout extends LayoutManager {
 				top + speedingSignWidth / 2 - (char0Height / 2),
 				Graphics.TOP | Graphics.HCENTER);
 	}
-	
+
+	public void setRouteIcon(int iconNumber, Image origIcon, int roundaboutExitNr, int distance) {
+		routeIcon[iconNumber].origIcon = origIcon;
+		routeIcon[iconNumber].roundaboutExitNr = roundaboutExitNr;
+		routeIcon[iconNumber].distance = distance;
+		ele[BIGNAVIICON1 + iconNumber].setText(" ");
+	}
+
+	private void showRouteIcon(Graphics g, int iconNumber, int x, int y) {
+		RouteIcon ri = routeIcon[iconNumber];
+		if (ri.origIcon != null) {
+			int height = getSpecialElementHeight(SE_BIGNAVI_ICON1, 0);
+			LayoutElement e = ele[BIGNAVIICON1];
+			height -= e.getFontHeight();
+			int width = height;
+			Image img = ImageCache.getScaledImage(ri.origIcon, height, height);
+			g.drawImage(img, x, y, Graphics.TOP|Graphics.LEFT);
+			if (ri.roundaboutExitNr != 0) {
+				Font font = Font.getFont(Font.FACE_MONOSPACE, Font.STYLE_BOLD, Font.SIZE_LARGE);
+				g.setFont(font);
+				int fontHeight = font.getHeight();
+				g.setColor(0xFFFFFF);
+				g.drawString(""  + ri.roundaboutExitNr, x + height / 2, y + height / 2 - fontHeight/2, Graphics.TOP|Graphics.HCENTER);
+			}
+			if (iconNumber == 1 || ri.distance > 1) {
+				g.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
+				String dist = HelperRoutines.formatDistance(ri.distance);
+				int distWidth = e.getFont().stringWidth(dist);
+				int fontHeight = e.getFontHeight();
+				img = ImageCache.getOneColorImage(0x80FFFFFF, distWidth > width ? distWidth : width, fontHeight);
+				g.drawImage(img, x, y + height, Graphics.TOP|Graphics.LEFT);
+				g.setFont(e.getFont());
+				g.drawString(	dist,
+								(distWidth > width) ? x : (x + (width-distWidth) / 2),
+								y + height,
+								Graphics.TOP|Graphics.LEFT
+				);
+			}			
+		}
+	}
+
 }
 
  	  	 

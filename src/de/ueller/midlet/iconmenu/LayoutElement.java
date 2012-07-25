@@ -609,7 +609,11 @@ public class LayoutElement {
 	public int getFontHeight() {
 		return fontHeight;
 	}
-		
+
+	public Font getFont() {
+		return font;
+	}
+	
 	public String getValidationError() {
 		if (flags == 0) {
 			return "not initialised";
