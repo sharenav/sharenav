@@ -1549,11 +1549,11 @@ public class CreateGpsMidData implements FilenameFilter {
 		}
 
 		nds.writeByte(0x56); // magic number
-		nfo.close();
-		cfo.close();
 		byte [][] ret = new byte[2][];
 		ret[0] = nfo.toByteArray();
 		ret[1] = cfo.toByteArray();
+		nfo.close();
+		cfo.close();
 		return ret;
 	}
 
@@ -1632,8 +1632,9 @@ public class CreateGpsMidData implements FilenameFilter {
 		}
 		ds.writeByte(0x56); // Magic number
 		ds.close();
+		byte[] ret = fo.toByteArray(); 
 		fo.close();
-		return fo.toByteArray();
+		return ret; 
 	}
 
 	/**
