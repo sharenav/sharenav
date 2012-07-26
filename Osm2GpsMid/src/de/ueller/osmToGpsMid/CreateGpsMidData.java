@@ -1654,6 +1654,10 @@ public class CreateGpsMidData implements FilenameFilter {
 		}
 	}
 	
+	
+	/* FIXME: This is not actually the data written to the file system but rather is used to calculate route tile sizes
+	 * The actual route data is written in Tile.writeConnections() and sizes from this data should be used
+	 */
 	private void writeRouteNode(Node n, DataOutputStream nds, DataOutputStream cds) throws IOException {
 		nds.writeByte(4);
 		nds.writeFloat(MyMath.degToRad(n.lat));
