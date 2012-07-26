@@ -271,7 +271,15 @@ public class IconMenuPage extends LayoutManager {
 		LayoutElement e;
 		// draw to boxes under the still to be drawn active icon to create a border
 		if (showCursor) {
-			e = (LayoutElement) this.elementAt(getEleId(currentCol, currentRow, scrollOffsY));
+			int elementPosition = getEleId(currentCol, currentRow, scrollOffsY);
+			// make sure we don't get index out of bounds, i.e. move to a valid position
+			if (elementPosition >= this.size()) {
+				while (elementPosition >= 0 && elementPosition >= this.size()) {
+					elementPosition--;
+				}
+				setCursor(elementPosition);
+			}
+			e = (LayoutElement) this.elementAt(elementPosition);
 			g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT]);
 			g.fillRect(e.left + dragOffsX - 2, e.top - 2 + dragOffsY, e.right - e.left + 4, e.bottom - e.top + 4);
 			g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_BACKGROUND]);
