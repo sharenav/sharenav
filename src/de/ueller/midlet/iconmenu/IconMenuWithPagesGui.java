@@ -61,6 +61,10 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	private LayoutElement ePrevTab;
 	/** " > " button */
 	private LayoutElement eNextTab;
+	/** " ^ " button */
+	private LayoutElement eVertScrollUp;
+	/** " v " button */
+	private LayoutElement eVertScrollDown;
 	/** status bar */
 	private LayoutElement eStatusBar;
 
@@ -157,6 +161,29 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		ePrevTab.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]);
 		ePrevTab.setText( " < ");
 		ePrevTab.setActionID(0);
+
+		eVertScrollUp = tabDirectionButtonManager.createAndAddElement(
+				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
+				LayoutElement.FLAG_BACKGROUND_BORDER |
+				getFontFlag()
+		);
+		eVertScrollUp.setBackgroundColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_BORDER]);
+		eVertScrollUp.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]);
+		eVertScrollUp.setText( " ^ ");
+		eVertScrollUp.setVRelative(ePrevTab);
+		eVertScrollUp.setActionID(0);
+
+		eVertScrollDown = tabDirectionButtonManager.createAndAddElement(
+				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
+				LayoutElement.FLAG_BACKGROUND_BORDER |
+				getFontFlag()
+		);
+		eVertScrollDown.setBackgroundColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_BORDER]);
+		eVertScrollDown.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]);
+		eVertScrollDown.setText( " v ");
+		eVertScrollDown.setVRelative(eVertScrollUp);
+		eVertScrollDown.setActionID(0);
+
 		eNextTab = tabDirectionButtonManager.createAndAddElement(
 				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_TOP |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
@@ -663,6 +690,19 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		} else {
 			eNextTab.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]); // white
 		}
+		if (getActiveMenuPage().scrollOffsY == 0) {
+			eVertScrollUp.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE]); // grey
+		} else {
+			eVertScrollUp.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]); // white
+		}
+		if ((getActiveMenuPage().size() + getActiveMenuPage().numCols - 1) / getActiveMenuPage().numCols - getActiveMenuPage().scrollOffsY > getActiveMenuPage().numRows) {
+			eVertScrollDown.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]); // white
+		} else {
+			eVertScrollDown.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE]); // grey
+		}
+		eVertScrollDown.setTextValid();
+		eVertScrollUp.setTextValid();
+
 		// clear the area of the right button as it might have been overdrawn by a tab button
 		g.setColor(0);
 		g.fillRect(eNextTab.left, eNextTab.top, eNextTab.right, eNextTab.bottom);
