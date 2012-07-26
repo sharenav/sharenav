@@ -12,8 +12,6 @@ import de.ueller.gpsmid.mapdata.Way;
 public class RoutePositionMark extends PositionMark {
 	/** the entity (e.g. way) of the route position mark */
 	public Entity entity;
-	/** the travel mode with which this PositionMark's entity has been set as closest way */ 
-	public byte entityTravelModeNr = -1;
 	/** the latitude coordinates of the way corresponding to this RoutePositionMark
 		this is used to find matching routeNodes
 	*/
@@ -40,7 +38,6 @@ public class RoutePositionMark extends PositionMark {
 		entity = w;
 		nodeLat = lat;
 		nodeLon = lon;
-		entityTravelModeNr = (byte) Configuration.getTravelModeNr();
 	}
 
 

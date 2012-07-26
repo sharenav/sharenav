@@ -824,12 +824,14 @@ public class Routing implements Runnable {
 			startNode.lat=fromMark.lat;
 			startNode.lon=fromMark.lon;
 
-			/* search again the closest way to the start position
-			 * if the travel mode changed (e.g from motorcar to foot)
-			 * - currently this will be always because in Trace the closest way for the routeSource PositionMark is not set
+			/* if the entity of the RoutePositionMark is not routable in the current travel mode
+			 * search again the closest way to the start position
 			 */			
-			if (fromMark.entityTravelModeNr != Configuration.getTravelModeNr()) {
-				fromMark.entity = null;
+			if (fromMark.entity != null) {
+				Way w = (Way) fromMark.entity;
+				if (!w.isRoutableWay()) { 
+					fromMark.entity = null;
+				}
 			}
 			if (fromMark.entity == null) {
 				parent.receiveMessage(Locale.get("routing.SearchingStartWay")/*Searching start way*/);
@@ -839,11 +841,14 @@ public class Routing implements Runnable {
 				}
 			}
 
-			/* search again the closest way to the destination position
-			 * if the travel mode changed (e.g from motorcar to foot)
+			/* if the entity of the RoutePositionMark is not routable in the current travel mode
+			 * search again the closest way to the destination position
 			 */			
-			if (toMark.entityTravelModeNr != Configuration.getTravelModeNr()) {
-				toMark.entity = null;
+			if (toMark.entity != null) {
+				Way w = (Way) toMark.entity;
+				if (!w.isRoutableWay()) { 
+					toMark.entity = null;
+				}
 			}
 			if (toMark.entity == null) {
 				parent.receiveMessage(Locale.get("routing.SearchingDestinationWay")/*Searching destination way*/);
