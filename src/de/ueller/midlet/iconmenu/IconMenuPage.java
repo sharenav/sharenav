@@ -204,27 +204,45 @@ public class IconMenuPage extends LayoutManager {
 	}
 
 	private int getEleId(int col, int row) {
+		int eleId = 0;
 		if (numCols != 4) { // 3 or more than 4
-			return col + row * numCols;
+			eleId = col + row * numCols;
 		} else { // numCols == 4 - arrange elements similarly as they are arranged in the 3-column setup
 			if (col == 3) {
-				return 9 + row;
+				eleId = 9 + row;
 			} else {
-				return row * 4 + (col-row);
+				eleId = row * 4 + (col-row);
 			}
 		}
+		// make sure we don't get index out of bounds, i.e. return element at last valid position if col & row would be incorrect
+		if (eleId >= this.size()) {
+			while (eleId >= 0 && eleId >= this.size()) {
+				eleId--;
+			}
+			// setCursor(eleId);
+		}
+		return eleId;
 	}
 	
 	private int getEleId(int col, int row, int scrollOffset) {
+		int eleId = 0;
 		if (numCols != 4) { // 3 or more than 4
-			return col + (row + scrollOffset) * numCols;
+			eleId = col + (row + scrollOffset) * numCols;
 		} else { // numCols == 4 - arrange elements similarly as they are arranged in the 3-column setup
 			if (col == 3) {
-				return 9 + row;
+				eleId = 9 + row;
 			} else {
-				return (row + scrollOffset) * 4 + (col-row);
+				eleId = (row + scrollOffset) * 4 + (col-row);
 			}
 		}
+		// make sure we don't get index out of bounds, i.e. return element at last valid position if col & row would be incorrect
+		if (eleId >= this.size()) {
+			while (eleId >= 0 && eleId >= this.size()) {
+				eleId--;
+			}
+			// setCursor(eleId);
+		}
+		return eleId;
 	}
 	
 	protected int getActiveEleActionId() {
@@ -271,15 +289,7 @@ public class IconMenuPage extends LayoutManager {
 		LayoutElement e;
 		// draw to boxes under the still to be drawn active icon to create a border
 		if (showCursor) {
-			int elementPosition = getEleId(currentCol, currentRow, scrollOffsY);
-			// make sure we don't get index out of bounds, i.e. move to a valid position
-			if (elementPosition >= this.size()) {
-				while (elementPosition >= 0 && elementPosition >= this.size()) {
-					elementPosition--;
-				}
-				setCursor(elementPosition);
-			}
-			e = (LayoutElement) this.elementAt(elementPosition);
+			e = (LayoutElement) this.elementAt(getEleId(currentCol, currentRow, scrollOffsY));
 			g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT]);
 			g.fillRect(e.left + dragOffsX - 2, e.top - 2 + dragOffsY, e.right - e.left + 4, e.bottom - e.top + 4);
 			g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_BACKGROUND]);

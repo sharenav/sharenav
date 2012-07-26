@@ -77,6 +77,12 @@ public class LayoutManager extends Vector {
 	}
 	
 	public LayoutElement getElementAt(int i) {
+		// make sure we don't get index out of bounds, i.e. return element at last valid position if col & row would be incorrect
+		if (i >= this.size()) {
+			while (i >= 0 && i >= this.size()) {
+				i--;
+			}
+		}
 		return (LayoutElement) this.elementAt(i);
 	}
 
