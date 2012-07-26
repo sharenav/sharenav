@@ -173,25 +173,25 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		eNextTab.setActionID(0);
 
 		eVertScrollUp = tabDirectionButtonManager.createAndAddElement(
-				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
+				LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_TOP |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
 				getFontFlag()
 		);
 		eVertScrollUp.setBackgroundColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_BORDER]);
 		eVertScrollUp.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]);
 		eVertScrollUp.setText( " ^ ");
-		eVertScrollUp.setVRelative(ePrevTab);
+		eVertScrollUp.setHRelative(ePrevTab);
 		eVertScrollUp.setActionID(5);
 
 		eVertScrollDown = tabDirectionButtonManager.createAndAddElement(
-				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
+				LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_TOP |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
 				getFontFlag()
 		);
 		eVertScrollDown.setBackgroundColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_BORDER]);
 		eVertScrollDown.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]);
 		eVertScrollDown.setText( " v ");
-		eVertScrollDown.setVRelative(eVertScrollUp);
+		eVertScrollDown.setHRelative(eVertScrollUp);
 		eVertScrollDown.setActionID(6);
 
 		eStatusBar = tabDirectionButtonManager.createAndAddElement(
@@ -218,7 +218,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	/** recreates the tab buttons for all the iconMenuPages */
 	private void recreateTabButtons() {
 		createTabPrevNextButtons();
-		tabButtonManager = new LayoutManager(ePrevTab.right, minY + renderDiff, eNextTab.left, maxY, Legend.COLORS[Legend.COLOR_ICONMENU_TOUCHED_BUTTON_BACKGROUND_COLOR]);
+		tabButtonManager = new LayoutManager(eVertScrollDown.right, minY + renderDiff, eNextTab.left, maxY, Legend.COLORS[Legend.COLOR_ICONMENU_TOUCHED_BUTTON_BACKGROUND_COLOR]);
 		LayoutElement e = null;
 		IconMenuPage imp = null;
 		for (int i=0; i < iconMenuPages.size(); i++) {
