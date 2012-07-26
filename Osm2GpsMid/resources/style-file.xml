@@ -1501,7 +1501,7 @@ in the main index as well as in housenumber index.
 -->
   				<wayWidth width="2" />
 				<routing with="motorcar" accessible="false" speed="5" />  	
-				<routing with="bicycle" accessible="true" speed="12" />
+				<routing with="bicycle" accessible="false" speed="12" />
   				<routing with="foot" accessible="true" speed="4" />
   			</Wvalue>
 <!-- according to http://wiki.openstreetmap.org/wiki/Tag:highway%3Dpath
