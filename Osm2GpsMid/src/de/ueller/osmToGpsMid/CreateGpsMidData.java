@@ -1103,7 +1103,7 @@ public class CreateGpsMidData implements FilenameFilter {
 		Stack<TileTuple> expTiles = new Stack<TileTuple>();
 		byte [] out = new byte[1];
 		expTiles.push(new TileTuple(t, tileBound));
-		byte [] connOut;
+		byte [] connOut = new byte[1];
 		// System.out.println("Exporting Tiles");
 		while (!expTiles.isEmpty()) {			
 			TileTuple tt = expTiles.pop();
@@ -1179,7 +1179,6 @@ public class CreateGpsMidData implements FilenameFilter {
 						// TODO: Isn't this run for tiles which will be split down in
 						// this method (below comment "Tile is too large, try to split it.")?
 						out = createMidContent(ways, nodes, t);
-						outputLength += out.length;						
 					}
 				}
 				/**
@@ -1206,7 +1205,6 @@ public class CreateGpsMidData implements FilenameFilter {
 					unsplittableTile = true;										
 					if (tooLarge) {
 						out = createMidContent(ways, nodes, t);
-						outputLength += out.length;						
 					}
 				}
 				t.nodes = nodes;
@@ -1219,9 +1217,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				nodes = getRouteNodesInBound(t.nodes, tileBound, realBound);
 				byte[][] erg = createMidContent(nodes, t);
 				out = erg[0];
-				outputLength += out.length;
 				connOut = erg[1];
-				outputLengthConns += connOut.length;
 				t.nodes = nodes;
 			}
 			
@@ -1279,8 +1275,11 @@ public class CreateGpsMidData implements FilenameFilter {
 					t.fid = tileSeq.next();
 					if (t.zl != ROUTEZOOMLEVEL && t.zl != ROUTEEXTRAMAINSTREETZOOMLEVEL) {
 						writeRenderTile(t, tileBound, realBound, nodes, out);
+						outputLength += out.length;						
 					} else {
 						writeRouteTile(t, tileBound, realBound, nodes, out);
+						outputLength += out.length;
+						outputLengthConns += connOut.length;
 					}
 
 				} else {
