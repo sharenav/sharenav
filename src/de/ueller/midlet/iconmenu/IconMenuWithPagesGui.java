@@ -564,7 +564,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		if (!pointerPressedDown) {
 			return;
 		}
-		if (Math.abs(x - touchX) < 10) {
+		if (Math.abs(x - touchX) < 10 && Math.abs(y - touchY) < 10) {
 			LayoutElement e = getActiveMenuPage().getElementAtPointer(touchX, touchY);
 			if (e != null) {
 				getActiveMenuPage().setTouchedElement(e);
