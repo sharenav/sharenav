@@ -359,6 +359,12 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		setActiveTab(tabNr);
 	}
 	
+	public void vertScroll(int offset) {
+		getActiveMenuPage().scrollOffsY += offset;
+		getActiveMenuPage().recalcPositions();
+		getActiveMenuPage().updateRememberEleId();
+	}
+	
 	public IconMenuPage getActiveMenuPage() {
 		 return (IconMenuPage) iconMenuPages.elementAt(tabNr);
 	}
@@ -544,15 +550,11 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		if (dragMode == dragModeY) {
 			if (y > touchY) {
 				if (getActiveMenuPage().scrollOffsY > 0) {
-					getActiveMenuPage().scrollOffsY -= 1;
-					getActiveMenuPage().recalcPositions();
-					getActiveMenuPage().updateRememberEleId();
+					vertScroll(-1);
 				}
 			} else {
 				if (getActiveMenuPage().scrollOffsY < (getActiveMenuPage().size() + getActiveMenuPage().numCols - 1) / getActiveMenuPage().numCols - getActiveMenuPage().numRows) {
-					getActiveMenuPage().scrollOffsY += 1;
-					getActiveMenuPage().recalcPositions();
-					getActiveMenuPage().updateRememberEleId();
+					vertScroll(1);
 				}
 			}
 		}
