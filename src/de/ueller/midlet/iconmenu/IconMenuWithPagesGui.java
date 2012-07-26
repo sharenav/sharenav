@@ -162,6 +162,16 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		ePrevTab.setText( " < ");
 		ePrevTab.setActionID(0);
 
+		eNextTab = tabDirectionButtonManager.createAndAddElement(
+				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_TOP |
+				LayoutElement.FLAG_BACKGROUND_BORDER |
+				getFontFlag()
+		);
+		eNextTab.setBackgroundColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_BORDER]);
+		eNextTab.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]);
+		eNextTab.setText( " > ");
+		eNextTab.setActionID(0);
+
 		eVertScrollUp = tabDirectionButtonManager.createAndAddElement(
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
@@ -171,7 +181,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		eVertScrollUp.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]);
 		eVertScrollUp.setText( " ^ ");
 		eVertScrollUp.setVRelative(ePrevTab);
-		eVertScrollUp.setActionID(0);
+		eVertScrollUp.setActionID(5);
 
 		eVertScrollDown = tabDirectionButtonManager.createAndAddElement(
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
@@ -182,17 +192,8 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		eVertScrollDown.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]);
 		eVertScrollDown.setText( " v ");
 		eVertScrollDown.setVRelative(eVertScrollUp);
-		eVertScrollDown.setActionID(0);
+		eVertScrollDown.setActionID(6);
 
-		eNextTab = tabDirectionButtonManager.createAndAddElement(
-				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_TOP |
-				LayoutElement.FLAG_BACKGROUND_BORDER |
-				getFontFlag()
-		);
-		eNextTab.setBackgroundColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_BORDER]);
-		eNextTab.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]);
-		eNextTab.setText( " > ");
-		eNextTab.setActionID(0);
 		eStatusBar = tabDirectionButtonManager.createAndAddElement(
 				LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_BOTTOM |
 				LayoutElement.FLAG_BACKGROUND_BOX | LayoutElement.FLAG_BACKGROUND_FULL_WIDTH |
@@ -360,9 +361,12 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 	}
 	
 	public void vertScroll(int offset) {
-		getActiveMenuPage().scrollOffsY += offset;
-		getActiveMenuPage().recalcPositions();
-		getActiveMenuPage().updateRememberEleId();
+		if ((offset == -1 && getActiveMenuPage().scrollOffsY > 0)
+		    || (offset == 1 && getActiveMenuPage().scrollOffsY < (getActiveMenuPage().size() + getActiveMenuPage().numCols - 1) / getActiveMenuPage().numCols - getActiveMenuPage().numRows)) {
+			getActiveMenuPage().scrollOffsY += offset;
+			getActiveMenuPage().recalcPositions();
+			getActiveMenuPage().updateRememberEleId();
+		}
 	}
 	
 	public IconMenuPage getActiveMenuPage() {
@@ -500,6 +504,10 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 				prevTab();
 			} else if (directionId == 1) {
 				nextTab();
+			} else if (tabDirectionButtonManager.getElementAtPointer(x, y) == eVertScrollUp) {
+				vertScroll(-1);
+			} else if (tabDirectionButtonManager.getElementAtPointer(x, y) == eVertScrollDown) {
+				vertScroll(1);
 			} else {
 				if (tabDirectionButtonManager.getElementAtPointer(x, y) == eStatusBar) {
 						int actionId = getActiveMenuPage().getActiveEleActionId();
@@ -549,13 +557,9 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		// scroll menu vertically if needed
 		if (dragMode == dragModeY) {
 			if (y > touchY) {
-				if (getActiveMenuPage().scrollOffsY > 0) {
-					vertScroll(-1);
-				}
+				vertScroll(-1);
 			} else {
-				if (getActiveMenuPage().scrollOffsY < (getActiveMenuPage().size() + getActiveMenuPage().numCols - 1) / getActiveMenuPage().numCols - getActiveMenuPage().numRows) {
-					vertScroll(1);
-				}
+				vertScroll(1);
 			}
 		}
 		dragMode = dragModeUnset;
