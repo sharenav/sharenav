@@ -215,12 +215,12 @@ public class IconMenuPage extends LayoutManager {
 			}
 		}
 		// make sure we don't get index out of bounds, i.e. return element at last valid position if col & row would be incorrect
-		if (eleId >= this.size()) {
-			while (eleId >= 0 && eleId >= this.size()) {
-				eleId--;
-			}
-			// setCursor(eleId);
+//		if (eleId >= this.size()) {
+		while (eleId >= 0 && eleId >= this.size()) {
+			eleId--;
 		}
+		// setCursor(eleId);
+//		}
 		return eleId;
 	}
 	
@@ -236,12 +236,12 @@ public class IconMenuPage extends LayoutManager {
 			}
 		}
 		// make sure we don't get index out of bounds, i.e. return element at last valid position if col & row would be incorrect
-		if (eleId >= this.size()) {
-			while (eleId >= 0 && eleId >= this.size()) {
-				eleId--;
-			}
-			// setCursor(eleId);
+//		if (eleId >= this.size()) {
+		while (eleId >= 0 && eleId >= this.size()) {
+			eleId--;
 		}
+		// setCursor(eleId);
+//		}
 		return eleId;
 	}
 	
