@@ -459,7 +459,7 @@ public class IconMenuWithPagesGui extends Canvas implements CommandListener,
 		tabButtonManager.clearTouchedElement();
 		tabDirectionButtonManager.clearTouchedElement();
 		pointerPressedDown = false;
-		if (Math.abs(x - touchX) < 10) { // if this is no drag action
+		if (Math.abs(x - touchX) < 10 && Math.abs(y - touchY) < 10) { // if this is no drag action
 			//#debug debug
 			logger.debug("pointer released at " + x + " " + y);
 			int directionId = tabDirectionButtonManager.getElementIdAtPointer(x, y);
