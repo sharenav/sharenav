@@ -1061,6 +1061,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			dictFilesWritten = s.get();
 			// Magic number
 			ds.writeUTF("END");
+			ds.close();
 			fo.close();
 
 		} catch (FileNotFoundException fnfe) {
@@ -1358,6 +1359,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			FileOutputStream fo = FileTools.createFileOutputStream(lpath + "/" + t.fid + ".d");
 			DataOutputStream tds = new DataOutputStream(fo);
 			tds.write(out);
+			tds.close();
 			fo.close();
 			// mark nodes as written to MidStorage 
 			for (Node n : nodes) { 
@@ -1552,6 +1554,8 @@ public class CreateGpsMidData implements FilenameFilter {
 		byte [][] ret = new byte[2][];
 		ret[0] = nfo.toByteArray();
 		ret[1] = cfo.toByteArray();
+		nds.close();
+		cds.close();
 		nfo.close();
 		cfo.close();
 		return ret;
