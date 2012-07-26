@@ -1631,6 +1631,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			w.write(ds, names1, urls1, t);
 		}
 		ds.writeByte(0x56); // Magic number
+		ds.close();
 		fo.close();
 		return fo.toByteArray();
 	}
