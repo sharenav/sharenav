@@ -256,7 +256,7 @@ public class IconMenuPage extends LayoutManager {
 		LayoutElement e;
 		for (int i=scrollOffsY * numRows; i < this.size() && i < scrollOffsY * numRows + numRows * numCols; i++){
 			e = (LayoutElement) this.elementAt(i);
-			e.setEleNr(i-scrollOffsY*numRows);
+			e.setEleNr(i-scrollOffsY*numCols);
 			//#debug debug
 			logger.trace("calc positions for element " + i);
 			e.calcSizeAndPosition();
