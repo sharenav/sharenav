@@ -128,7 +128,7 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 		}
 		mp = createAndAddMenuPage((this.getWidth() >= 176) 
 				? Locale.get("traceiconmenu.RecordTop")/* Recordings */
-					  : Locale.get("traceiconmenu.RecTop")/* Rec */, 3, 3);
+					  : Locale.get("traceiconmenu.RecTop")/* Rec */, 4, 3);
 		// to use a bigger number of icons in the same screen, e.g. this: 
 		//			  (predefsToShow.length) / 3 + 4 : 4);
 		iconToggleTrackRec = mp.createAndAddIcon(Locale.get("traceiconmenu.RecordTrack"), 
