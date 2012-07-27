@@ -296,6 +296,7 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 			
 			} else {
 				Trace.getInstance().performIconAction(Trace.ROUTING_START_CMD, null);
+				return;
 			}
 			parent.show();
 			return;
