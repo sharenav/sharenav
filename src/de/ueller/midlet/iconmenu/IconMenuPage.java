@@ -91,7 +91,7 @@ public class IconMenuPage extends LayoutManager {
 		this.currentRow = eleId / numCols;
 		int oldscrollOffsY = this.scrollOffsY;
 		this.scrollOffsY = 0;
-		if (numCols == 4) {
+		if (numCols == 4 && Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS)) {
 			// numCols == 4 - arrange elements similarly as they are arranged in the 3-column setup
 			this.currentCol = eleId % 3;
 			this.currentRow = eleId / 3;
@@ -203,7 +203,7 @@ public class IconMenuPage extends LayoutManager {
 
 	private int getEleId(int col, int row) {
 		int eleId = 0;
-		if (numCols != 4) { // 3 or more than 4
+		if (numCols != 4 || ! Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS)) { // 3 or more than 4
 			eleId = col + row * numCols;
 		} else { // numCols == 4 - arrange elements similarly as they are arranged in the 3-column setup
 			if (col == 3) {
@@ -224,7 +224,7 @@ public class IconMenuPage extends LayoutManager {
 	
 	private int getEleId(int col, int row, int scrollOffset) {
 		int eleId = 0;
-		if (numCols != 4) { // 3 or more than 4
+		if (numCols != 4 || ! Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS)) { // 3 or more than 4
 			eleId = col + (row + scrollOffset) * numCols;
 		} else { // numCols == 4 - arrange elements similarly as they are arranged in the 3-column setup
 			if (col == 3) {
