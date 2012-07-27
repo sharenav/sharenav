@@ -86,7 +86,7 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 				try {
 					Image image = Image.createImage("/" + Configuration.getIconPrefix() + "r_" + travelModes[i] + ".png");
 
-					float scale = image.getWidth() / this.getWidth() * 4;
+					float scale = 4 * image.getWidth() / this.getWidth();
 					if (scale < 1.0f) {
 						scale = 1;
 					}
