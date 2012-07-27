@@ -240,7 +240,7 @@ public class LayoutElement {
 			IconMenuPage imp = (IconMenuPage) lm;
 			int x = eleNr % imp.numCols;
 			int y = eleNr / imp.numCols;
-			if (imp.numCols == 4) {
+			if (imp.numCols == 4 && Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS)) {
                 // imp.numCols == 4 - arrange elements similarly as they are arranged in the 3-column setup
 				x = eleNr % 3;
 				y = eleNr / 3;
