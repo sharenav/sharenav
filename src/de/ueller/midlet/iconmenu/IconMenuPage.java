@@ -89,6 +89,7 @@ public class IconMenuPage extends LayoutManager {
 	public void setCursor(int eleId) {
 		this.currentCol = eleId % numCols;
 		this.currentRow = eleId / numCols;
+		int oldscrollOffsY = this.scrollOffsY;
 		this.scrollOffsY = 0;
 		if (numCols == 4) {
 			// numCols == 4 - arrange elements similarly as they are arranged in the 3-column setup
@@ -105,12 +106,9 @@ public class IconMenuPage extends LayoutManager {
 			this.currentRow -= diff;
 			this.scrollOffsY += diff;
 			recalcPositions();
-		} else {
-			if (this.scrollOffsY != 0) {
-				this.currentRow += this.scrollOffsY;
-				this.scrollOffsY = 0;
-				recalcPositions();
-			}
+		}
+		if (this.scrollOffsY != oldscrollOffsY) {
+		    recalcPositions();
 		}
 	}
 	
