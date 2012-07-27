@@ -416,7 +416,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		menuSelectLocProv.append(cellIDStartup);
 		//#style formItem
 		menuSelectLocProv.append(rawLogCG);
-		tfAltitudeCorrection = new TextField(Locale.get("guidiscover.AltitudeCorrection")/*Altitude correction*/, Integer.toString(Configuration.getAltitudeCorrection()), 3, TextField.DECIMAL);
+		tfAltitudeCorrection = new TextField(Locale.get("guidiscover.AltitudeCorrection")/*Altitude correction*/, Integer.toString(Configuration.getAltitudeCorrection()), 3, TextField.ANY);
 		//#style formItem
 		menuSelectLocProv.append(tfAltitudeCorrection);
 		menuSelectLocProv.setCommandListener(this);
@@ -664,7 +664,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//#style formItem
 		menuDisplayOptions.append(clockOpts);
 				
-		tfTimeDiff = new TextField(Locale.get("guidiscover.TimeDiff")/*Time diff. in minutes between device & display time*/, Integer.toString(Configuration.getTimeDiff()), 5, TextField.DECIMAL);
+		tfTimeDiff = new TextField(Locale.get("guidiscover.TimeDiff")/*Time diff. in minutes between device & display time*/, Integer.toString(Configuration.getTimeDiff()), 5, TextField.ANY);
 		//#style formItem
 		menuDisplayOptions.append(tfTimeDiff);
 
