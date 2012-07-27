@@ -254,7 +254,7 @@ public class IconMenuPage extends LayoutManager {
 	// @Override
 	public void recalcPositions() {
 		LayoutElement e;
-		for (int i=scrollOffsY * numRows; i < this.size() && i < scrollOffsY * numRows + numRows * numCols; i++){
+		for (int i=scrollOffsY * numCols; i < this.size() && i < scrollOffsY * numCols + numRows * numCols; i++){
 			e = (LayoutElement) this.elementAt(i);
 			e.setEleNr(i-scrollOffsY*numCols);
 			//#debug debug
@@ -267,7 +267,7 @@ public class IconMenuPage extends LayoutManager {
 	// @Override
 	public int getElementIdAtPointer(int x, int y) {
 		LayoutElement e;
-		for (int i=scrollOffsY * numRows; i < this.size() && i < scrollOffsY * numRows + numRows * numCols; i++){
+		for (int i=scrollOffsY * numCols; i < this.size() && i < scrollOffsY * numCols + numRows * numCols; i++){
 			//for (int i = this.size() - 1; i >= 0 ; i--){
 			e = getElementAt(i);
 			if (e.isInElement(x, y) && e.hasAnyValidActionId()) {
@@ -298,7 +298,7 @@ public class IconMenuPage extends LayoutManager {
 		int orgTop;
 		int orgTextTop;
 		// draw all visible icons
-		for (int i=scrollOffsY * numRows; i < this.size() && i < scrollOffsY * numRows + numRows * numCols; i++){
+		for (int i=scrollOffsY * numCols; i < this.size() && i < scrollOffsY * numCols + numRows * numCols; i++){
 			e = (LayoutElement) this.elementAt(i);
 			if (dragOffsX == 0 && dragOffsY == 0) {
 				e.paint(g);				
