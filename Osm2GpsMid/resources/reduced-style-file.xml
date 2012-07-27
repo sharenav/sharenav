@@ -414,6 +414,14 @@ scale alias 1: zoomed out 21x
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>	
+	  <value name ="embassy">
+		<description desc = "Embassy"/>
+		<image src="embassy.png"/>
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>	
 	  <value name ="car_rental">
 		<description desc = "Car rental"/>
 		<image src="car_rental.png"/>
@@ -542,6 +550,14 @@ scale alias 1: zoomed out 21x
 	  <value name="doityourself">
 		<description desc = "Do-it-yourself store"/>
 		<image src="diy_store.png"/>
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>
+	  <value name="chemist">
+		<description desc = "Chemist"/>
+		<image src="chemist.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
 		<scale scale="23"/>
@@ -859,7 +875,7 @@ scale alias 1: zoomed out 21x
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>
-	  <!--
+<!--
 	  <value name="*">
 		<description desc = "Other tourism"/>
 		<image src="othertourism.png"/>
@@ -867,7 +883,7 @@ scale alias 1: zoomed out 21x
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>
-	   -->
+-->
 	</key>
 	<key tag="historic">
 	  <value name ="castle">
@@ -946,6 +962,14 @@ scale alias 1: zoomed out 21x
 		<specialisation key="monument" value="yes"/>
 		<description desc = "Significant tree"/>
 		<image src="trees.png"/>
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>
+	  <value name="waterfall">
+		<description desc="Waterfall"/>
+		<image src="waterfall.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
 		<scale scale="23"/>
@@ -1131,11 +1155,22 @@ scale alias 1: zoomed out 21x
 	  </value>
   	</key>
 	-->
+	<key tag="waterway">
+	  <value name="waterfall">
+			<description desc="Waterfall"/>
+			<image src="waterfall.png"/>
+			<namekey tag="name"/>
+			<AreaPOI createForAreas="true"/>
+			<scale scale="23"/>
+			<textscale scale="26"/>
+	  </value>
+	</key>
   </pois>
   <ways>
   		<keyW tag = "highway">
   			<Wvalue name = "motorway" priority = "10">
   				<description desc = "motorway"/>
+				<image src = "motorway.png"/>
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
@@ -1148,6 +1183,7 @@ scale alias 1: zoomed out 21x
   			</Wvalue>
   			<Wvalue name = "motorway_link" priority = "10">
   				<description desc = "motorway link"/>
+				<image src = "motorway.png"/>
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
@@ -1163,7 +1199,7 @@ scale alias 1: zoomed out 21x
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
-  				<scale scale = "14"/>
+  				<scale scale = "10"/>
 				<lineColor color="007FC97F" colorAtNight="0038535C" />
   				<wayWidth width="6" />
   				<routing with="motorcar" accessible="true" speed="100" />
@@ -1187,7 +1223,7 @@ scale alias 1: zoomed out 21x
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
-  				<scale scale = "15"/>
+  				<scale scale = "12"/>
   				<lineColor color = "00FF7375" colorAtNight="00C4BD00"/>
   				<wayWidth width="6" />
   				<routing with="motorcar" accessible="true" speed="80" />
@@ -1199,7 +1235,7 @@ scale alias 1: zoomed out 21x
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
-  				<scale scale = "15"/>
+  				<scale scale = "14"/>
   				<lineColor color = "00FF7375" colorAtNight="00C4BD00"/>
   				<wayWidth width="6" />
   				<routing with="motorcar" accessible="true" speed="60" />
@@ -1211,7 +1247,7 @@ scale alias 1: zoomed out 21x
   				<namekey tag = "name"/>
 				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
-  				<scale scale = "18"/>
+  				<scale scale = "17"/>
 				<lineColor color="00FDBF6F" colorAtNight="00598798" />
   				<wayWidth width="5" />
   				<routing with="motorcar" accessible="true" speed="80" />
@@ -1223,7 +1259,7 @@ scale alias 1: zoomed out 21x
   				<namekey tag = "name"/>
 				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
-  				<scale scale = "18"/>
+  				<scale scale = "17"/>
 				<lineColor color="00FDBF6F" colorAtNight="00598798" />
   				<wayWidth width="5" />
   				<routing with="motorcar" accessible="true" speed="60" />
@@ -1235,11 +1271,23 @@ scale alias 1: zoomed out 21x
   				<namekey tag = "name"/>  				
 				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
-  				<scale scale = "19"/>
+  				<scale scale = "17"/>
   				<lineColor color = "00FFFF60" colorAtNight="008176BA" />
   				<wayWidth width="4" />
   				<routing with="motorcar" accessible="true" speed="50" />
   				<routing with="bicycle" accessible="true" speed="15" />
+  				<routing with="foot" accessible="true" speed="4" />  	
+  			</Wvalue>
+			<Wvalue name = "tertiary_link" priority = "10">
+  				<description desc = "tertiary link"/>
+  				<namekey tag = "name"/>
+				<namefallback tag = "ref"/>
+  				<isArea area = "false"/>
+  				<scale scale = "17"/>
+				<lineColor color="00FDBF6F" colorAtNight="00598798" />
+  				<wayWidth width="4" />
+  				<routing with="motorcar" accessible="true" speed="40" />
+  				<routing with="bicycle" accessible="true" speed="10" />
   				<routing with="foot" accessible="true" speed="4" />  	
   			</Wvalue>
   			<Wvalue name = "unclassified" priority = "9">  					        
@@ -1268,7 +1316,7 @@ scale alias 1: zoomed out 21x
   			</Wvalue>  			
   			<Wvalue name = "residential" priority = "10">
   				<description desc = "residential"/>
-  				<namekey tag = "name"/>  				
+  				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
   				<scale scale = "20"/>
@@ -1548,7 +1596,7 @@ scale alias 1: zoomed out 21x
    				<description desc = "tram"/>
  				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "18"/>
+  				<scale scale = "19"/>
   				<lineColor color = "00000070" colorAtNight="00037412" />
 				<borderColor color="00000070" colorAtNight="00037412" />
   				<lineStyle dashed = "true" />
@@ -1558,7 +1606,7 @@ scale alias 1: zoomed out 21x
   				<description desc = "tube"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "16"/>
+  				<scale scale = "19"/>
   				<lineColor color = "00FFA000" colorAtNight="00037412" />
 				<borderColor color="00FFA000" colorAtNight="00037412" />
   				<lineStyle dashed = "true" />
@@ -1637,22 +1685,23 @@ scale alias 1: zoomed out 21x
 		<keyW tag = "leisure">
   			<Wvalue name = "park">
   				<description desc = "Park"/>
-  				<namekey tag = "name"/>  				
+				<image src = "park.png"/>
+  				<namekey tag = "name"/>
   				<isArea area = "true"/>
-  				<scale scale = "19"/>
+  				<scale scale = "17"/>
   				<lineColor color = "0000FF00" colorAtNight="00147414"/>
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "stadium">
   				<description desc = "Stadium"/>
-  				<namekey tag = "name"/>  				
+  				<namekey tag = "name"/>
   				<isArea area = "true"/>
-  				<scale scale = "19"/>
+  				<scale scale = "17"/>
   				<lineColor color = "00FFFFBB"  colorAtNight="00636300"/>
   			</Wvalue>
   			<Wvalue name = "pitch">
   				<description desc = "Pitch"/>
-  				<namekey tag = "name"/>  				
+  				<namekey tag = "name"/>
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "00A0F000"/>
@@ -1734,7 +1783,8 @@ scale alias 1: zoomed out 21x
 			</Wvalue>  			
   			<Wvalue name = "school">
   				<description desc = "School"/>
-  				<namekey tag = "name"/>  				
+				<image src = "school.png"/>
+  				<namekey tag = "name"/>
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "00EEEEEE" colorAtNight="00622F2F"/>
@@ -1816,6 +1866,14 @@ scale alias 1: zoomed out 21x
   				<lineColor color = "000000F0" colorAtNight="003A3AC4" />
   				<wayWidth width="3" />  	  				
   			</Wvalue>
+			<Wvalue name="waterfall">
+				<description desc="Waterfall"/>
+				<namekey tag="name"/>
+				<isArea area="false"/>
+				<scale scale="19"/>
+				<lineColor color="000000F0" colorAtNight="003A3AC4"/>
+				<wayWidth width="6"/>
+			</Wvalue>
   			<Wvalue name = "*">
   				<description desc = "other waterway"/>
   				<namekey tag = "name"/>  				
@@ -1901,7 +1959,7 @@ scale alias 1: zoomed out 21x
 				<showName style = "area"/> 
 				<isArea area = "false"/>
 				<scale scale = "12"/>
-  				<lineColor color = "000000CC" colorAtNight="0000009A"/>  <!-- same as natural=water -->
+				<lineColor color = "00005555" colorAtNight="00CCFFFF"/>
   				<wayWidth width="10" />
 				<force_to layer = "-2"/>
 			</Wvalue>
@@ -1924,7 +1982,7 @@ scale alias 1: zoomed out 21x
 				<showName style = "area"/> 
 				<isArea area = "false"/>
 				<scale scale = "12"/>
-  				<lineColor color = "000000CC" colorAtNight="0000009A"/>  <!-- same as natural=water -->
+				<lineColor color = "00005555" colorAtNight="00CCFFFF"/>
   				<wayWidth width="10" />
 				<force_to layer = "-2"/>
 			</Wvalue>
@@ -1938,15 +1996,44 @@ scale alias 1: zoomed out 21x
 				<lineColor color = "009BFF9B" colorAtNight="00002200"/>  <!-- same as map background -->
 			</Wvalue>
 		</keyW>
+		<keyW tag = "shop">
+  			<Wvalue name = "*">
+  				<description desc = "Shop"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "19"/>
+  				<lineColor color = "00008090" colorAtNight="00583636"/>
+				<force_to layer = "-2"/>
+			</Wvalue>
+		</keyW>
   		<keyW tag = "natural">
   			<Wvalue name = "water">
   				<description desc = "Water"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "19"/>
+  				<scale scale = "10"/>
   				<lineColor color = "000000CC" colorAtNight="0000009A"/>
+				<force_to layer = "-1"/> 
+			</Wvalue>  			
+			<!-- natural=sea is produced by sea generator in Osm2GpsMid which turns coastlines into sea for rendering with GpsMid rendering machinery -->
+  			<Wvalue name = "sea">
+  				<description desc = "Sea"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "10"/>
+  				<lineColor color = "005A74B5" colorAtNight="0000009A"/>
+				<force_to layer = "-2"/> 
+			</Wvalue>  			
+  			<Wvalue name = "wood">
+  				<description desc = "Natural wood"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "17"/>
+  				<lineColor color = "00196618" colorAtNight="00074A07"/>				
+				<force_to layer = "-2"/>
 			</Wvalue>  			
   			<Wvalue name = "coastline">
+			  	<specialisation key = "generateSea" value = "true" properties = "true" />
   				<description desc = "coastline"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
@@ -1954,7 +2041,30 @@ scale alias 1: zoomed out 21x
 				(see https://sourceforge.net/tracker/index.php?func=detail&aid=3041068&group_id=192084&atid=939974 ) -->
   				<ignoreOsmAreaTag ignore = "true"/>
   				<scale scale = "6"/>
-  				<lineColor color = "00005555" colorAtNight="00CCFFFF"/>
+				<lineColor color = "00005555" colorAtNight="00CCFFFF"/>
+  				<wayWidth width="3" />
+				<force_to layer = "-2"/>
+			</Wvalue>  			
+			<!-- for debugging sea generator -->
+  			<Wvalue name = "seaoutline">
+  				<description desc = "Outline by seagen"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "6"/>
+  				<lineColor color = "00ff0022" colorAtNight="0000009A"/>
+				<wayWidth width = "10" />
+				<force_to layer = "3"/>
+			</Wvalue> 
+  			<Wvalue name = "coastline">
+			  	<specialisation key = "generateSea" value = "false" properties="true" />
+  				<description desc = "coastline"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+				<!-- take care of natural=coastline area handling 
+				(see https://sourceforge.net/tracker/index.php?func=detail&aid=3041068&group_id=192084&atid=939974 ) -->
+  				<ignoreOsmAreaTag ignore = "true"/>
+  				<scale scale = "6"/>
+				<lineColor color = "00005555" colorAtNight="00CCFFFF"/>
   				<wayWidth width="10" />
 				<force_to layer = "-2"/>
 			</Wvalue>  			
@@ -1966,12 +2076,33 @@ scale alias 1: zoomed out 21x
   				<lineColor color = "00FFFF9F" colorAtNight="00636000"/>				
 				<force_to layer = "-2"/>
 			</Wvalue>
+  			<Wvalue name = "glacier">
+  				<description desc = "Glacier"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "19"/>
+  				<lineColor color = "00FFFFFF" colorAtNight="005286BA"/>				
+			</Wvalue>  			
   			<Wvalue name = "cliff">
   				<description desc = "Cliff"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "00BDBDBD" colorAtNight="00B18787"/>  				
+			</Wvalue>  			
+  			<Wvalue name = "scree">
+  				<description desc = "Scree"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "19"/>
+  				<lineColor color = "00A0A0A0" colorAtNight="00B18787"/>  				
+			</Wvalue>  			
+  			<Wvalue name = "mud">
+  				<description desc = "Mud"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "19"/>
+  				<lineColor color = "00804000" colorAtNight="005E3002"/>			
 			</Wvalue>  			
   			<Wvalue name = "cave_entrance">
   				<description desc = "Cave entrance"/>
@@ -1980,6 +2111,14 @@ scale alias 1: zoomed out 21x
   				<scale scale = "19"/>
   				<lineColor color = "006C6C6C" colorAtNight="004F4F4F" />		
 			</Wvalue>
+			<Wvalue name = "*">
+  				<description desc = "Other natural"/>
+  				<namekey tag = "name"/>  				
+  				<namefallback tag = "*"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "19"/>
+  				<lineColor color = "0055FF55" />  	  				
+  			</Wvalue>
 		</keyW>
 		<keyW tag = "tourism">
 			<Wvalue name = "camp_site">
@@ -2025,9 +2164,9 @@ scale alias 1: zoomed out 21x
 	save memory and performance.
 	-->
 	<tileScaleLevels>
-		<tileScaleLevel level="3" minScale ="20" />
-		<tileScaleLevel level="2" minScale ="18" />
-		<tileScaleLevel level="1" minScale ="15" />
+		<tileScaleLevel level="3" minScale ="21" allowedForRoutableWays = "false" attractAreasWithSmallerBoundsDiameterThan = "50" />
+		<tileScaleLevel level="2" minScale ="19" attractAreasWithSmallerBoundsDiameterThan = "150"/>
+		<tileScaleLevel level="1" minScale ="17" attractAreasWithSmallerBoundsDiameterThan = "500" />
 		<!-- lower scales will be included in tile level 0 -->
 	</tileScaleLevels>
 
