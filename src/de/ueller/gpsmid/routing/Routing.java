@@ -764,7 +764,7 @@ public class Routing implements Runnable {
 		for (int v=begin;v < lats.length; v++){
 			//#debug debug
 			logger.debug("search point "+ lats[v] +"," + lons[v]);
-			rn=tile.getRouteNode(rn, 0.001f, lats[v], lons[v]);
+			rn=tile.getRouteNode(rn, 0.000001f, lats[v], lons[v]);
 			if (rn !=null){return rn;}
 		} 
 		return null;
@@ -774,7 +774,7 @@ public class Routing implements Runnable {
 		for (int v=end;v >= 0; v--){
 			//#debug debug
 			logger.debug("search point "+ lats[v] +"," + lons[v]);
-			rn=tile.getRouteNode(rn, 0.001f, lats[v], lons[v]);
+			rn=tile.getRouteNode(rn, 0.000001f, lats[v], lons[v]);
 			if (rn !=null){return rn;}
 		} 
 		return null;
