@@ -5,7 +5,7 @@
 # needed for signing android .apk
 # todo: deduce from environment
 
-jarsigner=/usr/lib/jvm/default-java/bin/
+jarsigner=/usr/lib/jvm/default-java/bin/jarsigner
 
 # uncomment to enable android signing with a real key
 #passparam="-keystore /some/where.jks -storepass IWontTell"
