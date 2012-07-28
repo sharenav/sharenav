@@ -17,25 +17,15 @@ public abstract class RouteBaseTile extends Tile {
 
 	public abstract RouteNode getRouteNode(int id);
 	/**
-	 * search for node in RouteNodes that nearer then best
+	 * search for node in RouteNodes that nearer than best
 	 * @param best
+	 * @param epsilon	(use EPSILON_SEARCH_EXACT_MATCH for approximately exact match,
+	 * 					 use latLon-values for minimum distance the best route node is searched at) 
 	 * @param lat
 	 * @param lon
 	 * @return
 	 */
 	public abstract RouteNode getRouteNode(RouteNode best, float epsilon, float lat, float lon);
-	/**
-	 * search for node in RouteNodes
-	 * that is exact same position
-	 * (WARNING: actually not exact, only approximately the same
-	 * which may cause the wrong RouteNode
-	 * being found if there are two very closeby RouteNodes,
-	 * therefore better use search for best route node)
-	 * @param lat
-	 * @param lon
-	 * @return
-	 */
-	public abstract RouteNode getRouteNode(float lat, float lon);
 	public abstract TurnRestriction getTurnRestrictions(int rnId);
 	public abstract Connection[] getConnections(int id,RouteBaseTile tile,boolean bestTime);
 //	public abstract void printMinMax
@@ -52,6 +42,6 @@ public abstract class RouteBaseTile extends Tile {
 	 * @param retTile
 	 * @return
 	 */
-	public abstract RouteNode getRouteNode(float lat,float lon,RouteTileRet retTile);
+	public abstract RouteNode getRouteNode(int id,RouteTileRet retTile);
 
 }

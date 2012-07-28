@@ -436,35 +436,6 @@ public class RouteTile extends RouteBaseTile {
 		return best;
 	}
 
-	public RouteNode getRouteNode(float lat, float lon) {
-		if (contain(lat,lon)){
-			if (loadNodesRequired()){
-				try {
-					loadNodes(Routing.onlyMainStreetNet, -1);
-				} catch (IOException e) {
-					e.printStackTrace();
-					return null;
-				}
-			}
-			for (int i=0; i<nodes.length;i++){
-				// due the shorts in map data we don't match exactly
-				if (MoreMath.approximately_equal(nodes[i].lat,lat,0.0000005f) &&
-					MoreMath.approximately_equal(nodes[i].lon,lon,0.0000005f)){
-					Connection cons[] = this.getConnections(nodes[i].id, this, !Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_AIM));
-					//#debug debug
-					logger.debug("aprox equal matches...");
-					if (cons.length > 0) {
-						//#debug debug
-						logger.debug("...and has connections in current travel mode");
-						return nodes[i];
-					}
-				}
-			}
-			lastUse=0;
-		}
-		return null;
-	}
-
 	public TurnRestriction getTurnRestrictions(int rnId) {
 		if (minId <= rnId && maxId >= rnId){
 			//#debug debug
@@ -493,10 +464,10 @@ public class RouteTile extends RouteBaseTile {
 	
 
 	/* (non-Javadoc)
-	 * @see de.ueller.gpsMid.mapData.RouteBaseTile#getRouteNode(float, float, de.ueller.midlet.gps.routing.RouteTileRet)
+	 * @see de.ueller.gpsMid.mapData.RouteBaseTile#getRouteNode(int, de.ueller.midlet.gps.routing.RouteTileRet)
 	 */
-	public RouteNode getRouteNode(float lat,float lon,RouteTileRet retTile){
-		RouteNode ret=getRouteNode(lat,lon);
+	public RouteNode getRouteNode(int id,RouteTileRet retTile){
+		RouteNode ret=getRouteNode(id);
 		if (ret != null){
 			this.permanent=true;
 			if (this instanceof RouteTile){

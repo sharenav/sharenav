@@ -149,19 +149,6 @@ public class RouteContainerTile extends RouteBaseTile {
 		}
 	}
 
-	public RouteNode getRouteNode(float lat, float lon) {
-		RouteNode ret = null;
-		if (contain(lat, lon, 0.03f)) {
-			if (t1 != null) {
-				ret = t1.getRouteNode(lat, lon);
-			}
-			if (ret == null && t2 != null) {
-				ret = t2.getRouteNode(lat, lon);
-			}
-		}
-		return ret;
-	}
-	
 	public TurnRestriction getTurnRestrictions(int rnId) {
 		if (minId <= rnId && maxId >= rnId) {
 			TurnRestriction turn = null;
@@ -183,15 +170,14 @@ public class RouteContainerTile extends RouteBaseTile {
 		}
 	}
 	
-	public RouteNode getRouteNode(float lat, float lon, RouteTileRet retTile) {
+	public RouteNode getRouteNode(int id, RouteTileRet retTile) {
 		RouteNode ret = null;
-		// FIXME: do we need an epsilon at all here?
-		if (contain(lat, lon, 0.0000005f)) {
+		if (minId <= id && maxId >= id){
 			if (t1 != null) {
-				ret = t1.getRouteNode(lat, lon, retTile);
+				ret = t1.getRouteNode(id, retTile);
 			}
 			if (ret == null && t2 != null) {
-				ret = t2.getRouteNode(lat, lon, retTile);
+				ret = t2.getRouteNode(id, retTile);
 			}
 		}
 		if (ret != null) {

@@ -982,7 +982,7 @@ public class Routing implements Runnable {
 				if (! w.isOneDirectionOnly() ){ // if no against oneway rule applies
 					// TODO: fill in bearings and cost
 					Connection newCon=new Connection(routeTo,0,(byte)99,(byte)99, -3);
-					tile.getRouteNode(nextNode.lat, nextNode.lon, nodeTile);
+					tile.getRouteNode(nextNode.id, nodeTile);
 					nodeTile.tile.addConnection(nextNode,newCon,bestTime);
 					/*
 					 *  remember coordinates of this alternative for dummy route node on the path
@@ -1006,7 +1006,7 @@ public class Routing implements Runnable {
 			// RouteHelpers.addRouteHelper(prefNode.lat, prefNode.lon, "prevNode dest");
 			// TODO: fill in bearings and cost
 			Connection newCon=new Connection(routeTo,0,(byte)99,(byte)99, -4);
-			tile.getRouteNode(prefNode.lat, prefNode.lon, nodeTile);
+			tile.getRouteNode(prefNode.id, nodeTile);
 			nodeTile.tile.addConnection(prefNode,newCon,bestTime);
 			/*
 			 *  remember coordinates of this alternative for dummy route node on the path

@@ -168,21 +168,6 @@ public class RouteFileTile extends RouteBaseTile {
 		return null;
 	}
 
-	public RouteNode getRouteNode(float lat, float lon) {
-		if (contain(lat,lon)){
-			if (tile == null){
-				try {
-					loadTile();
-				} catch (IOException e) {
-					logger.silentexception("loadTile failed", e);
-					return null;
-				}
-			}
-			return tile.getRouteNode(lat, lon);
-		}
-		return null;
-	}
-
 	public TurnRestriction getTurnRestrictions(int rnId) {
 		if (minId <= rnId && maxId >= rnId){
 			if (tile==null){
@@ -198,22 +183,18 @@ public class RouteFileTile extends RouteBaseTile {
 		return null;
 	}
 	
-	public RouteNode getRouteNode(float lat,float lon,RouteTileRet retTile){
-		RouteNode ret=null;
-		if (contain(lat,lon)){
-			if (tile == null){
+	public RouteNode getRouteNode(int id, RouteTileRet retTile){
+		if (minId <= id && maxId >= id){
+			if (tile==null){
 				try {
 					loadTile();
 				} catch (IOException e) {
-					logger.silentexception("loadTile failed", e);
+					e.printStackTrace();
 					return null;
 				}
 			}
-			ret= tile.getRouteNode(lat, lon,retTile);
-			if (ret != null){
-				this.permanent=true;
-			}
+			return tile.getRouteNode(id);
 		}
-		return ret;
+		return null;
 	}	
 }
