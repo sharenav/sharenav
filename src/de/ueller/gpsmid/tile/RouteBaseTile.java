@@ -52,6 +52,6 @@ public abstract class RouteBaseTile extends Tile {
 	 * @param retTile
 	 * @return
 	 */
-	public abstract RouteNode getRouteNode(float lat,float lon,RouteTileRet retTile);
+	public abstract RouteNode getRouteNode(int id,RouteTileRet retTile);
 
 }

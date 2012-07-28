@@ -493,10 +493,10 @@ public class RouteTile extends RouteBaseTile {
 	
 
 	/* (non-Javadoc)
-	 * @see de.ueller.gpsMid.mapData.RouteBaseTile#getRouteNode(float, float, de.ueller.midlet.gps.routing.RouteTileRet)
+	 * @see de.ueller.gpsMid.mapData.RouteBaseTile#getRouteNode(int, de.ueller.midlet.gps.routing.RouteTileRet)
 	 */
-	public RouteNode getRouteNode(float lat,float lon,RouteTileRet retTile){
-		RouteNode ret=getRouteNode(lat,lon);
+	public RouteNode getRouteNode(int id,RouteTileRet retTile){
+		RouteNode ret=getRouteNode(id);
 		if (ret != null){
 			this.permanent=true;
 			if (this instanceof RouteTile){
