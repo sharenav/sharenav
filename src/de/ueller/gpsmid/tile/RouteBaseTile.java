@@ -17,8 +17,10 @@ public abstract class RouteBaseTile extends Tile {
 
 	public abstract RouteNode getRouteNode(int id);
 	/**
-	 * search for node in RouteNodes that nearer then best
+	 * search for node in RouteNodes that nearer than best
 	 * @param best
+	 * @param epsilon	(use EPSILON_SEARCH_EXACT_MATCH for approximately exact match,
+	 * 					 use latLon-values for minimum distance the best route node is searched at) 
 	 * @param lat
 	 * @param lon
 	 * @return
