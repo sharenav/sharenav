@@ -86,7 +86,7 @@ public class RouteFileTile extends RouteBaseTile {
 			}
 			return tile.getRouteNode(best, lat, lon);
 		}
-		return null;
+		return best;
 	}
 
 	private void loadTile() throws IOException {
