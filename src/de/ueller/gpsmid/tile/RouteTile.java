@@ -391,6 +391,7 @@ public class RouteTile extends RouteBaseTile {
 //		}
 	}
 
+	// use epsilon < 0.00001f to look for best exact match
 	public RouteNode getRouteNode(RouteNode best, float epsilon, float lat, float lon) {
 		if (contain(lat,lon,epsilon)){
 			if (loadNodesRequired()){
@@ -410,8 +411,24 @@ public class RouteTile extends RouteBaseTile {
 				RouteNode n = nodes[i];
 				int dist = MoreMath.dist(n.lat, n.lon, lat, lon);
 				if (dist < bestDist){
-					best=n;
-					bestDist=dist;
+					if (
+							/*
+							 * if specified a very small epsilon accept only if match is an approximately equal match to the given coordinates
+							 */
+							(
+								epsilon < 0.00001f &&
+								MoreMath.approximately_equal(n.lat,lat,0.0000005f) &&
+								MoreMath.approximately_equal(n.lon,lon,0.0000005f) 
+							)
+							||
+							/*
+							 *  if specified a bigger epsilon accept every better match than before
+							 */
+							 epsilon >= 0.00001f
+							){
+								best=n;
+								bestDist=dist;						
+					}
 				}
 			}
 			lastUse=0;

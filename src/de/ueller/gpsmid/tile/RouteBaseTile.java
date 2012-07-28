@@ -40,6 +40,7 @@ public abstract class RouteBaseTile extends Tile {
 	public abstract Connection[] getConnections(int id,RouteBaseTile tile,boolean bestTime);
 //	public abstract void printMinMax
 	private final static float epsilon=0.0001f;
+	public final static float EPSILON_SEARCH_EXACT_MATCH=0.000001f;
 	
 	public void walk(PaintContext pc, int opt) {
 		// TODO implement walk		
