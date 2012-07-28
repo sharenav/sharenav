@@ -2,18 +2,16 @@
 
 # usage: bundlemap.sh mapdir [ sourcejarname ] targetjarname
 
+# written to be run in main GpsMid directory
+
 # needed for signing android .apk
 # todo: deduce from environment
 
+#jarsigner=jarsigner
 jarsigner=/usr/lib/jvm/default-java/bin/jarsigner
 
 # uncomment to enable android signing with a real key
 #passparam="-keystore /some/where.jks -storepass IWontTell"
-
-ver=0.6.3
-mid=dist/GpsMid-Generic-editing-$ver.jar
-
-midtarget=target-$ver.jar
 
 if [ "$1" = "-a" ]
 then
@@ -21,24 +19,56 @@ then
     shift
 fi
 
-if [ "$#" != 3 -a "$#" != 2 ]
+ver=0.7.71-map71
+andtarget=android-online
+midtarget=editing
+
+if [ "$#" != 2 -a "$#" != 1 ]
 then
-  echo "usage: bundlemap.sh mapdir [ sourcejarname ] targetjarname"
+  echo "usage: bundlemap.sh [ -a ] mapdir [ targetversion ]"
+  echo "where -a means bundle for Android, and targetversion is"
+  echo 'e.g. "android-online" for Android or e.g. "editing" or "full" for J2ME'
+  echo 'defaults are: android-online for Android, editing for J2ME'.
+  echo "example: \"bundlemap.sh -a map\" will take dist/Gpsmid-Generic-$andtarget-$ver.apk, bundle map from dir \"map\" into it,"
+  echo "and write file Gpsmid-Generic-$andtarget-$ver.apk which can be installed on a device." 
   exit 1
-fi
+fi >&2
 
-if [ "$2" ]
+
+if [ "$android" ]
 then
-  mid="$2"
-  midtarget="$2"
+
+  if [ "$2" ]
+  then
+    andtarget="$2"
+  fi
+
+  apk=`ls -t dist/GpsMid-Generic-$andtarget-*.apk 2>/dev/null|head -1`
+  if [ "$apk" ]
+  then
+     ver=`echo $apk|sed "s/dist\/GpsMid-Generic-$andtarget-//" | sed "s/\.apk//"`
+  fi
+  mid=dist/GpsMid-Generic-$andtarget-$ver.apk
+else
+  if [ "$2" ]
+  then
+    midtarget="$2"
+  fi
+
+  jar=`ls -t dist/GpsMid-Generic-$midtarget-*.jar 2>/dev/null|head -1`
+  if [ "$jar" ]
+  then
+     ver=`echo $apk|sed "s/dist\/GpsMid-Generic-$midtarget-//" | sed "s/\.jar//"`
+  fi
+  mid=dist/GpsMid-Generic-$midtarget-$ver.jar
 fi
 
-if [ "$#" -eq 3 ]
-then
-    mid="$2"
-    midtarget="$3"
-fi
+midtarget=`echo $mid | sed 's/^dist\///'`
 
+#echo "mid: $mid"
+#echo "midtarget: $midtarget"
+#echo "ver: $ver"
+#exit 1
 
 if [ "$1" ]
 then
@@ -52,31 +82,32 @@ then
 fi
 
 
-cd "$mapdir" || exit 3
-
 if [ "$mid" != "$midtarget" ]
 then
-  cp ../"$mid" ../"$midtarget"
+  cp "$mid" "$midtarget"
 fi
 
 #jar uf  "$midtarget" `find .`
 
-zip -q ../"$midtarget" -d META-INF/
-zip -q ../"$midtarget" -d c/\* t\*/\* s\*.d dict\*.dat d\*/\*.d names\*.dat legend.dat
+zip -q "$midtarget" -d META-INF/
+zip -q "$midtarget" -d c/\* t\*/\* s\*.d dict\*.dat d\*/\*.d names\*.dat legend.dat
 #cp -p "$midtarget"  "$midtarget".copy
-zip -q ../"$midtarget" -u  `find .|grep -v META-INF`
-zip -q ../"$midtarget" -d META-INF/
-zip -q ../"$midtarget" -d META-INF/MANIFEST.MF
-zip -q ../"$midtarget" -u META-INF/
-zip -q ../"$midtarget" -u META-INF/MANIFEST.MF
+if [ "$android" ]
+then
+  unzip -q -o "$mid" META-INF/*
+fi
+zip "$midtarget" -u `find $mapdir|grep -v META-INF`
 
+zip -q "$midtarget" -d META-INF
+zip -q "$midtarget" -d META-INF/MANIFEST.MF
+zip -q "$midtarget" -Z store -u META-INF
+zip -q "$midtarget" -Z store -u META-INF/MANIFEST.MF
 
 if [ "$android" ]
 then
 
-  cd ..
   # tools/bundlemap-sign-android.sh "`basename $midtarget`"
 
-  $jarsigner -verbose -digestalg SHA1 -sigalg MD5withRSA $passparam GpsMid-Generic-android-online-$ver.apk gpsmid
+  $jarsigner -verbose -digestalg SHA1 -sigalg MD5withRSA $passparam $midtarget gpsmid
 
 fi

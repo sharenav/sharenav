@@ -21,6 +21,8 @@
     - fixed an error that prevented to load all route / map tiles of the Germany map from thju
     *** Android Support ***
     - multitouch two-finger rotate & pinch zoom 
+    *** Map bundling tool ***
+    - syntax changed for tools/bundlemap.sh
      
 GpsMid 0.7.8
     *** Touchscreen / User Interface ***
