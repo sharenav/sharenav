@@ -821,7 +821,7 @@ public class RouteInstructions {
 		// if the routePathConnection stayed the same but the segment inside the way changed
 		// it depends on the direction of the route along the way if we go forward or backward 
 		// along the route
-		} else if (routePathConnection == prevRoutePathConnection && !actualRoutePathWay.isCircleway()) {
+		} else if (routePathConnection == prevRoutePathConnection && actualRoutePathWay != null && !actualRoutePathWay.isCircleway()) {
 			ConnectionWithNode c = (ConnectionWithNode) route.elementAt(routePathConnection);
 			// determine the direction of the route on the way
 			// by checking if the route goes on the way forward or backward
