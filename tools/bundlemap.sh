@@ -2,6 +2,14 @@
 
 # usage: bundlemap.sh mapdir [ sourcejarname ] targetjarname
 
+# needed for signing android .apk
+# todo: deduce from environment
+
+jarsigner=/usr/lib/jvm/default-java/bin/
+
+# uncomment to enable android signing with a real key
+#passparam="-keystore /some/where.jks -storepass IWontTell"
+
 mid=dist/GpsMid-Generic-editing-0.6.3.jar
 
 midtarget=target-0.6.3.jar
@@ -66,6 +74,8 @@ if [ "$android" ]
 then
 
   cd ..
-  tools/bundlemap-sign-android.sh "`basename $midtarget`"
+  # tools/bundlemap-sign-android.sh "`basename $midtarget`"
+
+  $jarsigner -verbose -digestalg SHA1 -sigalg MD5withRSA $passparam GpsMid-Generic-android-online-0.7.76-map71.apk gpsmid
 
 fi

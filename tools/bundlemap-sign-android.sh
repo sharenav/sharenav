@@ -2,6 +2,9 @@
 
 # tested on Ubuntu 10.10
 
+# obsolete since 2012-07-29: integrated into bundlemap.sh with a new method
+# for bundling
+
 if [ -r android.properties ]
 then
 
