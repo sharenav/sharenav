@@ -722,7 +722,7 @@ scale alias 1: zoomed out 21x
   				<description desc = "Sea"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "10"/>
+  				<scale scale = "8"/>
   				<lineColor color = "005A74B5" colorAtNight="0000009A"/>
 				<force_to layer = "-2"/> 
 			</Wvalue>  			
