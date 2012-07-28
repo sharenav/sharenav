@@ -168,21 +168,6 @@ public class RouteFileTile extends RouteBaseTile {
 		return null;
 	}
 
-	public RouteNode getRouteNode(float lat, float lon) {
-		if (contain(lat,lon)){
-			if (tile == null){
-				try {
-					loadTile();
-				} catch (IOException e) {
-					logger.silentexception("loadTile failed", e);
-					return null;
-				}
-			}
-			return tile.getRouteNode(lat, lon);
-		}
-		return null;
-	}
-
 	public TurnRestriction getTurnRestrictions(int rnId) {
 		if (minId <= rnId && maxId >= rnId){
 			if (tile==null){
