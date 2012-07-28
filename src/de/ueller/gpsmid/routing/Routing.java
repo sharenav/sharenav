@@ -1033,8 +1033,7 @@ public class Routing implements Runnable {
 					best.lon = routeTo.lon + 0.001f;
 					float distLon = (int) ProjMath.getDistance(routeTo.lat, routeTo.lon, best.lat, best.lon);		
 					float latLonPerKm = 1.0f / Math.max(distLat, distLon); // same as 0.001f * 1000 / Math.Max(distLat, distLon)
-					best.lat = 999;
-					best.lon = best.lat;
+					best = null;
 	
 					float oldBestRouteNodeSearchEpsilon = RouteBaseTile.bestRouteNodeSearchEpsilon;
 					RouteBaseTile.bestRouteNodeSearchEpsilon = latLonPerKm; // start searching closest mainstreetnet route node within about one km around destination
@@ -1042,10 +1041,10 @@ public class Routing implements Runnable {
 					do {
 						best = tile.getRouteNode(best, routeTo.lat, routeTo.lon);
 						RouteBaseTile.bestRouteNodeSearchEpsilon += latLonPerKm;
-					} while ( (best == null || best.lat == 999) && RouteBaseTile.bestRouteNodeSearchEpsilon < latLonPerKm * 20);
+					} while (best == null && RouteBaseTile.bestRouteNodeSearchEpsilon < latLonPerKm * 20);
 					RouteBaseTile.bestRouteNodeSearchEpsilon = oldBestRouteNodeSearchEpsilon;
 					
-					if (best != null && best.lat != 999) {
+					if (best != null) {
 						distToMainstreetNetRouteNode = (int) ProjMath.getDistance(routeTo.lat, routeTo.lon, best.lat, best.lon);
 					} else if (Configuration.getMainStreetDistanceKm() <= 20){
 						parent.alert("Routing", "No MainstreetNet RouteNode found within 20 km at destination", 5000);

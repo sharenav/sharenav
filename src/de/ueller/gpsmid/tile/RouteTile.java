@@ -401,16 +401,10 @@ public class RouteTile extends RouteBaseTile {
 					return null;
 				}
 			}
-			if (best == null){
-				// see bug id 3543511, https://sourceforge.net/tracker/?func=detail&aid=3543511&group_id=192084&atid=939974
-				//best=nodes[0];
-
-				// FIXME may not be the best fix, but gets the job done for now
-				best = new RouteNode();
-				best.lat = 999;
-				best.lon = best.lat;
+			int bestDist = Integer.MAX_VALUE;
+			if (best != null) {
+				bestDist = MoreMath.dist(best.lat, best.lon, lat, lon);
 			}
-			int bestDist = MoreMath.dist(best.lat, best.lon, lat, lon);
 			int nodesLength = Routing.onlyMainStreetNet ? numMainStreetRouteNodes : nodes.length;
 			for (int i = 0; i < nodesLength; i++){
 				RouteNode n = nodes[i];
