@@ -86,7 +86,7 @@ public class RouteNode {
 	
 	
 	public String toString(){
-		return "RouteNode(" + id +") RAD:" + lat + "/" + lon + " DEG: " + MoreMath.FAC_RADTODEC * lat + "/" + MoreMath.FAC_RADTODEC * lon + ")"; 
+		return "RouteNode(" + id +") DEG: lat: " + MoreMath.FAC_RADTODEC * lat + " lon: " + MoreMath.FAC_RADTODEC * lon + " RAD:" + lat + "/" + lon; 
 	}
 
 	public String toUrl(){
