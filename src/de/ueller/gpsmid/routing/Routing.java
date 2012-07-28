@@ -971,11 +971,13 @@ public class Routing implements Runnable {
 												new Node(toMark.lat, toMark.lon, true)
 					)
 			);
-			System.out.println("Closest " + RouteInstructions.getClosestPointOnDestWay() );
+			// System.out.println("Closest " + RouteInstructions.getClosestPointOnDestWay() );
+			// RouteHelpers.addRouteHelper(RouteInstructions.getClosestPointOnDestWay().radlat, RouteInstructions.getClosestPointOnDestWay().radlon, "closest");
 			RouteTileRet nodeTile=new RouteTileRet();
 			// roundabouts don't need to be explicitly tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
 			RouteNode nextNode = findNextRouteNode(nearestSeg, toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
 			if (nextNode != null) {
+				// RouteHelpers.addRouteHelper(nextNode.lat, nextNode.lon, "nextNode dest");
 				finalNodeId2 = nextNode.id; // must be before the oneDirection check as this routeNode might be the destination node for connection/duration determination
 				if (! w.isOneDirectionOnly() ){ // if no against oneway rule applies
 					// TODO: fill in bearings and cost
@@ -1001,6 +1003,7 @@ public class Routing implements Runnable {
 				parent.receiveMessage(Locale.get("routing.NoPrevRouteNodeAtDestination")/*No prev route node at destination*/);
 				return false;
 			}
+			// RouteHelpers.addRouteHelper(prefNode.lat, prefNode.lon, "prevNode dest");
 			// TODO: fill in bearings and cost
 			Connection newCon=new Connection(routeTo,0,(byte)99,(byte)99, -4);
 			tile.getRouteNode(prefNode.lat, prefNode.lon, nodeTile);
