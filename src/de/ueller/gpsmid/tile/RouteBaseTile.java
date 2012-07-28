@@ -25,8 +25,12 @@ public abstract class RouteBaseTile extends Tile {
 	 */
 	public abstract RouteNode getRouteNode(RouteNode best, float epsilon, float lat, float lon);
 	/**
-	 * search for node in RouteNodes that is exact at the
-	 * same position
+	 * search for node in RouteNodes
+	 * that is exact same position
+	 * (WARNING: actually not exact, only approximately the same
+	 * which may cause the wrong RouteNode
+	 * being found if there are two very closeby RouteNodes,
+	 * therefore better use search for best route node)
 	 * @param lat
 	 * @param lon
 	 * @return
