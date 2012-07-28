@@ -433,7 +433,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private boolean courseValid = false;
 
 	public boolean atDest = false;
-	public boolean movedAwayFromDest = true;
+	public volatile boolean movedAwayFromDest = true;
 
 	private Names namesThread;
 
@@ -4285,6 +4285,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		return posMark;
 	}
 	public void setDestination(RoutePositionMark dest) {
+		movedAwayFromDest = false;
 		endRouting();
 		this.dest = dest;
 		pc.dest = dest;
@@ -4300,7 +4301,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				Configuration.setDestPos(new Node(dest.lat, dest.lon, true));
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SAVED_DESTPOS_VALID, true);
 			}
-			movedAwayFromDest = false;
 		} else {
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_SAVED_DESTPOS_VALID, false);
 			//#debug info
