@@ -391,8 +391,8 @@ public class RouteTile extends RouteBaseTile {
 //		}
 	}
 
-	public RouteNode getRouteNode(RouteNode best, float lat, float lon) {
-		if (contain(lat,lon,RouteBaseTile.bestRouteNodeSearchEpsilon)){
+	public RouteNode getRouteNode(RouteNode best, float epsilon, float lat, float lon) {
+		if (contain(lat,lon,epsilon)){
 			if (loadNodesRequired()){
 				try {
 					loadNodes(Routing.onlyMainStreetNet, -1);

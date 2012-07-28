@@ -14,7 +14,6 @@ public abstract class RouteBaseTile extends Tile {
 	protected int maxId;
 	public boolean lastNodeHadTurnRestrictions = false;
 	public RouteNode lastRouteNode = null;
-	public static float bestRouteNodeSearchEpsilon = 0.03f;
 
 	public abstract RouteNode getRouteNode(int id);
 	/**
@@ -24,7 +23,7 @@ public abstract class RouteBaseTile extends Tile {
 	 * @param lon
 	 * @return
 	 */
-	public abstract RouteNode getRouteNode(RouteNode best,float lat, float lon);
+	public abstract RouteNode getRouteNode(RouteNode best, float epsilon, float lat, float lon);
 	/**
 	 * search for node in RouteNodes that is exact at the
 	 * same position

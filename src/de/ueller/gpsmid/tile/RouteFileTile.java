@@ -74,8 +74,8 @@ public class RouteFileTile extends RouteBaseTile {
 		return null;
 	}
 
-	public RouteNode getRouteNode(RouteNode best, float lat, float lon) {
-		if (contain(lat,lon,RouteBaseTile.bestRouteNodeSearchEpsilon)){
+	public RouteNode getRouteNode(RouteNode best, float epsilon, float lat, float lon) {
+		if (contain(lat,lon,epsilon)){
 			if (tile == null){
 				try {
 					loadTile();
@@ -84,7 +84,7 @@ public class RouteFileTile extends RouteBaseTile {
 					return null;
 				}
 			}
-			return tile.getRouteNode(best, lat, lon);
+			return tile.getRouteNode(best, epsilon, lat, lon);
 		}
 		return best;
 	}

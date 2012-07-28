@@ -121,13 +121,13 @@ public class RouteContainerTile extends RouteBaseTile {
 		}
 	}
 
-	public RouteNode getRouteNode(RouteNode best, float lat, float lon) {
-		if (contain(lat, lon, RouteBaseTile.bestRouteNodeSearchEpsilon)) {
+	public RouteNode getRouteNode(RouteNode best, float epsilon, float lat, float lon) {
+		if (contain(lat, lon, epsilon)) {
 			if (t1 != null) {
-				best = t1.getRouteNode(best, lat, lon);
+				best = t1.getRouteNode(best, epsilon, lat, lon);
 			}
 			if (t2 != null) {
-				best = t2.getRouteNode(best, lat, lon);
+				best = t2.getRouteNode(best, epsilon, lat, lon);
 			}
 		}
 		return best;

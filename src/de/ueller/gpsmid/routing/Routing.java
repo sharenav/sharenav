@@ -1033,16 +1033,13 @@ public class Routing implements Runnable {
 					best.lon = routeTo.lon + 0.001f;
 					float distLon = (int) ProjMath.getDistance(routeTo.lat, routeTo.lon, best.lat, best.lon);		
 					float latLonPerKm = 1.0f / Math.max(distLat, distLon); // same as 0.001f * 1000 / Math.Max(distLat, distLon)
+					float bestRouteNodeSearchEpsilon = latLonPerKm;
 					best = null;
-	
-					float oldBestRouteNodeSearchEpsilon = RouteBaseTile.bestRouteNodeSearchEpsilon;
-					RouteBaseTile.bestRouteNodeSearchEpsilon = latLonPerKm; // start searching closest mainstreetnet route node within about one km around destination
 					// search closest mainstreet net route node within about 20 km around destination 
 					do {
-						best = tile.getRouteNode(best, routeTo.lat, routeTo.lon);
-						RouteBaseTile.bestRouteNodeSearchEpsilon += latLonPerKm;
-					} while (best == null && RouteBaseTile.bestRouteNodeSearchEpsilon < latLonPerKm * 20);
-					RouteBaseTile.bestRouteNodeSearchEpsilon = oldBestRouteNodeSearchEpsilon;
+						best = tile.getRouteNode(best, bestRouteNodeSearchEpsilon, routeTo.lat, routeTo.lon);
+						bestRouteNodeSearchEpsilon += latLonPerKm;
+					} while (best == null && bestRouteNodeSearchEpsilon < latLonPerKm * 20);
 					
 					if (best != null) {
 						distToMainstreetNetRouteNode = (int) ProjMath.getDistance(routeTo.lat, routeTo.lon, best.lat, best.lon);
@@ -1141,7 +1138,7 @@ public class Routing implements Runnable {
 				cPrev.durationFSecsToNext = c.durationFSecsToNext;
 				cPrev = c;
 				if (i == sequence.size() - 1) {
-					c.durationFSecsToNext = 5555;
+					c.durationFSecsToNext = Short.MAX_VALUE;
 				}
 			}
 
