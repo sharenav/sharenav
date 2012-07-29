@@ -269,6 +269,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup debugOther;
 	private StringItem  gpxUrl;
 	private StringItem  gpsUrl;
+	private ImageItem mapLocationImage;
 	private ChoiceGroup autoConnect;
 	private ChoiceGroup cellIDStartup;
 	private ChoiceGroup btKeepAlive;
