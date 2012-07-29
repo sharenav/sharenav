@@ -906,17 +906,7 @@ public class RouteData {
 				}
 				
 				turn = turn.nextTurnRestrictionAtThisNode;
-			}
-			// translate potentially remaining route node ids to check if there are any remaining ones
-			fullNetRouteNode = getFullNetRouteNode(n.node);
-			if (fullNetRouteNode != null) {
-				if (n.id != fullNetRouteNode.id) {
-					System.out.println("  Warning: translating route node id that should already be translated");												
-				}
-				n.id = fullNetRouteNode.id;
-			} else {
-				System.out.println("  error translating route node id");							
-			}
+			}		
 		}
 	}
 }
