@@ -198,7 +198,7 @@ public class FsDiscover
 
 			list = createEmptyList();
 			urlList.removeAllElements();
-			list.append(".", null);
+			list.append(Locale.get("fsdiscover.thisdir")/*[This directory]*/, null);
 			urlList.addElement(url);
 			list.append("..", null);
 			//urlList.addElement(url + "Directory Up");
@@ -327,6 +327,9 @@ public class FsDiscover
 		if (c == DOWN_CMD) {
 			if (list.getString(list.getSelectedIndex()).equalsIgnoreCase("..")) {
 				c = UP_CMD;
+			} else if (list.getString(list.getSelectedIndex()).equalsIgnoreCase(Locale.get("fsdiscover.thisdir"))) {
+				selectEntry();
+				return;
 			} else {
 				url = (String) urlList.elementAt(list.getSelectedIndex());
 				processorThread = new Thread(this);
