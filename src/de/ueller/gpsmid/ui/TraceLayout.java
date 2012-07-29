@@ -436,6 +436,7 @@ public class TraceLayout extends LayoutManager {
 		float factor;
 		int fontFlag;
 		int fontFlag2;
+		LayoutElement e;
 		if (TraceLayout.bigOnScreenButtons) {
 			factor = 1.5f;
 			fontFlag = LayoutElement.FLAG_FONT_LARGE;
@@ -450,44 +451,25 @@ public class TraceLayout extends LayoutManager {
 		if (isPortraitLayout) {
 			buttonPercent = (int) (8 * factor);
 		}
-		LayoutElement e = ele[ZOOM_IN];
-		e.setWidthPercent(buttonPercent);
-		e.setHeightPercent(buttonPercent);
-		e.setFlag(fontFlag2);
-		e = ele[ZOOM_OUT];
-		e.setWidthPercent(buttonPercent);
-		e.setHeightPercent(buttonPercent);		
-		e.setFlag(fontFlag2);
-		e = ele[SHOW_DEST];
-		e.setWidthPercent(buttonPercent);
-		e.setHeightPercent(buttonPercent);
-		e.setFlag(fontFlag2);
-		e = ele[RECENTER_GPS];
-		e.setWidthPercent(buttonPercent);
-		e.setHeightPercent(buttonPercent);
-		e.setFlag(fontFlag2);
-		e = ele[RECORDINGS];
-		e.setWidthPercent(buttonPercent);
-		e.setHeightPercent(buttonPercent);
-		e.setFlag(fontFlag2);
-		e = ele[SEARCH];
-		e.setWidthPercent(buttonPercent);
-		e.setHeightPercent(buttonPercent);
-		e.setFlag(fontFlag2);
-		e = ele[POINT_OF_COMPASS];
-		e.setFlag(fontFlag2);
-		e = ele[SOLUTION];
-		e.setFlag(fontFlag2);
-		e = ele[RECORDED_COUNT];
-		e.setFlag(fontFlag2);
-		e = ele[CURRENT_TIME];
-		e.setFlag(fontFlag);
-		e = ele[TRAVEL_MODE];
-		e.setFlag(fontFlag);
-		e = ele[ROUTE_DISTANCE];
-		e.setFlag(fontFlag);
-		e = ele[WAYNAME];
-		e.setFlag(fontFlag);
+		// buttons
+		int ids0[] = {ZOOM_IN, ZOOM_OUT, SHOW_DEST, RECENTER_GPS, RECORDINGS, SEARCH};
+		for (int i = 0; i < ids0.length; i++) {
+			e = ele[ids0[i]];
+			e.setWidthPercent(buttonPercent);
+			e.setHeightPercent(buttonPercent);
+			e.setFlag(fontFlag2);
+		}
+
+		int ids1[] = {POINT_OF_COMPASS, SOLUTION, RECORDED_COUNT};
+		for (int i = 0; i < ids1.length; i++) {
+			e = ele[ids1[i]];
+			e.setFlag(fontFlag2);
+		}
+		int ids2[] = {CURRENT_TIME, TRAVEL_MODE, ROUTE_DISTANCE, WAYNAME};
+		for (int i = 0; i < ids2.length; i++) {
+			e = ele[ids2[i]];
+			e.setFlag(fontFlag);
+		}
 		e = ele[SCALEBAR];
 		e.setFlag(fontFlag2);
 	}
