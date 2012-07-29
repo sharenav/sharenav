@@ -150,19 +150,21 @@ public class RouteData {
 					}
 				}
 				if (numFromConnections != 1) {
-					System.out.println("warning: ignoring map data: Can't parse turn restriction: " + numFromConnections + " from_connections matched for: " + turn.toString(parser.getWayHashMap()));
-					if (numFromConnections == 0) {
-						System.out.println("warning: ignoring map data:   Reason may be: way tagged with access=no (no functional problem in that case) or from/to swapped on oneways");						
-					} else {
-						System.out.println("warning: ignoring map data:   Reason may be: fromWay not split at via member");												
-						turn.fromRouteNode = null; // make the turn restriction incomplete so it won't get passed to GpsMid 
-					}
-					for (Connection c:nViaFrom.getConnectedFrom()) {
-						if (restrictionFromWay.containsNode(c.from.node)) {
-							System.out.println("  FromNode: " + c.from.node.id);
+					if (restrictionFromWay.isAccessForRoutingInAnyTurnRestrictionTravelMode()) {
+						System.out.println("warning: ignoring map data: Can't parse turn restriction: " + numFromConnections + " from_connections matched for: " + turn.toString(parser.getWayHashMap()));
+						if (numFromConnections == 0) {
+							System.out.println("warning: ignoring map data:   Reason may be: from/to swapped on oneways or a gap between viaNode and fromWay");						
+						} else {
+							System.out.println("warning: ignoring map data:   Reason may be: fromWay not split at via member");												
+							turn.fromRouteNode = null; // make the turn restriction incomplete so it won't get passed to GpsMid 
 						}
+						for (Connection c:nViaFrom.getConnectedFrom()) {
+							if (restrictionFromWay.containsNode(c.from.node)) {
+								System.out.println("  FromNode: " + c.from.node.id);
+							}
+						}
+						System.out.println("warning: ignoring map data:   URL for via node: " + n.node.toUrl());
 					}
-					System.out.println("warning: ignoring map data:   URL for via node: " + n.node.toUrl());					
 				}
 
 				// search the RouteNode following the viaRouteNode on the toWay
@@ -178,19 +180,21 @@ public class RouteData {
 					}
 				}
 				if (numToConnections != 1) {
-					System.out.println("warning: ignoring map data: Can't parse turn restriction: " + numToConnections + " to_connections matched for: "  + turn.toString(parser.getWayHashMap()));
-					if (numToConnections == 0) {
-						System.out.println("warning: ignoring map data:   Reason may be: way tagged with access=no (no functional problem in that case) or from/to swapped on oneways");						
-					} else {
-						System.out.println("warning: ignoring map data:   Reason may be: toWay not split at via member");												
-						turn.toRouteNode = null; // make the turn restriction incomplete so it won't get passed to GpsMid 
-					}
-					for (Connection c:n.getConnected()) {
-						if (restrictionToWay.containsNode(c.to.node)) {
-							System.out.println("warning: ignoring map data:  ToNode: " + c.to.node.id);
+					if (restrictionToWay.isAccessForRoutingInAnyTurnRestrictionTravelMode()) {
+						System.out.println("warning: ignoring map data: Can't parse turn restriction: " + numToConnections + " to_connections matched for: "  + turn.toString(parser.getWayHashMap()));
+						if (numToConnections == 0) {
+							System.out.println("warning: ignoring map data:   Reason may be: from/to swapped on oneways or a gap between viaNode and toWay");						
+						} else {
+							System.out.println("warning: ignoring map data:   Reason may be: toWay not split at via member");												
+							turn.toRouteNode = null; // make the turn restriction incomplete so it won't get passed to GpsMid 
 						}
+						for (Connection c:n.getConnected()) {
+							if (restrictionToWay.containsNode(c.to.node)) {
+								System.out.println("warning: ignoring map data:  ToNode: " + c.to.node.id);
+							}
+						}
+						System.out.println("warning: ignoring map data:  URL for via node: " + n.node.toUrl());
 					}
-					System.out.println("warning: ignoring map data:  URL for via node: " + n.node.toUrl());					
 				}
 				if (numFromConnections == 1 && numToConnections == 1) {
 					numTurnRestrictions++;

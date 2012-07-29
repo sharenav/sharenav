@@ -30,6 +30,7 @@ import de.ueller.osmToGpsMid.area.Outline;
 import de.ueller.osmToGpsMid.area.Triangle;
 import de.ueller.osmToGpsMid.area.Vertex;
 import de.ueller.osmToGpsMid.model.name.Names;
+import de.ueller.osmToGpsMid.model.TravelModes;
 import de.ueller.osmToGpsMid.model.url.Urls;
 
 
@@ -207,6 +208,11 @@ public class Way extends Entity implements Comparable<Way> {
 	public boolean isAccessForAnyRouting() {
 		return (wayTravelModes != 0);
 	}
+	
+	public boolean isAccessForRoutingInAnyTurnRestrictionTravelMode() {
+		return (wayTravelModes & TravelModes.applyTurnRestrictionsTravelModes) > 0;
+	}
+	
 
 	/**
 	 * Check way tags for routeAccessRestriction from style-file
