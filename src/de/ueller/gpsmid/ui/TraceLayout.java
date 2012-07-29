@@ -139,6 +139,7 @@ public class TraceLayout extends LayoutManager {
 		);
 		e.setVRelative(ele[SCALEBAR]);
 		e.setAdditionalOffsX(bigNaviX);
+		e.setAdditionalOffsY(3);
 		e.setSpecialElementID(SE_BIGNAVI_ICON1);		
 		
 		e = ele[BIGNAVIICON2]; addElement(e,
