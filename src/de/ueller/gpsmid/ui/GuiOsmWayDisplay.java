@@ -35,6 +35,9 @@ import de.ueller.midlet.ui.UploadListener;
 import de.ueller.util.HttpHelper;
 import de.ueller.util.Logger;
 
+//#if polish.android
+import de.enough.polish.android.midlet.MidletBridge;
+//#endif
 //#if polish.api.online
 //#endif
 
@@ -191,12 +194,20 @@ public class GuiOsmWayDisplay extends GuiOsmEntityDisplay implements GpsMidDispl
 				eway.uploadXML(changesetGui.getChangesetID(),this);
 			} else if (loadState == LOAD_STATE_LOAD) {
 				osmentity = new OsmDataWay(http.getData(), wayID);
+				//#if polish.android
+				runSetupScreen();
+				//#else
 				setupScreen();
+				//#endif
 				loadState = LOAD_STATE_NONE;
 			} else {
 				if (GpsMid.getInstance().shouldBeShown() == this) {
 					osmentity = eway.getOSMdata();
+					//#if polish.android
+					runSetupScreen();
+					//#else
 					setupScreen();
+					//#endif
 				}
 			}
 		} else {
@@ -204,5 +215,15 @@ public class GuiOsmWayDisplay extends GuiOsmEntityDisplay implements GpsMidDispl
 		}
 	}
 
+	//#if polish.android
+	public void runSetupScreen() {
+		MidletBridge.instance.runOnUiThread(
+			new Runnable() {
+				public void run() {
+					setupScreen();
+				}
+			});
+	}
+	//#endif
 }
 //#endif
