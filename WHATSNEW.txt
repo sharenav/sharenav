@@ -9,14 +9,19 @@
     *** Usability ***
     - Received position SMS can now be pasted to DegLat in "Enter waypoint" dialog
     - increased defaults for maximum search results in new midlets
+    - new option in Setup / Here&Online to disable internet access during runtime
     *** Routing ***
     - show distance below big navigation icons
     - more consistent color for u-turn big navigation icons
+    - footways are now non-accessible for bicycles if the way has no tag like bicycle=yes as well
+    - fixed bug causing no route line at the end of the route and wrong instruction
+      (reason: wrong closeby routeNode could be determined on the destination way)
     *** Osm2GpsMid / Osm2GpsMid GUI ***
     - new tile size/count preset "even fewer and large map tiles" to generate maps for powerful mobiles
       while keeping the number of files in map data not very high. This might be useful for most
       Android devices but also to be able to install e.g. on Nokia 5800 very big jars (~200 MB)
     - new default for tile size/count in generated maps is now "average tile file size and count"
+    - no more messages about invalid turn restriction if ways of the relation are tagged with access=no
     *** Bug fixes ***
     - fixed an error that prevented to load all route / map tiles of the Germany map from thju
     *** Android Support ***
