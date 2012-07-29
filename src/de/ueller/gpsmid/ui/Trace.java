@@ -1952,10 +1952,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			
 			if (! routeCalc) {
 				//#if polish.api.osm-editing
-				if (!internetAccessAllowed()) {
-					return;
-				}
-				if (c == CMDS[RETRIEVE_XML]) {
+				if (c == CMDS[RETRIEVE_XML] && internetAccessAllowed()) {
 					if (Legend.enableEdits) {
 						// -1 alert ("Editing", "Urlidx: " + pc.actualWay.urlIdx, Alert.FOREVER);
 						if ((pc.actualWay != null) && (getUrl(pc.actualWay.urlIdx) != null)) {
@@ -1972,7 +1969,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						parent.alert("Editing", "Editing support was not enabled in Osm2GpsMid", Alert.FOREVER);
 					}
 				}
-				if (c == CMDS[EDIT_ENTITY]) {
+				if (c == CMDS[EDIT_ENTITY] && internetAccessAllowed()) {
 					// if we clicked a clickable marker, get coords from the marker instead of tap
 					int x = centerP.x;
 					int y = centerP.y;
@@ -2015,7 +2012,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						parent.alert("Editing", "Editing support was not enabled in Osm2GpsMid", Alert.FOREVER);
 					}
 				}
-				if (c == CMDS[RETRIEVE_NODE]) {
+				if (c == CMDS[RETRIEVE_NODE] && internetAccessAllowed()) {
 					if (Legend.enableEdits) {
 						GuiOsmPoiDisplay guiNode = new GuiOsmPoiDisplay(-1, null,
 								center.radlat, center.radlon, this);
@@ -2025,7 +2022,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						logger.error(Locale.get("trace.EditingIsNotEnabled")/*Editing is not enabled in this map*/);
 					}
 				}
-				if (c == CMDS[EDIT_ADDR_CMD]) {
+				if (c == CMDS[EDIT_ADDR_CMD] && internetAccessAllowed()) {
 					if (Legend.enableEdits) {
 						String streetName = "";
 						//if ((pc != null) && (pc.actualWay != null)) {
