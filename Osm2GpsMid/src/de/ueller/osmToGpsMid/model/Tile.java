@@ -572,12 +572,12 @@ public class Tile {
 					) { 
 						nds.writeFloat(MyMath.degToRad(n.node.lat));
 						nds.writeFloat(MyMath.degToRad(n.node.lon));
-						// For ROUTEEXTRAMAINSTREETZOOMLEVEL it is necessary to write out also the route node ids as route nodes stored in the t5 files
+						// FIXME: For ROUTEEXTRAMAINSTREETZOOMLEVEL it will be necessary to write out also the route node ids as route nodes stored in the t5 files
 						// are no more sequential to make them match the route node ids in the full net. The plan is to have the ids anyway written out
 						// sorted for quick accessing extramainstreetnet route nodes by id in GpsMid with a bsearch()-like method.
-						if (zl == CreateGpsMidData.ROUTEEXTRAMAINSTREETZOOMLEVEL) {
-							nds.writeInt(n.id);
-						}
+						// Or maybe we'll use in GpsMid an IntTree for direct access to route nodes by id
+						// (if using IntTree make sure to add a constructor setting the initial the capacity of the IntTree)
+						// nds.writeInt(n.id);
 		
 						hasTurnRestriction = false;
 						turnWrite = turnRestrictions.get(n.node.id);
@@ -649,6 +649,7 @@ public class Tile {
 						}
 					} // end of street net condition
 				} // end of routeNodes loop
+								
 				// attach turn restrictions at the end of the mainstreet / normal street node data
 				for (RouteNode n : routeNodes) {
 					isOnMainStreetNet = n.isOnMainStreetNet();
@@ -681,7 +682,6 @@ public class Tile {
 					} // end of street net condition for turn restrictions
 				} // end of routeNodes loop for turn restrictions								
 			} // end of writeStreetNets loop
-			
 			/**
 			 * Write a special marker, so that we can detect if something
 			 * went wrong with decoding the variable length encoding
