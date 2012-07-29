@@ -575,7 +575,7 @@ public class BundleGpsMid implements Runnable {
 			
 			RouteData rd = null;
 			if (Configuration.attrToBoolean(config.useRouting) >= 0 ) {
-				rd = new RouteData(parser, target.getCanonicalPath(), false);
+				rd = new RouteData(parser, target.getCanonicalPath());
 				System.out.println("Remembering " + parser.trafficSignalCount + " traffic signal nodes");
 				rd.rememberDelayingNodes();
 			}
@@ -597,21 +597,6 @@ public class BundleGpsMid implements Runnable {
 
 			new CalcNearBy(parser);
 			cd.exportMapToMid();
-			
-			if (Configuration.attrToBoolean(config.useRouting) >= 0 && Configuration.attrToBoolean(config.useExtraMainstreetNet) >= 0) {
-				rd = new RouteData(parser, target.getCanonicalPath(), true);
-//				System.out.println("Remembering " + parser.trafficSignalCount + " traffic signal nodes");
-//				rd.rememberDelayingNodes();
-				
-				System.out.println("Creating mainstreet route data");
-				System.out.println("==============================");
-				rd.create(config);
-				rd.optimise();
-				OsmParser.printMemoryUsage(1);
-
-				cd.exportRouteExtraMainstreetZoomLevelToMid();
-			}
-
 			//Drop parser to conserve Memory
 			parser = null;
 			cd = null;

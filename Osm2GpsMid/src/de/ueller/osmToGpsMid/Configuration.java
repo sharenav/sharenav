@@ -352,9 +352,6 @@ public class Configuration {
 		/** Defines string to add to Manifest / .jad file*/
 		public String addToManifest = "";
 		
-		/** Defines whether to write an extra mainstreet net for routing */
-		public String useExtraMainstreetNet = "false";
-
 		/** Defines which routing options from the style-file get used. */
 		public String useRouting = "motorcar";
 		
@@ -666,7 +663,6 @@ public class Configuration {
 			readRouteList();
 			
 			setRouting(getString("useRouting"));
-			setExtraMainstreetNet(getString("useExtraMainstreetNet"));
 			useUrlTags = getString("useUrlTags").equalsIgnoreCase("true");
 			usePhoneTags = getString("usePhoneTags").equalsIgnoreCase("true");
 			useHouseNumbers = getString("useHouseNumbers").equalsIgnoreCase("true");
@@ -1325,10 +1321,6 @@ public class Configuration {
 			} else {
 				useRouting = routing;
 			}
-		}
-
-		public void setExtraMainstreetNet(String extraMainstreetNet) {
-			useExtraMainstreetNet = extraMainstreetNet;
 		}
 
 		public void setIcons(String icons) {

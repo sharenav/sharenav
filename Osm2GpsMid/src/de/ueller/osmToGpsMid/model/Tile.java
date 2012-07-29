@@ -143,7 +143,7 @@ public class Tile {
 //			System.out.println("Start new Dict file");
 			// Write this containerTile as a FileTile. This container will be then 
 			// placed within this new FileTile. 
-			if (zl != CreateGpsMidData.ROUTEZOOMLEVEL && zl != CreateGpsMidData.ROUTEEXTRAMAINSTREETZOOMLEVEL) {
+			if (zl != CreateGpsMidData.ROUTEZOOMLEVEL) {
 				ds.writeByte(TYPE_FILETILE);
 				ds.writeFloat(degToRad(bounds.minLat));
 				ds.writeFloat(degToRad(bounds.minLon));
@@ -175,7 +175,7 @@ public class Tile {
 			case TYPE_MAP:
 			case TYPE_ROUTEDATA:
 //				System.out.println("Type 1");
-				if (zl != CreateGpsMidData.ROUTEZOOMLEVEL && zl != CreateGpsMidData.ROUTEEXTRAMAINSTREETZOOMLEVEL) {
+				if (zl != CreateGpsMidData.ROUTEZOOMLEVEL) {
 					lds.writeByte(TYPE_MAP);
 					lds.writeFloat(degToRad(bounds.minLat));
 					lds.writeFloat(degToRad(bounds.minLon));
@@ -198,7 +198,7 @@ public class Tile {
 			case TYPE_CONTAINER:
 			case TYPE_ROUTECONTAINER:
 //				System.out.println("Type 2");
-				if (zl != CreateGpsMidData.ROUTEZOOMLEVEL && zl != CreateGpsMidData.ROUTEEXTRAMAINSTREETZOOMLEVEL) {
+				if (zl != CreateGpsMidData.ROUTEZOOMLEVEL) {
 					lds.writeByte(TYPE_CONTAINER);
 					lds.writeFloat(degToRad(bounds.minLat));
 					lds.writeFloat(degToRad(bounds.minLon));
@@ -485,14 +485,8 @@ public class Tile {
 		if (routeNodes != null) {
 			//System.out.println("Write Routenodes " + fid + " nodes " + 
 			// routeNodes.size() +"  with " + idxMin + " to " + idxMax);
-			FileOutputStream cfo = null;
-			if (zl == CreateGpsMidData.ROUTEZOOMLEVEL) {
-				cfo = FileTools.createFileOutputStream(
+			FileOutputStream cfo = FileTools.createFileOutputStream(
 					path + "/c/" + fid + ".d");
-			} else if (zl == CreateGpsMidData.ROUTEEXTRAMAINSTREETZOOMLEVEL) {
-				cfo = FileTools.createFileOutputStream(
-						path + "/c5/" + fid + ".d");				
-			}
 			DataOutputStream cds = new DataOutputStream(new BufferedOutputStream(cfo));
 			FileOutputStream fo = FileTools.createFileOutputStream(
 					path + "/t" + zl + "/" + fid + ".d");
@@ -522,7 +516,7 @@ public class Tile {
 					) { 
 						turnWrite = turnRestrictions.get(n.node.id);
 						while (turnWrite != null) {
-							if (turnWrite.isComplete() && (zl != CreateGpsMidData.ROUTEEXTRAMAINSTREETZOOMLEVEL || turnWrite.isExtraMainStreet())) {
+							if (turnWrite.isComplete()) {
 								countTurnRestrictions[writeStreetNets]++;
 							}
 							turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
@@ -531,10 +525,6 @@ public class Tile {
 				}
 				// write counter how many turn restrictions are in this tile in mainstreet/normalNet
 				nds.writeShort(countTurnRestrictions[writeStreetNets]);
-			}
-			
-			if (zl == CreateGpsMidData.ROUTEEXTRAMAINSTREETZOOMLEVEL && countTurnRestrictions[1] != 0) {
-				System.out.println("WARNING: " + countTurnRestrictions[1] + " normal net turn restrictions in extramainstreet");
 			}
 
 			// write mainStreetNet routeNodes / turn restrictions in the first loop, 
@@ -548,17 +538,12 @@ public class Tile {
 					) { 
 						nds.writeFloat(MyMath.degToRad(n.node.lat));
 						nds.writeFloat(MyMath.degToRad(n.node.lon));
-						// FIXME: For ROUTEEXTRAMAINSTREETZOOMLEVEL it will be necessary to write out also the route node ids as route nodes stored in the t5 files
-						// are no more sequential to make them match the route node ids in the full net. The plan is to have the ids anyway written out
-						// sorted for quick accessing extramainstreetnet route nodes by id in GpsMid with a bsearch()-like method.
-						// Or maybe we'll use in GpsMid an IntTree for direct access to route nodes by id
-						// (if using IntTree make sure to add a constructor setting the initial the capacity of the IntTree)
-						// nds.writeInt(n.id);
+						//nds.writeInt(cds.size());
 		
 						hasTurnRestriction = false;
 						turnWrite = turnRestrictions.get(n.node.id);
 						while (turnWrite != null) {
-							if (turnWrite.isComplete() && (zl != CreateGpsMidData.ROUTEEXTRAMAINSTREETZOOMLEVEL || turnWrite.isExtraMainStreet())) {
+							if (turnWrite.isComplete()) {
 								countTurnRestrictions[writeStreetNets]++;
 								hasTurnRestriction = true;
 							}
@@ -635,7 +620,7 @@ public class Tile {
 					) { 
 						turnWrite = turnRestrictions.get(n.node.id);
 						while (turnWrite != null) {
-							if (turnWrite.isComplete() && (zl != CreateGpsMidData.ROUTEEXTRAMAINSTREETZOOMLEVEL || turnWrite.isExtraMainStreet())) {					
+							if (turnWrite.isComplete()) {					
 								nds.writeInt(turnWrite.viaRouteNode.id);
 								// just a prevention against renumbered RouteNodes
 								if (turnWrite.viaRouteNode.id != n.id) {
