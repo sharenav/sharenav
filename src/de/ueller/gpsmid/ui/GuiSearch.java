@@ -403,7 +403,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 				try {
 					if (url != null) {
 						//#if polish.api.online
-						GpsMid.getInstance().platformRequest(url);
+						if (parent.internetAccessAllowed()) {
+							GpsMid.getInstance().platformRequest(url);
+						}
 						//#else
 						GpsMid.getInstance().alert (Locale.get("guisearch.OpenUrlTitle"),
 							      Locale.get("guisearch.OpenUrl") +  " " + url, Alert.FOREVER);
@@ -677,6 +679,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 	//#if polish.api.osm-editing
 	private void editOSM(SearchResult sr) {
 		if (Legend.enableEdits) {
+			if (!parent.internetAccessAllowed()) {
+				return;
+			}
 			//System.out.println("Trying to retrieve node " + sr.osmID + " lat: " + sr.lat + " lon " + sr.lon);
 			if (sr.type < 0) {
 				GuiOsmPoiDisplay guiNode = new GuiOsmPoiDisplay((int) sr.osmID, null,

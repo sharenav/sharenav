@@ -183,7 +183,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	protected static final int SEND_MESSAGE_CMD = 53;
 	protected static final int SHOW_DEST_CMD = 54;
 	protected static final int EDIT_ADDR_CMD = 55;
-	protected static final int OPEN_URL_CMD = 56;
+	// protected static final int OPEN_URL_CMD = 56;
 	protected static final int SHOW_PREVIOUS_POSITION_CMD = 57;
 	protected static final int TOGGLE_GPS_CMD = 58;
 	protected static final int CELLID_LOCATION_CMD = 59;
@@ -1527,7 +1527,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				}
 				return;
 			}
-			if (c == CMDS[ONLINE_INFO_CMD]) {
+			if (c == CMDS[ONLINE_INFO_CMD] && internetAccessAllowed()) {
 				// if we clicked a clickable marker, get coords from the marker instead of tap
 				int x = centerP.x;
 				int y = centerP.y;
@@ -1753,11 +1753,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				setFullScreenMode(fullScreen);
 				return;
 			}
-			if (c == CMDS[HELP_ONLINE_TOUCH_CMD]) {
+			if (c == CMDS[HELP_ONLINE_TOUCH_CMD] && internetAccessAllowed()) {
 				GuiWebInfo.openUrl(GuiWebInfo.getStaticUrlForSite(Locale.get("guiwebinfo.helptouch")));
 				return;
 			}
-			if (c == CMDS[HELP_ONLINE_WIKI_CMD]) {
+			if (c == CMDS[HELP_ONLINE_WIKI_CMD] && internetAccessAllowed()) {
 				GuiWebInfo.openUrl(GuiWebInfo.getStaticUrlForSite(Locale.get("guiwebinfo.helpwiki")));
 				return;
 			}
@@ -1952,6 +1952,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			
 			if (! routeCalc) {
 				//#if polish.api.osm-editing
+				if (!internetAccessAllowed()) {
+					return;
+				}
 				if (c == CMDS[RETRIEVE_XML]) {
 					if (Legend.enableEdits) {
 						// -1 alert ("Editing", "Urlidx: " + pc.actualWay.urlIdx, Alert.FOREVER);
@@ -3894,7 +3897,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				// System.out.println("Checking for clickable markers");
 				boolean markerClicked = false;
 				ClickableCoords coords = getClickableMarker(x, y);
-				if (coords != null) {
+				if (coords != null && internetAccessAllowed()) {
 					markerClicked = true;
 					if (coords.url != null) {
 						GuiWebInfo.openUrl(coords.url);
@@ -4609,4 +4612,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		coords.nodeID = nodeID;
 		clickableMarkers.addElement(coords);
 	}
+    
+    public boolean internetAccessAllowed() {
+    	if (Configuration.getCfgBitState(Configuration.CFGBIT_INTERNET_ACCESS)) {
+        	return true;
+    	}
+		alert("GpsMid", Locale.get("trace.OnlineFeaturesDisabledIn") + " " + Locale.get("traceiconmenu.Setup") + " / " + Locale.get("guidiscovericonmenu.Online"), 5000); // Online features are disabled in Setup / Online 
+		return false;
+    }
+    
 }

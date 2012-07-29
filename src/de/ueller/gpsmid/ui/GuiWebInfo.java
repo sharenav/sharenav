@@ -134,7 +134,7 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 				mParent.show();
 			//#if polish.api.bigsearch
 			//#if polish.api.osm-editing
-			} else if (site.equalsIgnoreCase(Locale.get("guiwebinfo.EditPOI")/*Edit POI*/)) {
+			} else if (site.equalsIgnoreCase(Locale.get("guiwebinfo.EditPOI")/*Edit POI*/) && trace.internetAccessAllowed()) {
 					//System.out.println("Calling GuiOsmPoiDisplay: nodeID " + mNodeID);
 					GuiOsmPoiDisplay guiNode = new GuiOsmPoiDisplay((int) mNodeID, null,
 											mPos.latitude, mPos.longitude, mParent);
@@ -142,7 +142,7 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 					guiNode.refresh();
 			//#endif 
 			//#endif 
-			} else {
+			} else if (trace.internetAccessAllowed()) {
 				String url = getUrlForSite(site);
 				openUrl(url);
 				mParent.show();
