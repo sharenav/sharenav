@@ -2243,7 +2243,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			 */
 			updatePosition();
 		}
-		tl = new TraceLayout(minX, minY, maxX, maxY);
+		recreateTraceLayout();
 	}
 
 	public void sizeChanged(int w, int h) {
@@ -2266,8 +2266,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 
 		setDisplayCoords(w, h);
-		tl = new TraceLayout(minX, minY, maxX, maxY);
-
+		recreateTraceLayout();
+		
 		if (isShowingSplitIconMenu() && (traceIconMenu != null)) {
 			traceIconMenu.sizeChanged(w, h);
 		}
