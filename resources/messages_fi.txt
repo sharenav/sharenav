@@ -887,3 +887,4 @@ routing.RouteFoundIn=Reitti löytyi, kesti
 guisetupgui.otherOptions=Muut asetukset
 guisetupgui.ExitWithBackButton=Ensimmäinen takaisin -nappi poistuu GpsMidistä
 keycommandcanvas.BackAgainToExit=Paina takaisin uudelleen poistuaksesi GpsMidistä
+fsdiscover.thisdir=[Tämä hakemisto]
