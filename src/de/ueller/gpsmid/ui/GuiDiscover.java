@@ -249,6 +249,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup naviLangGroup;
 	private ChoiceGroup onlineLangGroup;
 	private ChoiceGroup onlineOptionGroup;
+	private ChoiceGroup internetAccessGroup;
 	private ChoiceGroup directionOpts;
 	private ChoiceGroup directionDevOpts;
 	private ChoiceGroup renderOpts;
@@ -268,7 +269,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup debugOther;
 	private StringItem  gpxUrl;
 	private StringItem  gpsUrl;
-	private ImageItem mapLocationImage;
 	private ChoiceGroup autoConnect;
 	private ChoiceGroup cellIDStartup;
 	private ChoiceGroup btKeepAlive;
@@ -724,6 +724,15 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private void initOnlineOptions() {
 		menuOnlineOptions = new Form(Locale.get("guidiscover.OnlineOptions")/*Online options*/);
 
+		String [] internetAccess = { 
+				Locale.get("guidiscover.AllowInternetAccess") /*Allow Internet Access*/
+		};
+		
+		internetAccessGroup = new ChoiceGroup(Locale.get("guidiscover.InternetAccess")/*Internet Access*/, Choice.MULTIPLE, internetAccess, null);
+		//#style formItem
+		menuOnlineOptions.append(internetAccessGroup);
+		internetAccessGroup.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_INTERNET_ACCESS));
+		
 		int langNum = 0;
 		if (Legend.numOnlineLang + numLangDifference > 1) {
 			String [] onlineLang = new String[Legend.numOnlineLang + numLangDifference];
@@ -1630,6 +1639,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	}
 
 	private void returnFromOnlineOptions() {
+		boolean oldInternetAccess = Configuration.getCfgBitState(Configuration.CFGBIT_INTERNET_ACCESS);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_INTERNET_ACCESS,
+				internetAccessGroup.isSelected(0));
+		
 		String onlineLang = null;
 		if (langToAdd != null) {
 			onlineLang = langToAdd;
@@ -1653,6 +1666,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				onlineOptionGroup.isSelected(5));
 
 		state = STATE_ROOT;
+		if (internetAccessGroup.isSelected(0) != oldInternetAccess) {
+			Trace.uncacheIconMenu();
+		}
 		this.show();
 	}
 

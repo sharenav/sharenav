@@ -2250,9 +2250,10 @@ public class Way extends Entity {
 		boolean doNotSimplifyMap = !Configuration.getCfgBitState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY);
 		//#endif
 		
+		int idx;
 		for (int i1 = 0; i1 < path.length; ){
 //			pc.g.setColor(wayDesc.lineColor);
-			int idx = path[i1++];	
+			idx = path[i1++];	
 			if (idx < 0) {
 				idx += 65536;
 			}

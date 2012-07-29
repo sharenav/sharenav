@@ -108,8 +108,16 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 		iconAddPOI.makeImageGreyed();
 		iconEditWay.makeImageGreyed();
 		iconAddAddr.makeImageGreyed();
+		iconOnlineInfo.makeImageGreyed();
 		//#endif
-
+		if (!Configuration.getCfgBitState(Configuration.CFGBIT_INTERNET_ACCESS)) {
+			iconAddPOI.makeImageGreyed();
+			iconEditPOI.makeImageGreyed();
+			iconEditWay.makeImageGreyed();
+			iconAddAddr.makeImageGreyed();
+			iconOnlineInfo.makeImageGreyed();
+		}
+		
 		//#if not polish.api.osm-editing
 		iconEditWay.makeImageGreyed();
 		//#endif
@@ -228,7 +236,16 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 		mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Keys")/*Keys*/, "is_keys", Trace.KEYS_HELP_CMD);
 		if (hasPointerEvents()) {
 			iconHelpOnlineTouch = mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Touch")/*Touch*/, "i_online", Trace.HELP_ONLINE_TOUCH_CMD);
-		}		iconHelpOnlineWiki = mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Wiki")/*Wiki*/, "i_online", Trace.HELP_ONLINE_WIKI_CMD);
+		}
+		iconHelpOnlineWiki = mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Wiki")/*Wiki*/, "i_online", Trace.HELP_ONLINE_WIKI_CMD);
+		//#if not polish.api.online
+		iconHelpOnlineTouch.makeImageGreyed();
+		iconHelpOnlineWiki.makeImageGreyed();
+		//#endif
+		if (!Configuration.getCfgBitState(Configuration.CFGBIT_INTERNET_ACCESS)) {
+			iconHelpOnlineTouch.makeImageGreyed();
+			iconHelpOnlineWiki.makeImageGreyed();
+		}
 		mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
 	}
 

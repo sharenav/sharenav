@@ -14,6 +14,7 @@ import javax.microedition.io.file.FileConnection;
 import de.enough.polish.util.Locale;
 import de.ueller.gpsmid.ui.GpsMid;
 import de.ueller.gpsmid.ui.GuiDiscover;
+import de.ueller.gpsmid.ui.Trace;
 import de.ueller.util.Logger;
 
 
@@ -43,6 +44,7 @@ public class ConfigExportImport {
 			FileConnection con = (FileConnection)Connector.open(url);
 			Configuration.deserialise(con.openInputStream());
 			con.close();
+			Trace.uncacheIconMenu();
 			GpsMid.getInstance().alert(Locale.get("generic.Info")/*Info*/, 
 						   Locale.get("guidiscover.CfgImported", url)/*Configuration imported from '<file>'*/, 3000);
 		} catch (Exception e) {

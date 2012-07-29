@@ -56,7 +56,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 30;
+	public final static int VERSION = 31;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -351,6 +351,8 @@ public class Configuration {
 	public final static short CFGBIT_SEARCH_MAPDATA_BY_NAME = 140;
 	// bit 141: true if application can be quit with Back-Button on the map screen
 	public final static short CFGBIT_EXIT_APPLICATION_WITH_BACK_BUTTON = 141;
+	/** bit 142: true if internet access is allowed */
+	public final static short CFGBIT_INTERNET_ACCESS = 142;
 	
 	/**
 	 * These are the database record IDs for each configuration option
@@ -891,6 +893,12 @@ public class Configuration {
 			//#endif
 			setAltitudeCorrection(0);
 		}
+		if (configVersionStored < 31) {
+			//#if polish.api.online
+			setCfgBitSavedState(CFGBIT_INTERNET_ACCESS, true);
+			//#endif			
+		}
+
 		
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127, cfgBits_128_to_191);
 	}

@@ -1342,3 +1342,7 @@ routing.RouteFoundIn=Route found in
 guisetupgui.ExitWithBackButton=Single back button in map screen exits GpsMid
 guisetupgui.otherOptions=Other options
 keycommandcanvas.BackAgainToExit=Press the back key again to exit GpsMid
+guidiscover.AllowInternetAccess=Allow Internet Access
+guidiscover.InternetAccess=Internet Access
+trace.OnlineFeaturesDisabledIn=Online features are disabled in
+ 
