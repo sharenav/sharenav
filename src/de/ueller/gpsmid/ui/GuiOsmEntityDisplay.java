@@ -101,12 +101,17 @@ public abstract class GuiOsmEntityDisplay extends Form implements GpsMidDisplaya
 				i.addCommand(EDIT_CMD);
 				i.addCommand(REMOVE_CMD);
 				i.setItemCommandListener(this);
+				//#style formItem
 				this.append(i);
 			}
 			if (osmentity.getVersion() > 0) {
+				//#style formItem
 				this.append(new StringItem(Locale.get("guiosmentitydisplay.Edited")/*Edited */, null));
+				//#style formItem
 				this.append(new StringItem(Locale.get("guiosmentitydisplay.at")/*    at:*/, osmentity.getEditTime()));
+				//#style formItem
 				this.append(new StringItem(Locale.get("guiosmentitydisplay.by")/*    by:*/, osmentity.getEditor()));
+				//#style formItem
 				this.append(new StringItem(Locale.get("guiosmentitydisplay.ver")/*    ver:*/, Integer.toString(osmentity.getVersion())));
 			}
 			//#if polish.android
