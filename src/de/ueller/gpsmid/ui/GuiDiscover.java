@@ -29,6 +29,7 @@ import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.Gauge;
+import javax.microedition.lcdui.ImageItem;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.ItemCommandListener;
 import javax.microedition.lcdui.TextField;
@@ -51,6 +52,9 @@ import de.ueller.gpsmid.ui.GuiCamera;
 
 import de.ueller.gps.location.GetCompass;
 import de.ueller.gps.location.SECellId;
+//#if polish.android
+import de.ueller.midlet.util.ImageTools;
+//#endif
 
 public class GuiDiscover implements CommandListener, ItemCommandListener, 
 		GpsMidDisplayable, SelectionListener, IconActionPerformer {
@@ -264,6 +268,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup debugOther;
 	private StringItem  gpxUrl;
 	private StringItem  gpsUrl;
+	private ImageItem mapLocationImage;
 	private ChoiceGroup autoConnect;
 	private ChoiceGroup cellIDStartup;
 	private ChoiceGroup btKeepAlive;
@@ -433,6 +438,28 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		sources[0] = Locale.get("guidiscover.Built-inMap")/*Built-in map*/;
 		sources[1] = Locale.get("guidiscover.Filesystem")/*Filesystem: */;
 		mapSrc = new ChoiceGroup(Locale.get("guidiscover.MapSource")/*Map source:*/, Choice.EXCLUSIVE, sources, null);
+
+		//#if polish.android
+		try {
+			// FIXME would be better to have a dedicated icon
+			Image image = Image.createImage("/" + Configuration.getIconPrefix() + "is_save" + ".png");
+
+			float scale = 4 * image.getWidth() / Trace.getInstance().getWidth();
+			if (scale < 1.0f) {
+				scale = 1;
+			}
+			String name = Locale.get("guidiscover.SelectMapSource")/*Select Map Source*/;
+
+			mapLocationImage = new ImageItem(name, 
+							    ImageTools.scaleImage(image, (int) (image.getWidth() / scale), (int) (image.getHeight() / scale)),
+							    ImageItem.LAYOUT_RIGHT, name);
+		} catch (IOException ioe) {
+		}
+		mapLocationImage.addCommand(FILE_MAP);
+		mapLocationImage.setDefaultCommand(FILE_MAP);
+		mapLocationImage.setItemCommandListener(this);
+		menuSelectMapSource.append(mapLocationImage);
+		//#endif
 
 		String [] preferInternal = new String[2];
 		preferInternal[0] = Locale.get("guidiscover.PreferBuiltInPNGs")/*Prefer built-in POI PNGs (faster startup e.g. on some Nokias)*/;
