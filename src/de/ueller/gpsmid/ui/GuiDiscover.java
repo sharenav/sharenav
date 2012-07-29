@@ -147,7 +147,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 
 	private final Command STORE_ROOTFS = new Command(Locale.get("guidiscover.Select")/*Select*/, Command.OK, 2);
 	
-	private final Command FILE_MAP = new Command(Locale.get("guidiscover.SelectDirectory")/*Select Directory*/, Command.ITEM, 2);
+	private final Command FILE_MAP = new Command(Locale.get("guidiscover.SelectMapSource")/*Select Map Source*/, Command.ITEM, 2);
+	private final Command SELECT_DIR = new Command(Locale.get("guidiscover.SelectDirectory")/*Select Directory*/, Command.ITEM, 2);
 	private final Command BT_MAP	= new Command(Locale.get("guidiscover.SelectBtDev")/*Select bluetooth device*/, Command.ITEM, 2);
 	//#if polish.api.osm-editing
 	private final Command OSM_URL = new Command(Locale.get("guidiscover.UploadOSM")/*Upload to OSM*/, Command.ITEM, 2);
@@ -317,7 +318,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		String [] loggings = new String[1];
 		menuDebug.addCommand(BACK_CMD);
 		menuDebug.addCommand(OK_CMD);
-		menuDebug.addCommand(FILE_MAP);
+		menuDebug.addCommand(SELECT_DIR);
 		menuDebug.setCommandListener(this);
 		boolean [] selDebug = new boolean[1];
 		selDebug[0] = Configuration.getDebugRawLoggerEnable();
@@ -398,7 +399,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//#style formItem
 		menuSelectLocProv.append(locProv);
 		//#style formItem
-		menuSelectLocProv.addCommand(FILE_MAP);
+		menuSelectLocProv.addCommand(SELECT_DIR);
 
 		final String[] logCategories = {Locale.get("guidiscover.CellIDs")/*Cell-IDs for OpenCellID.org*/, Locale.get("guidiscover.RawGpsData")/*Raw Gps Data*/ };
 		rawLogCG = new ChoiceGroup(LABEL_SELECT_LOGDIR_FIRST, ChoiceGroup.MULTIPLE, logCategories, new Image[2]);
@@ -822,6 +823,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		if (c == FILE_MAP) {
 			handleFileMapCommand();
 		}
+		if (c == SELECT_DIR) {
+			handleFileMapCommand();
+		}
 		if (c == MANUAL_URL_CMD) {
 			menuURLEnter = new Form(Locale.get("guidiscover.EnterConnectionUrl")/*Enter connection url*/);
 			tfURL = new TextField(Locale.get("guidiscover.URL")/*URL*/, gpsUrlStr, 256, TextField.ANY);
@@ -983,7 +987,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private void handleFileMapCommand() {
 		//#if polish.api.fileconnection
 		String initialDir = "";
-		String title = Locale.get("guidiscover.SelectDirectory")/*Select Directory*/;
+		String title = Locale.get("guidiscover.SelectMapSource")/*Select Map Source*/;
 		switch (state) {
 			case STATE_LOC_PROV:
 				title = Locale.get("guidiscover.RawLogDir")/*Raw GPS/CellID Log Directory*/;
@@ -1168,7 +1172,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				menuGpx = new Form(Locale.get("guidiscover.GpxReceiver")/*Gpx Receiver*/);
 				menuGpx.addCommand(BACK_CMD);
 				menuGpx.addCommand(OK_CMD);
-				menuGpx.addCommand(FILE_MAP);
+				menuGpx.addCommand(SELECT_DIR);
 				menuGpx.addCommand(BT_MAP);
 				//#if polish.api.osm-editing
 				menuGpx.addCommand(OSM_URL);
