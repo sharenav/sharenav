@@ -160,7 +160,8 @@ public class TraceLayout extends LayoutManager {
 		e = ele[POINT_OF_COMPASS]; addElement(e,
 			LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_FONT_MEDIUM |
-			LayoutElement.FLAG_BACKGROUND_BOX
+			LayoutElement.FLAG_BACKGROUND_BOX |
+			LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 		);
 		e.setVRelative(ele[TITLEBAR]);
 		e.setColor(Legend.COLORS[Legend.COLOR_COMPASS_DIRECTION_TEXT]);
@@ -170,7 +171,8 @@ public class TraceLayout extends LayoutManager {
 	
 		e = ele[SOLUTION]; addElement(e,
 			LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
-			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX
+			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX |
+			LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 		);
 		e.setColor(Legend.COLORS[Legend.COLOR_SOLUTION_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_SOLUTION_BACKGROUND]);
@@ -190,7 +192,8 @@ public class TraceLayout extends LayoutManager {
 		
 		e = ele[RECORDED_COUNT]; addElement(e,
 				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
-				LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX);
+				LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX |
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RECORDING_BACKGROUND]);
 		e.setAdditionalOffsX(-1);
 		e.setVRelative(ele[SOLUTION]);
@@ -205,7 +208,8 @@ public class TraceLayout extends LayoutManager {
 	
 		e = ele[AUDIOREC]; addElement(e,
 				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
-				LayoutElement.FLAG_FONT_MEDIUM
+				LayoutElement.FLAG_FONT_MEDIUM |
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 			);
 		e.setAdditionalOffsX(-1);
 		e.setVRelative(ele[CELLID]);
@@ -214,7 +218,8 @@ public class TraceLayout extends LayoutManager {
 			LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_BOTTOM |
 			LayoutElement.FLAG_FONT_MEDIUM |
 			LayoutElement.FLAG_BACKGROUND_BOX | LayoutElement.FLAG_BACKGROUND_FULL_WIDTH |
-			LayoutElement.FLAG_RESERVE_SPACE
+			LayoutElement.FLAG_RESERVE_SPACE |
+			LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 		);
 		e.setColor(Legend.COLORS[Legend.COLOR_WAYNAME_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_WAYNAME_BACKGROUND]);
@@ -237,7 +242,8 @@ public class TraceLayout extends LayoutManager {
 		e = ele[ROUTE_DISTANCE]; addElement(e,
 			LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 			LayoutElement.FLAG_FONT_MEDIUM |
-			LayoutElement.FLAG_BACKGROUND_BOX
+			LayoutElement.FLAG_BACKGROUND_BOX |
+			LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 		);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_BACKGROUND]);
 		e.setColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_TEXT]);
@@ -256,7 +262,8 @@ public class TraceLayout extends LayoutManager {
 		e = ele[CURRENT_TIME]; addElement(e,
 				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 				LayoutElement.FLAG_FONT_MEDIUM |
-				LayoutElement.FLAG_BACKGROUND_BOX
+				LayoutElement.FLAG_BACKGROUND_BOX |
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 		);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_CLOCK_BACKGROUND]);
 		e.setColor(Legend.COLORS[Legend.COLOR_CLOCK_TEXT]);
@@ -415,7 +422,8 @@ public class TraceLayout extends LayoutManager {
 		addElement(e, 
 				   LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 				LayoutElement.FLAG_FONT_MEDIUM |
-				LayoutElement.FLAG_BACKGROUND_BOX);
+				LayoutElement.FLAG_BACKGROUND_BOX |
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT);
 		// FIXME create a color for this at map format change
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_CLOCK_BACKGROUND]);
 		e.setColor(Legend.COLORS[Legend.COLOR_CLOCK_TEXT]);
@@ -436,15 +444,18 @@ public class TraceLayout extends LayoutManager {
 		float factor;
 		int fontFlag;
 		int fontFlag2;
+		int fontHeightPercent;
 		LayoutElement e;
 		if (TraceLayout.bigOnScreenButtons) {
 			factor = 1.5f;
 			fontFlag = LayoutElement.FLAG_FONT_LARGE;
 			fontFlag2 = fontFlag | LayoutElement.FLAG_FONT_BOLD;
+			fontHeightPercent = 125;				
 		} else {
 			factor = 1;
 			fontFlag = LayoutElement.FLAG_FONT_MEDIUM;
 			fontFlag2 = fontFlag;
+			fontHeightPercent = 100;
 		}
 		
 		int buttonPercent = (int) (12 * factor);
@@ -464,11 +475,13 @@ public class TraceLayout extends LayoutManager {
 		for (int i = 0; i < ids1.length; i++) {
 			e = ele[ids1[i]];
 			e.setFlag(fontFlag2);
+			e.setHeightPercent(fontHeightPercent);
 		}
 		int ids2[] = {CURRENT_TIME, TRAVEL_MODE, ROUTE_DISTANCE, WAYNAME};
 		for (int i = 0; i < ids2.length; i++) {
 			e = ele[ids2[i]];
 			e.setFlag(fontFlag);
+			e.setHeightPercent(fontHeightPercent);
 		}
 		e = ele[SCALEBAR];
 		e.setFlag(fontFlag2);
