@@ -2376,6 +2376,20 @@ end -->
   				<scale scale = "19"/>
   				<lineColor color = "0000A020" />  	  				
   			</Wvalue>
+			<Wvalue name = "zoo">
+  				<description desc = "Zoo"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "19"/>
+  				<lineColor color = "0018DD65" />  	  				
+  			</Wvalue>
+			<Wvalue name = "*">
+  				<description desc = "Other tourism"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "19"/>
+  				<lineColor color = "0049FF8F" />  	  				
+  			</Wvalue>
 		</keyW>			
 		<keyW tag = "building">
 			<Wvalue name = "yes"  priority = "-1">
