@@ -17,6 +17,9 @@
     - footways are now non-accessible for bicycles if the way has no tag like bicycle=yes as well
     - fixed bug causing no route line at the end of the route and wrong instruction
       (reason: wrong closeby routeNode could be determined on the destination way)
+    - the route line is now rendered on top of POIs as well when the cursor is close to it
+      because in regions with many POIs e.g. trees mapped next to the streets
+      the route line became hardly visible
     - more consistent color for u-turn big navigation icons
     *** Osm2GpsMid / Osm2GpsMid GUI ***
     - new tile size/count preset "even fewer and large map tiles" to generate maps for powerful mobiles

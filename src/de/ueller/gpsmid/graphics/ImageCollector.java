@@ -246,9 +246,10 @@ public class ImageCollector implements Runnable {
 				 */
 				byte layersToRender[] = { Tile.LAYER_AREA, 1 | Tile.LAYER_AREA , 2 | Tile.LAYER_AREA,
 						3 | Tile.LAYER_AREA, 4 | Tile.LAYER_AREA,  0, 1, 2, 3, 4,
+						Tile.LAYER_NODE, 
 						0 | Tile.LAYER_HIGHLIGHT, 1 | Tile.LAYER_HIGHLIGHT,
-						2 | Tile.LAYER_HIGHLIGHT, 3 | Tile.LAYER_HIGHLIGHT,
-						Tile.LAYER_NODE };
+						2 | Tile.LAYER_HIGHLIGHT, 3 | Tile.LAYER_HIGHLIGHT
+				};
 				
 				/**
 				 * Draw each layer separately to enforce paint ordering:
