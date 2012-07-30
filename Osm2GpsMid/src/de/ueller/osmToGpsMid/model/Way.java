@@ -451,11 +451,20 @@ public class Way extends Entity implements Comparable<Way> {
 //			if (getName().indexOf("Volksbad") >= 0) {
 //				System.out.println ("lat: " + b.minLat + " lon: " + b.minLon + " : " + diameter + "  " + getName());
 //			}
-			if (diameter < LegendParser.tileLevelAttractsAreasWithSmallerBoundsDiameterThan[3]) {
+			if (		diameter < LegendParser.tileLevelAttractsAreasWithSmallerBoundsDiameterThan[3] 
+			    		&&
+			    		(LegendParser.tileScaleLevelIsAllowedForRoutableWays[3] || !isAccessForAnyRouting())
+			) {
 				tileLevelFromDiameter = 3;
-			} else if (diameter < LegendParser.tileLevelAttractsAreasWithSmallerBoundsDiameterThan[2]) {
+			} else if (	diameter < LegendParser.tileLevelAttractsAreasWithSmallerBoundsDiameterThan[2]
+			    		&&
+			    		(LegendParser.tileScaleLevelIsAllowedForRoutableWays[2] || !isAccessForAnyRouting())
+			) {
 				tileLevelFromDiameter = 2;
-			} else if (diameter < LegendParser.tileLevelAttractsAreasWithSmallerBoundsDiameterThan[1]) {
+			} else if (	diameter < LegendParser.tileLevelAttractsAreasWithSmallerBoundsDiameterThan[1]
+                        &&
+                        (LegendParser.tileScaleLevelIsAllowedForRoutableWays[1] || !isAccessForAnyRouting())
+            ) {
 				tileLevelFromDiameter = 1;
 			}
 		}
