@@ -1,4 +1,4 @@
-    *** Map Performance ***
+    *** Map Performance and style-file ***
     - reorganized style-file for better performance when zoomed out
     - increased performance for zooming far out, panning around and zooming somewhere else in.
       This is achieved by dropping requests for tiles that are off-screen
@@ -6,6 +6,7 @@
     - small and smallish areas are stored based on their diameter in more appropriate tile levels
       (new parameter "attractAreasWithSmallerBoundsDiameterThan" in style-file) 
     - drop small & smallish areas (like lakes) when zooming very far out
+    - added way types for tourism/zoo and for other tourism areas
     *** Usability ***
     - Received position SMS can now be pasted to DegLat in "Enter waypoint" dialog
     - increased defaults for maximum search results in new midlets
