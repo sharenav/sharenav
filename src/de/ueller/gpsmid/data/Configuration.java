@@ -2433,8 +2433,8 @@ public class Configuration {
 	public static void deserialise(InputStream is) throws IOException {
 		DataInputStream dis = new DataInputStream(is);
 		int version = dis.readInt();
-		// below version 21 older GpsMid.cfg files could not be read
-		if (version != VERSION && !version >= 21) {
+		// below version 2 older GpsMid.cfg files could not be read
+		if (version != VERSION && version < 22) {
 			throw new IOException(Locale.get("configuration.ConfigVersionMismatch")/*Version of the stored config does not match with current GpsMid*/);
 		}
 		boolean destPosValid = getCfgBitSavedState(CFGBIT_SAVED_DESTPOS_VALID);
