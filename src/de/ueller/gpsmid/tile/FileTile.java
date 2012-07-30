@@ -60,6 +60,25 @@ public class FileTile extends Tile implements QueueableTile {
 		}
 	}
 	
+	public int getNameIdx(float lat, float lon, short type) {
+		if (contain(lat, lon, 0.00001f)) {
+			System.out.println("SEARCH TILE6");
+			while (!isDataReady()) {
+				synchronized (this) {
+					try {
+						wait(100);
+						//#debug debug
+						logger.debug("Walk: wait for data");
+					} catch (InterruptedException e) {
+					}						
+				}
+			}
+			lastUse = 0;
+			return tile.getNameIdx(lat, lon, type);
+		}
+		return -1;
+	}
+	
 	public void walk(PaintContext pc,int opt) {
 		if (contain(pc)) {
 			while (!isDataReady()) {

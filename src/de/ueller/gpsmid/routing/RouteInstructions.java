@@ -19,6 +19,7 @@ import de.ueller.gpsmid.data.RoutePositionMark;
 import de.ueller.gpsmid.graphics.ImageCollector;
 import de.ueller.gpsmid.mapdata.Way;
 import de.ueller.gpsmid.mapdata.WayDescription;
+import de.ueller.gpsmid.tile.Tile;
 import de.ueller.gpsmid.ui.GpsMid;
 import de.ueller.gpsmid.ui.Trace;
 import de.ueller.gpsmid.ui.TraceLayout;
@@ -608,7 +609,7 @@ public class RouteInstructions {
 				e = Trace.tl.ele[TraceLayout.ROUTE_INTO];
 				e.setBackgroundColor(routeInstructionColor);				
 				e.setColor(Legend.COLORS[Legend.COLOR_RI_TEXT]);				
-				if (nameNow != null) {
+				if (nameNow != null && nameNow.length() > 0) {
 					e.setText("=> " + nameNow);
 				}				
 				if(Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP)) {
@@ -983,6 +984,7 @@ public class RouteInstructions {
 				} else {
 					ri = RI_LEAVE_MOTORWAY;					
 				}
+				fillInMotorWayJunctionName(c);
 			}
 			// area start
 			if ( isAreaStart(rfPrev, rfCurr) ) {
@@ -1311,6 +1313,20 @@ public class RouteInstructions {
 		return a;
 	}
 
+	/**
+	 * @param c
+	 */
+	private void fillInMotorWayJunctionName(ConnectionWithNode c) {
+		int nodeNameIdx;
+		for (int i1 = 0; i1 < 4; i1++) {
+			// TODO: look explicitely for nodes with type motorway junction 
+			nodeNameIdx = trace.tiles[i1].getNameIdx(c.to.lat, c.to.lon, (short) -1);
+			if (nodeNameIdx != -1) {
+				c.nodeNameIdx = nodeNameIdx;
+			}
+		}
+	}
+	
 	/*
 	 * get wayname for the current instruction -
 	 * in roundabouts we have to search the first non-roundabout
@@ -1337,8 +1353,20 @@ public class RouteInstructions {
 				break;
 			}
 		}
+		StringBuffer sbName = new StringBuffer();
+		String name;
+		if (c.nodeNameIdx != -1) {
+			name = trace.getName(c.nodeNameIdx);
+			if (name != null) {
+				sbName.append(name);
+			}
+		}
 		if (c.wayNameIdx != -1) {
-			return trace.getName(c.wayNameIdx);
+			name = trace.getName(c.wayNameIdx);
+			if (sbName.length() > 0 && name != null) {
+				sbName.append(" / ");
+			}
+			sbName.append(name);			
 		} else {
 			WayDescription wayDesc = Legend.getWayDescription(c.wayType);
 			boolean nextWayIsOriginalNextWay = true;
@@ -1349,16 +1377,30 @@ public class RouteInstructions {
 				c2 = (ConnectionWithNode) route.elementAt(i);
 				wayDesc = Legend.getWayDescription(c2.wayType);
 				if (c2.wayNameIdx != -1) {
-					String name = trace.getName(c2.wayNameIdx);
-					return (name == null) ? null : "... " + name;
+					name = trace.getName(c2.wayNameIdx);
+					if (sbName.length() > 0 && name != null) {
+						sbName.append (" / ");
+					}
+					if (name != null) {
+						sbName.append("...");
+						sbName.append(name);
+					}
+					return sbName.toString();
 				}
 			}
 			/* 
 			 * if we did not find a name on the following links or the first way after the links return unnamed way type,
 			 * only prefix "..." if there's a link way before the way
 			 */
-			return (nextWayIsOriginalNextWay ? "" : "... ") + Locale.get("imagecollector.unnamed")/*(unnamed */ + wayDesc.description + ")";
+			if (sbName.length() > 0) {
+				sbName.append (" / ");
+			}
+			if (!nextWayIsOriginalNextWay) {
+				sbName.append ("... ");				
+			}
+			sbName.append( Locale.get("imagecollector.unnamed")/*(unnamed */ + wayDesc.description + ")");
 		}
+		return sbName.toString();
 	}
 
 	public static void toNextInstruction(int direction) {

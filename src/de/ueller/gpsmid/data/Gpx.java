@@ -1136,6 +1136,10 @@ public class Gpx extends Tile implements Runnable, InputListener {
 	 */
 	public void walk(PaintContext pc, int opt) {
 	}
+	public int getNameIdx(float lat, float lon, short type) {
+		// only interesting for SingleTile	
+		return -1;
+	}
 
 	/**
 	 * Renders the waypoints, the recording track and the loaded tracks on the screen.

@@ -109,6 +109,22 @@ public class ContainerTile extends Tile {
 			cleanup(4);
 		}
 	}
+	
+	public int getNameIdx(float lat, float lon, short type) {
+		int ret = -1;
+		if (contain(lat, lon, 0.00001f)) {
+			if (t1 != null) {
+				ret = t1.getNameIdx(lat, lon, type);
+			}
+			if (ret == -1 && t2 != null) {
+				ret = t2.getNameIdx(lat, lon, type);
+			}
+		} else {	
+			cleanup(4);
+		}
+		return ret;
+	}
+
 
 	/**
 	    * Returns a Vector of SearchResult containing POIs of

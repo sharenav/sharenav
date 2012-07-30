@@ -11,11 +11,13 @@
     - increased defaults for maximum search results in new midlets
     - new option in Setup / Here&Online to disable internet access during runtime
     *** Routing ***
-    - show distance below big navigation icons
-    - more consistent color for u-turn big navigation icons
+    - the name of the motoway exit is shown in the route instruction
+      if a "motorway junction" node exists at the motorway exit  
+    - distance is shown below the big navigation icons
     - footways are now non-accessible for bicycles if the way has no tag like bicycle=yes as well
     - fixed bug causing no route line at the end of the route and wrong instruction
       (reason: wrong closeby routeNode could be determined on the destination way)
+    - more consistent color for u-turn big navigation icons
     *** Osm2GpsMid / Osm2GpsMid GUI ***
     - new tile size/count preset "even fewer and large map tiles" to generate maps for powerful mobiles
       while keeping the number of files in map data not very high. This might be useful for most

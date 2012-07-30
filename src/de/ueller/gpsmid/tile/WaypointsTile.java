@@ -113,7 +113,11 @@ public class WaypointsTile extends Tile {
 	public synchronized void walk(PaintContext pc, int opt) {
 		// TODO Auto-generated method stub
 	}
-
+	public int getNameIdx(float lat, float lon, short type) {
+		// only interesting for SingleTile	
+		return -1;
+	}
+	
 	public synchronized void paint(PaintContext pc, byte layer) {
 		if (layer == Tile.LAYER_NODE) {
 			if (contain(pc)) {

@@ -127,6 +127,32 @@ public class SingleTile extends Tile implements QueueableTile {
 		walk(pc, opt, Tile.LAYER_ALL);
 	}
 	
+	public int getNameIdx(float lat, float lon, short type) {
+		if (contain(lat, lon, 0.00001f)) {
+			while (!isDataReady()) {
+				synchronized (this) {
+					try {
+						wait(100);
+						//#debug debug
+						logger.debug("Walk: wait for data");
+					} catch (InterruptedException e) {
+					}						
+				}
+			}
+			lastUse = 0;
+			for (int i=0; i < nameIdx.length; i++) {
+				if (MoreMath.approximately_equal(lat, nodeLat[i] * MoreMath.FIXPT_MULT_INV + centerLat,0.0000005f) &&
+					MoreMath.approximately_equal(lon, nodeLon[i] * MoreMath.FIXPT_MULT_INV + centerLon,0.0000005f)
+				) {
+					if (type == -1 || type == this.type[i]) {
+						return nameIdx[i];						
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
 	public void paint(PaintContext pc, byte layer) {
 		walk(pc, Tile.OPT_PAINT, layer);
 	}

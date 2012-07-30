@@ -57,6 +57,7 @@ public abstract class Tile {
 	 */
 	public abstract void paint(PaintContext pc, byte layer);
 	public abstract void walk(PaintContext pc,int opt);
+	public abstract int getNameIdx(float lat, float lon, short type);
 	public abstract boolean cleanup(int level);
 		
 	public boolean contain(ScreenContext pc) {

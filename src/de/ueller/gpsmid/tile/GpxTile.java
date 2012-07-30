@@ -106,7 +106,11 @@ public class GpxTile extends Tile {
 	public synchronized void walk(PaintContext pc, int opt) {
 		// TODO Auto-generated method stub
 	}
-
+	public int getNameIdx(float lat, float lon, short type) {
+		// only interesting for SingleTile
+		return -1;
+	}
+	
 	public void paint(PaintContext pc, byte layer) {
 		// It seems that making this method synchronized increases how often the
 		// freezing after saving waypoints (as described in tracker item 2189029) occurs. 

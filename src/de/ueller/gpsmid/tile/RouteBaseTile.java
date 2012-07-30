@@ -35,7 +35,11 @@ public abstract class RouteBaseTile extends Tile {
 	public void walk(PaintContext pc, int opt) {
 		// TODO implement walk		
 	}
-
+	public int getNameIdx(float lat, float lon, short type) {
+		// only interesting for SingleTile
+		return -1;
+	}
+	
 	/**
 	 * @param lat
 	 * @param lon
