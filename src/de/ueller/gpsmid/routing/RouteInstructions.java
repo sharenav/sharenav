@@ -1363,10 +1363,12 @@ public class RouteInstructions {
 		}
 		if (c.wayNameIdx != -1) {
 			name = trace.getName(c.wayNameIdx);
-			if (sbName.length() > 0 && name != null) {
-				sbName.append(" / ");
+			if (name != null) {
+				if (sbName.length() > 0) {
+					sbName.append(" / ");
+				}
+				sbName.append(name);
 			}
-			sbName.append(name);			
 		} else {
 			WayDescription wayDesc = Legend.getWayDescription(c.wayType);
 			boolean nextWayIsOriginalNextWay = true;
@@ -1378,10 +1380,10 @@ public class RouteInstructions {
 				wayDesc = Legend.getWayDescription(c2.wayType);
 				if (c2.wayNameIdx != -1) {
 					name = trace.getName(c2.wayNameIdx);
-					if (sbName.length() > 0 && name != null) {
-						sbName.append (" / ");
-					}
 					if (name != null) {
+						if (sbName.length() > 0) {
+							sbName.append (" / ");
+						}
 						sbName.append("...");
 						sbName.append(name);
 					}
