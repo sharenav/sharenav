@@ -2273,11 +2273,6 @@ public class Way extends Entity {
 			} else {
 				if (p1.x != p2.x || p2.x != p3.x || p1.y != p2.y || p2.y != p3.y) {
 					g.fillTriangle(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
-				} else {
-					// optimisation: render triangles consisting of 3 equal coordinates simply as a dot 
-					g.drawRect(p1.x, p1.y, 0, 0 );
-				}
-				
 // Without these, there are ugly light-color gaps in filled areas on Android devices - but this cuts down on performance,
 // remove for now on 2012-07-23 for configurations with "simplify map when busy" turned on
 // possibly could be helped by antialiasing or some other tweaks in J2MEPolish code:
@@ -2287,6 +2282,24 @@ public class Way extends Entity {
 // see also http://stackoverflow.com/questions/7608362/how-to-draw-smooth-rounded-path
 // though better yet would be to use direct polygons without triangulation
 //
+// with 250 m zoom on Sams. Galaxy Note, paint times with the drawLines:
+// I/System.out( 7740): Painting map took 18176 ms 992/1524
+// I/System.out( 7740): Painting map took 19300 ms 992/1524
+// I/System.out( 7740): Painting map took 14855 ms 992/1524
+// I/System.out( 7740): Painting map took 14030 ms 992/1524
+// I/System.out( 7740): Painting map took 14450 ms 992/1524
+// I/System.out( 7740): Painting map took 13993 ms 992/1524
+// I/System.out( 7740): Painting map took 13572 ms 992/1524
+// without drawLines:
+// I/System.out( 8938): Painting map took 6304 ms 992/1524
+// I/System.out( 8938): Painting map took 5430 ms 992/1524
+// I/System.out( 8938): Painting map took 5587 ms 992/1524
+// I/System.out( 8938): Painting map took 5219 ms 992/1524
+// I/System.out( 8938): Painting map took 4609 ms 992/1524
+// I/System.out( 8938): Painting map took 4386 ms 992/1524
+// I/System.out( 8938): Painting map took 4287 ms 992/1524
+
+
 //#if polish.android
 				if (doNotSimplifyMap) {
 					g.drawLine(p1.x,p1.y,p2.x,p2.y);
@@ -2294,6 +2307,10 @@ public class Way extends Entity {
 					g.drawLine(p1.x,p1.y,p3.x,p3.y);
 				}
 //#endif
+				} else {
+					// optimisation: render triangles consisting of 3 equal coordinates simply as a dot 
+					g.drawRect(p1.x, p1.y, 0, 0 );
+				}
 			}			
 		}
 		paintAreaName(pc,t);
