@@ -117,6 +117,15 @@ at large.
 		<capability name="JavaPackage" value=""/>
 	</device>
 	<device supportsPolishGui="true">
+		<identifier>Generic/midsize</identifier>
+		<description>This device is the minimal requirements for GpsMid + locationapi + bluetooth + file access. It's got a smaller in-memory footprint than /full.
+		</description>
+		<features>isVirtual</features>
+		<capability name="JavaPlatform" value="MIDP/2.0"/>
+		<capability name="JavaConfiguration" value="CLDC/1.1"/>
+		<capability name="JavaPackage" value="location-api, btapi, pdaapi, fileconnection, nokia-ui"/>
+	</device>
+	<device supportsPolishGui="true">
 		<identifier>Generic/minimal-bt</identifier>
 		<description>This device includes bluetooth, but otherwise is minimal. 
 		</description>
