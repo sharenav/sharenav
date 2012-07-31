@@ -146,10 +146,10 @@ public class TraceLayout extends LayoutManager {
 				(isPortraitLayout ? LayoutElement.FLAG_HALIGN_LEFT : LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE) | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 				LayoutElement.FLAG_FONT_SMALL
 		);
+		e.setAdditionalOffsY(3);
 		if (isPortraitLayout) {
 			e.setVRelative(ele[BIGNAVIICON1]);
 			e.setAdditionalOffsX(bigNaviX);
-			e.setAdditionalOffsY(3);
 		} else {
 			e.setVRelative(ele[SCALEBAR]);
 			e.setHRelative(ele[BIGNAVIICON1]);
