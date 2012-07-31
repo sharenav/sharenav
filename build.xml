@@ -428,7 +428,7 @@
 			</obfuscator>
 			
 			<!-- sign key="gpsmid" keystore="gpsmidkey.jks"	password="${password}" unless="test" /> -->
--                       <sign key="gpsmid" keystore="gpsmidkey.jks"     password="${password}" />
+			<sign key="gpsmid" keystore="gpsmidkey.jks"     password="${password}" />
 			
 			<!-- debug settings: only include debug setting when the test-property is true -->
 			<debug if="logging" showLogOnError="true" verbose="true" level="debug">
