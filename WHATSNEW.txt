@@ -30,8 +30,12 @@
     - no more messages about invalid turn restriction if ways of the relation are tagged with access=no
     *** Bug fixes ***
     - fixed an error that prevented to load all route / map tiles of the Germany map from thju
+    *** New J2ME build target ***
+    - Gpsmid-Generic-midsize with location API & bluetooth & file access support, but complicated
+    search & multimedia turned off to keep memory footprint smaller
     *** Android Support ***
     - multitouch two-finger rotate & pinch zoom 
+    - a bunch of bug fixes & UI improvements
     *** Map bundling tool ***
     - syntax changed for tools/bundlemap.sh
      
