@@ -71,6 +71,7 @@ public class Way extends Entity implements Comparable<Way> {
 	public Long id;
 
 	private Path					path								= null;
+	private Path					trianglePath								= null;
 	public HouseNumber			housenumber							= null;
 	public List<Triangle>		triangles							= null;
 	//private Bounds				bound								= null;
@@ -98,10 +99,13 @@ public class Way extends Entity implements Comparable<Way> {
 	 */
 	public static long			lastUnhandledMaxSpeedWayId			= -1;
 
+	private final static boolean triangulateAreas = true;
+	private final static boolean saveAreaOutlines = false;
 
 	public Way(long id) {
 		this.id = id;
 		this.path = new Path();
+		this.trianglePath = new Path();
 	}
 
 	/**
@@ -113,11 +117,13 @@ public class Way extends Entity implements Comparable<Way> {
 	public Way(long id, Way other) {
 		this.id = id;
 		this.path = new Path(other.path);
+		this.trianglePath = new Path(other.trianglePath);
 	}
 
 	public Way(long id, ArrayList<Node> newPath) {
 		this.id = id;
 		this.path = new Path(newPath);
+		//this.trianglePath = new Path(newPath);
 	}
 
 	/**
@@ -130,6 +136,7 @@ public class Way extends Entity implements Comparable<Way> {
 		this.id = other.id;
 		this.type = other.type;
 		this.path = new Path(other.path, reverse);
+		this.trianglePath = new Path(other.trianglePath, reverse);
 	}
 
 	/**
@@ -142,6 +149,7 @@ public class Way extends Entity implements Comparable<Way> {
 		this.id = other.id;
 		this.type = other.type;
 		this.path = new Path();
+		this.trianglePath = new Path();
 	}
 
 	public void deletePath() {
@@ -632,7 +640,12 @@ public class Way extends Entity implements Comparable<Way> {
 				bound.extend(t.getVert()[2].getLat(), t.getVert()[2].getLon());
 			}
 		} else {
-			path.extendBounds(bound);
+			if (path != null) {
+				path.extendBounds(bound);
+			}
+			if (trianglePath != null) {
+				trianglePath.extendBounds(bound);
+			}
 		}
 		return bound;
 	}
@@ -940,7 +953,7 @@ public class Way extends Entity implements Comparable<Way> {
 			}
 
 		}
-		if (isArea()) {
+		if (isArea() && !saveAreaOutlines) {
 			if (longWays) {
 				ds.writeShort(getNodeCount());
 			} else {
@@ -952,10 +965,13 @@ public class Way extends Entity implements Comparable<Way> {
 				ds.writeShort(tri.getVert()[2].getNode().renumberdId);
 			}
 		} else {
+			if (isArea() && triangulateAreas) {
+				System.err.println("Warning: can't yet write both an outline and a triangulation for an area");
+			}
 			if (longWays) {
-				ds.writeShort(getNodeCount());
+				ds.writeShort(path.getNodeCount());
 			} else {
-				ds.writeByte(getNodeCount());
+				ds.writeByte(path.getNodeCount());
 			}
 			for (Node n : path.getNodes()) {
 				ds.writeShort(n.renumberdId);
@@ -1032,7 +1048,7 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public Node getFirstNodeWithoutPOIType() {
-		for (Node n : path.getNodes()) {
+		for (Node n : (path != null ? path : trianglePath).getNodes()) {
 			if (n.getType(config) == -1) {
 				return n;
 			}
@@ -1042,7 +1058,7 @@ public class Way extends Entity implements Comparable<Way> {
 
 	public ArrayList<RouteNode> getAllRouteNodesOnTheWay() {
 		ArrayList<RouteNode> returnNodes = new ArrayList<RouteNode>();
-		for (Node n : path.getNodes()) {
+		for (Node n : (path != null ? path : trianglePath).getNodes()) {
 			if (n.routeNode != null) {
 				returnNodes.add(n.routeNode);
 			}
@@ -1067,7 +1083,12 @@ public class Way extends Entity implements Comparable<Way> {
 	 * @param replaceNodes Hashmap of pairs of nodes
 	 */
 	public void replace(HashMap<Node, Node> replaceNodes) {
-		path.replace(replaceNodes);
+		if (path != null) {
+			path.replace(replaceNodes);
+		}
+		if (trianglePath != null) {
+			trianglePath.replace(replaceNodes);
+		}
 	}
 
 	// public List<SubPath> getSubPaths() {
@@ -1086,7 +1107,7 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public int getLineCount() {
-		if (isArea()) {
+		if (isArea() && !saveAreaOutlines) {
 			return checkTriangles().size();
 		} else {
 			return path.getLineCount();
@@ -1094,7 +1115,7 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public int getNodeCount() {
-		if (isArea()) {
+		if (isArea() && !saveAreaOutlines) {
 			return checkTriangles().size() * 3;
 		} else {
 			return path.getNodeCount();
@@ -1172,7 +1193,7 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public boolean isValid() {
-		if (path.getNodeCount() == 0) {
+		if ((path == null || path.getNodeCount() == 0) && (trianglePath == null || trianglePath.getNodeCount() == 0)) {
 			return false;
 		}
 		return true;
@@ -1309,18 +1330,21 @@ public class Way extends Entity implements Comparable<Way> {
 	 */
 	public void recreatePath() {
 		if (isArea() && triangles.size() > 0) {
-			path = new Path();
+			trianglePath = new Path();
+			if (!saveAreaOutlines) {
+				deletePath();
+			}
 		}
 		for (Triangle t : triangles) {
 			for (int l = 0; l < 3; l++) {
 				Node n = t.getVert()[l].getNode();
-				//if (!path.getNodes().contains(n)) {
-					path.add(n);
+				//if (!trianglePath.getNodes().contains(n)) {
+					trianglePath.add(n);
 				//}
 			}
 		}
 		((ArrayList)triangles).trimToSize();
-		trimPath();
+		trimTrianglePath();
 		//clearBounds();
 	}
 	/**
@@ -1328,22 +1352,30 @@ public class Way extends Entity implements Comparable<Way> {
 	 */
 	public void recreatePathAvoidDuplicates() {
 		if (isArea() && triangles.size() > 0) {
-			path = new Path();
+			trianglePath = new Path();
+			if (!saveAreaOutlines) {
+				path = trianglePath;
+			}
 		}
 		for (Triangle t : triangles) {
 			for (int l = 0; l < 3; l++) {
 				Node n = t.getVert()[l].getNode();
 				// FIXME this is costly
-				if (!path.getNodes().contains(n)) {
-					path.add(n);
+				if (!trianglePath.getNodes().contains(n)) {
+					trianglePath.add(n);
 				}
 			}
 		}
 		((ArrayList)triangles).trimToSize();
-		trimPath();
+		trimTrianglePath();
 		//clearBounds();
 	}
 
+	public void trimTrianglePath()
+	{
+		if (trianglePath != null )
+			trianglePath.trimPath();
+	}
 	public void trimPath()
 	{
 		if (path != null )
