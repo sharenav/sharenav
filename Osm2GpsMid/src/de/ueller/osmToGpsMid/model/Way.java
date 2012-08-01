@@ -973,6 +973,10 @@ public class Way extends Entity implements Comparable<Way> {
 			} else {
 				ds.writeByte(path.getNodeCount());
 			}
+			// FIXME if there are holes in the area, we should write the holes here too,
+			// probably requires changing map format. Probably a new flag bit for the way,
+			// has_holes, and if set, after the nodes there would be a count of the holes
+			// and then each hole stored like the outline.
 			for (Node n : path.getNodes()) {
 				ds.writeShort(n.renumberdId);
 			}
@@ -1128,7 +1132,12 @@ public class Way extends Entity implements Comparable<Way> {
 
 	public Way split() {
 		if (isArea()) {
-			return splitArea();
+			if (saveAreaOutlines) {
+				// FIXME write a splitter mode which works with outlined areas
+				return null;
+			} else {
+				return splitArea();
+			}
 		} else {
 			return splitNormalWay();
 		}
