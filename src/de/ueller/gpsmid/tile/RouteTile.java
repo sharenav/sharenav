@@ -626,8 +626,7 @@ public class RouteTile extends RouteBaseTile {
 	public void addConnection(RouteNode rn, Connection newCon, boolean bestTime) {
 		int addIdx=-1;
 		for (int i=0; i<nodes.length;i++){
-			RouteNode n = nodes[i];
-			if (rn==n){
+			if (rn.id==nodes[i].id){ // compare id instead of rn==n because of cached RouteNodes
 				addIdx=i;
 				break;
 			}

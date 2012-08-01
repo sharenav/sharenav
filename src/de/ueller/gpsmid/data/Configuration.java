@@ -34,6 +34,7 @@ import net.sourceforge.util.zip.ZipFile;
 import de.ueller.gps.Node;
 import de.ueller.gpsmid.graphics.ProjFactory;
 import de.ueller.gpsmid.mapdata.QueueReader;
+import de.ueller.gpsmid.routing.Routing;
 import de.ueller.gpsmid.routing.TravelMode;
 import de.ueller.gpsmid.ui.GuiDiscover;
 import de.ueller.gpsmid.ui.Trace;
@@ -1521,6 +1522,7 @@ public class Configuration {
 	public static void setMapUrl(String url) {
 		write(url, RECORD_ID_MAP_FILE_URL);
 		mapFileUrl = url;
+		Routing.dropToConnectionsCache();
 	}
 
 	public static String getSmsRecipient() {

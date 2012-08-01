@@ -4285,6 +4285,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		return posMark;
 	}
 	public void setDestination(RoutePositionMark dest) {
+		Routing.dropToConnectionsCache();
 		movedAwayFromDest = false;
 		endRouting();
 		this.dest = dest;

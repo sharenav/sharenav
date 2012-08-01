@@ -39,7 +39,6 @@ public class Routing implements Runnable {
 	private final static Logger logger = Logger.getInstance(Routing.class, Logger.ERROR);
 	private RouteBaseTile tile;
 	private RouteBaseTile currentTile = null;
-	private int distToMainstreetNetRouteNode;
 	private boolean markSuccessorsToFullFillMainstreetNetDistance = false;
 	private RouteNode routeFrom;
 	private RouteNode routeTo;
@@ -75,7 +74,6 @@ public class Routing implements Runnable {
 	private int expanded;
 	private RouteNode sourcePathSegNodeDummyRouteNode = new RouteNode();
 	private Connection sourcePathSegNodeDummyConnection = new Connection();
-	private int currentTravelMask = 0;
 	/**
 	 * Dummy ConnectionWithNode at the path segment node of the source way to begin
 	 * This arbitrary position on the way's path will be detected as part of the route line by searchConnection2Ways 
@@ -101,6 +99,12 @@ public class Routing implements Runnable {
 	Node finalDestPathSegNodeDummy2 = new Node();
 	
 	private long searchStartTime;
+	
+	// to-Connections-Cache
+	private static volatile RouteNode destRn = null;
+	private static volatile RouteNode destPrevRn = null;
+	private static volatile int distToMainstreetNetRouteNode = 0;
+	private static volatile int currentTravelMask = 0;
 
 	public Routing(Trace parent) throws IOException {
 		this.parent = parent;
@@ -128,7 +132,10 @@ public class Routing implements Runnable {
 				roadRun = false;
 			}
 		}
-		currentTravelMask = Configuration.getTravelMask();
+		if (currentTravelMask != Configuration.getTravelMask()) {
+			dropToConnectionsCache();
+			currentTravelMask = Configuration.getTravelMask();
+		}
 		showRouteHelpers = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTEHELPERS);
 		showConnectionTraces = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTECONNECTION_TRACES);
 	}
@@ -974,16 +981,18 @@ public class Routing implements Runnable {
 			// System.out.println("Closest " + RouteInstructions.getClosestPointOnDestWay() );
 			// RouteHelpers.addRouteHelper(RouteInstructions.getClosestPointOnDestWay().radlat, RouteInstructions.getClosestPointOnDestWay().radlon, "closest");
 			RouteTileRet nodeTile=new RouteTileRet();
-			// roundabouts don't need to be explicitly tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
-			RouteNode nextNode = findNextRouteNode(nearestSeg, toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
-			if (nextNode != null) {
+			if (destRn == null) {
+				destRn = findNextRouteNode(nearestSeg, toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
+			}
+			if (destRn != null) {
 				// RouteHelpers.addRouteHelper(nextNode.lat, nextNode.lon, "nextNode dest");
-				finalNodeId2 = nextNode.id; // must be before the oneDirection check as this routeNode might be the destination node for connection/duration determination
+				finalNodeId2 = destRn.id; // must be before the oneDirection check as this routeNode might be the destination node for connection/duration determination
+				// roundabouts don't need to be explicitly tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
 				if (! w.isOneDirectionOnly() ){ // if no against oneway rule applies
 					// TODO: fill in bearings and cost
 					Connection newCon=new Connection(routeTo,0,(byte)99,(byte)99, -3);
-					tile.getRouteNode(nextNode.id, nodeTile);
-					nodeTile.tile.addConnection(nextNode,newCon,bestTime);
+					tile.getRouteNode(destRn.id, nodeTile);
+					nodeTile.tile.addConnection(destRn,newCon,bestTime);
 					/*
 					 *  remember coordinates of this alternative for dummy route node on the path
 					 *  this will allow to find the path segment
@@ -998,16 +1007,18 @@ public class Routing implements Runnable {
 					finalDestPathSegNodeDummy2.radlon = toMark.nodeLon[finalSeg];
 				}
 			}
-			RouteNode prefNode = findPrevRouteNode(nearestSeg - 1, toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
-			if (prefNode == null) {
+			if (destPrevRn == null) {
+				destPrevRn = findPrevRouteNode(nearestSeg - 1, toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
+			}
+			if (destPrevRn == null) {
 				parent.receiveMessage(Locale.get("routing.NoPrevRouteNodeAtDestination")/*No prev route node at destination*/);
 				return false;
 			}
 			// RouteHelpers.addRouteHelper(prefNode.lat, prefNode.lon, "prevNode dest");
 			// TODO: fill in bearings and cost
 			Connection newCon=new Connection(routeTo,0,(byte)99,(byte)99, -4);
-			tile.getRouteNode(prefNode.id, nodeTile);
-			nodeTile.tile.addConnection(prefNode,newCon,bestTime);
+			tile.getRouteNode(destPrevRn.id, nodeTile);
+			nodeTile.tile.addConnection(destPrevRn,newCon,bestTime);
 			/*
 			 *  remember coordinates of this alternative for dummy route node on the path
 			 *  this will allow to find the path segment
@@ -1018,13 +1029,12 @@ public class Routing implements Runnable {
 			if (finalSeg >= toMark.nodeLat.length) {
 				finalSeg = toMark.nodeLat.length - 1;	
 			}
-			finalNodeId1 = prefNode.id;
+			finalNodeId1 = destPrevRn.id;
 			finalDestPathSegNodeDummy1.radlat = toMark.nodeLat[finalSeg];
 			finalDestPathSegNodeDummy1.radlon = toMark.nodeLon[finalSeg];
 			
 			if (routeTo != null) {
-				distToMainstreetNetRouteNode = 0;
-				if (Configuration.getTravelMode().useMainStreetNetForLargeRoutes()) {
+				if (Configuration.getTravelMode().useMainStreetNetForLargeRoutes() && distToMainstreetNetRouteNode == 0) {
 					/* search closest MainstreetRouteNode at destination */
 					Routing.onlyMainStreetNet = true;
 					// calc lat/lon per km
@@ -1050,8 +1060,8 @@ public class Routing implements Runnable {
 						parent.alert("Routing", "No MainstreetNet RouteNode found within 20 km at destination", 5000);
 					}
 					// RouteHelpers.addRouteHelper(best.lat, best.lon, "Closest MainstreetRouteNode at destination");
-					Routing.onlyMainStreetNet = false;
 				}
+				Routing.onlyMainStreetNet = false;
 				
 				parent.cleanup();
 				System.gc();
@@ -1265,6 +1275,12 @@ public class Routing implements Runnable {
 		}
 		
 	} 
+
+	public static void dropToConnectionsCache() {
+		destRn = null;
+		destPrevRn = null;
+		distToMainstreetNetRouteNode = 0;
+	}
 
 	public void cancelRouting() {
 		Routing.stopRouting = true;
