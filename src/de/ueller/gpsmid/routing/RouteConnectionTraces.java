@@ -41,6 +41,10 @@ public class RouteConnectionTraces {
 	}
 
 	public static void paint(PaintContext pc, int xo, int yo) {
+		if (routeConnectionTraces == null) {
+			return;
+		}
+		
 		ConnectionTrace ci;
 		WaySegment waySegment = new WaySegment();
 
