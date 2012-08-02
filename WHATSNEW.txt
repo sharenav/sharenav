@@ -118,7 +118,7 @@ GpsMid 0.8
     - New option in Setup/Debug to show route calculation traces in map,
       connections requested from mainstreet net are drawn wider
     *** Search ***
-    - The POI search distance is no configurable; default is 10 km. A high limit
+    - The POI search distance is now configurable; default is 10 km. A high limit
       does not work in all areas, depending on number of map objects (tile size?).
     - bug fix to prevent POI search crashes which appeared more often on slow
       devices and less often on faster devices
