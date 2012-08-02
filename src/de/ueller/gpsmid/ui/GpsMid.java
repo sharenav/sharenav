@@ -258,7 +258,13 @@ public class GpsMid extends MIDlet implements CommandListener {
 			// if our stored state is running, don't show splash (mainly significant for Android)
 			if (initDone || Configuration.getCfgBitState(Configuration.CFGBIT_RUNNING)
 			    || (Configuration.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN) && Legend.isValid)) {
+			    	//#if polish.android
+				if (trace == null) {
+					showMapScreen();
+				}
+				//#else
 				showMapScreen();
+				//#endif
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_RUNNING)) {
 					// returning from pause or restart
 					// size may have changed, also workaround for microemulator refresh issue
