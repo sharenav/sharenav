@@ -296,7 +296,7 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 			Node center = new Node((n-s) / 2 + s,(e-w) / 2 + w, true);
 			Projection p = ProjFactory.getInstance(center,mParent.getCourse(),5000,mParent.getWidth(),mParent.getHeight());
 			float scale = p.getScale(n1, n2, intPoint1, intPoint2);
-			mParent.receivePosition(center.radlat, center.radlon, scale * 1.2f);
+			mParent.receivePosition(center.radlat, center.radlon, scale * 2.25f);
 		}
 		mParent.show();
 		return;
