@@ -17,6 +17,7 @@ import de.ueller.gps.Node;
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.gpsmid.data.RoutePositionMark;
+import de.ueller.gpsmid.tile.WaypointsTile;
 import de.ueller.midlet.ui.CompletionListener;
 import de.ueller.midlet.ui.InputListener;
 import de.ueller.midlet.ui.ProgressDisplay;
@@ -43,6 +44,7 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 	private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 5);
 	private final Command DEST_CMD = new Command(Locale.get("guiwaypoint.AsDestination")/*As destination*/, Command.ITEM, 6);
 	private final Command DISP_CMD = new Command(Locale.get("guiwaypoint.Display")/*Display*/, Command.OK, 6);
+	private final Command DISP_OUTLINE_CMD = new Command(Locale.get("guiwaypoint.DisplayOutline")/*Display outline*/, Command.ITEM, 6);
 
 	/** Vector containing all waypoints currently in the application. */
 	private Vector mWaypoints;
@@ -83,6 +85,7 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		addCommand(BACK_CMD);
 		addCommand(DEST_CMD);
 		addCommand(DISP_CMD);
+		addCommand(DISP_OUTLINE_CMD);
 	}
 	
 	/**
@@ -197,6 +200,29 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 			return;
 		}
 		if (c == DISP_CMD) {
+			WaypointsTile.wptOutlineLat = null;
+			WaypointsTile.wptOutlineLon = null;
+			handleDisplayWaypoint(false);
+			return;
+		}
+		if (c == DISP_OUTLINE_CMD) {
+			boolean[] sel = new boolean[mWaypoints.size()];
+			this.getSelectedFlags(sel);
+			int num = 0;
+			for (int i = 0; i < sel.length; i++) {
+				if (sel[i]) {
+					num++;
+				}
+			}
+			WaypointsTile.wptOutlineLat = new float[num];
+			WaypointsTile.wptOutlineLon = new float[num];
+			int i2 = 0;
+			for (int i = 0; i < sel.length; i++) {
+				if (sel[i]) {
+					WaypointsTile.wptOutlineLat[i2] = getWaypoint(i).lat; 
+					WaypointsTile.wptOutlineLon[i2++] = getWaypoint(i).lon;
+				}
+			}		
 			handleDisplayWaypoint(false);
 			return;
 		}

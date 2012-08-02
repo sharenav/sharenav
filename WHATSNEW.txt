@@ -1,107 +1,146 @@
-    *** Map Performance and style-file ***
-    - reorganized style-file for better performance when zoomed out
-    - increased performance for zooming far out, panning around and zooming somewhere else in.
-      This is achieved by dropping requests for tiles that are off-screen
+TODO:      
+**** REWORK clickable to tell what the user has to do to get them working
+**** REWORK/REMOVE Predefined Waypoints
+**** add icon menu improvements 
+
+
+GpsMid 0.8
+    *** Map Performance ***
+    - Zooming far out, panning around and zooming somewhere else in is now much faster.
+      This is achieved by dropping requests for loading tiles that are off-screen
       or do not need to be rendered because zoomed to far out
+    - Reorganized style-file for better performance when zoomed out
+    - The map screen now updated more often during panning when dragging the touch screen.
+      (not only after the ImageCollector class has finished drawing the map but every 1/3 s) (thx walter9)
+    - Bug fix: The ImageCollector thread no more is started twice
+      when a saved destination is restored at GpsMid startup (thx walter9)
+    - small & smallish areas (like lakes) are no more rendered when zooming very far out
+    - The number of not loaded tiles are displayed in the left upper corner,
+      and a * sign after the number if the map is actually being rendered (thx walter9)
+    *** Routing Performance ***
+    - Fixes and improvements for mainstreet net. In motorcar transport mode
+      this speeds up route calculation and reduces memory requirements for far distances.
+    - Lower values for distance to mainstreet net speed up route calculation.
+      It's now possible to put 1 into Setup/Routing as distance in km to Mainstreet Net,
+      GpsMid will handle it if there's no Mainstreet Net within this distance
+      at the route start or destination.
+    - Default value for distance to mainstreet net in new midlets is now 2 km instead of 3. 
+    - adjustment to routing parameters for faster route calculation - routes
+      should be as good as before, please report if you get worse routes than
+      earlier
+    *** Map Display ***
+    - Optional travel mode display (& setting on touch screen phones) on map
+    - Fixed an error that prevented to load all route / map tiles of the Germany map from thju
+    - The width of the line to the destination is now configurable in Display Options,
+      default value is 2. (thx pos_ei_don for drawWideLine())
+    - Additional backlight level 10% for Nokia and Android mobiles, so now there is 1%, 10%, 25%, 50%, 75%, 100%
+    - Some workarounds (mainly useful for sea rendering) for map data overflows which can
+      appear due to shortcomings of Osm2GpsMid
+    - Map switch can now be done without restarting GpsMid
+    - Accuracy of fix can be shown with GPS status
+    - Number of satellites is show in some more cases also in NoFix situations.
+    - New option in map features to draw ways not usable by the current travel mode darker
+    - On new GpsMid installations on devices with a display height or width > 400
+      the base zoom level is now 24 instead of 23 (map is zoomed once in).
+    - New setting for altitude correction.
+    - Option to use the GPS clock as clock source for on-map display
+      (currently only NMEA-transmitting GPS devices give clock information)
+    - Option to set a time difference in minutes between device time and display time
+      (to work around platforms which for some reason give incorrect time
+      e.g. due to deficiencies in JVM time zone code)
+   	*** Style-file ***
+    - new attribute 'allowedForRoutableWays' in style-file.xml for configuring if a tile scale level is allowed
+      to contain routable ways (default is "true"). If a tile scale level does not contain
+      any routable ways, it e.g. does not have to be searched for route line creation which results in better performance.
     - small and smallish areas are stored based on their diameter in more appropriate tile levels
       (new parameter "attractAreasWithSmallerBoundsDiameterThan" in style-file) 
-    - drop small & smallish areas (like lakes) when zooming very far out
-    - added way types for tourism/zoo and for other tourism areas
-    *** Usability ***
-    - Received position SMS can now be pasted to DegLat in "Enter waypoint" dialog
-    - increased defaults for maximum search results in new midlets
-    - new option in Setup / Here&Online to disable internet access during runtime
-    *** Routing ***
-    - the name of the motoway exit is shown in the route instruction
-      if a "motorway junction" node exists at the motorway exit  
-    - distance is shown below the big navigation icons
-    - footways are now non-accessible for bicycles if the way has no tag like bicycle=yes as well
-    - fixed bug causing no route line at the end of the route and wrong instruction
-      (reason: wrong closeby routeNode could be determined on the destination way)
-    - the route line is now rendered on top of POIs as well when the cursor is close to it
-      because in regions with many POIs e.g. trees mapped next to the streets
-      the route line became hardly visible
-    - more consistent color for u-turn big navigation icons
-    *** Osm2GpsMid / Osm2GpsMid GUI ***
-    - new tile size/count preset "even fewer and large map tiles" to generate maps for powerful mobiles
-      while keeping the number of files in map data not very high. This might be useful for most
-      Android devices but also to be able to install e.g. on Nokia 5800 very big jars (~200 MB)
-    - new default for tile size/count in generated maps is now "average tile file size and count"
-    - no more messages about invalid turn restriction if ways of the relation are tagged with access=no
-    *** Bug fixes ***
-    - fixed an error that prevented to load all route / map tiles of the Germany map from thju
-    *** New J2ME build target ***
-    - Gpsmid-Generic-midsize with location API & bluetooth & file access support, but complicated
-    search & multimedia turned off to keep memory footprint smaller
-    *** Android Support ***
-    - multitouch two-finger rotate & pinch zoom 
-    - a bunch of bug fixes & UI improvements
-    - change build target "Generic/android" to "Generic/android-offline"
-    - photo support for target android-offline
-    - add photo support for target android-offline
-    - update apk permissions to match what GpsMid requires
-    *** Map bundling tool ***
-    - syntax changed for tools/bundlemap.sh
-     
-GpsMid 0.7.8
-    *** Touchscreen / User Interface ***
+    - support toll rules separately for each travel mode in routemodes.inc.
+      Ways will still be rendered with toll decoration only if toll=yes or toll=true is set
+      regardless of toll rules or current travel mode
+    - experimental support for dashed areas
+      add e.g. <lineStyle dashed = "true" /> for landuse/industrial in style-file)
+    - added way types for tourism/zoo and for other tourism areas    
+    *** Touchscreen ***
     - On the map screen long tap * to toggle track recording
     - During track recording long tap recorded trackpoints on the map screen to suspend/resume track recording
     - On the map screen long tap _ to manage track list, double tap _ to manage waypoints
-    - On the map screen long tap on compass dir to turn map North up and invalidate course for routing
+    - On the map screen long tap on the compass direction to turn map North up and invalidate course for routing
     - Double tapping the wayname bar for searching removed because single tapping _ should be used for this
-    - In routing choice, added buttons for selection of route mode - no need to go through menu
-    - More icon sizes are included, you can now choose from "useIcons = small|true|big|large|huge" in the .properties file.
-      useIcons=large and useIcons=huge make sense for devices with high resolution displays
-    - Help tab added to icon menu
-    - Links to online help for touchscreen and GpsMid wiki in Online menu
-    - Display & touch screen helper in help menu
+    *** User Interface ***
+    - Received position SMS can now be pasted to DegLat in "Enter waypoint" dialog
     - Favorites can be optionally shown as routing targets in route icon menu
+    - Clickable markers for POIs: URLs on map are now optionally touchable links which open the URL in a web browser,
+      and with a long tap open a context menu (Here&Online). On keyboard-only phones, the same is achieved by positioning
+      the cursor marker inside a marker area and choosing Here&Online.
     - Long tap on map now opens a context menu which now has nearby POI search in addition to the
       previously-existing online functions; also has options to route to and set as destination.
       Long tap on a clickable marker POI allows for opening POI url, phone or editing POI tags.
       On keyboard-only phones, the content menu is accessible as the Here&Online menu (formerly
       names as Online).
-    - Clickable markers for POIs: URLs on map are now optionally touchable links which open the URL in a web browser,
-      and with a long tap open a context menu (Here&Online). On keyboard-only phones, the same is achieved by positioning
-      the cursor marker inside a marker area and choosing Here&Online.
     - Optional split-screen mode, where map is in upper half of screen and icon menu is in lower half of screen.
       Useful for e.g. one-touch waypoint recording, routing etc. when the device screen size allows for it.
       Keyboard commands are current not handled for split-screen mode, so it's practically useful currently only
       for touch screen device users.
-    *** Map display ***
-    - The map screen now updated more often during panning when dragging the touch screen.
-      (not only after the ImageCollector class has finished drawing the map but every 1/3 s)
-      This improves zooming out very large maps. (thx walter9)
-    - Zooming far out and then zooming far in again works now faster because as soon as all tiles
-      for the map display are loaded remaining tile loading requests will be dropped (thx walter9)
-    - The number of not loaded tiles are displayed in the left upper corner,
-      and a * sign after the number if the map is actually being rendered (thx walter9)
-    - experimental support for dashed areas
-      add e.g. <lineStyle dashed = "true" /> for landuse/industrial in style-file)
-    - The width of the line to the destination is now configurable in Display Options,
-      default value is 2. (thx pos_ei_don for drawWideLine())
-    - If backlight method is known for the phone model backlight is turned on by default in new midlets.
-    - Additional backlight level 10% for Nokia and Android mobiles, so now there is 1%, 10%, 25%, 50%, 75%, 100%
     - Time to change backlight level with keys 1 and 3 or zoom buttons on touch screens
       after toggling backlight has been increased to 5 seconds.
-    - Some workarounds (mainly useful for sea rendering) for map data overflows which can
-      appear due to shortcomings of Osm2GpsMid
-    - option to use the GPS clock as clock source for on-map display
-      (currently only NMEA-transmitting GPS devices give clock information)
-    - option to set a time difference in minutes between device time and display time
-      (to work around platforms which for some reason give incorrect time
-      e.g. due to deficiencies in JVM time zone code)
-    - Bug fix: The ImageCollector thread no more is started twice
-      when a saved destination is restored at GpsMid startup (thx walter9)
-    - Map switch can now be done without restarting GpsMid
-    - Accuracy of fix can be shown with GPS status
-    - Number of satellites is show in some more cases also in NoFix situations.
-    - Optional travel mode display (& setting on touch screen phones) on map
-    - New option in map features to draw ways not useable by the current travel mode darker
+    - More icon sizes are included, you can now choose from "useIcons = small|true|big|large|huge" in the .properties file.
+      useIcons=large and useIcons=huge make sense for devices with high resolution displays
+    - Increased defaults for maximum search results in new midlets
+    - If backlight method is known for the phone model backlight is turned on by default in new midlets.
+    - In Waypoints dialog multiple waypoints can be chosen and selected "Display as outline"
+      to just display an outline of the selected waypoints. This is helpful to temporarily render area
+      outlines defined by waypoints. (This feature requires waypoints to be entered / imported
+      in a sensible order for ouitline rendering)
+    - New option in Setup / Here&Online to disable internet access during runtime
+    - Help tab added to icon menu
+    - Links to online help for touchscreen and GpsMid wiki in Online menu
+    - Display & touch screen helper in help menu
+    *** Routing Usability ****
+    - Optional big navigation icons for next two instructions including their distance in upper left corner
+    - When turn restriction checking is on, take account also the driving direction
+      in route calculation - in other words, when driving with car, don't assume we
+      can start driving backwards without a u-turn or can just take a u-turn with no costs
+    - The name of the motorway exit is shown in the route instruction
+      if a "motorway junction" node exists at the motorway exit  
+    - The route line is now rendered on top of POIs as well when the cursor is close to it
+      because in regions with many POIs e.g. trees mapped next to the streets
+      the route line became hardly visible
+    - Optionally aim for shortest time or shortest distance
+    - Optionally stop routing when we arrive at destination
     - On new GpsMid installations on devices with a display height or width > 400
-      the base zoom level is now 24 instead of 23 (map is zoomed once in).
-    - There's now a setting for altitude correction.
+      the minimum route line width is now 5 instead of 3.
+    - Don't pause GpsMid (& close location producer) if we're routing 
+    - Fixed bug causing no route line at the end of the route and wrong instruction
+      (reason: wrong closeby routeNode could be determined on the destination way)
+    - More consistent color for u-turn big navigation icons
+    - Footways are now non-accessible for bicycles if the way has no tag like bicycle=yes as well
+    - Options to show or not show the big arrows or the small in-map arrows.
+    - New option in Setup/Debug to show route calculation traces in map,
+      connections requested from mainstreet net are drawn wider
+    *** Search ***
+    - The POI search distance is no configurable; default is 10 km. A high limit
+      does not work in all areas, depending on number of map objects (tile size?).
+    - bug fix to prevent POI search crashes which appeared more often on slow
+      devices and less often on faster devices
+    - heed max search count for POI search, bugfix for name search fencepost error
+    - new menu entry to save result as a favorite
+    - fulltext search now easily accessible on touch screen phones;
+      the "*" key function moved to the cursor keyboard
+    - eliminate delay in showing results
+    - filter results (or most of them at least) when using qwerty keyboard
+    - sort by distance is now the default for favorites
+    - the state of sort by distance or sort by name is remembered separately for
+      favorite search & map data search
+    - fixed bug with sort by distance
+    *** Osm2GpsMid / Osm2GpsMid GUI ***
+    - Route destinations for the route corridor are saved in last.properties. After loading
+      a .properties file with route destinations you can press "Calculate Route Corridor"
+      to (re-)generate the route corridor.
+    - new tile size/count preset "even fewer and large map tiles" to generate maps for powerful mobiles
+      while keeping the number of files in map data not very high. This might be useful for most
+      Android devices but also to be able to install e.g. on Nokia 5800 very big jars (~200 MB)
+    - new default for tile size/count in generated maps is now "average tile file size and count"
+    - no more messages about invalid turn restriction if ways of the relation are tagged with access=no
     *** Sea generation ***
     - greatly faster sea generation algorithm with option useSeaTiles = true
       in .properties file. It divides the map into roughly 20km * 20km areas
@@ -110,54 +149,6 @@ GpsMid 0.7.8
       There are however more map artifacts when using the option and shortcomings
       which lead to incorrect choices of land / sea are triggered more often
       when seatiles are used.
-    *** Search ***
-    - allow configuration of POI search distance; default is 10 km. A high limit
-      does not work in all areas, depending on number of map objects (tile size?).
-    - bug fix to prevent POI search crashes which appeared more often on slow
-      devices and less often on faster devices
-    - heed max search count for POI search, bugfix for name search fencepost error
-    - allow to save result as a favorite
-    - fulltext search now easily accessible on touch screen phones;
-      the "*" key function moved to the cursor keyboard
-    - fix bug with sort by distance
-    - eliminate delay in showing results
-    - filter results (or most of them at least) when using qwerty keyboard
-    - sort by distance is now the default for map data search
-    - the state of sort by distance or sort by name is remembered separately for
-      favorite search & map data search
-    *** Routing ***
-    - fixes and improvements for mainstreet net. In motorcar transport mode
-      this speeds up route calculation and reduces memory requirements for far distances.
-    - Lower values for distance to mainstreet net speed up route calculation.
-      It's now possible to put 1 into Setup/Routing as distance in km to Mainstreet Net,
-      GpsMid will handle it if there's no Mainstreet Net within this distance
-      at the route start or destination.
-    - Default value for distance to mainstreet net in new midlets is now 2 km instead of 3. 
-    - add support for toll rules for each travel mode to routemodes.inc.
-      Ways will still be rendered with toll decoration only if toll=yes or toll=true is set
-      regardless of toll rules or current travel mode
-    - when turn restriction checking is on, take account also the driving direction
-      in route calculation - in other words, when driving with car, don't assume we
-      can start driving backwards without a u-turn or can just take a u-turn with no costs
-    - optionally stop routing when we arrive at destination
-    - big navigation arrows for next two instructions in upper left corner;
-      options to show or not show the big arrows or the small in-map arrows.
-    - On new GpsMid installations on devices with a display height or width > 400
-      the minimum route line width is now 5 instead of 3.
-    - don't pause GpsMid (& close location producer) if we're routing 
-    - add option to select whether to aim for shortest time or shortest distance
-    - adjustment to routing parameters for faster route calculation - routes
-      should be as good as before, please report if you get worse routes than
-      earlier
-    - add option to Setup/Debug to show route calculation traces in map,
-      connections requested from mainstreet net are drawn wider
-    - new attribute 'allowedForRoutableWays' in style-file.xml for configuring if a tile scale level is allowed
-      to contain routable ways (default is "true"). If a tile scale level does not contain
-      any routable ways, it e.g. does not have to be searched for route line creation which results in better performance.
-    *** Osm2GpsMid / Osm2GpsMid GUI ***
-    - Route destinations for the route corridor are saved in last.properties. After loading
-      a .properties file with route destinations you can press "Calculate Route Corridor"
-      to (re-)generate the route corridor.
     *** Predefined waypoints ***
     - An option for predefined waypoints (entered via the icon menu) is now available.
       Currently the predefined waypoints are fixed in the program, in the future they
@@ -186,8 +177,17 @@ GpsMid 0.7.8
     - new .properties entry "addToManifest" to add a line to manifest.mf and .jad,
       e.g. MIDlet-Touch-Support:true to hide keyboard on Samsung Bada mobiles
       or  LGE-MIDlet-Display-Nav-Keypad:no on LG mobiles
+    - new J2ME build target: Gpsmid-Generic-midsize with location API
+      & bluetooth & file access support, but complicated search & multimedia turned off
+      to keep memory footprint smaller
     *** Android Support ***
-    - many stability / usability improvements
+    - many stability / usability improvements including a bunch of bug fixes
+    - multitouch two-finger rotate & pinch zoom 
+    - a bunch of bug fixes & UI improvements
+    - change build target "Generic/android" to "Generic/android-offline"
+    - photo support for target android-offline
+    - update apk permissions to match what GpsMid requires
+    - in routing choice added buttons for selection of route mode - no need to go through menu
     - huge icon menu images are used by default which makes the icons look much better
     - new option for backlight setting: Android WindowManager (KEEP_SCREEN_ON)
     - new Android native location provider which can be used instead of JSR179
@@ -196,14 +196,15 @@ GpsMid 0.7.8
     - some minor adjustments due to upgrading to J2MEPolish 2.3, related to file dialogue
     - various UI improvements and fixes with back key handling
     - audio recording now works (n.b.: the location is currently always /sdcard directory)
-    - first incomplete try at taking photos - the preview can be 90 degrees tilted,
+    - first incomplete try at taking photos - the preview doesn't work yet, so user has to aim blind,
       and apparently the default preferences for picture quality are always not so good.
-      Works only for target android-online.
     - For easier support of sounds for routing by default WAV and AMR files
       are stored uncompressed in the map data as required for Android
       (.properties parameter default dontCompress = wav,amr)
     - back key now by default required twice for exiting GpsMid, the old
       behaviour of exiting with one press of back key is optional
+    *** Developer Map bundling tool ***
+    - syntax changed for tools/bundlemap.sh
 
 GpsMid 0.7.7
     *** Map display ***
