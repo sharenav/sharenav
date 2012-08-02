@@ -69,7 +69,9 @@ GpsMid 0.8
     - Double tapping the wayname bar for searching removed because single tapping _ should be used for this
     *** User Interface ***
     - Received position SMS can now be pasted to DegLat in "Enter waypoint" dialog
-    - Favorites can be optionally shown as routing targets in route icon menu
+    - Favorites can be optionally shown as routing targets in route icon menu. 
+      Favorites which don't fit in the first icon menu screen can be gotten to by
+      vertical scroll (drag or cursor down) of the icon menu.
     - Clickable markers for POIs: URLs and phone numbers on map are now optionally touchable links which open the URL in a web browser,
       and with a long tap open a context menu (Here&Online). On keyboard-only phones, the same is achieved by positioning
       the cursor marker inside a marker area and choosing Here&Online.
@@ -157,7 +159,9 @@ GpsMid 0.8
       Currently the predefined waypoints are fixed in the program, in the future they
       will be user-settable. When a predefined waypoint icon is pressed, the named
       waypoint (possibly with extra info asked from user) will be saved as a waypoint
-      and in the track if track is recording.
+      and in the track if track is recording. Predefined waypoints which don't fit
+      on one icon menu screen can be gotten to by vertical scroll (drag or cursor down)
+       of the icon menu.
     *** Digital compass ***
     - Support for JSR179 Orientation class compass (e.g. Nokia C6-01)
     - Auto-switch between compass & movement now works even when previous setting was movement
