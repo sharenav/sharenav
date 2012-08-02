@@ -35,7 +35,7 @@ at large.
 		<groups>android</groups>
 		<capability name="GpsMid.editing" value="true"/>
 		<!-- add "bigstyles" to be able to handle more than 255 style file elements -->
-		<capability name="JavaPackage" value="btapi, osm-editing, bigsearch"/>
+		<capability name="JavaPackage" value="btapi, bigsearch"/>
 	    <capability name="build.android.permissions" value="RECORD_AUDIO,ACCESS_FINE_LOCATION,ACCESS_MOCK_LOCATION,ACCESS_COARSE_LOCATION,WAKE_LOCK,STATUS_BAR,CAMERA" />
 	</device>
 	<device supportsPolishGui="true">
