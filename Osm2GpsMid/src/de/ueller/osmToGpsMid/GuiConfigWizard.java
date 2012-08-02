@@ -202,6 +202,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	private static final String LOAD_STYLE = "Load custom style file";
 	
 	private boolean customSoundfiles = false;
+	private String origUseLang = "*";
 
 	/** Preferences stored in a location determined automatically by the runtime */
 	Preferences prefs;
@@ -965,6 +966,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				}
 			}
 		}
+		origUseLang = getSelectedUseLang();
 	}
 
 	/** Opens a file chooser dialog for the bundle .properties file.
@@ -1211,7 +1213,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 
 			// comment out if we didn't read a custom soundfile setting, created automatically
 			// from selected language(s)
-			if (! customSoundfiles) {
+			if (! customSoundfiles || !getSelectedUseLang().equals(origUseLang)) {
 				fw.write("# ");
 			}
 			fw.write("useSoundFilesWithSyntax = " + config.getSoundFiles() + "\r\n");
@@ -1287,6 +1289,16 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 
 	}
 
+	private String getSelectedUseLang() {
+		String langString = "";
+		for (int i = 2; i < langList.length ; i++) {
+			if (languages[i].isSelected()) {
+				//System.out.println("Lang selected: " + langList[i]);
+				langString += "," + langList[i];
+			}
+		}
+		return langString;
+	}
 
 	private void updateSettings(boolean midlet) {
 		String soundFiles = "sound";
@@ -1302,7 +1314,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			}
 		}
 		// preserve custom sounds
-		if (config.getSoundFiles().equals("sound")) {
+		if (config.getSoundFiles().equals("sound") || (!getSelectedUseLang().equals(origUseLang))) {
+			customSoundfiles = false;
 			config.setSoundFiles(soundFiles);
 		} else {
 			customSoundfiles = true;
