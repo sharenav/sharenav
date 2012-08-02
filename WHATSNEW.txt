@@ -1,7 +1,6 @@
-TODO:      
+TODO: (perhaps done?)
 **** REWORK clickable to tell what the user has to do to get them working
 **** REWORK/REMOVE Predefined Waypoints
-  ** Why?
 **** add icon menu improvements 
 
 
