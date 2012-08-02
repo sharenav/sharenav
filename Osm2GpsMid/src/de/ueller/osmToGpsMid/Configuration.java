@@ -911,6 +911,10 @@ public class Configuration {
 			return generateSea;
 		}
 
+		public boolean getUseWordSearch() {
+			return useWordSearch;
+		}
+
 		public boolean getUseSeaTiles() {
 			return useSeaTiles;
 		}

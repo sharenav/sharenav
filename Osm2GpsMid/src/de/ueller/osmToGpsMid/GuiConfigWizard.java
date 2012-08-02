@@ -1085,7 +1085,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("\r\n");
 
 			fw.write("# Build word indexes.\r\n");
-			fw.write("useWordSearch = " + config.useWordSearch() + "\r\n");
+			fw.write("useWordSearch = " + config.getUseWordSearch() + "\r\n");
 			fw.write("\r\n");
 
 			fw.write("# You can have up to 9 regions.\r\n");
