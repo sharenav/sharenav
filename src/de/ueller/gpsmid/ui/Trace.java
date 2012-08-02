@@ -795,6 +795,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return;
 			}
 			running=true;
+			//#if polish.android
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_GPS_CONNECTED, true);
+			//#endif
 			startCompass();
 			int locprov = Configuration.getLocationProvider();
 			receiveMessage(Locale.get("trace.ConnectTo")/*Connect to */ + Configuration.LOCATIONPROVIDER[locprov]);
@@ -1019,7 +1022,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (imageCollector != null) {
 			imageCollector.resume();
 		}
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTO_START_GPS) && !running && (locationProducer == null)) {
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTO_START_GPS) && !running && (locationProducer == null)
+		    //#if polish.android
+		    && Configuration.getCfgBitState(Configuration.CFGBIT_GPS_CONNECTED)
+		    //#endif
+		    
+			) {
 			Thread thread = new Thread(this,"LocationProducer init");
 			thread.start();
 		}
@@ -1351,6 +1359,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 
 			if (c == CMDS[DISCONNECT_GPS_CMD]) {
+				//#if polish.android
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_GPS_CONNECTED, false);
+				//#endif
 				if (locationProducer != null) {
 					locationProducer.close();
 				}

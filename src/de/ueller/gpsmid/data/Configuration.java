@@ -354,6 +354,8 @@ public class Configuration {
 	public final static short CFGBIT_EXIT_APPLICATION_WITH_BACK_BUTTON = 141;
 	/** bit 142: true if internet access is allowed */
 	public final static short CFGBIT_INTERNET_ACCESS = 142;
+	/** bit 143: indicate whether gpsmid is connected to gps (for android which can kill the process and restart it)*/
+	public final static short CFGBIT_GPS_CONNECTED = 143;
 	
 	/**
 	 * These are the database record IDs for each configuration option
