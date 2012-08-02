@@ -36,6 +36,8 @@
     *** Android Support ***
     - multitouch two-finger rotate & pinch zoom 
     - a bunch of bug fixes & UI improvements
+    - change build target "Generic/android" to "Generic/android-offline"
+    - photo support for target android-offline
     - add photo support for target android-offline
     - update apk permissions to match what GpsMid requires
     *** Map bundling tool ***
