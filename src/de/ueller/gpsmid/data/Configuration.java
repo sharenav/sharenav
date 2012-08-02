@@ -2520,6 +2520,7 @@ public class Configuration {
 		if (version >= 29) {
 			altitudeCorrection = dis.readInt();
 		}
+		applyDefaultValues(version);
 	}
 	
 	public static int getTouchMarkerDiameter() {
