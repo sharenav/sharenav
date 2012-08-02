@@ -1084,6 +1084,10 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("generateSea = " + config.getGenerateSea() + "\r\n");
 			fw.write("\r\n");
 
+			fw.write("# Build word indexes.\r\n");
+			fw.write("useWordSearch = " + config.useWordSearch() + "\r\n");
+			fw.write("\r\n");
+
 			fw.write("# You can have up to 9 regions.\r\n");
 			fw.write("# Ways and POIs in any of the regions will be written to the bundle.\r\n");
 			Vector<Bounds> bounds = config.getBounds();
