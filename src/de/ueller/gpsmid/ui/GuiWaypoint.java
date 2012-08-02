@@ -252,27 +252,29 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		int idx = -1;
 		boolean[] sel = new boolean[mWaypoints.size()];
 		this.getSelectedFlags(sel);
+		PositionMark wp;
 		for (int i = 0; i < sel.length; i++) {
 			if (sel[i]) {
+				wp = getWaypoint(i);
 				if (idx == -1) {
 					idx = i;
-					w =  getWaypoint(i).lon;
-					e =  getWaypoint(i).lon;
-					n = getWaypoint(i).lat;
-					s = getWaypoint(i).lat;
+					w =  wp.lon;
+					e =  wp.lon;
+					n = wp.lat;
+					s = wp.lat;
 				} else {
 					idx = -2;
-					if (getWaypoint(i).lon < w) {
-						w = getWaypoint(i).lon;
+					if (wp.lon < w) {
+						w = wp.lon;
 					}
-					if (getWaypoint(i).lon > e) {
-						e = getWaypoint(i).lon;
+					if (wp.lon > e) {
+						e = wp.lon;
 					}
-					if (getWaypoint(i).lat < s) {
-						s = getWaypoint(i).lat;
+					if (wp.lat < s) {
+						s = wp.lat;
 					}
-					if (getWaypoint(i).lat > n) {
-						n = getWaypoint(i).lat;
+					if (wp.lat > n) {
+						n = wp.lat;
 					}
 				}
 			}
@@ -289,8 +291,9 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		} else {		// two or more waypoints selected, won't set as destination
 			IntPoint intPoint1 = new IntPoint(10, 10);
 			IntPoint intPoint2 = new IntPoint(mParent.getWidth() - 10, mParent.getHeight() - 10);
-			Node n1 = new Node(n * MoreMath.FAC_RADTODEC, w * MoreMath.FAC_RADTODEC);
-			Node n2 = new Node(s * MoreMath.FAC_RADTODEC, e * MoreMath.FAC_RADTODEC);
+			Node n1 = new Node(n, w, true);
+			Node n2 = new Node(s, e, true);
+			Node center = new Node((n-s) / 2 + s,(e-w) / 2 + w, true);
 			Projection p = ProjFactory.getInstance(center,mParent.getCourse(),5000,mParent.getWidth(),mParent.getHeight());
 			float scale = p.getScale(n1, n2, intPoint1, intPoint2);
 			mParent.receivePosition(center.radlat, center.radlon, scale * 1.2f);
