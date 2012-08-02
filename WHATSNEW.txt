@@ -1,6 +1,7 @@
 TODO:      
 **** REWORK clickable to tell what the user has to do to get them working
 **** REWORK/REMOVE Predefined Waypoints
+  ** Why?
 **** add icon menu improvements 
 
 
@@ -69,9 +70,11 @@ GpsMid 0.8
     *** User Interface ***
     - Received position SMS can now be pasted to DegLat in "Enter waypoint" dialog
     - Favorites can be optionally shown as routing targets in route icon menu
-    - Clickable markers for POIs: URLs on map are now optionally touchable links which open the URL in a web browser,
+    - Clickable markers for POIs: URLs and phone numbers on map are now optionally touchable links which open the URL in a web browser,
       and with a long tap open a context menu (Here&Online). On keyboard-only phones, the same is achieved by positioning
       the cursor marker inside a marker area and choosing Here&Online.
+      The default style doesn't have any POIs defined as clickable, see the wiki documentation
+      on how to modify the style file to add clickability to POI types.
     - Long tap on map now opens a context menu which now has nearby POI search in addition to the
       previously-existing online functions; also has options to route to and set as destination.
       Long tap on a clickable marker POI allows for opening POI url, phone or editing POI tags.
