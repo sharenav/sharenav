@@ -1349,3 +1349,4 @@ guidiscover.InternetAccess=Internet Access
 trace.OnlineFeaturesDisabledIn=Online features are disabled in
 filegpximportsession.UnknownUrlType=Unknown url type to load from: 
 guiwaypointenter.LatDegOrSMS=Lat deg or received SMS:
+guiwaypoint.DisplayOutline=Display Outline

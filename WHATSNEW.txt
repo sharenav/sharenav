@@ -87,6 +87,10 @@ GpsMid 0.8
       useIcons=large and useIcons=huge make sense for devices with high resolution displays
     - Increased defaults for maximum search results in new midlets
     - If backlight method is known for the phone model backlight is turned on by default in new midlets.
+    - In Waypoints dialog multiple waypoints can be chosen and selected "Display as outline"
+      to just display an outline of the selected waypoints. This is helpful to temporarily render area
+      outlines defined by waypoints. (This feature requires waypoints to be entered / imported
+      in a sensible order for ouitline rendering)
     - New option in Setup / Here&Online to disable internet access during runtime
     - Help tab added to icon menu
     - Links to online help for touchscreen and GpsMid wiki in Online menu

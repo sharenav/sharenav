@@ -44,6 +44,9 @@ public class WaypointsTile extends Tile {
 	// Dimension at which this tile was split: true = lat, false = lon.
 	boolean splitDimension;
 
+	public static float wptOutlineLat[] = null;
+	public static float wptOutlineLon[] = null;
+
 	public WaypointsTile() {
 		wayPts = new Vector();
 		totalWayPts = 0;
@@ -127,6 +130,30 @@ public class WaypointsTile extends Tile {
 				} else {
 					paintLocal(pc);
 				}
+			}
+		}
+		// FIXME: should not be painted recursively
+		if (wptOutlineLat != null) {
+			paintWaypointsOutline(pc);
+		}
+	}
+
+	private void paintWaypointsOutline(PaintContext pc) {
+		// render waypoint outline
+		if (wptOutlineLat.length > 1) {
+			// FIXME: color should be in Legend from style-file
+			pc.g.setColor(0x00FF8D6B);
+			pc.g.setStrokeStyle(Graphics.SOLID);
+			for (int i = 0; i < wptOutlineLat.length; i++) {
+				pc.getP().forward(wptOutlineLat[i], wptOutlineLon[i], pc.lineP2);
+				int x = pc.lineP2.x;
+				int y = pc.lineP2.y;
+				int idx = i + 1;
+				if (idx == wptOutlineLat.length) {
+					idx = 0;
+				}
+				pc.getP().forward(wptOutlineLat[idx], wptOutlineLon[idx], pc.lineP2);
+				pc.g.drawLine(x, y, pc.lineP2.x, pc.lineP2.y);
 			}
 		}
 	}
