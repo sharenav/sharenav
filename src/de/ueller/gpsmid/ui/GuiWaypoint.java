@@ -17,6 +17,8 @@ import de.ueller.gps.Node;
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.PositionMark;
 import de.ueller.gpsmid.data.RoutePositionMark;
+import de.ueller.gpsmid.graphics.Projection;
+import de.ueller.gpsmid.graphics.ProjFactory;
 import de.ueller.gpsmid.tile.WaypointsTile;
 import de.ueller.midlet.ui.CompletionListener;
 import de.ueller.midlet.ui.InputListener;
@@ -286,11 +288,12 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 			}
 		} else {		// two or more waypoints selected, won't set as destination
 			IntPoint intPoint1 = new IntPoint(10, 10);
-			IntPoint intPoint2 = new IntPoint(getWidth() - 10, getHeight() - 10);
+			IntPoint intPoint2 = new IntPoint(mParent.getWidth() - 10, mParent.getHeight() - 10);
 			Node n1 = new Node(n * MoreMath.FAC_RADTODEC, w * MoreMath.FAC_RADTODEC);
 			Node n2 = new Node(s * MoreMath.FAC_RADTODEC, e * MoreMath.FAC_RADTODEC);
-			float scale = mParent.pc.getP().getScale(n1, n2, intPoint1, intPoint2);
-			mParent.receivePosition((n-s) / 2 + s, (e-w) / 2 + w, scale * 1.2f);
+			Projection p = ProjFactory.getInstance(center,mParent.getCourse(),5000,mParent.getWidth(),mParent.getHeight());
+			float scale = p.getScale(n1, n2, intPoint1, intPoint2);
+			mParent.receivePosition(center.radlat, center.radlon, scale * 1.2f);
 		}
 		mParent.show();
 		return;
