@@ -31,7 +31,9 @@ import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextField;
 //#if polish.android
+import android.content.Context;
 import android.os.Looper;
+import android.os.PowerManager;
 import android.util.FloatMath;
 import android.view.InputEvent;
 import android.view.KeyEvent;
@@ -212,6 +214,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public final static int DISTANCE_ROAD = 3;
 	public final static int DISTANCE_AIR = 4;
 	public final static int DISTANCE_UNKNOWN = 5;
+
+	//#if polish.android
+	//public static MidletBridge midletBridge;
+	private PowerManager.WakeLock wl = null;
+	private PowerManager pm = null;
+	//#endif
 
 	//#if polish.android
 	// FIXME should be set based on something like pixels per inch value
@@ -1294,6 +1302,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			if (c == CMDS[START_RECORD_CMD]) {
 				try {
+					//#if polish.android
+					getPersistent();
+					//#endif
 					gpx.newTrk(false);
 					alert(Locale.get("trace.GpsRecording")/*Gps track recording*/, Locale.get("trace.StartingToRecord")/*Starting to record*/, 1250);
 				} catch (RuntimeException e) {
@@ -1304,6 +1315,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			if (c == CMDS[STOP_RECORD_CMD]) {
 				gpx.saveTrk(false);
+				//#if polish.android
+				leavePersistent();
+				//#endif
 				alert(Locale.get("trace.GpsRecording")/*Gps track recording*/, Locale.get("trace.StoppingToRecord")/*Stopping to record*/, 1250);
 				recordingsMenu = null; // refresh recordings menu
 				return;
@@ -2171,6 +2185,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			// currently "true" to not ask for name to ensure fast
 			// quit & try to avoid loss of data which might result from
 			// waiting for user to type the name
+			//#if polish.android
+			leavePersistent();
+			//#endif
 			gpx.saveTrk(true);
 		}
 		//#debug debug
@@ -4600,6 +4617,31 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public void resetClickableMarkers() {
 		clickableMarkers = new Vector();
 	}
+	
+	//#if polish.android
+	// FIXME should rather start a background service for recording track or
+	// other fuctionality which requires staying active
+	public void getPersistent() {
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)
+		    && Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON)) {
+			// wakelock already active
+			return;
+		}
+		if (pm == null) {
+			pm = (PowerManager) MidletBridge.instance.getSystemService(Context.POWER_SERVICE);
+		}
+		if (wl == null) {
+			wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "GpsMid");
+			wl.acquire();
+		}
+	}
+	public void leavePersistent() {
+		if (wl != null) {
+			wl.release();
+			wl = null;
+		}
+	}
+	//#endif
 
     public void addClickableMarker(int x, int y, String url, String phone, int nodeID) {
 		ClickableCoords coords = new ClickableCoords();
