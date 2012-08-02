@@ -318,7 +318,7 @@
 		</deviceRequirements>
 		<deviceRequirements unless="test">
 			<or>
-				<requirement name="Identifier" value="Generic/android" />
+				<requirement name="Identifier" value="Generic/android-offline" />
 				<requirement name="Identifier" value="Generic/android-online" />
 <!--
 				<requirement name="Identifier" value="Generic/android1.5" />

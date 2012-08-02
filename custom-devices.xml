@@ -27,6 +27,18 @@ at large.
 	    <capability name="build.android.permissions" value="RECORD_AUDIO,ACCESS_FINE_LOCATION,ACCESS_MOCK_LOCATION,ACCESS_COARSE_LOCATION,SEND_SMS,WAKE_LOCK,STATUS_BAR,INTERNET,CAMERA" />
 	</device>
 	<device supportsPolishGui="true">
+		<identifier>Generic/android-offline</identifier>
+		<parent>Generic/android</parent>
+		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing.
+		</description>
+		<features>isVirtual</features>
+		<groups>android</groups>
+		<capability name="GpsMid.editing" value="true"/>
+		<!-- add "bigstyles" to be able to handle more than 255 style file elements -->
+		<capability name="JavaPackage" value="btapi, osm-editing, bigsearch"/>
+	    <capability name="build.android.permissions" value="RECORD_AUDIO,ACCESS_FINE_LOCATION,ACCESS_MOCK_LOCATION,ACCESS_COARSE_LOCATION,WAKE_LOCK,STATUS_BAR,CAMERA" />
+	</device>
+	<device supportsPolishGui="true">
 		<identifier>Generic/microemulator</identifier>
 		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing for microemulator testing.
 		</description>
