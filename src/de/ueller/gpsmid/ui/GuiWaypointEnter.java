@@ -73,18 +73,45 @@ public class GuiWaypointEnter extends Form implements CommandListener {
 			float lonDeg = 0.0f;
 			s = fldLatDeg.getString();
 			if (s.length() != 0) {
+				// allow to paste gpx format as well by converting it to SMS format before
+				StringBuffer sb = new StringBuffer(s);
+				int i = s.indexOf("lat=");
+				if (i >= 0) {
+					sb.setCharAt(i + 3, ':');
+				}
+				i = s.indexOf("lon=");
+				if (i >= 0) {
+					sb.setCharAt(i + 3, ':');
+				}
+				i = sb.toString().indexOf("'");
+				while (i >= 0) {
+					sb.deleteCharAt(i);
+					i = sb.toString().indexOf("'");					
+				}
+				s = sb.toString();
 				// parse pasted received position SMS in format, e. g. lat: 49.1234 lon: 11.56789
 				if (s.indexOf("lat:") >= 0 && s.indexOf("lon:") >= 0) {
 					int begin = s.indexOf("lat:") + 4;
-					int end = s.indexOf(" ", begin + 6);
-					if (end <= 0) {
-						end = s.length();
+					int end = begin + 4;
+					// skip leading spaces before searching for end
+					while (end < s.length() && s.charAt(end) == ' ') {
+						end++;
+					}
+					final String floatChars = "0123456789.-";
+					// search end of number
+					while (end < s.length() && floatChars.indexOf(s.substring(end, end + 1)) >= 0) {
+						end++;
 					}
 					latDeg = Float.parseFloat( s.substring(begin, end).trim() );
 					begin = s.indexOf("lon:") + 4;
-					end = s.indexOf(" ", begin + 6);
-					if (end <= 0) {
-						end = s.length();
+					end = begin + 4;
+					// skip leading spaces before searching for end
+					while (end < s.length() && s.charAt(end) == ' ') {
+						end++;
+					}
+					// search end of number
+					while (end < s.length() && floatChars.indexOf(s.substring(end, end + 1)) >= 0) {
+						end++;
 					}
 					lonDeg = Float.parseFloat( s.substring(begin, end).trim() );
 
