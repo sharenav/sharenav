@@ -201,6 +201,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	private static final String BUILTIN_STYLE_STREET = "Built-in street-style-file.xml";
 	private static final String LOAD_STYLE = "Load custom style file";
 	
+	private boolean customSoundfiles = false;
+
 	/** Preferences stored in a location determined automatically by the runtime */
 	Preferences prefs;
 	
@@ -1204,6 +1206,14 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("#  Currently the following sound-files with syntax are internal to Osm2GpsMid:\r\n");
 			fw.write("#   English: sound  German: sound-de Finnish: sound-fi\r\n");			
 			fw.write("#  Example to include the Finnish and German sound files: useSoundFilesWithSyntax=sound-de, sound-fi\r\n");			
+			fw.write("#  Generally there's no need to set this if you just want to use the standard sound files with the windowed Osm2GpsMid\r\n");			
+			fw.write("#  - it's set automatically for you from selected languages\r\n");
+
+			// comment out if we didn't read a custom soundfile setting, created automatically
+			// from selected language(s)
+			if (! customSoundfiles) {
+				fw.write("# ");
+			}
 			fw.write("useSoundFilesWithSyntax = " + config.getSoundFiles() + "\r\n");
 			fw.write("\r\n");
 			
@@ -1291,7 +1301,13 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				soundFiles += ",sound-" + langList[i];
 			}
 		}
-		config.setSoundFiles(soundFiles);
+		// preserve custom sounds
+		if (config.getSoundFiles().equals("sound")) {
+			config.setSoundFiles(soundFiles);
+		} else {
+			customSoundfiles = true;
+			soundFiles = config.getSoundFiles();
+		}
 		config.setUseLang(useLang);
 		config.setUseLangName(useLangName);
 		// "*" is last

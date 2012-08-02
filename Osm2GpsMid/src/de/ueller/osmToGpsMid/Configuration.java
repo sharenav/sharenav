@@ -685,7 +685,7 @@ public class Configuration {
 				setPlanetName(getString("mapSource"));
 			}
 
-			setSoundFiles(getString("useSoundFilesWithSyntax"));
+			useSoundFiles = getString("useSoundFilesWithSyntax");
 
 			// don't override cell source set by command line with one from .properties
 			// also don't override one set by GUI with an empty one from properties
