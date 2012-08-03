@@ -528,6 +528,10 @@ public class BundleGpsMid implements Runnable {
 			expand(config, tmpDir);
 			File target = new File(tmpDir);
 			createPath(target);
+			if (config.sourceIsApk) {
+				File targetAssets = new File(tmpDir + "/assets");
+				createPath(targetAssets);
+			}
 			
 			OsmParser parser = config.getPlanetParser();
 			

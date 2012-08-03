@@ -48,6 +48,9 @@ public class RouteData {
 	}
 	
 	public void create(Configuration config) {
+		if (config.sourceIsApk) {
+			this.path = this.path + "/assets";
+		}
 		// reset connectedLineCount for each Node to 0
 		for (Node n:parser.getNodes()) {
 			n.resetConnectedLineCount();

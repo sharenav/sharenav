@@ -129,6 +129,9 @@ public class CreateGpsMidData implements FilenameFilter {
 	public CreateGpsMidData(OsmParser parser, String path) {
 		super();
 		this.parser = parser;
+		if (Configuration.getConfiguration().sourceIsApk) {
+			path = path + "/assets";
+		}
 		this.path = path;
 		File dir = new File(path);
 		wayRedirect = new WayRedirect();
