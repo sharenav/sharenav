@@ -316,6 +316,18 @@ public class BundleGpsMid implements Runnable {
 
 	private static void packDir(ZipOutputStream os, File d, String path) throws IOException {
 		File[] files = d.listFiles();
+		if (config.sourceIsApk) {
+			for (int i = 0; i < files.length; i++) {
+				if (files[i].isDirectory()
+				    && files[i].getName().equals("META-INF")
+				    && path.length() == 0) {
+					// put META-INF first, not sure if it matters but is customary
+					File tmp = files[0];
+					files[0] = files[i];
+					files[i] = tmp;
+				}
+			}
+		}
 		for (int i = 0; i < files.length; i++) {
 			if (files[i].isDirectory()) {
 				if (path.length() > 0) {
