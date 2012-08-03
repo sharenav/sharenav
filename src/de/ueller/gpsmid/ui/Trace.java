@@ -1677,10 +1677,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				gpsRecenter = true;
 				gpsRecenterInvalid = true;
 				gpsRecenterStale = true;
-				GuiRoute guiRoute = new GuiRoute(this, false);
 				if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_DONT_ASK_FOR_ROUTING_OPTIONS)) {
 					commandAction(ROUTING_START_CMD);
 				} else {
+					GuiRoute guiRoute = new GuiRoute(this, false);
 					guiRoute.show();
 				}
 				return;
