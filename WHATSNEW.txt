@@ -209,6 +209,7 @@ GpsMid 0.8
       (.properties parameter default dontCompress = wav,amr)
     - back key now by default required twice for exiting GpsMid, the old
       behaviour of exiting with one press of back key is optional
+    - a bundled .apk can now also be chosen as a map
     *** Developer Map bundling tool ***
     - syntax changed for tools/bundlemap.sh
 

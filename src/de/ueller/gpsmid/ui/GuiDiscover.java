@@ -1053,7 +1053,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		}
 		FsDiscover fsd = new FsDiscover(this, this, initialDir, 
 				(state == STATE_MAP) ? FsDiscover.CHOOSE_FILE_OR_DIR : FsDiscover.CHOOSE_DIRONLY, 
-				(state == STATE_MAP) ? ".zip;.jar" : null, title);
+				(state == STATE_MAP) ? ".zip;.jar;.apk" : null, title);
 		fsd.show();
 		//#else
 		//logger.error("Files system support is not compiled into this version");
