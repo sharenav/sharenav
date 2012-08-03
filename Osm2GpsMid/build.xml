@@ -71,6 +71,7 @@
    	<copy todir="resources">
    		<fileset dir="../dist">
    			<include name="*.jar"/>
+   			<include name="*.apk"/>
 <!--   			<include name="*_${local_lang}.jar" if="local_lang" />
    			<include name="*.jar" unless="local_lang" />
 -->
@@ -131,10 +132,12 @@
    			<include name="temp*"/>
    			<include name="GpsMid*.jad"/>
 			<include name="GpsMid*.jar"/>
+			<include name="GpsMid*.apk"/>
    			<include name="GpsMid*.zip"/>
 		</fileset>
    		<fileset dir="${resources.dir}">
    			<include name="*.jar" />
+   			<include name="*.apk" />
    		</fileset>	
    	</delete>	
    </target>
@@ -177,6 +180,7 @@
 		</fileset>
         <fileset dir="${resources.dir}">
      		<include name="*.jar" />
+     		<include name="*.apk" />
         	<include name="*.xml" />
             <include name="*.inc" />
    	 		<include name="style-file.dtd" />

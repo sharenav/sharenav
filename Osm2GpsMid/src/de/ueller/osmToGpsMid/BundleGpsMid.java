@@ -275,7 +275,7 @@ public class BundleGpsMid implements Runnable {
 	private static void pack(Configuration c) throws ZipException, IOException {
 		File n = null;
 		if (config.getMapName().equals("")) {
-			n = new File(c.getMidletFileName() + ".jar");
+			n = new File(c.getMidletFileName() + (config.sourceIsApk ? ".apk": ".jar"));
 			rewriteManifestFile(c, true);
 		} else {
 			n = new File(c.getMapFileName());
@@ -294,7 +294,7 @@ public class BundleGpsMid implements Runnable {
 		}
 		packDir(zf, src, "");
 		zf.close();
-		if (config.getMapName().equals("")) {
+		if (config.getMapName().equals("") && !config.sourceIsApk) {
 			writeJADfile(c, n.length());
 		}
 		Calendar endTime = Calendar.getInstance();

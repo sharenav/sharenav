@@ -410,6 +410,9 @@ public class Configuration {
 		/** Maximum ways that are allowed to be stored into a tile of the zoom levels. */
 		public int maxTileWays[] = new int[4];
 
+		/** Is the source file an .apk file */
+		public boolean sourceIsApk = false; 
+
 		/** Path name of the style-file */
 		public String styleFile;
 
@@ -956,6 +959,9 @@ public class Configuration {
 		 */
 		public void setCodeBase (String app) {
 			appParam = app;
+			if (appParam.contains("android")) {
+				sourceIsApk = true;
+			}
 		}
 
 		/** Allows to set parameters for tile size vscount
@@ -1008,10 +1014,12 @@ public class Configuration {
 			if ("false".equals(baseName)) {
 				return null;
 			}
-			baseName = "/" + appParam + "-" + getVersion() + "-map" + MAP_FORMAT_VERSION + ".jar";
+			baseName = "/" + appParam + "-" + getVersion() + "-map" + MAP_FORMAT_VERSION
+				+ (sourceIsApk ? ".apk" : ".jar");
 			InputStream is = getClass().getResourceAsStream(baseName);
 			if (is == null) {
-				baseName = "/" + appParam + "-" + getVersion() + "-map" + MAP_FORMAT_VERSION + ".jar";
+				baseName = "/" + appParam + "-" + getVersion() + "-map" + MAP_FORMAT_VERSION
+					+ (sourceIsApk ? ".apk" : ".jar");
 				System.out.println("Using lang=" + getUseLang() + " (" + getUseLangName() + ")");
 				is = getClass().getResourceAsStream(baseName);
 			}

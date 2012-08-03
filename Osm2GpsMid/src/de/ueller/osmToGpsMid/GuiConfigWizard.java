@@ -585,7 +585,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.weighty = 0;
 		jpOptions2.add(jcbCellSource, gbc);
 		
-		jbCreate = new JButton("Create GpsMid midlet");
+		jbCreate = new JButton("Create GpsMid midlet or apk");
 		jbCreate.setActionCommand("Create-midlet");
 		jbCreate.addActionListener(this);
 		gbc.gridwidth = 2;
@@ -808,7 +808,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jcbGenerateSea.setSelected(config.getGenerateSea());
 	}
 
-	/** Finds all files in the Osm2GpsMid JAR that match the pattern "GpsMid-*.jar"
+	/** Finds all files in the Osm2GpsMid JAR that match the pattern "GpsMid-*.jar" or "GpsMid-*.apk"
 	 * and puts their names in a vector, cutting off at the last "-".
 	 * E.g. GpsMid-Generic-multi-0.6.4-map65.jar -> GpsMid-Generic-multi
 	 * 
@@ -823,7 +823,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			Enumeration<JarEntry> jes = jarFile.entries();
 			while (jes.hasMoreElements()) {
 				String entryName = jes.nextElement().getName();
-				if ((entryName.startsWith("GpsMid-")) && (entryName.endsWith(".jar"))) {
+				if ((entryName.startsWith("GpsMid-")) && (entryName.endsWith(".jar") || entryName.endsWith(".apk"))) {
 					if (!res.contains(entryName.substring(0, entryName.lastIndexOf("-", entryName.lastIndexOf("-")-1)))) {
 						res.add(entryName.substring(0, entryName.lastIndexOf("-", entryName.lastIndexOf("-")-1)));
 					}
