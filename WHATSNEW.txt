@@ -210,6 +210,10 @@ GpsMid 0.8
     - back key now by default required twice for exiting GpsMid, the old
       behaviour of exiting with one press of back key is optional
     - a bundled .apk can now also be chosen as a map
+    - Osm2GpsMid can now create unsigned .apk's - an .apk is produced if target name
+      contains "android". To be able to install this .apk into an Android device, you probably
+      must sign it with jarsigner, typically with a command line something like:
+      "jarsigner -digestalg SHA1 -sigalg MD5withRSA finland-0.7.76-map71.apk gpsmid"
     *** Developer Map bundling tool ***
     - syntax changed for tools/bundlemap.sh
 
