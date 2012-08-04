@@ -326,10 +326,12 @@ public class BundleGpsMid implements Runnable {
 			} catch (IOException ioe) {
 				System.out.println("Wasn't able to sign " + bundleName);
 			}
-			try {
-				signer.waitFor();
-			} catch (InterruptedException ie) {
-				System.out.println("Wasn't able to sign " + bundleName + ", interrupted");
+			if (signer != null) {
+				try {
+					signer.waitFor();
+				} catch (InterruptedException ie) {
+					System.out.println("Wasn't able to sign " + bundleName + ", interrupted");
+				}
 			}
 		}
 		// System.out.println("Bundlename: " + bundleName + " jarSigner: " + jarSigner);
