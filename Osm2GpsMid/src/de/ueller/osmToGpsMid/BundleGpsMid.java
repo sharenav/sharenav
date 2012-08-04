@@ -487,7 +487,7 @@ public class BundleGpsMid implements Runnable {
 			System.out.println("ERROR: can't find config, exiting");
 			System.exit(1);
 		}
-		if ((config.enableEditingSupport) && (!(config.getAppParam().equalsIgnoreCase("GpsMid-Generic-editing")) && !(config.getAppParam().equalsIgnoreCase("GpsMid-Generic-newfeatures")))) {
+		if ((config.enableEditingSupport) && (!(config.getAppParam().contains("editing")))) {
 			System.out.println("ERROR: You are creating a map with editing support, but use a app version that does not support editing\n"
 					+ "     please fix your .properties file");
 			System.exit(1);
