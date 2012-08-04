@@ -413,6 +413,9 @@ public class Configuration {
 		/** Is the source file an .apk file */
 		public boolean sourceIsApk = false; 
 
+		/** Do we want to sign the produced .apk file */
+		public boolean signApk = false; 
+
 		/** Path name of the style-file */
 		public String styleFile;
 
@@ -750,6 +753,7 @@ public class Configuration {
 			cellIDnoLAC = getString("cellIDnoLAC").equalsIgnoreCase("true");
 			generateSea = getString("generateSea").equalsIgnoreCase("true");
 			useSeaTiles = getString("useSeaTiles").equalsIgnoreCase("true");
+			signApk = getString("signApk").equalsIgnoreCase("true");
 			drawSeaOutlines = getString("drawSeaOutlines").equalsIgnoreCase("true");
 		}
 
@@ -920,6 +924,10 @@ public class Configuration {
 
 		public boolean getUseSeaTiles() {
 			return useSeaTiles;
+		}
+
+		public boolean getSignApk() {
+			return signApk;
 		}
 
 		public boolean getDrawSeaOutlines() {

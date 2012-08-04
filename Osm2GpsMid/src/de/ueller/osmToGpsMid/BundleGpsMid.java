@@ -293,7 +293,39 @@ public class BundleGpsMid implements Runnable {
 			throw new Error("TempDir is not a directory");
 		}
 		packDir(zf, src, "");
+		String bundleName = n.getAbsolutePath();
+		String jarSigner = "jarsigner";
+		// jarSigner = "/usr/lib/jvm/default-java/bin/jarsigner";
 		zf.close();
+
+		if (config.sourceIsApk && config.signApk) {
+			Process signer = null;
+			// FIXME add "-storepass" handling, either
+			// via .properties or a password field or both
+
+			String command[] = { jarSigner,
+					     "-verbose",
+					     "-digestalg",
+					     "SHA1",
+					     "-sigalg",
+					     "MD5withRSA",
+					     bundleName,
+					     "gpsmid" };
+			try {
+				// FIXME handle jarsigner input & output
+				signer = Runtime.getRuntime().exec(command);
+				// Runtime.getRuntime().exec(jarSigner + " -verbose -digestalg SHA1 -sigalg MD5withRSA " + bundleName + " gpsmid");
+			} catch (IOException ioe) {
+				System.out.println("Wasn't able to sign " + bundleName);
+			}
+			try {
+				signer.waitFor();
+			} catch (InterruptedException ie) {
+				System.out.println("Wasn't able to sign " + bundleName + ", interrupted");
+			}
+		}
+		System.out.println("Bundlename: " + bundleName + " jarSigner: " + jarSigner);
+
 		if (config.getMapName().equals("") && !config.sourceIsApk) {
 			writeJADfile(c, n.length());
 		}

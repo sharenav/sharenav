@@ -1092,6 +1092,10 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("useSeaTiles = " + config.getUseSeaTiles() + "\r\n");
 			fw.write("\r\n");
 
+			fw.write("# Sign created apk after creating.\r\n");
+			fw.write("signApk = " + config.getSignApk() + "\r\n");
+			fw.write("\r\n");
+
 			fw.write("# Build word indexes.\r\n");
 			fw.write("useWordSearch = " + config.getUseWordSearch() + "\r\n");
 			fw.write("\r\n");
