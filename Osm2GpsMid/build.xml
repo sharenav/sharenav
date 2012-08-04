@@ -88,6 +88,7 @@
         <entry key="useHouseNumbers" value="false"/>
         <entry key="useWordSearch" value="false"/>
         <entry key="useSeaTiles" value="false"/>
+        <entry key="outlineAreaFormat" value="false"/>
         <entry key="signApk" value="false"/>
         <entry key="signApkPassword" value=""/>
         <entry key="drawSeaOutlines" value="false"/>

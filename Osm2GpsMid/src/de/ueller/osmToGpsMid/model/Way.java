@@ -99,8 +99,8 @@ public class Way extends Entity implements Comparable<Way> {
 	 */
 	public static long			lastUnhandledMaxSpeedWayId			= -1;
 
-	private final static boolean triangulateAreas = true;
-	private final static boolean saveAreaOutlines = false;
+	private static boolean triangulateAreas = true;
+	private static boolean saveAreaOutlines = false;
 
 	public Way(long id) {
 		this.id = id;
@@ -768,7 +768,8 @@ public class Way extends Entity implements Comparable<Way> {
 	 * @param t Tile to which this way belongs - bounds coordinates are relative to its center
 	 * @throws IOException
 	 */
-	public void write(DataOutputStream ds, Names names1, Urls urls1, Tile t) throws IOException {
+	public void write(DataOutputStream ds, Names names1, Urls urls1, Tile t, boolean outlineFormat) throws IOException {
+		
 		Bounds b = new Bounds();
 		int flags = 0;
 		int flags2 = 0;
@@ -779,7 +780,10 @@ public class Way extends Entity implements Comparable<Way> {
 		int urlIdx = -1;
 		int phoneIdx = -1;
 		byte layer = 0;
-
+		if (outlineFormat) {
+			triangulateAreas = false;
+			saveAreaOutlines = true;
+		}
 		if (config == null) {
 			config = Configuration.getConfiguration();
 		}

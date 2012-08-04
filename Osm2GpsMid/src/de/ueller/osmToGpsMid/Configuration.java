@@ -419,6 +419,9 @@ public class Configuration {
 		/** Password for jarsigner for .apk signing */
 		public String signApkPassword = ""; 
 
+		/** Do we want store areas as outlines */
+		public boolean outlineAreaFormat = false; 
+
 		/** Path name of the style-file */
 		public String styleFile;
 
@@ -757,6 +760,7 @@ public class Configuration {
 			generateSea = getString("generateSea").equalsIgnoreCase("true");
 			useSeaTiles = getString("useSeaTiles").equalsIgnoreCase("true");
 			signApk = getString("signApk").equalsIgnoreCase("true");
+			outlineAreaFormat = getString("outlineAreaFormat").equalsIgnoreCase("true");
 			signApkPassword = getString("signApkPassword");
 			drawSeaOutlines = getString("drawSeaOutlines").equalsIgnoreCase("true");
 		}
@@ -940,6 +944,10 @@ public class Configuration {
 
 		public boolean getDrawSeaOutlines() {
 			return drawSeaOutlines;
+		}
+	
+		public boolean getOutlineAreaFormat() {
+			return outlineAreaFormat;
 		}
 
 		/** Returns the name of the Map (as it will be shown on the phone).
