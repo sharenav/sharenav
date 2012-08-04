@@ -332,7 +332,7 @@ public class BundleGpsMid implements Runnable {
 				System.out.println("Wasn't able to sign " + bundleName + ", interrupted");
 			}
 		}
-		System.out.println("Bundlename: " + bundleName + " jarSigner: " + jarSigner);
+		// System.out.println("Bundlename: " + bundleName + " jarSigner: " + jarSigner);
 
 		if (config.getMapName().equals("") && !config.sourceIsApk) {
 			writeJADfile(c, n.length());
