@@ -311,15 +311,20 @@ public class BundleGpsMid implements Runnable {
 			//		     bundleName,
 			//		     "gpsmid" };
 			String passString = config.getSignApkPassword();
+			String passStringShown = "";
 			if (! passString.equals("")) {
 				passString = " -storepass " + passString;
+				passStringShown = " -storepass " + "(hidden)"
 			}
-			String command = jarSigner
-				+ " -verbose -digestalg SHA1 -sigalg MD5withRSA"
-				+ passString
+			String commandPart1 = jarSigner
+				+ " -verbose -digestalg SHA1 -sigalg MD5withRSA";
+			String commandPart2 =
 				+ " " + bundleName
 				+ " gpsmid";
+			String command = commandPart1 + passString + commandPart2;
+			
 			try {
+				System.out.println("Signing with external program: " + commandPart1 + passStringShown + commandPart2);
 				// FIXME handle jarsigner input & output
 				signer = Runtime.getRuntime().exec(command);
 				// Runtime.getRuntime().exec(jarSigner + " -verbose -digestalg SHA1 -sigalg MD5withRSA " + bundleName + " gpsmid");
