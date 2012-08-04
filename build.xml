@@ -321,6 +321,7 @@
 				<requirement name="Identifier" value="Generic/android-offline" />
 				<requirement name="Identifier" value="Generic/android-online" />
 <!--
+				<requirement name="Identifier" value="Generic/android-online-outlines" />
 				<requirement name="Identifier" value="Generic/android1.5" />
 				<requirement name="Identifier" value="Generic/android1.6" />
 				<requirement name="Identifier" value="Generic/android2.1" />

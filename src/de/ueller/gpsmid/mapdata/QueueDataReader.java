@@ -218,6 +218,41 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			wayCount += 65536;
 		}
 //		logger.trace("reading " + wayCount + " ways");
+
+		// FIXME check from legend if the outline format data exists
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS)
+		    //#if polish.api.areaoutlines
+		    && true
+		    //#else
+		    && false
+		    //#endif
+			) {
+			byte[] ignoreLayers = new byte[wayCount];
+			// read & ignore the old format ways & areas
+			for (int i = 0; i < wayCount; i++) {
+				SingleTile dummyTile = new SingleTile();
+				byte flags = ds.readByte();
+				//#if polish.api.osm-editing
+				if (Legend.enableEdits) {
+					new EditableWay(ds, flags, dummyTile, ignoreLayers, i);
+				} else {
+					new Way(ds, flags, dummyTile, ignoreLayers, i);
+				}
+				//#else
+				new Way(ds, flags, tt, layers, i);
+				if (Legend.enableEdits) {
+					ds.readInt();
+				}
+				//#endif
+			}
+			readVerify((byte) 0x56,"read final magic value",ds);
+			wayCount = ds.readShort();
+			// read wayCount for the areaoutline way block
+			if (wayCount < 0) {
+				wayCount += 65536;
+			}
+		}
+
 		int lastread = 0;
 		try {
 			Way[] tmpWays = new Way[wayCount];
@@ -286,7 +321,17 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			throwError(e, "Ways (last ok index " + lastread + " out of " + 
 					wayCount + ")", tt);
 		}
-		readVerify((byte) 0x56,"read final magic value",ds);
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS)
+		    //#if polish.api.areaoutlines
+		    && true
+		    //#else
+		    && false
+		    //#endif
+			) {
+			readVerify((byte) 0x57,"read final magic value",ds);
+		} else {
+			readVerify((byte) 0x56,"read final magic value",ds);
+		}
 	}
 	
 	private void readVerify(byte expect,String msg,DataInputStream is){

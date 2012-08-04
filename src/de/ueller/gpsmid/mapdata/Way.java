@@ -36,6 +36,12 @@ import de.ueller.util.Logger;
 import de.ueller.util.MoreMath;
 import de.ueller.util.ProjMath;
 
+//#if polish.android
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Paint.Style;
+//#endif
 /**
  * handle Ways and arrays. Be careful, all paint parts useing static vars so painting
  *  is NOT thread save, because of Imagecollector is a single Thread which is the only one that
@@ -2251,6 +2257,57 @@ public class Way extends Entity {
 		//#endif
 		
 		int idx;
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS)
+		    //#if polish.api.areaoutlines
+		    && true
+		    //#else
+		    && false
+		    //#endif
+			) {
+			if (path.length > 0) {
+				//#if polish.android
+				//#if polish.api.areaoutlines
+				Path aPath = new Path();
+				g.getPaint().setStyle(Style.FILL);
+				//#endif
+				//#endif
+				idx = path[0];	
+				if (idx < 0) {
+					idx += 65536;
+				}
+				p.forward(t.nodeLat[idx],t.nodeLon[idx],p1,t);
+				//#if polish.android
+				//#if polish.api.areaoutlines
+				aPath.moveTo(p1.x + g.getTranslateX(), p1.y + g.getTranslateY());
+				//#endif
+				//#endif
+				for (int i1 = 1; i1 < path.length; ){
+					idx = path[i1++];	
+					if (idx < 0) {
+						idx += 65536;
+					}
+					p.forward(t.nodeLat[idx],t.nodeLon[idx],p2,t);
+					//#if polish.android
+					//#if polish.api.areaoutlines
+					aPath.lineTo(p2.x + g.getTranslateX(), p2.y + g.getTranslateY());
+					//#endif
+					//#endif
+				}
+				//#if polish.android
+				//#if polish.api.areaoutlines
+				aPath.lineTo(p1.x + g.getTranslateX(), p1.y + g.getTranslateY());
+				aPath.close();
+				// FIXME holes must be added here for areas which have them, and set a proper winding method (even-odd?)
+				// FIXME currently this depends on a modified Graphics.java of J2MEPolish to expose the private canvas and paint
+				// variables in Graphics.java to other modules; must find a way to do this with normal J2MEPolish or to
+				// get a modification to J2MEPolish
+				g.getCanvas().drawPath(aPath, g.getPaint());
+				g.getPaint().setStyle(Style.STROKE);
+				//#endif
+				//#endif
+			}
+		} else {
+
 		for (int i1 = 0; i1 < path.length; ){
 //			pc.g.setColor(wayDesc.lineColor);
 			idx = path[i1++];	
@@ -2312,6 +2369,7 @@ public class Way extends Entity {
 					g.drawRect(p1.x, p1.y, 0, 0 );
 				}
 			}			
+		}
 		}
 		paintAreaName(pc,t);
 	}

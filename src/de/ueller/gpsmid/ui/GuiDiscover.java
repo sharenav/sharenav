@@ -593,8 +593,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//#style formItem
 		menuDisplayOptions.append(tfDestLineWidth);
 		
-		String [] perfTune = new String[1];
+		String [] perfTune = new String[2];
 		perfTune[0] = Locale.get("guidiscover.simplify")/*Simplify map when busy*/;
+		perfTune[1] = Locale.get("guidiscover.PreferOutline")/*Prefer outline area format*/;
+
 		perfTuneOpts = new ChoiceGroup(Locale.get("guidiscover.PerfTuneOptions")/*Performance tuning options:*/, Choice.MULTIPLE, perfTune, null);
 		//#style formItem
 		menuDisplayOptions.append(perfTuneOpts);
@@ -1172,6 +1174,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				clockOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_GPS_TIME_FALLBACK));
 				metricUnits.setSelectedIndex(Configuration.getCfgBitSavedState(Configuration.CFGBIT_METRIC) ? 0 : 1, true);
 				perfTuneOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY));
+				perfTuneOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS));
 				visualOpts.setSelectedIndex(0, ! Configuration.getCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS));
 				visualOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUND_WAY_ENDS));
 				SingleTile.newPOIFont();
@@ -1566,9 +1569,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_METRIC, (metricUnits.getSelectedIndex() == 0));
 		
-		sellight = new boolean[1];
+		sellight = new boolean[2];
 		perfTuneOpts.getSelectedFlags(sellight);
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY, sellight[0]);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS, sellight[1]);
 
 		sellight = new boolean[2];
 		visualOpts.getSelectedFlags(sellight);

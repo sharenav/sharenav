@@ -104,6 +104,10 @@ public class SingleTile extends Tile implements QueueableTile {
 //		 logger.debug("ready " + deep + ":ST Nr=" + fileId);
 	}
 
+	public SingleTile() throws IOException {
+		this.zl = 0;
+	}
+
 	private boolean isDataReady() {
 		if (state == STATE_NOTLOAD) {
 			// logger.debug("singleTile start load " + fileId );
