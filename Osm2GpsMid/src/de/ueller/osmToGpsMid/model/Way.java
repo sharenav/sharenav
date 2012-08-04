@@ -783,6 +783,9 @@ public class Way extends Entity implements Comparable<Way> {
 		if (outlineFormat) {
 			triangulateAreas = false;
 			saveAreaOutlines = true;
+		} else {
+			triangulateAreas = true;
+			saveAreaOutlines = false;
 		}
 		if (config == null) {
 			config = Configuration.getConfiguration();
