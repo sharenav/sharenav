@@ -825,6 +825,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				String entryName = jes.nextElement().getName();
 				if ((entryName.startsWith("GpsMid-")) && (entryName.endsWith(".jar") || entryName.endsWith(".apk"))) {
 					if (!res.contains(entryName.substring(0, entryName.lastIndexOf("-", entryName.lastIndexOf("-")-1)))) {
+						entryName = entryName.substring(entryName.indexOf("-")+1);
 						res.add(entryName.substring(0, entryName.lastIndexOf("-", entryName.lastIndexOf("-")-1)));
 					}
 				}
@@ -1139,6 +1140,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			Vector<String>apps = enumerateAppParam();
 			// write out available app parameters except for the selected one
 			for (String a: apps) {
+				a = "GpsMid-" + a;
 				if (! a.equals(app)) {
 					fw.write("#app = " + a + "\r\n");
 				}
