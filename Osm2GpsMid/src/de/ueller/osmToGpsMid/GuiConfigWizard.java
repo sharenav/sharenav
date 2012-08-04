@@ -1088,6 +1088,10 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("generateSea = " + config.getGenerateSea() + "\r\n");
 			fw.write("\r\n");
 
+			fw.write("# Use sea tiles.\r\n");
+			fw.write("useSeaTiles = " + config.getUseSeaTiles() + "\r\n");
+			fw.write("\r\n");
+
 			fw.write("# Build word indexes.\r\n");
 			fw.write("useWordSearch = " + config.getUseWordSearch() + "\r\n");
 			fw.write("\r\n");
