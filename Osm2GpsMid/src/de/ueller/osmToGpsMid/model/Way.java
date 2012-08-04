@@ -101,6 +101,7 @@ public class Way extends Entity implements Comparable<Way> {
 
 	private static boolean triangulateAreas = true;
 	private static boolean saveAreaOutlines = false;
+	private static boolean deleteAreaOutlines = false;
 
 	public Way(long id) {
 		this.id = id;
@@ -1347,7 +1348,7 @@ public class Way extends Entity implements Comparable<Way> {
 	public void recreatePath() {
 		if (isArea() && triangles.size() > 0) {
 			trianglePath = new Path();
-			if (!saveAreaOutlines) {
+			if (deleteAreaOutlines) {
 				deletePath();
 			}
 		}
@@ -1369,7 +1370,7 @@ public class Way extends Entity implements Comparable<Way> {
 	public void recreatePathAvoidDuplicates() {
 		if (isArea() && triangles.size() > 0) {
 			trianglePath = new Path();
-			if (!saveAreaOutlines) {
+			if (deleteAreaOutlines) {
 				path = trianglePath;
 			}
 		}
