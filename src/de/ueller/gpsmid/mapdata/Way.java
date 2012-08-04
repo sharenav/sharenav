@@ -1896,8 +1896,25 @@ public class Way extends Entity {
 				}
 				// when this is not render as lines (for the non-highlighted part of the way) or it is a highlighted part, draw as area
 				if (wOriginal != 0 || hl[i] >= 0) {
+					//#if polish.api.areaoutlines
+					// FIXME would be more efficient to construct a line
+					// from all the triangles (for filling turn corners and
+					// round road ends)
+					//
+					Path aPath = new Path();
+					pc.g.getPaint().setStyle(Style.FILL);
+					aPath.moveTo(l2b.x + pc.g.getTranslateX(), l2b.y + pc.g.getTranslateY());
+					aPath.lineTo(l1b.x + pc.g.getTranslateX(), l1b.y + pc.g.getTranslateY());
+					aPath.lineTo(l1e.x + pc.g.getTranslateX(), l1e.y + pc.g.getTranslateY());
+					aPath.lineTo(l2e.x + pc.g.getTranslateX(), l2e.y + pc.g.getTranslateY());
+					aPath.lineTo(l2b.x + pc.g.getTranslateX(), l2b.y + pc.g.getTranslateY());
+					aPath.close();
+					pc.g.getCanvas().drawPath(aPath, pc.g.getPaint());
+					pc.g.getPaint().setStyle(Style.STROKE);
+					//#else
 					pc.g.fillTriangle(l2b.x, l2b.y, l1b.x, l1b.y, l1e.x, l1e.y);
 					pc.g.fillTriangle(l1e.x, l1e.y, l2e.x, l2e.y, l2b.x, l2b.y);
+					//#endif
 
 					if (i == 0) {  // if this is the first segment, draw the lines
 						// draw circular endings
