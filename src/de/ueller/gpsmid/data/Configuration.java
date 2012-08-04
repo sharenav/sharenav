@@ -356,7 +356,7 @@ public class Configuration {
 	public final static short CFGBIT_INTERNET_ACCESS = 142;
 	/** bit 143: indicate whether gpsmid is connected to gps (for android which can kill the process and restart it)*/
 	public final static short CFGBIT_GPS_CONNECTED = 143;
-	/** bit 144: prefer outline area format*/
+	/** bit 144: prefer outline area format (only Android) */
 	public final static short CFGBIT_PREFER_OUTLINE_AREAS = 144;
 	
 	/**
