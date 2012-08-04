@@ -1544,40 +1544,40 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		
 		// convert boolean array with selection states for backlight
 		// to one flag with corresponding bits set
-		boolean[] sellight = new boolean[10];
-		backlightOpts.getSelectedFlags( sellight );
+		boolean[] sel = new boolean[10];
+		backlightOpts.getSelectedFlags( sel );
 		// save selected values to record store
 		int i = 0;
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ON, sellight[i++]);
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED, sellight[i++]);
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_KEEPALIVE, sellight[i++]);
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_MIDP2, sellight[i++]);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ON, sel[i++]);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED, sel[i++]);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_KEEPALIVE, sel[i++]);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_MIDP2, sel[i++]);
 		//#if polish.api.nokia-ui
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_NOKIA, sellight[i++]);
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH, sellight[i++]);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_NOKIA, sel[i++]);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH, sel[i++]);
 		//#endif
 		//#if polish.api.min-siemapi
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_SIEMENS, sellight[i++]);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_SIEMENS, sel[i++]);
 		//#endif
 		//#if polish.api.min-samsapi
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_SAMSUNG, sellight[i++]);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_SAMSUNG, sel[i++]);
 		//#endif
 		//#if polish.android
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK, sellight[i++]);
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WINDOW_MANAGER, sellight[i++]);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK, sel[i++]);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WINDOW_MANAGER, sel[i++]);
 		//#endif
 		
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_METRIC, (metricUnits.getSelectedIndex() == 0));
 		
-		sellight = new boolean[2];
-		perfTuneOpts.getSelectedFlags(sellight);
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY, sellight[0]);
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS, sellight[1]);
+		sel = new boolean[2];
+		perfTuneOpts.getSelectedFlags(sel);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY, sel[0]);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS, sel[1]);
 
-		sellight = new boolean[2];
-		visualOpts.getSelectedFlags(sellight);
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS, ! sellight[0]);
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUND_WAY_ENDS, sellight[1]);
+		sel = new boolean[2];
+		visualOpts.getSelectedFlags(sel);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS, ! sel[0]);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUND_WAY_ENDS, sel[1]);
 
 		String w=tfDestLineWidth.getString();
 		Configuration.setDestLineWidth(
