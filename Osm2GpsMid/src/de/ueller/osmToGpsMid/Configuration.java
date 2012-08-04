@@ -1252,7 +1252,9 @@ public class Configuration {
 				cmis = new FileInputStream("charMap.txt");
 			} catch (FileNotFoundException e) {
 				try {
-					cmis = new FileInputStream(getTempDir() + "/charMap.txt");
+					cmis = new FileInputStream(getTempDir()
+								   + (sourceIsApk ? "/assets" : "")
+								   + "/charMap.txt");
 					if (cmis == null){
 						throw new IOException("Could not find a valid charMap.txt");
 					}
