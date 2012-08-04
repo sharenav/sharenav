@@ -787,7 +787,11 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jtfRouting.setText(config.useRouting);
 		System.out.println("  app: " + config.getString("app"));
 		jcbPhone.removeActionListener(this);
-		jcbPhone.setSelectedItem(config.getString("app"));
+		String appName = config.getString("app");
+		if (appName.startsWith("GpsMid-")) {
+			appName = appName.substring(appName.indexOf("-")+1);
+		}
+		jcbPhone.setSelectedItem(appName);
 		jcbPhone.addActionListener(this);
 		jcbTileSize.removeActionListener(this);
 		jcbTileSize.setSelectedIndex(config.getTileSizeVsCountId());
@@ -1552,7 +1556,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			}
 		}
 		if (event.getSource() == jcbPhone) {
-			config.setCodeBase((String)jcbPhone.getSelectedItem());
+			config.setCodeBase("GpsMid-" + (String)jcbPhone.getSelectedItem());
 		}
 		if (event.getSource() == jcbTileSize) {
 			config.setTileSizeVsCountId(jcbTileSize.getSelectedIndex());
