@@ -313,8 +313,6 @@ public class BundleGpsMid implements Runnable {
 					     bundleName,
 					     "gpsmid" };
 			String passString = config.getSignApkPassword();
-			String passStringArray[] = new String[2];
-			String passStringShown = "";
 			if (! passString.equals("")) {
 				command[2] = "-storepass";
 				command[3] = passString;
