@@ -314,7 +314,7 @@ public class BundleGpsMid implements Runnable {
 			String passStringShown = "";
 			if (! passString.equals("")) {
 				passString = " -storepass " + passString;
-				passStringShown = " -storepass " + "(hidden)"
+				passStringShown = " -storepass " + "(hidden)";
 			}
 			String commandPart1 = jarSigner
 				+ " -verbose -digestalg SHA1 -sigalg MD5withRSA";
