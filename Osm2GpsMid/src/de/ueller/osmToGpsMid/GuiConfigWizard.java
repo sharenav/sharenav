@@ -1352,7 +1352,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		}
 		config.setMidletName(jtfName.getText());
 		config.setRouting(jtfRouting.getText());
-		config.setCodeBase((String)jcbPhone.getSelectedItem());
+		config.setCodeBase( "GpsMid-" + (String)jcbPhone.getSelectedItem());
 		config.mapzip = !midlet;
 	}
 
