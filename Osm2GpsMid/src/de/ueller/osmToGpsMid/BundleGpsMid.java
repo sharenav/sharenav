@@ -300,17 +300,25 @@ public class BundleGpsMid implements Runnable {
 
 		if (config.sourceIsApk && config.signApk) {
 			Process signer = null;
-			// FIXME add "-storepass" handling, either
-			// via .properties or a password field or both
+			// FIXME add "-storepass" handling with a password field on GUI
 
-			String command[] = { jarSigner,
-					     "-verbose",
-					     "-digestalg",
-					     "SHA1",
-					     "-sigalg",
-					     "MD5withRSA",
-					     bundleName,
-					     "gpsmid" };
+			//String command[] = { jarSigner,
+			//		     "-verbose",
+			//		     "-digestalg",
+			//		     "SHA1",
+			//		     "-sigalg",
+			//		     "MD5withRSA",
+			//		     bundleName,
+			//		     "gpsmid" };
+			String passString = config.getSignApkPassword();
+			if (! passString.equals("")) {
+				passString = " -storepass " + passString;
+			}
+			String command = jarSigner
+				+ " -verbose -digestalg SHA1 -sigalg MD5withRSA"
+				+ passString
+				+ " " + bundleName
+				+ " gpsmid";
 			try {
 				// FIXME handle jarsigner input & output
 				signer = Runtime.getRuntime().exec(command);

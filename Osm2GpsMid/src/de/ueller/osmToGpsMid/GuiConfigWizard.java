@@ -1096,6 +1096,10 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("signApk = " + config.getSignApk() + "\r\n");
 			fw.write("\r\n");
 
+			fw.write("# Password for jarsigner for signing the apk.\r\n");
+			fw.write("# signApkPassword = " + "[ put your password here ]" + "\r\n");
+			fw.write("\r\n");
+
 			fw.write("# Build word indexes.\r\n");
 			fw.write("useWordSearch = " + config.getUseWordSearch() + "\r\n");
 			fw.write("\r\n");

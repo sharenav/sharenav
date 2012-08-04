@@ -416,6 +416,9 @@ public class Configuration {
 		/** Do we want to sign the produced .apk file */
 		public boolean signApk = false; 
 
+		/** Password for jarsigner for .apk signing */
+		public String signApkPassword = ""; 
+
 		/** Path name of the style-file */
 		public String styleFile;
 
@@ -754,6 +757,7 @@ public class Configuration {
 			generateSea = getString("generateSea").equalsIgnoreCase("true");
 			useSeaTiles = getString("useSeaTiles").equalsIgnoreCase("true");
 			signApk = getString("signApk").equalsIgnoreCase("true");
+			signApkPassword = getString("signApkPassword");
 			drawSeaOutlines = getString("drawSeaOutlines").equalsIgnoreCase("true");
 		}
 
@@ -928,6 +932,10 @@ public class Configuration {
 
 		public boolean getSignApk() {
 			return signApk;
+		}
+
+		public String getSignApkPassword() {
+			return signApkPassword;
 		}
 
 		public boolean getDrawSeaOutlines() {
