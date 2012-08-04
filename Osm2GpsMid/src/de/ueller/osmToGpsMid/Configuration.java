@@ -753,7 +753,7 @@ public class Configuration {
 			tileSize[tileSize.length - 1] =  new TileSizeDescription(maxDictDepth, maxTileWays[0], maxTileWays[1], maxTileWays[2], maxTileWays[3], maxTileSize, maxRouteTileSize);		
 			
 			setStyleFileName(getString("style-file"));
-			appParam = getString("app");
+			setCodeBase (getString("app"));
 			enableEditingSupport = getString("enableEditing").equalsIgnoreCase("true");
 			cellOperator = getString("useCellID");
 			cellIDnoLAC = getString("cellIDnoLAC").equalsIgnoreCase("true");
