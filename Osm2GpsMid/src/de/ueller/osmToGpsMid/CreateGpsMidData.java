@@ -209,13 +209,10 @@ public class CreateGpsMidData implements FilenameFilter {
 			sl.createSearchList(path, SearchList.INDEX_WORD);
 			// create search list for whole words / house numbers
 			sl.createSearchList(path, SearchList.INDEX_WHOLEWORD);
-			Configuration.mapFlags |= LEGEND_MAPFLAG_WORDSEARCH;
 		}
 		if (Configuration.getConfiguration().useHouseNumbers) {
 			sl.createSearchList(path, SearchList.INDEX_HOUSENUMBER);
 		}
-
-		Configuration.mapFlags |= LEGEND_MAPFLAG_TRIANGLE_AREA_BLOCK;
 
 		// Output statistics for travel modes
 		if (Configuration.attrToBoolean(configuration.useRouting) >= 0) {
@@ -270,6 +267,16 @@ public class CreateGpsMidData implements FilenameFilter {
 	private void exportLegend(String path) {
 		FileOutputStream foi;
 		String outputMedia;
+		Configuration.mapFlags = 0L;
+		if (Configuration.getConfiguration().getTriangleAreaFormat()) {
+			Configuration.mapFlags |= LEGEND_MAPFLAG_TRIANGLE_AREA_BLOCK;
+		}
+		if (Configuration.getConfiguration().getOutlineAreaFormat()) {
+			Configuration.mapFlags |= LEGEND_MAPFLAG_OUTLINE_AREA_BLOCK;
+		}
+		if (Configuration.getConfiguration().useWordSearch) {
+			Configuration.mapFlags |= LEGEND_MAPFLAG_WORDSEARCH;
+		}
 		try {
 			FileTools.createPath(new File(path + "/dat"));
 			foi = new FileOutputStream(path + "/legend.dat");
@@ -1633,11 +1640,13 @@ public class CreateGpsMidData implements FilenameFilter {
 			writeNode(n, ds, SEGNODE, t);
 		}
 		ds.writeByte(0x55); // Magic number
-		ds.writeShort(ways.size());
-		for (Way w : ways) {
-			w.write(ds, names1, urls1, t, false);
+		if (Configuration.getConfiguration().getTriangleAreaFormat()) {
+			ds.writeShort(ways.size());
+			for (Way w : ways) {
+				w.write(ds, names1, urls1, t, false);
+			}
+			ds.writeByte(0x56); // Magic number
 		}
-		ds.writeByte(0x56); // Magic number
 		if (Configuration.getConfiguration().getOutlineAreaFormat()) {
 			ds.writeShort(ways.size());
 			for (Way w : ways) {

@@ -425,6 +425,9 @@ public class Configuration {
 		/** Do we want store areas as outlines */
 		public boolean outlineAreaFormat = false; 
 
+		/** Do we want store areas as triangles */
+		public boolean triangleAreaFormat = true; 
+
 		/** Path name of the style-file */
 		public String styleFile;
 
@@ -764,6 +767,7 @@ public class Configuration {
 			useSeaTiles = getString("useSeaTiles").equalsIgnoreCase("true");
 			signApk = getString("signApk").equalsIgnoreCase("true");
 			outlineAreaFormat = getString("outlineAreaFormat").equalsIgnoreCase("true");
+			triangleAreaFormat = getString("triangleAreaFormat").equalsIgnoreCase("true");
 			signApkPassword = getString("signApkPassword");
 			drawSeaOutlines = getString("drawSeaOutlines").equalsIgnoreCase("true");
 		}
@@ -951,6 +955,10 @@ public class Configuration {
 	
 		public boolean getOutlineAreaFormat() {
 			return outlineAreaFormat;
+		}
+
+		public boolean getTriangleAreaFormat() {
+			return triangleAreaFormat;
 		}
 
 		/** Returns the name of the Map (as it will be shown on the phone).

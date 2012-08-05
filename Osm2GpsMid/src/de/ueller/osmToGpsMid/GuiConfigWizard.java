@@ -1101,6 +1101,10 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("outlineAreaFormat = " + config.getOutlineAreaFormat() + "\r\n");
 			fw.write("\r\n");
 
+			fw.write("# Triangle area format (needed for J2ME).\r\n");
+			fw.write("triangleAreaFormat = " + config.getTriangleAreaFormat() + "\r\n");
+			fw.write("\r\n");
+
 			fw.write("# Sign created apk after creating.\r\n");
 			fw.write("signApk = " + config.getSignApk() + "\r\n");
 			fw.write("\r\n");
