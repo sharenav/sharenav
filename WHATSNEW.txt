@@ -214,18 +214,22 @@ GpsMid 0.8
     - back key now by default required twice for exiting GpsMid, the old
       behaviour of exiting with one press of back key is optional
     - a bundled .apk can now also be chosen as a map
-    - Osm2GpsMid can now create unsigned and signed .apk's
-      - an .apk is produced if target name
-      contains "android". To be able to install this .apk into an
-      Android device, you probably must sign it with jarsigner,
-      to which there are multiple possibilities (the first two work only
-      if your Java environment has a working jarsigner program available;
-      apparently this is not the case for some Microsoft-produced platforms)
-      * add signApk = true to .properties
-      * command line, e.g.
-        "jarsigner -digestalg SHA1 -sigalg MD5withRSA finland-0.7.76-map71.apk gpsmid"
-      * use zipsigner android app to sign the apk in the device,
-        see http://code.google.com/p/zip-signer/
+    - Osm2GpsMid can now create unsigned and (depending on platform) signed .apk's
+      - an .apk is produced if target name contains "android".
+      - about signing: to be able to install this .apk into an
+        Android device, you probably must sign it with jarsigner,
+        to which there are multiple possibilities (the first two work only
+        if your Java environment has a working jarsigner program available)
+        * add signApk = true to .properties
+        * command line, e.g.
+          "jarsigner -digestalg SHA1 -sigalg MD5withRSA finland-0.7.76-map71.apk gpsmid"
+        * use zipsigner, an android app to sign an apk in the device,
+          see http://code.google.com/p/zip-signer/
+      - apks can be signed by Osm2GpsMid only if the platform has a correct jarsigner installed
+        so it can can be accessed with a simple jarsigner call
+      - it seems a GNU/Linux systems with java developer environment
+        offers jarsigner so it works, but an OS belonging to the Microsoft Windows family doesn't.
+	No reports from other platforms yet.
     *** Developer Map bundling tool ***
     - syntax changed for tools/bundlemap.sh
 
