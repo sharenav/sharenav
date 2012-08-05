@@ -489,7 +489,7 @@ public class BundleGpsMid implements Runnable {
 		}
 		if ((config.enableEditingSupport) && (!(config.getAppParam().contains("editing")) && !(config.getAppParam().contains("full-connected")))) {
 			System.out.println("ERROR: You are creating a map with editing support, but use a app version that does not support editing\n"
-					+ "     please fix your .properties file");
+					+ "     please fix your .properties file (full-connected app versions have editing support)");
 			System.exit(1);
 		}
 		if ((config.getPlanetName() == null || config.getPlanetName().equals(""))) {
