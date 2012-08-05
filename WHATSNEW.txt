@@ -136,6 +136,8 @@ GpsMid 0.8
     - the state of sort by distance or sort by name is remembered separately for
       favorite search & map data search
     - fixed bug with sort by distance
+    - If word search is set and map (since map version 72) doesn't have word indexes, fall back
+      to full name search
     *** Osm2GpsMid / Osm2GpsMid GUI ***
     - Route destinations for the route corridor are saved in last.properties. After loading
       a .properties file with route destinations you can press "Calculate Route Corridor"
