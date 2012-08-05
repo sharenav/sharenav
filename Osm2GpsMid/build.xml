@@ -17,7 +17,7 @@
 	<property name="src.jmv" value="${basedir}/src_externals"/>
 	<property name="properties.dir" value="${basedir}/mapdef"/>
 	<property name="resources.dir" value="${basedir}/resources"/>
-	<property name="app" value="GpsMid-Generic-full"/>
+	<property name="app" value="GpsMid-Generic-full-connected"/>
 
 	<property name="lib.dir" value="${basedir}/lib"/>
 
