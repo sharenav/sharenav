@@ -116,7 +116,7 @@ public class BundleGpsMid implements Runnable {
 		if (c.getDontCompress().equals("*")) {
 			compressed = false;
 		} else {
-			dontCompress = c.getDontCompress().split("[;,]", 2);
+			dontCompress = c.getDontCompress().split("[;,]");
 			if (dontCompress[0].equals("")) {
 				dontCompress = null;
 			}
