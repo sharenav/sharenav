@@ -121,8 +121,8 @@ at large.
 		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, min-samsapi, osm-editing, online, bigsearch"/>
 	</device>
 	<device supportsPolishGui="true">
-		<identifier>Generic/editing</identifier>
-		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing.
+		<identifier>Generic/full-connected</identifier>
+		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing and other connected functionality (like track upload to OSM, opening hyperlinks).
 		</description>
 		<features>isVirtual</features>
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
