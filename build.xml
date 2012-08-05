@@ -129,11 +129,11 @@
 		</deviceRequirements>
 		<deviceRequirements unless="test">
 			<or>
-				<requirement name="Identifier" value="Generic/editing" />
-				<requirement name="Identifier" value="Generic/blackberry" />
+				<requirement name="Identifier" value="Generic/full-connected" />
 				<requirement name="Identifier" value="Generic/full" />
 				<requirement name="Identifier" value="Generic/midsize" />
 				<requirement name="Identifier" value="Generic/minimal" />
+				<requirement name="Identifier" value="Generic/blackberry" />
 				<!--
 				<requirement name="Identifier" value="Generic/newfeatures" />
 				<requirement name="Identifier" value="Motorola/Motorazr_V3i" />
@@ -318,9 +318,13 @@
 		</deviceRequirements>
 		<deviceRequirements unless="test">
 			<or>
+				<requirement name="Identifier" value="Generic/android-full-connected" />
+				<requirement name="Identifier" value="Generic/android-full" />
+				<requirement name="Identifier" value="Generic/android-midsize" />
+				<requirement name="Identifier" value="Generic/android-minimal" />
+<!--
 				<requirement name="Identifier" value="Generic/android-offline" />
 				<requirement name="Identifier" value="Generic/android-online" />
-<!--
 				<requirement name="Identifier" value="Generic/android-online-outlines" />
 				<requirement name="Identifier" value="Generic/android1.5" />
 				<requirement name="Identifier" value="Generic/android1.6" />

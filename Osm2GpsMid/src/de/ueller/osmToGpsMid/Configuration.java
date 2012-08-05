@@ -982,6 +982,9 @@ public class Configuration {
 		 * @param app Name of the base Midlet
 		 */
 		public void setCodeBase (String app) {
+			if (app.equalsIgnoreCase("GpsMid-Generic-editing")) {
+				app = "GpsMid-Generic-full-connected";
+			}
 			appParam = app;
 			if (appParam.contains("android")) {
 				sourceIsApk = true;

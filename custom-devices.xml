@@ -27,6 +27,54 @@ at large.
 	    <capability name="build.android.permissions" value="RECORD_AUDIO,ACCESS_FINE_LOCATION,ACCESS_MOCK_LOCATION,ACCESS_COARSE_LOCATION,SEND_SMS,WAKE_LOCK,STATUS_BAR,INTERNET,CAMERA" />
 	</device>
 	<device supportsPolishGui="true">
+		<identifier>Generic/android-full</identifier>
+		<parent>Generic/android</parent>
+		<description>This device combines the full capabilities of GpsMid except OpenStreetMap editing and internet-connected functionality.
+		</description>
+		<features>isVirtual</features>
+		<groups>android</groups>
+		<capability name="GpsMid.editing" value="true"/>
+		<!-- add "bigstyles" to be able to handle more than 255 style file elements -->
+		<capability name="JavaPackage" value="btapi, bigsearch"/>
+	    <capability name="build.android.permissions" value="RECORD_AUDIO,ACCESS_FINE_LOCATION,ACCESS_MOCK_LOCATION,ACCESS_COARSE_LOCATION,WAKE_LOCK,STATUS_BAR,CAMERA" />
+	</device>
+	<device supportsPolishGui="true">
+		<identifier>Generic/android-full-connected</identifier>
+		<parent>Generic/android</parent>
+		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing.
+		</description>
+		<features>isVirtual</features>
+		<groups>android</groups>
+		<capability name="GpsMid.editing" value="true"/>
+		<!-- add "bigstyles" to be able to handle more than 255 style file elements -->
+		<capability name="JavaPackage" value="btapi, osm-editing, online, bigsearch"/>
+	    <capability name="build.android.permissions" value="RECORD_AUDIO,ACCESS_FINE_LOCATION,ACCESS_MOCK_LOCATION,ACCESS_COARSE_LOCATION,SEND_SMS,WAKE_LOCK,STATUS_BAR,INTERNET,CAMERA" />
+	</device>
+	<device supportsPolishGui="true">
+		<identifier>Generic/android-midsize</identifier>
+		<parent>Generic/android</parent>
+		<description>This device combines the full capabilities of GpsMid except OpenStreetMap editing and internet-connected functionality.
+		</description>
+		<features>isVirtual</features>
+		<groups>android</groups>
+		<capability name="GpsMid.editing" value="true"/>
+		<!-- add "bigstyles" to be able to handle more than 255 style file elements -->
+		<capability name="JavaPackage" value="btapi, bigsearch"/>
+	    <capability name="build.android.permissions" value="RECORD_AUDIO,ACCESS_FINE_LOCATION,ACCESS_MOCK_LOCATION,ACCESS_COARSE_LOCATION,WAKE_LOCK,STATUS_BAR,CAMERA" />
+	</device>
+	<device supportsPolishGui="true">
+		<identifier>Generic/android-minimal</identifier>
+		<parent>Generic/android</parent>
+		<description>This device combines the minimal (actually below minimal, not even GPS) capabilities of GpsMid
+		</description>
+		<features>isVirtual</features>
+		<groups>android</groups>
+		<capability name="GpsMid.editing" value="true"/>
+		<!-- add "bigstyles" to be able to handle more than 255 style file elements -->
+		<capability name="JavaPackage" value=""/>
+	    <capability name="build.android.permissions" value="ACCESS_MOCK_LOCATION,ACCESS_COARSE_LOCATION,WAKE_LOCK,STATUS_BAR" />
+	</device>
+	<device supportsPolishGui="true">
 		<identifier>Generic/android-online</identifier>
 		<parent>Generic/android</parent>
 		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing.
