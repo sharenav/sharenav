@@ -239,7 +239,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 					new Way(ds, flags, dummyTile, ignoreLayers, i, false);
 				}
 				//#else
-				new Way(ds, flags, dummyTile, ignoreLayers, i);
+				new Way(ds, flags, dummyTile, ignoreLayers, i, false);
 				if (Legend.enableEdits) {
 					ds.readInt();
 				}
