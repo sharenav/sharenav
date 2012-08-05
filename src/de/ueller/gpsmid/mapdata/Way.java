@@ -91,6 +91,11 @@ public class Way extends Entity {
 	public static final byte WAY_FLAG3_NAMEASFORAREA = 16;
 	public static final byte WAY_FLAG3_HAS_HOUSENUMBERS = 32;
 	public static final byte WAY_FLAG3_LONGHOUSENUMBERS = 64;
+	public static final int WAY_FLAG3_ADDITIONALFLAG = 128;
+
+	public static final byte WAY_FLAG4_ALERT = 1;
+	public static final byte WAY_FLAG4_CLICKABLE = 2;
+	public static final byte WAY_FLAG4_HOLES = 4;
 
 	public static final byte DRAW_BORDER=1;
 	public static final byte DRAW_AREA=2;
@@ -279,6 +284,7 @@ public class Way extends Entity {
 		
 		byte f2=0;
 		byte f3=0;
+		byte f4=0;
 		if ( (f & WAY_FLAG_ADDITIONALFLAG) > 0 ) {
 			f2 = is.readByte();
 			if ( (f2 & WAY_FLAG2_ROUNDABOUT) > 0 ) {
@@ -337,6 +343,9 @@ public class Way extends Entity {
 						is.readLong();
 					}
 				}
+				if ( (f3 & WAY_FLAG3_ADDITIONALFLAG) > 0 ) {
+					f4 = is.readByte();
+				}
 			}
 
 		}
@@ -391,7 +400,7 @@ public class Way extends Entity {
 		for (short i = 0; i < count; i++) {
 			path[i] = is.readShort();
 		}
-		if (outlineFlag && (f & WAY_FLAG_AREA) > 0) {
+		if (outlineFlag && (f4 & WAY_FLAG4_HOLES) > 0 && (f & WAY_FLAG_AREA) > 0) {
 			int holeCount = is.readShort();
 			for (int i = 0; i < holeCount; i++) {
 				count = is.readShort();
