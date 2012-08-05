@@ -2284,12 +2284,7 @@ public class Way extends Entity {
 		
 		int idx;
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS)
-		    //#if polish.api.areaoutlines
-		    && true
-		    //#else
-		    && false
-		    //#endif
-			) {
+		    && Legend.getLegendMapFlag(Legend.LEGEND_MAPFLAG_OUTLINE_AREA_BLOCK)) {
 			if (path.length > 0) {
 				//#if polish.android
 				//#if polish.api.areaoutlines
