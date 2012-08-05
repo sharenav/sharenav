@@ -84,7 +84,7 @@ public class CreateGpsMidData implements FilenameFilter {
 	public final static int	 LEGEND_FLAG_ADDITIONALFLAG = 0x80;
 
        public final static int LEGEND_MAPFLAG_OUTLINE_AREA_BLOCK = 0x01;
-       public final static int LEGEND_MAPFLAG_NO_TRIANGLE_AREA_BLOCK = 0x02;
+       public final static int LEGEND_MAPFLAG_TRIANGLE_AREA_BLOCK = 0x02;
        public final static int LEGEND_MAPFLAG_WORDSEARCH = 0x04;
 
 	public final static byte LEGEND_FLAG2_CLICKABLE = 0x01;
@@ -214,6 +214,8 @@ public class CreateGpsMidData implements FilenameFilter {
 		if (Configuration.getConfiguration().useHouseNumbers) {
 			sl.createSearchList(path, SearchList.INDEX_HOUSENUMBER);
 		}
+
+		Configuration.mapFlags |= LEGEND_MAPFLAG_TRIANGLE_AREA_BLOCK;
 
 		// Output statistics for travel modes
 		if (Configuration.attrToBoolean(configuration.useRouting) >= 0) {

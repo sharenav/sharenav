@@ -219,14 +219,12 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		}
 //		logger.trace("reading " + wayCount + " ways");
 
-		// FIXME check from legend if the outline format data exists
+		// skip data with triangles if we prefer outline data and have
+		// outline data
+
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS)
-		    //#if polish.api.areaoutlines
-		    && true
-		    //#else
-		    && false
-		    //#endif
-			) {
+		    && Legend.getLegendMapFlag(Legend.LEGEND_MAPFLAG_TRIANGLE_AREA_BLOCK)
+		    && Legend.getLegendMapFlag(Legend.LEGEND_MAPFLAG_OUTLINE_AREA_BLOCK)) {
 			byte[] ignoreLayers = new byte[wayCount];
 			// read & ignore the old format ways & areas
 			for (int i = 0; i < wayCount; i++) {
@@ -324,12 +322,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 					wayCount + ")", tt);
 		}
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS)
-		    //#if polish.api.areaoutlines
-		    && true
-		    //#else
-		    && false
-		    //#endif
-			) {
+		    && Legend.getLegendMapFlag(Legend.LEGEND_MAPFLAG_OUTLINE_AREA_BLOCK)) {
 			readVerify((byte) 0x57,"read final magic value",ds);
 		} else {
 			readVerify((byte) 0x56,"read final magic value",ds);

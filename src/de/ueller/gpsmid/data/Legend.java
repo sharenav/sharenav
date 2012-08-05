@@ -48,7 +48,7 @@ public class Legend {
 	public final static byte NODE_MASK2_PHONEHIGH=0x2;
 	
 	public final static int LEGEND_MAPFLAG_OUTLINE_AREA_BLOCK = 0x01;
-	public final static int LEGEND_MAPFLAG_NO_TRIANGLE_AREA_BLOCK = 0x02;
+	public final static int LEGEND_MAPFLAG_TRIANGLE_AREA_BLOCK = 0x02;
 	public final static int LEGEND_MAPFLAG_WORDSEARCH = 0x04;
 
 	public final static byte LEGEND_FLAG_IMAGE = 0x01;
