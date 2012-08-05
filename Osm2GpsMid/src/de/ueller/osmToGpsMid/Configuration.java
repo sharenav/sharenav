@@ -62,7 +62,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write.
 	 * This constant must be in sync with GpsMid.
 	 */
-	public final static short MAP_FORMAT_VERSION = 71;
+	public final static short MAP_FORMAT_VERSION = 72;
 
 	public final static int COLOR_MAP_BACKGROUND = 0;
 	public final static int COLOR_MAP_TEXT = 1;
@@ -400,6 +400,9 @@ public class Configuration {
 		
 		/** Max. map precision in meters */
 	    	public static double mapPrecisionInMeters = 1d;
+
+		/** Max. map precision in meters */
+	    	public static long mapFlags = 0L;
 
 		/** Use sea tiles for more efficient sea generation */
 	    	public boolean useSeaTiles = false;

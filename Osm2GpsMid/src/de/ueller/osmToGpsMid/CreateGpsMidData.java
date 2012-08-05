@@ -83,6 +83,10 @@ public class CreateGpsMidData implements FilenameFilter {
 	public final static byte LEGEND_FLAG_MIN_DESCRIPTION_SCALE = 0x40;
 	public final static int	 LEGEND_FLAG_ADDITIONALFLAG = 0x80;
 
+       public final static int LEGEND_MAPFLAG_OUTLINE_AREA_BLOCK = 0x01;
+       public final static int LEGEND_MAPFLAG_NO_TRIANGLE_AREA_BLOCK = 0x02;
+       public final static int LEGEND_MAPFLAG_WORDSEARCH = 0x04;
+
 	public final static byte LEGEND_FLAG2_CLICKABLE = 0x01;
 
 	public final static byte ROUTE_FLAG_MOTORWAY = 0x01;
@@ -205,6 +209,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			sl.createSearchList(path, SearchList.INDEX_WORD);
 			// create search list for whole words / house numbers
 			sl.createSearchList(path, SearchList.INDEX_WHOLEWORD);
+			Configuration.mapFlags |= LEGEND_MAPFLAG_WORDSEARCH;
 		}
 		if (Configuration.getConfiguration().useHouseNumbers) {
 			sl.createSearchList(path, SearchList.INDEX_HOUSENUMBER);
@@ -675,6 +680,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			}
 			
 			dsi.writeFloat((float)Configuration.mapPrecisionInMeters);
+			dsi.writeLong(Configuration.mapFlags);
 			dsi.close();
 			foi.close();
 			

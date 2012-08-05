@@ -811,7 +811,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		}
 		return (matchMode() ||
 		    !searchAlpha || name == null ||
-			(Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+			(hasWordSearch() ?
 			 // FIXME this gives some extra matches, as it matches to strings in the middle of the name also
 			 // Should instead break the name into words, and then match each of the words.
 			 name.toLowerCase().indexOf(searchCanon.toString().toLowerCase()) >= 0 :
@@ -849,7 +849,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 						if (matchMode() && matchSources != null) {
 							if (matchSources.get(id) != null &&
 							    (((Integer) matchIdx.get(id)).intValue() != res.nameIdx
-							     || Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH))) {
+							     || hasWordSearch())) {
 								res.preMatchIdx = ((Integer) matchIdx.get(id)).intValue();
 								addToResult(res);
 							}
@@ -1044,7 +1044,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				} 
 
 				// name part identical to search string 
-				if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) || matchMode()) {
+				if (hasWordSearch() || matchMode()) {
 					// FIXME could use improvement, maybe put match in the middle of screen
 					if (i == cursor){ 
 						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_TYPED]);
@@ -1075,7 +1075,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					gc.drawString(name.substring(len), 17 + gc.getFont().stringWidth(name.substring(0,len)) , yc, Graphics.TOP | Graphics.LEFT);
 				}
 				// carret 
-				if(!(Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) || matchMode())
+				if(!(hasWordSearch() || matchMode())
 				   && carret<=imatch && displayReductionLevel<1) { 
 					int len = carret+flags.length()-tickerUse;
 					if (len >= 0) {
@@ -1097,7 +1097,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				}
 			
 				String letters[] = {  Locale.get("guisearch.choose")/*choose*/, "  X  ", "  <- ", 
-						      Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+						      hasWordSearch() ?
 						      Locale.get("guisearch.label1wordSearch")/* 1*- */ :
 						      Locale.get("guisearch.label1")/*_1*- */,
 						      Locale.get("guisearch.label2")/* abc2*/,
@@ -1106,12 +1106,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 						      Locale.get("guisearch.label7")/*pqrs7*/, Locale.get("guisearch.label8")/* tuv8*/,
 						      Locale.get("guisearch.label9")/*wxyz9*/, 
 						      Locale.get("guisearch.fulltextshort")/*fulltext*/, "  0  ", 
-						      Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+						      hasWordSearch() ?
 						      Locale.get("guisearch.pound")/*_#end*/ :
 						      Locale.get("guisearch.poundNameSearch")/*#end*/};
 				if (cursorKeypad) {
 					String keypadLetters[] = {  Locale.get("guisearch.abc")/*abc*/, "  X  ", "  <- ", 
-						       Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+						    hasWordSearch() ?
 						       Locale.get("guisearch.clabel1wordSearch")/*exit search*/ :
 						       Locale.get("guisearch.clabel1")/*exit search*/,
 						       Locale.get("guisearch.clabel2")/* abc2*/,
@@ -1121,7 +1121,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 						       Locale.get("guisearch.sort")/*sort*/, 
 						       Locale.get("guisearch.more")/*more*/,
            					    Locale.get("guisearch.clabel0")/*POIs*/,
-						       Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+						    hasWordSearch() ?
 						       Locale.get("guisearch.pound")/*_#end*/ :
 						       Locale.get("guisearch.poundNameSearch")/*#end*/};
 					letters = keypadLetters;
@@ -1139,7 +1139,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 			}
 		}
 	}
-	
+
+	protected boolean hasWordSearch() {
+		return Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH)
+			&& (Legend.enableMap72MapFlags == false || Legend.getLegendMapFlag(Legend.LEGEND_MAPFLAG_WORDSEARCH));
+	}
+
 	protected void keyRepeated(int keyCode) {
 		//Moving the cursor should work with repeated keys the same
 		//as pressing the key multiple times
@@ -1173,7 +1178,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			/*  KEY_NUM constants match "(char) keyCode" */
 			searchCanon.insert(carret++, (char) keyCode);
 		//#if polish.api.bigsearch
-		} else if (keyCode == KEY_POUND || (keyCode == 32 && Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH))) {
+		} else if (keyCode == KEY_POUND || (keyCode == 32 && hasWordSearch())) {
 			// switch to another word, start searching in AND mode
 			// collect a list of long entity id's, mark
 
@@ -1192,7 +1197,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 				//System.out.println("space pressed, searching whole word index");
 				String searchString = NumberCanon.canonial(searchCanon.toString());
-				if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH)) {
+				if (hasWordSearch()) {
 					searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_WORD);
 				} else {
 					if (Legend.enableMap66Search) {
@@ -1597,7 +1602,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			Integer sourceNew = new Integer(sr.source);
 			if (matchSources.get(id) != null &&
 			    (((Integer) matchIdx.get(id)).intValue() != sr.nameIdx
-			     || Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH))) {
+			     || hasWordSearch())) {
 				//System.out.println("found match from old results, id = "
 				//		   + id + "source = "
 				//		   + ((Integer) matchSources.get(id)).intValue());
@@ -1987,7 +1992,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			logger.info("researching");
 			scrollOffset = 0;
 			searchThread.search(NumberCanon.canonial(searchCanon.toString()),
-					    Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ? 
+					    hasWordSearch() ? 
 					    SearchNames.INDEX_WORD : SearchNames.INDEX_BIGNAME);
 			repaint(0, renderDiff, maxX, maxY);
 			// title will be set by SearchName.doSearch when we need to determine first if we have favorites

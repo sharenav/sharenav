@@ -28,7 +28,7 @@ public class Legend {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 71;
+	public final static short MAP_FORMAT_VERSION = 72;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -47,6 +47,10 @@ public class Legend {
 	public final static byte NODE_MASK2_PHONE=0x1;
 	public final static byte NODE_MASK2_PHONEHIGH=0x2;
 	
+	public final static int LEGEND_MAPFLAG_OUTLINE_AREA_BLOCK = 0x01;
+	public final static int LEGEND_MAPFLAG_NO_TRIANGLE_AREA_BLOCK = 0x02;
+	public final static int LEGEND_MAPFLAG_WORDSEARCH = 0x04;
+
 	public final static byte LEGEND_FLAG_IMAGE = 0x01;
 	public final static byte LEGEND_FLAG_SEARCH_IMAGE = 0x02;
 	public final static byte LEGEND_FLAG_MIN_IMAGE_SCALE = 0x04;
@@ -215,6 +219,8 @@ public class Legend {
 	
 	public static float mapPrecision;
 
+	public static long mapFlags;
+
 	public static String mapVersion;
 	public static String bundleDate;
 	public static boolean isValid = false;
@@ -227,6 +233,7 @@ public class Legend {
 	public static boolean enableMap68Filenames;
 	public static boolean enableMap69Precision;
 	public static boolean enableMap70ConnTravelModes_Additional_Byte;
+	public static boolean enableMap72MapFlags;
 	public static short numUiLang;
 	public static short numNaviLang;
 	public static short numOnlineLang;
@@ -277,6 +284,7 @@ public class Legend {
 		enableMap68Filenames = false;
 		enableMap69Precision = false;
 		enableMap70ConnTravelModes_Additional_Byte = false;
+		enableMap72MapFlags = false;
 		// map 71: added optional additional bytes for way & POI type flags for alert & clickable
 		isValid = false;
 		/* Set some essential default colors in case legend.dat can not be opened/read.
@@ -322,6 +330,9 @@ public class Legend {
 		if (mapFormatVersion >= 70) {
 			enableMap70ConnTravelModes_Additional_Byte = true;
 		}
+		if (mapFormatVersion >= 72) {
+			enableMap72MapFlags = true;
+		}
 		// we can read old versions
 		if (mapFormatVersion != MAP_FORMAT_VERSION && mapFormatVersion != 65
 		    && mapFormatVersion != 66
@@ -329,6 +340,7 @@ public class Legend {
 		    && mapFormatVersion != 68
 		    && mapFormatVersion != 69
 		    && mapFormatVersion != 70
+		    && mapFormatVersion != 71
 		) {
 		        Trace.getInstance().alert(Locale.get("legend.wrongmapvertitle"),
 				     Locale.get("legend.wrongmapvermsg1") + " " + MAP_FORMAT_VERSION
@@ -497,6 +509,9 @@ public class Legend {
 		if (enableMap69Precision) {
 			mapPrecision = ds.readFloat();
 		}
+		if (enableMap72MapFlags) {
+			mapFlags = ds.readLong();
+		}
 		ds.close();
 	}
 	
@@ -632,6 +647,10 @@ public class Legend {
 		return color & 0x00FFFFFF;
 	}
 	
+	public static boolean getLegendMapFlag(long mask) {
+		return (mapFlags & mask) == mask;
+	}
+
 	private static void readWayDescriptions(DataInputStream ds) throws IOException {
 		Image generic = Image.createImage("/unknown.png");
 		byte wayDescNumByte = ds.readByte();

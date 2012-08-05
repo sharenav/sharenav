@@ -78,7 +78,7 @@
 	<property name="dir.work" value="build/real/${customization}" />
 	<property name="dir.dist" value="dist/${customization}" />
 	<property name="deploy-url" value="" />
-	<property name="mapversion" value="71" />
+	<property name="mapversion" value="72" />
 	<!-- enable if changes have been made to j2mepolish -->
 	<!-- <property name="polish.client.source" value="${polish.home}/j2mepolish-src/j2me/src" /> -->
 </target>
