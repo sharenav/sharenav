@@ -1137,7 +1137,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			
 
 			fw.write("# To choose a different device specific build, use the app property.\r\n");
-			fw.write("# GpsMid-Generic-full-connected (for net-connected use)
+			fw.write("# GpsMid-Generic-full-connected (for net-connected use)");
 			fw.write("# or GpsMid-Generic-full (for non-net-connected use) should work for most phones (except BlackBerry).\r\n");
 			String app = config.getAppParam();
 			fw.write("app = " + app + "\r\n");
