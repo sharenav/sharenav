@@ -988,6 +988,8 @@ public class Configuration {
 			appParam = app;
 			if (appParam.contains("android")) {
 				sourceIsApk = true;
+			} else {
+				sourceIsApk = false;
 			}
 		}
 
