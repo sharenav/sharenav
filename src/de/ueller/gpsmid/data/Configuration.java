@@ -358,6 +358,8 @@ public class Configuration {
 	public final static short CFGBIT_GPS_CONNECTED = 143;
 	/** bit 144: prefer outline area format (only Android) */
 	public final static short CFGBIT_PREFER_OUTLINE_AREAS = 144;
+	/** bit 145: Debug / Show tile requests dropped message */
+	public final static short CFGBIT_SHOW_TILE_REQUESTS_DROPPED = 145;
 	
 	/**
 	 * These are the database record IDs for each configuration option

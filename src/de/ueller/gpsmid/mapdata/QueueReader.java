@@ -7,6 +7,7 @@ package de.ueller.gpsmid.mapdata;
 import java.io.IOException;
 import java.util.Vector;
 
+import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.graphics.ImageCollector;
 import de.ueller.gpsmid.tile.SingleTile;
@@ -127,7 +128,7 @@ public abstract class QueueReader implements Runnable {
 				}
 			}
 		}
-		if (droppedCountZoomedOut > 0 || droppedCountZoomedIn > 0) {
+		if (droppedCountZoomedOut > 0 || droppedCountZoomedIn > 0 && Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_TILE_REQUESTS_DROPPED)) {
 			StringBuffer sb = new StringBuffer();
 			if (droppedCountZoomedOut > 0) {
 				sb.append(droppedCountZoomedOut + " zl>" + ImageCollector.minTile);
