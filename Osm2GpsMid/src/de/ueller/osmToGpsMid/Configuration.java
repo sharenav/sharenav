@@ -332,7 +332,7 @@ public class Configuration {
 		/** Flag if zip (with no midlet) is to be built instead of a jar (as it will be shown on the phone). */
 		public boolean mapzip;
 
-		/** Name of the base Midlet (e.g. GpsMid-Generic-multi) to be used. */
+		/** Name of the base Midlet (e.g. GpsMid-Generic-full-connected) to be used. */
 		private String appParam;
 
 		/** Flags if there are more way or poi styles than 126 or 255. */
@@ -978,7 +978,7 @@ public class Configuration {
 			return getMapName() + "-" + getVersion() + "-map" + MAP_FORMAT_VERSION + ".zip";
 		}
 		
-		/** Allows to set the name of the base Midlet (e.g. GpsMid-Generic-multi).
+		/** Allows to set the name of the base Midlet (e.g. GpsMid-Generic-full-connected).
 		 * @param app Name of the base Midlet
 		 */
 		public void setCodeBase (String app) {
@@ -1054,7 +1054,7 @@ public class Configuration {
 			return is;
 		}
 
-		/** Returns the name of the base Midlet (e.g. GpsMid-Generic-multi).
+		/** Returns the name of the base Midlet (e.g. GpsMid-Generic-full-connected).
 		 * @return Name of the base Midlet
 		 */
 		public String getAppParam() {

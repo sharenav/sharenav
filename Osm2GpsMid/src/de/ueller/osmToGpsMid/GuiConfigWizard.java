@@ -496,7 +496,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jpOptions.add(jlPhone, gbc);
 		
 		jcbPhone = new JComboBox(enumerateAppParam().toArray());
-		jcbPhone.setToolTipText("Select the compilation version that contains the features supported by your phone. Generic-full should work well in most cases.");
+		jcbPhone.setToolTipText("Select the compilation version that contains the features supported by your phone. Generic-full-connected with net services access or Generic-full without it should work well in most cases.");
 		jcbPhone.addActionListener(this);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.gridx = 1;
@@ -814,7 +814,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 
 	/** Finds all files in the Osm2GpsMid JAR that match the pattern "GpsMid-*.jar" or "GpsMid-*.apk"
 	 * and puts their names in a vector, cutting off at the last "-".
-	 * E.g. GpsMid-Generic-multi-0.6.4-map65.jar -> GpsMid-Generic-multi
+	 * E.g. GpsMid-Generic-full-0.6.4-map65.jar -> GpsMid-Generic-full
 	 * 
 	 * @return Vector containing the names
 	 */
@@ -1137,7 +1137,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			
 
 			fw.write("# To choose a different device specific build, use the app property.\r\n");
-			fw.write("# GpsMid-Generic-full should work for most phones (except BlackBerry).\r\n");
+			fw.write("# GpsMid-Generic-full-connected (for net-connected use)
+			fw.write("# or GpsMid-Generic-full (for non-net-connected use) should work for most phones (except BlackBerry).\r\n");
 			String app = config.getAppParam();
 			fw.write("app = " + app + "\r\n");
 
@@ -1288,8 +1289,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			config.enableEditingSupport = ((JCheckBox)event.getSource()).isSelected();
 			if (config.enableEditingSupport && !((String)jcbPhone.getSelectedItem()).contains("Editing")) {
 				//TODO: Need to find a way to select item without refering to hardcoded string names
-				jcbPhone.setSelectedItem("GpsMid-Generic-editing");
-				JOptionPane.showMessageDialog(this, "Editing requires online support. Changed Phone capabilities setting accordingly");
+				jcbPhone.setSelectedItem("Generic-full-connected");
+				JOptionPane.showMessageDialog(this, "Editing requires online (connected) support. Changed Phone capabilities setting accordingly");
 			}
 		} else if ("comboBoxChanged".equalsIgnoreCase(event.getActionCommand())) {
 			handleComboBoxChanged(event);
