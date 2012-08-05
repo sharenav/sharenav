@@ -67,6 +67,7 @@ public class Way extends Entity implements Comparable<Way> {
 
 	public static final byte WAY_FLAG4_ALERT = 1;
 	public static final byte WAY_FLAG4_CLICKABLE = 2;
+	public static final byte WAY_FLAG4_HOLES = 4;
 
 	public Long id;
 
@@ -102,7 +103,7 @@ public class Way extends Entity implements Comparable<Way> {
 
 	private static boolean triangulateAreas = true;
 	private static boolean saveAreaOutlines = false;
-	private static boolean deleteAreaOutlines = false;
+	private static boolean deleteAreaOutlines = true;
 
 	public Way(long id) {
 		this.id = id;
@@ -788,6 +789,7 @@ public class Way extends Entity implements Comparable<Way> {
 		int flags = 0;
 		int flags2 = 0;
 		int flags3 = 0;
+		int flags4 = 0;
 		int maxspeed = 50;
 		int maxspeedwinter = 50;
 		int nameIdx = -1;
@@ -801,6 +803,12 @@ public class Way extends Entity implements Comparable<Way> {
 			triangulateAreas = true;
 			saveAreaOutlines = false;
 		}
+		if (Configuration.getConfiguration().outlineAreaFormat) {
+			deleteAreaOutlines = false;
+		} else {
+			deleteAreaOutlines = true;
+		}
+
 		if (config == null) {
 			config = Configuration.getConfiguration();
 		}
@@ -834,6 +842,9 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 		if (showNameAsForArea()) {
 			flags3 += WAY_FLAG3_NAMEASFORAREA;
+		}
+		if (holes != null && saveAreaOutlines) {
+			flags4 += WAY_FLAG4_HOLES;
 		}
 		maxspeed = (int) getMaxSpeed();
 		maxspeedwinter = (int) getMaxSpeedWinter();
@@ -901,6 +912,9 @@ public class Way extends Entity implements Comparable<Way> {
 		if (longWays) {
 			flags2 += WAY_FLAG2_LONGWAY;
 		}
+		if (flags4 != 0) {
+			flags3 += WAY_FLAG3_ADDITIONALFLAG;
+		}
 		if (flags3 != 0) {
 			flags2 += WAY_FLAG2_ADDITIONALFLAG;
 		}
@@ -940,6 +954,9 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 		if (flags3 != 0) {
 			ds.writeByte(flags3);
+		}
+		if (flags4 != 0) {
+			ds.writeByte(flags4);
 		}
 		if ((flags3 & WAY_FLAG3_URL) == WAY_FLAG3_URL){
 			if ((flags3 & WAY_FLAG3_URLHIGH) == WAY_FLAG3_URLHIGH){
@@ -1002,30 +1019,23 @@ public class Way extends Entity implements Comparable<Way> {
 				ds.writeShort(n.renumberdId);
 			}
 		}
-		if (isArea() && saveAreaOutlines) {
-			int holeCount = 0;
-			if (holes != null) {
-				holeCount = holes.size();
-				//System.out.println("Way.java: holecount " + holes.size());
-				//int n = 0;
-				//for (Path hole : holes) {
-				//	Path holeNodes = holes.get(n++);
-					//System.out.println("Way.java: hole " + n + " nodecount: " + holeNodes.getNodeCount());
-				//}
-			}
+		if (isArea() && saveAreaOutlines && holes != null) {
+			int holeCount = holes.size();
+			//System.out.println("Way.java: holecount " + holes.size());
+			//int n = 0;
+			//for (Path hole : holes) {
+			//	Path holeNodes = holes.get(n++);
+			//System.out.println("Way.java: hole " + n + " nodecount: " + holeNodes.getNodeCount());
+			//}
 			ds.writeShort(holeCount);
-			if (holes != null) {
-				int nCount = 0;
-				for (Path hole : holes) {
-					//System.out.println("Way.java: hole " + nCount++ + " nodecount: " + hole.getNodeCount());
-					ds.writeShort(hole.getNodeCount());
-					for (Node n : hole.getNodes()) {
-						ds.writeShort(n.renumberdId);
-					}
+			int nCount = 0;
+			for (Path hole : holes) {
+				//System.out.println("Way.java: hole " + nCount++ + " nodecount: " + hole.getNodeCount());
+				ds.writeShort(hole.getNodeCount());
+				for (Node n : hole.getNodes()) {
+					ds.writeShort(n.renumberdId);
 				}
 			}
-
-
 		}
 
 		if (config.enableEditingSupport) {
