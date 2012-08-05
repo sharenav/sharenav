@@ -186,6 +186,9 @@ GpsMid 0.8
     - new J2ME build target: Gpsmid-Generic-midsize with location API
       & bluetooth & file access support, but complicated search & multimedia turned off
       to keep memory footprint smaller
+    - J2ME build target Gpsmid-Generic-editing renamed to GpsMid-Generic-full-connected
+      to better describe what the target does. Backwards compatibility exists so even
+      .properties files with GpsMid-Generic-editing will work.
     *** Android Support ***
     - many stability / usability improvements including a bunch of bug fixes
     - multitouch two-finger rotate & pinch zoom 
