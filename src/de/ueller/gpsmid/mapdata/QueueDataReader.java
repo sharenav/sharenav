@@ -260,7 +260,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 				byte flags = ds.readByte();
 //				if (flags != 0x80) {
 					Way w;
-					boolean outlineFlag = Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS);
+					boolean outlineFlag = Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS) && Legend.getLegendMapFlag(Legend.LEGEND_MAPFLAG_OUTLINE_AREA_BLOCK);
 
 					//#if polish.api.osm-editing
 					if (Legend.enableEdits) {
