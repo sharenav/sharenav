@@ -234,9 +234,9 @@ public class QueueDataReader extends QueueReader implements Runnable {
 				byte flags = ds.readByte();
 				//#if polish.api.osm-editing
 				if (Legend.enableEdits) {
-					new EditableWay(ds, flags, dummyTile, ignoreLayers, i);
+					new EditableWay(ds, flags, dummyTile, ignoreLayers, i, false);
 				} else {
-					new Way(ds, flags, dummyTile, ignoreLayers, i);
+					new Way(ds, flags, dummyTile, ignoreLayers, i, false);
 				}
 				//#else
 				new Way(ds, flags, dummyTile, ignoreLayers, i);
@@ -262,14 +262,16 @@ public class QueueDataReader extends QueueReader implements Runnable {
 				byte flags = ds.readByte();
 //				if (flags != 0x80) {
 					Way w;
+					boolean outlineFlag = Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS);
+
 					//#if polish.api.osm-editing
 					if (Legend.enableEdits) {
-						w = new EditableWay(ds, flags, tt, layers, i);
+						w = new EditableWay(ds, flags, tt, layers, i, outlineFlag);
 					} else {
-						w = new Way(ds, flags, tt, layers, i);
+						w = new Way(ds, flags, tt, layers, i, outlineFlag);
 					}
 					//#else
-					w = new Way(ds, flags, tt, layers, i);
+					w = new Way(ds, flags, tt, layers, i, outlineFlag);
 					if (Legend.enableEdits) {
 						int x = ds.readInt();
 					}

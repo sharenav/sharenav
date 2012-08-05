@@ -235,7 +235,7 @@ public class Way extends Entity {
 	 * @param nodes
 	 * @throws IOException
 	 */
-	public Way(DataInputStream is, byte f, Tile t, byte[] layers, int idx) throws IOException {
+	public Way(DataInputStream is, byte f, Tile t, byte[] layers, int idx, boolean outlineFlag) throws IOException {
 
 		minLat = is.readShort();
 		minLon = is.readShort();
@@ -391,7 +391,16 @@ public class Way extends Entity {
 		for (short i = 0; i < count; i++) {
 			path[i] = is.readShort();
 		}
-			
+		if (outlineFlag && (f & WAY_FLAG_AREA) > 0) {
+			int holeCount = is.readShort();
+			for (int i = 0; i < holeCount; i++) {
+				count = is.readShort();
+				for (int j = 0; j < count; j++) {
+					// ignore holes for now
+					is.readShort();
+				}
+			}
+		}
 	}
 	
 	private void readVerify(byte expect,String msg,DataInputStream is){

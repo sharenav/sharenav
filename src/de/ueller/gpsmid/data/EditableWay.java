@@ -31,8 +31,8 @@ public class EditableWay extends Way implements UploadListener {
 	private HttpHelper http = null;
 	//#endif
 	
-	public EditableWay(DataInputStream is, byte f, Tile t, byte[] layers, int idx) throws IOException {
-		super(is, f, t, layers, idx);
+	public EditableWay(DataInputStream is, byte f, Tile t, byte[] layers, int idx, boolean outlineFlag) throws IOException {
+		super(is, f, t, layers, idx, outlineFlag);
 		osmID = is.readInt();
 		OSMdata = null;
 	}

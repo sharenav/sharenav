@@ -79,6 +79,7 @@ public class Relations {
 			Relation r = i.next();
 //			System.out.println("check relation " + r + "is valid()=" + r.isValid() );
 			if (r.isValid()) {
+				Way outerWay = null;
 				validRelationCount++;
 				if (validRelationCount % 100 == 0) {
 					System.out.println("info: handled " + validRelationCount + " relations");
@@ -303,6 +304,7 @@ public class Relations {
 							}
 						}
 						parser.addWay(w2);
+						outerWay = w2;
 						removeWays.add(w);
 					}
 					for (Long ref : r.getWayIds(Member.ROLE_INNER)) {
@@ -316,6 +318,7 @@ public class Relations {
 						Outline no = createOutline(w);
 						if (no != null) {
 							a.addHole(no);
+							outerWay.addHole(w);
 							removeWays.add(w);
 						}
 					}

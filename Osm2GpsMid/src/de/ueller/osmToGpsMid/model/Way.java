@@ -72,6 +72,7 @@ public class Way extends Entity implements Comparable<Way> {
 
 	private Path					path								= null;
 	private Path					trianglePath								= null;
+	private ArrayList<Path> 		holes = null;
 	public HouseNumber			housenumber							= null;
 	public List<Triangle>		triangles							= null;
 	//private Bounds				bound								= null;
@@ -151,6 +152,18 @@ public class Way extends Entity implements Comparable<Way> {
 		this.type = other.type;
 		this.path = new Path();
 		this.trianglePath = new Path();
+	}
+
+	public void addHole(Way holeWay) {
+		if (holes == null) {
+			holes = new ArrayList<Path>();
+		}
+		Path holePath = new Path((ArrayList<Node>) holeWay.getNodes());
+		holes.add(holePath);
+	}
+
+	public ArrayList<Path> getHoles() {
+		return holes;
 	}
 
 	public void deletePath() {
@@ -988,6 +1001,31 @@ public class Way extends Entity implements Comparable<Way> {
 			for (Node n : path.getNodes()) {
 				ds.writeShort(n.renumberdId);
 			}
+		}
+		if (isArea() && saveAreaOutlines) {
+			int holeCount = 0;
+			if (holes != null) {
+				holeCount = holes.size();
+				//System.out.println("Way.java: holecount " + holes.size());
+				//int n = 0;
+				//for (Path hole : holes) {
+				//	Path holeNodes = holes.get(n++);
+					//System.out.println("Way.java: hole " + n + " nodecount: " + holeNodes.getNodeCount());
+				//}
+			}
+			ds.writeShort(holeCount);
+			if (holes != null) {
+				int nCount = 0;
+				for (Path hole : holes) {
+					//System.out.println("Way.java: hole " + nCount++ + " nodecount: " + hole.getNodeCount());
+					ds.writeShort(hole.getNodeCount());
+					for (Node n : hole.getNodes()) {
+						ds.writeShort(n.renumberdId);
+					}
+				}
+			}
+
+
 		}
 
 		if (config.enableEditingSupport) {

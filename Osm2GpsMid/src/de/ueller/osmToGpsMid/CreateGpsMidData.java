@@ -44,6 +44,7 @@ import de.ueller.osmToGpsMid.model.EntityDescription;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.POIdescription;
 import de.ueller.osmToGpsMid.model.WayDescription;
+import de.ueller.osmToGpsMid.model.Path;
 import de.ueller.osmToGpsMid.model.RouteNode;
 import de.ueller.osmToGpsMid.model.Sequence;
 import de.ueller.osmToGpsMid.model.Tile;
@@ -1579,6 +1580,14 @@ public class CreateGpsMidData implements FilenameFilter {
 				if (Configuration.getConfiguration().getOutlineAreaFormat()) {
 					for (Node n : w1.getNodes()) {
 						addUnusedNode(wayNodes, n);
+					}
+					ArrayList<Path> holes = w1.getHoles();
+					if (holes != null) {
+						for (Path hole : holes) {
+							for (Node n : hole.getNodes()) {
+								addUnusedNode(wayNodes, n);
+							}
+						}
 					}
 				}
 			} else {
