@@ -201,8 +201,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	protected static final int TOUCH_HELP_CMD = 69;
 	protected static final int CMS_CMD = 70;
 	protected static final int TOGGLE_UNUSEABLEWAYS_DARKER = 71;
+	protected static final int HELP_ONLINE_WIKI_ANDROID_CMD = 72;
 
-	private final Command [] CMDS = new Command[72];
+	private final Command [] CMDS = new Command[73];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -590,6 +591,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		CMDS[MANUAL_LOCATION_CMD] = new Command(Locale.get("trace.ManualLocation")/*Set location manually*/,Command.ITEM,100);
 		CMDS[HELP_ONLINE_TOUCH_CMD] = new Command(Locale.get("guidiscovericonmenu.Touch")/**/,Command.ITEM,100);
 		CMDS[HELP_ONLINE_WIKI_CMD] = new Command(Locale.get("guidiscovericonmenu.Wiki")/**/,Command.ITEM,100);
+		//#if polish.android
+		CMDS[HELP_ONLINE_WIKI_ANDROID_CMD] = new Command(Locale.get("guidiscovericonmenu.AndroidWiki")/**/,Command.ITEM,100);
+		//#endif
 		CMDS[KEYS_HELP_CMD] = new Command(Locale.get("guidiscover.KeyShortcuts")/**/,Command.ITEM,100);
 		CMDS[ROUTE_TO_FAVORITE_CMD] = new Command(Locale.get("guidiscover.KeyShortcuts")/**/,Command.ITEM,100);
 		CMDS[ROTATE_TRAVEL_MODE_CMD] = new Command(Locale.get("guiroute.TravelBy")/**/,Command.ITEM,100);
@@ -1786,6 +1790,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				GuiWebInfo.openUrl(GuiWebInfo.getStaticUrlForSite(Locale.get("guiwebinfo.helpwiki")));
 				return;
 			}
+			//#if polish.android
+			if (c == CMDS[HELP_ONLINE_WIKI_ANDROID_CMD] && internetAccessAllowed()) {
+				GuiWebInfo.openUrl(GuiWebInfo.getStaticUrlForSite(Locale.get("guiwebinfo.helpwikiandroid")));
+				return;
+			}
+			//#endif
 			if (c == CMDS[KEYS_HELP_CMD]) {
 				GuiKeyShortcuts gks = new GuiKeyShortcuts(this);
 				gks.show();

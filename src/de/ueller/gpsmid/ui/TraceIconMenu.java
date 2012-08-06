@@ -33,6 +33,9 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 	LayoutElement iconEditWay;
 	LayoutElement iconHelpOnlineTouch;
 	LayoutElement iconHelpOnlineWiki;
+	//#if polish.android
+	LayoutElement iconHelpOnlineWikiAndroid;
+	//#endif
 	
 	private final int favoriteMax = 20;
 
@@ -238,9 +241,15 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 			iconHelpOnlineTouch = mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Touch")/*Touch*/, "i_online", Trace.HELP_ONLINE_TOUCH_CMD);
 		}
 		iconHelpOnlineWiki = mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Wiki")/*Wiki*/, "i_online", Trace.HELP_ONLINE_WIKI_CMD);
+		//#if polish.android
+		iconHelpOnlineWikiAndroid = mp.createAndAddIcon(Locale.get("guidiscovericonmenu.AndroidWiki")/*Android help*/, "i_online", Trace.HELP_ONLINE_WIKI_ANDROID_CMD);
+		//#endif
 		//#if not polish.api.online
 		iconHelpOnlineTouch.makeImageGreyed();
 		iconHelpOnlineWiki.makeImageGreyed();
+		//#if polish.android
+		iconHelpOnlineAndroidWiki.makeImageGreyed();
+		//#endif
 		//#endif
 		if (!Configuration.getCfgBitState(Configuration.CFGBIT_INTERNET_ACCESS)) {
 			iconHelpOnlineTouch.makeImageGreyed();

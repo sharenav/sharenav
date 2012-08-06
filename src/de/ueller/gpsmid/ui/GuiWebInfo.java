@@ -265,6 +265,11 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.helpwiki")/*Online help (Gpsmid wiki)*/)) {
 			url = "https://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Main_Page";				
 		}
+		//#if polish.android
+		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.helpwikiandroid")/*GpsMid on Android help (Gpsmid wiki)*/)) {
+			url = "https://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Android";				
+		}
+		//#endif
 		return url;
 	}
 
