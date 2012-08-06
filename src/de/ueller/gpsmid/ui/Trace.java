@@ -4643,11 +4643,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	// FIXME should rather start a background service for recording track or
 	// other fuctionality which requires staying active
 	public void getPersistent() {
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)
-		    && Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON)) {
-			// wakelock already active
-			return;
-		}
+		//if (Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)
+		//    && Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON)) {
+		//	// wakelock already active
+		//	return;
+		//}
 		if (pm == null) {
 			pm = (PowerManager) MidletBridge.instance.getSystemService(Context.POWER_SERVICE);
 		}
