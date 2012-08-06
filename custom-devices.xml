@@ -15,7 +15,7 @@ at large.
 -->
 <devices>
 	<device supportsPolishGui="true">
-		<identifier>Generic/android-online-outlines</identifier>
+		<identifier>Generic/android-full-connected-outlines</identifier>
 		<parent>Generic/android</parent>
 		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing and outline areas (requiring a modified J2MEPolish for now).
 		</description>
