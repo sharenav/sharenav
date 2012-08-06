@@ -24,6 +24,8 @@ import javax.microedition.io.file.FileConnection;
 import de.enough.polish.android.midlet.MidletBridge;
 import android.content.res.AssetManager;
 import android.content.Context;
+import java.io.File;
+import java.io.FileInputStream;
 //#endif
 import javax.microedition.lcdui.Command;
 import javax.microedition.rms.InvalidRecordIDException;
@@ -1624,6 +1626,26 @@ public class Configuration {
 		}
 		//#if polish.api.fileconnection
 		if (mapFileUrl.endsWith("/")) {
+			//#if polish.android
+			try {
+				// directory mode
+				name = mapFileUrl + name.substring(1);
+				//#debug debug
+				logger.debug("Opening file from filesystem: " + name);
+				// strip file:/// prefix
+				File f = new File(name.substring(8));
+				is = new FileInputStream(f);
+				if (is == null)	{
+					// This is just to safeguard against the case that an implementation
+					// might return null instead of throwing an IOE, see above.
+					throw new IOException();
+				}
+			} catch (IOException ioe) {
+				throw new IOException(Locale.get("configuration.ExFNFCouldnt")
+						/*Could not find file */ + name +
+						Locale.get("configuration.ExFNFFilesys")/* in file system.*/);					
+			}
+			//#else
 			try {
 				// directory mode
 				name = mapFileUrl + name.substring(1);
@@ -1641,6 +1663,7 @@ public class Configuration {
 						/*Could not find file */ + name +
 						Locale.get("configuration.ExFNFFilesys")/* in file system.*/);					
 			}
+			//#endif
 		} else {
 			// zipfile mode
 			if (mapZipFile == null) {
