@@ -619,12 +619,9 @@ public class GpsMid extends MIDlet implements CommandListener {
 										if (pm == null) {
 											pm = (PowerManager) MidletBridge.instance.getSystemService(Context.POWER_SERVICE);
 										}
-										if (wl == null) {
-											wl = pm.newWakeLock(
-												(Configuration.getBackLightLevel() <= 50) ?
-												PowerManager.SCREEN_DIM_WAKE_LOCK : PowerManager.FULL_WAKE_LOCK,
-												"GpsMid");
+										if (wl != null) {
 											wl.release();
+											wl = null;
 										}
 										// with Android WindowManager
 									} else if (Configuration
