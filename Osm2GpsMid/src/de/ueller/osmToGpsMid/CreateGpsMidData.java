@@ -591,10 +591,12 @@ public class CreateGpsMidData implements FilenameFilter {
 						FileTools.countFiles("icon") + " files");
 
 				// if useIcons == small or useIcons == big rename the corresponding icons to normal icons
-				if (Configuration.attrToBoolean(configuration.useIcons) == 0) {
+				if ((!Configuration.getConfiguration().sourceIsApk) && Configuration.attrToBoolean(configuration.useIcons) == 0) {
 					renameAlternativeIconSizeToUsedIconSize(configuration.useIcons + "_");
 				}
-				removeUnusedIconSizes(path, false);
+				if (!Configuration.getConfiguration().sourceIsApk) {
+					removeUnusedIconSizes(path, false);
+				}
 			}
 						
 			/**
