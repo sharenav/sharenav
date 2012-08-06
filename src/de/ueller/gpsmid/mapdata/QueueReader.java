@@ -128,7 +128,7 @@ public abstract class QueueReader implements Runnable {
 				}
 			}
 		}
-		if (droppedCountZoomedOut > 0 || droppedCountZoomedIn > 0 && Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_TILE_REQUESTS_DROPPED)) {
+		if ((droppedCountZoomedOut > 0 || droppedCountZoomedIn > 0) && Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_TILE_REQUESTS_DROPPED)) {
 			StringBuffer sb = new StringBuffer();
 			if (droppedCountZoomedOut > 0) {
 				sb.append(droppedCountZoomedOut + " zl>" + ImageCollector.minTile);
