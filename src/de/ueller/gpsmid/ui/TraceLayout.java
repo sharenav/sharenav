@@ -662,7 +662,7 @@ public class TraceLayout extends LayoutManager {
 				String dist = HelperRoutines.formatDistance(ri.distance);
 				int distWidth = e.getFont().stringWidth(dist);
 				int fontHeight = e.getFontHeight();
-				img = ImageCache.getOneColorImage(0x80FFFFFF, distWidth > width ? distWidth : width, fontHeight);
+				img = ImageCache.getOneColorImage(0xC0FFFFFF, distWidth > width ? distWidth : width, fontHeight);
 				g.drawImage(img, x, y + height, Graphics.TOP|Graphics.LEFT);
 				g.setFont(e.getFont());
 				g.drawString(	dist,
