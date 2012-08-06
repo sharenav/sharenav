@@ -574,7 +574,12 @@ public class GpsMid extends MIDlet implements CommandListener {
 										// with Android WindowManager
 									} else if (Configuration
 											.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WINDOW_MANAGER)) {
-										MidletBridge.instance.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+										MidletBridge.instance.runOnUiThread(
+											new Runnable() {
+												public void run() {
+													MidletBridge.instance.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+												}
+											});
 										//#endif
 										//#if polish.api.min-siemapi
 									} else if (Configuration
@@ -599,6 +604,33 @@ public class GpsMid extends MIDlet implements CommandListener {
 										}
 										//#endif
 									}
+								} else {
+									//#if polish.android
+									// turn the backlight off
+									// with Android WakeLock
+									if (Configuration
+									    .getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)) {
+										if (pm == null) {
+											pm = (PowerManager) MidletBridge.instance.getSystemService(Context.POWER_SERVICE);
+										}
+										if (wl == null) {
+											wl = pm.newWakeLock(
+												(Configuration.getBackLightLevel() <= 50) ?
+												PowerManager.SCREEN_DIM_WAKE_LOCK : PowerManager.FULL_WAKE_LOCK,
+												"GpsMid");
+											wl.release();
+										}
+										// with Android WindowManager
+									} else if (Configuration
+										   .getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WINDOW_MANAGER)) {
+										MidletBridge.instance.runOnUiThread(
+											new Runnable() {
+												public void run() {
+													MidletBridge.instance.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+												}
+											});
+									}
+									//#endif
 								}
 								try {
 									synchronized (this) {

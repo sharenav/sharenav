@@ -230,7 +230,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	//#endif
 
 //	private SirfInput si;
-	private LocationMsgProducer locationProducer;
+	private volatile LocationMsgProducer locationProducer;
 	private LocationMsgProducer cellIDLocationProducer = null;
 	private CompassProducer compassProducer = null;
 	private volatile int compassDirection = 0;
@@ -243,7 +243,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private volatile int maxY = 0;
 	private volatile int renderDiff = 0;
 
-	public byte solution = LocationMsgReceiver.STATUS_OFF;
+	public volatile byte solution = LocationMsgReceiver.STATUS_OFF;
 	public String solutionStr = Locale.get("solution.Off");
 	
 	/** Flag if the user requested to be centered to the current GPS position (true)
