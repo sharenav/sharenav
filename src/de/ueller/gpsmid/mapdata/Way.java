@@ -304,6 +304,9 @@ public class Way extends Entity {
 			}
 			if ( (f2 & WAY_FLAG2_ADDITIONALFLAG) == WAY_FLAG2_ADDITIONALFLAG ) {
 				f3 = is.readByte();
+				if ( (f3 & WAY_FLAG3_ADDITIONALFLAG) > 0 ) {
+					f4 = is.readByte();
+				}
 				if ( (f3 & WAY_FLAG3_NAMEASFORAREA) > 0) {
 					flags += WAY_NAMEASFORAREA;
 				}
@@ -342,9 +345,6 @@ public class Way extends Entity {
 					for (short i = 0; i < hcount; i++) {
 						is.readLong();
 					}
-				}
-				if ( (f3 & WAY_FLAG3_ADDITIONALFLAG) > 0 ) {
-					f4 = is.readByte();
 				}
 			}
 
