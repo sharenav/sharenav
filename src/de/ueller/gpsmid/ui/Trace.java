@@ -4652,7 +4652,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			pm = (PowerManager) MidletBridge.instance.getSystemService(Context.POWER_SERVICE);
 		}
 		if (wl == null) {
-			wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "GpsMid");
+			wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "GpsMidRecord");
 			wl.acquire();
 		}
 	}
