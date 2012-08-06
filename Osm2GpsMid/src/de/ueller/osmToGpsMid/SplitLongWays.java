@@ -39,16 +39,18 @@ public class SplitLongWays {
 		count = 0;
 		for (Way way : parser.getWays()) {
 			if (way.isArea()) {
-				if (way.triangles == null) {
-					way.triangulate();
-				}
-				if (way.triangles != null && way.triangles.size() > 0) {
-					count++;
-					//if (count % 500 == 0) {
-					//	System.out.println("Did " + count 
-					//			   + " recreatePath()s");
-					//}
-					way.recreatePathAvoidDuplicates();
+				if (Configuration.getConfiguration().triangleAreaFormat) {
+					if (way.triangles == null) {
+						way.triangulate();
+					}
+					if (way.triangles != null && way.triangles.size() > 0) {
+						count++;
+						//if (count % 500 == 0) {
+						//	System.out.println("Did " + count 
+						//			   + " recreatePath()s");
+						//}
+						way.recreatePathAvoidDuplicates();
+					}
 				}
 			}
 

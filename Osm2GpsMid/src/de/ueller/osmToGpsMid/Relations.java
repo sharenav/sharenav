@@ -323,10 +323,15 @@ public class Relations {
 						}
 					}
 					try {
-						List<Triangle> areaTriangles = a.triangulate();
-						firstWay.triangles = areaTriangles;
-						//firstWay.recreatePathAvoidDuplicates();
-						firstWay.recreatePath();
+						if (Configuration.getConfiguration().triangleAreaFormat) {
+							List<Triangle> areaTriangles = a.triangulate();
+							firstWay.triangles = areaTriangles;
+							//firstWay.recreatePathAvoidDuplicates();
+							firstWay.recreatePath();
+							triangles += areaTriangles.size();
+//					System.out.println("areaTriangles.size for relation " + r.toUrl() + " :" + areaTriangles.size());
+							areas += 1;
+						}
 						// neither methdod below to remove type tag works
 						//r.getTags().remove("type");
 						//if (r.containsKey("type")) {
@@ -341,9 +346,6 @@ public class Relations {
 						//if (r.getTags().size() > 0) {
 						//	firstWay.replaceTags(r);
 						//}
-						triangles += areaTriangles.size();
-//					System.out.println("areaTriangles.size for relation " + r.toUrl() + " :" + areaTriangles.size());
-						areas += 1;
 					} catch (Exception e) {
 						System.out.println("Something went wrong when trying to triangulate relation ");
 						System.out.println("  " + r.toUrl() + " I'll attempt to ignore this relation");
