@@ -17,7 +17,9 @@ ant -Ddevice=Generic/blackberry
 
 # normal build 
 
+
 ant
+ant -propertyfile android.properties android
 cd Osm2GpsMid
 ant
 cd ..
@@ -28,6 +30,7 @@ ant clean
 ( cd Osm2GpsMid ; ant clean )
 ant debug -Ddevice=Generic/blackberry
 ant debug j2mepolish
+ant -propertyfile android.properties debug android
 
 cd Osm2GpsMid
 ant
