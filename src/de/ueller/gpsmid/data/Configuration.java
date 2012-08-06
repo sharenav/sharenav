@@ -552,7 +552,9 @@ public class Configuration {
 	private static int destLineWidth = 2;
 	private static int timeDiff = 0;
 	private static int altitudeCorrection = 0;
-
+	//#if polish.android
+	private static AssetManager assets = null;
+	//#endif
 	
 	public static void read() {
 		logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
@@ -1605,7 +1607,10 @@ public class Configuration {
 			//#if polish.android
 			//#debug debug
 			logger.debug("Opening file as android asset: " + name);
-			is = MidletBridge.instance.getAssets().open(name.substring(1));
+			if (assets == null) {
+				assets = MidletBridge.instance.getAssets();
+			}
+			is = assets.open(name.substring(1));
 			//#else
 			//#debug debug
 			logger.debug("Opening file from JAR: " + name);
