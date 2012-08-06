@@ -201,7 +201,7 @@ GpsMid 0.8
     - update apk permissions to match what GpsMid requires
     - in routing choice added buttons for selection of route mode - no need to go through menu
     - huge icon menu images are used by default which makes the icons look much better
-    - new option for backlight setting: Android WindowManager (KEEP_SCREEN_ON)
+    - new option for backlight setting: Android WindowManager (KEEP_SCREEN_ON), with dimming
     - new Android native location provider which can be used instead of JSR179
     - reduced the number of build targets to simplify builds & distribution; different
       targets (2.1, 2.2, 2.3 etc.) can be uncommented in build.xml if needed

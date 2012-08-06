@@ -63,6 +63,7 @@ import de.enough.polish.util.Locale;
 import de.enough.polish.android.midlet.MidletBridge;
 import android.os.PowerManager;
 import android.view.WindowManager;
+import android.view.Window;
 import android.os.PowerManager.WakeLock;
 import android.content.Context;
 //#endif
@@ -577,7 +578,12 @@ public class GpsMid extends MIDlet implements CommandListener {
 										MidletBridge.instance.runOnUiThread(
 											new Runnable() {
 												public void run() {
-													MidletBridge.instance.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+													Window window = MidletBridge.instance.getWindow();
+													window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+													WindowManager.LayoutParams params = window.getAttributes();
+													// use 1% as default value, at least on Galaxy Note it's otherwise the same as 10%
+													params.screenBrightness = ((float) ((Configuration.getBackLightLevel() == 1) ? -1 : Configuration.getBackLightLevel())) / (float) 100.0;
+													window.setAttributes(params);
 												}
 											});
 										//#endif

@@ -1787,7 +1787,7 @@ public class Configuration {
 	}
 	
 	public static boolean isBackLightDimmable() {
-		return Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA) || Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK);
+		return Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA) || Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK) || Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WINDOW_MANAGER);
 	}
 	
 	public static void addToBackLightLevel(int backLightLevelIndexDiff) {
