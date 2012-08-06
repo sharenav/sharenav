@@ -248,7 +248,7 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 		iconHelpOnlineTouch.makeImageGreyed();
 		iconHelpOnlineWiki.makeImageGreyed();
 		//#if polish.android
-		iconHelpOnlineAndroidWiki.makeImageGreyed();
+		iconHelpOnlineWikiAndroid.makeImageGreyed();
 		//#endif
 		//#endif
 		if (!Configuration.getCfgBitState(Configuration.CFGBIT_INTERNET_ACCESS)) {
