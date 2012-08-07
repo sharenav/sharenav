@@ -498,6 +498,8 @@ public class Configuration {
 	private static String mapFileUrl;
 	public static ZipFile mapZipFile;
 
+	public static boolean zipFileIsApk;
+
 	private static String smsRecipient;
 	private static int speedTolerance = 0;
 	
@@ -1673,9 +1675,17 @@ public class Configuration {
 			// zipfile mode
 			if (mapZipFile == null) {
 				mapZipFile = new ZipFile(mapFileUrl, -1);
+				if (mapFileUrl.toLowerCase().endsWith(".apk")) {
+					zipFileIsApk = true;
+				} else {
+					zipFileIsApk = false;
+				}
 			}
 			//#debug debug
 			logger.debug("Opening file from zip-file: " + name);
+			if (zipFileIsApk) {
+				name = "/assets" + name;
+			}
 			is = mapZipFile.getInputStream(mapZipFile.getEntry(name.substring(1)));
 			if (is == null)	{
 				// getInputStream() simply returns null if file not found,
