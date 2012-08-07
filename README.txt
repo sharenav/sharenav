@@ -80,9 +80,10 @@ outlines, those with "-outlines" suffix are build with the outline feature activ
 Building from source
 ====================
 
-By default, if you build J2MEPolish from source, it doesn't require or
+By default, if you build GpsMid from source, it doesn't require or
 use the J2MEPolish modification.
 
-To use the area outline code, modify build.xml to include the "-outlines" targets.
-This happens by moving the "-outlines" -containing lines above the "<!--" mark,
-in other word by uncommenting these lines.
+To use the area outline code, modify J2MEPolish, then modify build.xml
+to include the "-outlines" targets.  This happens by moving the
+"-outlines" -containing lines above the "<!--" mark, in other word by
+uncommenting these lines.
