@@ -144,6 +144,7 @@ public class Way extends Entity {
 	private byte wayRouteModes = 0;
 
 	public short[] path;
+	public short[][] holes;
 	public short minLat;
 	public short minLon;
 	public short maxLat;
@@ -402,11 +403,13 @@ public class Way extends Entity {
 		}
 		if (outlineFlag && (f4 & WAY_FLAG4_HOLES) > 0 && (f & WAY_FLAG_AREA) > 0) {
 			int holeCount = is.readShort();
+			holes = new short[holeCount][];
 			for (int i = 0; i < holeCount; i++) {
 				count = is.readShort();
+				holes[i] = new short[count];
 				for (int j = 0; j < count; j++) {
 					// ignore holes for now
-					is.readShort();
+					holes[i][j] = is.readShort();
 				}
 			}
 		}
@@ -2298,10 +2301,11 @@ public class Way extends Entity {
 				//#if polish.android
 				//#if polish.api.areaoutlines
 				Path aPath = new Path();
+				aPath.setFillType(Path.FillType.EVEN_ODD);
 				g.getPaint().setStyle(Style.FILL);
 				//#endif
 				//#endif
-				idx = path[0];	
+				idx = path[0];
 				if (idx < 0) {
 					idx += 65536;
 				}
@@ -2327,7 +2331,27 @@ public class Way extends Entity {
 				//#if polish.api.areaoutlines
 				aPath.lineTo(p1.x + g.getTranslateX(), p1.y + g.getTranslateY());
 				aPath.close();
-				// FIXME holes must be added here for areas which have them, and set a proper winding method (even-odd?)
+				if (holes != null) {
+					for (short hole[] : holes) {
+						idx = hole[0];
+						if (idx < 0) {
+							idx += 65536;
+						}
+						p.forward(t.nodeLat[idx],t.nodeLon[idx],p1,t);
+						aPath.moveTo(p1.x + g.getTranslateX(), p1.y + g.getTranslateY());
+						for (int i1 = 1; i1 < hole.length; ) {
+							idx = hole[i1++];	
+							if (idx < 0) {
+								idx += 65536;
+							}
+							p.forward(t.nodeLat[idx],t.nodeLon[idx],p2,t);
+							aPath.lineTo(p2.x + g.getTranslateX(), p2.y + g.getTranslateY());
+						}
+						aPath.lineTo(p1.x + g.getTranslateX(), p1.y + g.getTranslateY());
+						aPath.close();
+					}
+				}
+				// FIXME set a proper winding method (even-odd?)
 				// FIXME currently this depends on a modified Graphics.java of J2MEPolish to expose the private canvas and paint
 				// variables in Graphics.java to other modules; must find a way to do this with normal J2MEPolish or to
 				// get a modification to J2MEPolish
