@@ -2301,8 +2301,8 @@ public class Way extends Entity {
 				//#if polish.android
 				//#if polish.api.areaoutlines
 				Path aPath = new Path();
-				aPath.setFillType(Path.FillType.EVEN_ODD);
 				g.getPaint().setStyle(Style.FILL);
+				aPath.setFillType(Path.FillType.EVEN_ODD);
 				//#endif
 				//#endif
 				idx = path[0];
