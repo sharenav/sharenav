@@ -173,8 +173,9 @@ public class SmallArrayMap<K, V> implements Map<K, V> {
 				// No second part to copy if hit is at the end of the array.
 				if (2 * i + 2 < mapArray.length) {
 					System.arraycopy(mapArray, 2 * i + 2, tmp, 2 * i, 
-							mapArray.length - 2 * i + 2);
+							mapArray.length - 2 * i - 2);
 				}
+				mapArray = tmp;
 				return val;
 			}
 		}
