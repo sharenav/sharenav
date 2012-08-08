@@ -277,7 +277,7 @@ public class Relations {
 							//continue rel;
 						//}
 
-//					System.out.println("Handling outer way http://www.openstreetmap.org/browse/way/" + ref);
+						//System.out.println("Handling outer way http://www.openstreetmap.org/browse/way/" + ref);
 						if (w == null) {
 							System.out.println("Way " + w.toUrl() + " was not found but referred as outline in ");
 							System.out.println("  relation " + r.toUrl() + " I'll ignore this relation");
@@ -305,6 +305,15 @@ public class Relations {
 						}
 						parser.addWay(w2);
 						outerWay = w2;
+						// FIXME? Possibly outline could have more
+						// values for the tag than what is used
+						// for relation; so it's conveivable
+						// we should only remove one value instead
+						// of the key
+						for (String key : r.getTags()) {
+							w.deleteTag(key);
+							w.resetType(conf);
+						}
 						removeWays.add(w);
 					}
 					for (Long ref : r.getWayIds(Member.ROLE_INNER)) {
@@ -314,11 +323,20 @@ public class Relations {
 							System.out.println("  relation "+ r.toUrl() + " I'll ignore this relation");
 							continue rel;
 						}
-//					System.out.println("Adding way " + w.toUrl() + " as INNER");
+						//System.out.println("Adding way " + w.toUrl() + " as INNER");
 						Outline no = createOutline(w);
 						if (no != null) {
 							a.addHole(no);
 							outerWay.addHole(w);
+							// FIXME? Possibly outline could have more
+							// values for the tag than what is used
+							// for relation; so it's conveivable
+							// we should only remove one value instead
+							// of the key
+							for (String key : r.getTags()) {
+								w.deleteTag(key);
+								w.resetType(conf);
+							}
 							removeWays.add(w);
 						}
 					}
@@ -329,7 +347,7 @@ public class Relations {
 							//firstWay.recreatePathAvoidDuplicates();
 							firstWay.recreatePath();
 							triangles += areaTriangles.size();
-//					System.out.println("areaTriangles.size for relation " + r.toUrl() + " :" + areaTriangles.size());
+							//System.out.println("areaTriangles.size for relation " + r.toUrl() + " :" + areaTriangles.size());
 							areas += 1;
 						}
 						// neither methdod below to remove type tag works
