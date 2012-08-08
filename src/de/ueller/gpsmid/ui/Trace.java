@@ -4182,6 +4182,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			return;
 		}
 		locationProducer = null;
+		running = false;
 		notify();
 		addCommand(CMDS[CONNECT_GPS_CMD]);
 //		addCommand(START_RECORD_CMD);
