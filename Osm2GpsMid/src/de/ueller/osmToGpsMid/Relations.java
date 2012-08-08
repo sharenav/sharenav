@@ -311,8 +311,10 @@ public class Relations {
 						// we should only remove one value instead
 						// of the key
 						for (String key : r.getTags()) {
-							w.deleteTag(key);
-							w.resetType(conf);
+							if (r.getAttribute(key).equals(w.getAttribute(key))) {
+								w.deleteTag(key);
+								w.resetType(conf);
+							}
 						}
 						removeWays.add(w);
 					}
@@ -334,8 +336,10 @@ public class Relations {
 							// we should only remove one value instead
 							// of the key
 							for (String key : r.getTags()) {
-								w.deleteTag(key);
-								w.resetType(conf);
+								if (r.getAttribute(key).equals(w.getAttribute(key))) {
+									w.deleteTag(key);
+									w.resetType(conf);
+								}
 							}
 							removeWays.add(w);
 						}
