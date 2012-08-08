@@ -1395,6 +1395,11 @@ public class Way extends Entity implements Comparable<Way> {
 	 * Regenerates this way's path object, rough version for speed
 	 */
 	public void recreatePath() {
+		if (Configuration.getConfiguration().outlineAreaFormat) {
+			deleteAreaOutlines = false;
+		} else {
+			deleteAreaOutlines = true;
+		}
 		if (isArea() && triangles.size() > 0) {
 			trianglePath = new Path();
 			if (deleteAreaOutlines) {
@@ -1417,6 +1422,11 @@ public class Way extends Entity implements Comparable<Way> {
 	 * Regenerates this way's path object, avoiding duplicates
 	 */
 	public void recreatePathAvoidDuplicates() {
+		if (Configuration.getConfiguration().outlineAreaFormat) {
+			deleteAreaOutlines = false;
+		} else {
+			deleteAreaOutlines = true;
+		}
 		if (isArea() && triangles.size() > 0) {
 			trianglePath = new Path();
 			if (deleteAreaOutlines) {
