@@ -340,6 +340,14 @@ public class Relations {
 									w.deleteTag(key);
 									w.resetType(conf);
 								}
+								if (key.equals("natural") && r.getAttribute(key).equals("water") && w.getAttribute("name") != null && !"".equals(w.getAttribute("name"))) {
+									// FIXME
+									// a hole in a water could be an islet also, perhaps decide on size. perhaps also something else, like a rock or a tree.
+									//System.out.println("Adding place=island for way " + w);
+
+									w.put("place", "island");
+									w.resetType(conf);
+								}
 							}
 							removeWays.add(w);
 						}
