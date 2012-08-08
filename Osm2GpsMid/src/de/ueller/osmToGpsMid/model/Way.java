@@ -1374,7 +1374,7 @@ public class Way extends Entity implements Comparable<Way> {
 			Outline o = null;
 			o = new Outline();
 			o.setWayId(id);
-			for (Node n : getNodes()) {
+			for (Node n : trianglePath.getNodes()) {
 				o.append(new Vertex(n, o));
 			}
 			Area a = new Area();
