@@ -108,7 +108,7 @@ public class SeaGenerator {
 						}
 					}
 					if (foundCoastline) {
-						currentWay.deleteTag("natural");
+						//currentWay.deleteTag("natural");
 						if (others != null) {
 							currentWay.setAttribute("natural", others);
 						}
@@ -514,7 +514,7 @@ public class SeaGenerator {
 				if(!containedByLand) {
 					// found an anti-island that is not contained by
 					// land so convert it back into an island
-					ai.deleteTag("natural");
+					//ai.deleteTag("natural");
 					if(generateSeaUsingMP) {
 						// create a "inner" way for the island
 						// TODO seaRelation.addElement("inner", ai);
