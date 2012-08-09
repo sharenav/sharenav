@@ -275,6 +275,10 @@ public class Legend {
 		}	
 	}
 	
+	public static boolean getMapFlag(long mask) {
+		return (mapFlags & mask) != 0;
+	}
+	
 	public static void readLegend() throws IOException {
 		COLOR_COUNT = 89;
 		enableEdits = false;

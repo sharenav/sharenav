@@ -401,7 +401,7 @@ public class Configuration {
 		/** Max. map precision in meters */
 	    	public static double mapPrecisionInMeters = 1d;
 
-		/** Max. map precision in meters */
+		/** Map flags */
 	    	public static long mapFlags = 0L;
 
 		/** Use sea tiles for more efficient sea generation */

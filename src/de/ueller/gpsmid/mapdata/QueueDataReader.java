@@ -222,7 +222,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		// skip data with triangles if we prefer outline data and have
 		// outline data
 
-		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS)
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS)
 		    && Legend.getLegendMapFlag(Legend.LEGEND_MAPFLAG_TRIANGLE_AREA_BLOCK)
 		    && Legend.getLegendMapFlag(Legend.LEGEND_MAPFLAG_OUTLINE_AREA_BLOCK)) {
 			byte[] ignoreLayers = new byte[wayCount];
@@ -260,7 +260,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 				byte flags = ds.readByte();
 //				if (flags != 0x80) {
 					Way w;
-					boolean outlineFlag = Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS) && Legend.getLegendMapFlag(Legend.LEGEND_MAPFLAG_OUTLINE_AREA_BLOCK);
+					boolean outlineFlag = Configuration.getCfgBitState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS) && Legend.getLegendMapFlag(Legend.LEGEND_MAPFLAG_OUTLINE_AREA_BLOCK);
 
 					//#if polish.api.osm-editing
 					if (Legend.enableEdits) {
@@ -321,7 +321,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			throwError(e, "Ways (last ok index " + lastread + " out of " + 
 					wayCount + ")", tt);
 		}
-		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS)
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS)
 		    && Legend.getLegendMapFlag(Legend.LEGEND_MAPFLAG_OUTLINE_AREA_BLOCK)) {
 			readVerify((byte) 0x57,"read final magic value",ds);
 		} else {
