@@ -11,8 +11,8 @@ public class ConnectionWithNode {
 	public byte numToRoutableWays=0;
 	public int wayNameIdx=-1; // used to vaguely identify ways that might contain a solution path for highlighting  
 	public int nodeNameIdx=-1;  
-	public short wayFromConAt=0;
-	public short wayToConAt=0;
+	public int wayFromConAt=0;
+	public int wayToConAt=0;
 	//#if polish.api.bigstyles
 	public short wayType=0;
 	//#else

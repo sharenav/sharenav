@@ -559,8 +559,8 @@ public class Way extends Entity {
 	public void connections2WayMatch(PaintContext pc, SingleTile t) {
 		boolean containsCon1 = false;
 		boolean containsCon2 = false;
-		short containsCon1At = 0;
-		short containsCon2At = 0;
+		int containsCon1At = 0;
+		int containsCon2At = 0;
 		short searchCon1Lat = (short) ((pc.searchCon1Lat - t.centerLat) * MoreMath.FIXPT_MULT);
 		short searchCon1Lon = (short) ((pc.searchCon1Lon - t.centerLon) * MoreMath.FIXPT_MULT);
 		short searchCon2Lat = (short) ((pc.searchCon2Lat - t.centerLat) * MoreMath.FIXPT_MULT);
@@ -693,8 +693,8 @@ public class Way extends Entity {
 		if (containsCon1 && containsCon2) {
 			WayDescription wayDesc = Legend.getWayDescription(this.type);
 			float conWayRealDistance = 0;
-			short from = containsCon1At;
-			short to = containsCon2At;
+			int from = containsCon1At;
+			int to = containsCon2At;
 			int direction = 1;
 			if (from > to) {
 				/* 
@@ -719,7 +719,7 @@ public class Way extends Entity {
 			int idx2;
 
 			// sum up the distance of the segments between searchCon1 and searchCon2
-			for (short i = from; i != to; i++) {
+			for (int i = from; i != to; i++) {
 				if ( (isRoundAbout() || isCircleway) && i >= (path.length - 2))  {
 					i=-1; // if in roundabout at end of path continue at first node
 					if (to == (path.length - 1) ) {
@@ -1052,8 +1052,8 @@ public class Way extends Entity {
 												 *  flag the parts of the way as to be highlighted
 												 *  by putting in the index of the corresponding connection 
 												 */
-												short from = c.wayFromConAt;
-												short to = c.wayToConAt;
+												int from = c.wayFromConAt;
+												int to = c.wayToConAt;
 												boolean isCircleway = isCircleway();
 												if (from > to  && !(isRoundAbout() || isCircleway) ) {
 													// swap direction

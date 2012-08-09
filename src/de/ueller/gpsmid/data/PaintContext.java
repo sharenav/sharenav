@@ -92,11 +92,11 @@ public class PaintContext extends ScreenContext {
 	/** used to vaguely identify ways that might contain a solution path for highlighting */
 	public volatile int conWayNameIdx;
 	/** highlight way from this path node # */
-	public volatile short conWayFromAt;
+	public volatile int conWayFromAt;
 	/** a way id of the Way between the from and to-RouteNodes */
 	public volatile int conWayCombinedFileAndWayNr;
 	/** highlight way to this path node # */
-	public volatile short conWayToAt;
+	public volatile int conWayToAt;
 	/** highlight way to node idx */
 	public volatile short conWayType;
 	/** modifiers like motorway and motorway_link (from description) and roundabout/bridge tunnel (from way) */
