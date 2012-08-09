@@ -201,6 +201,9 @@ public class CleanUpData {
 			for (Node n:w.getNodes()) {
 				n.used = true;
 			}
+			for (Node n:w.getTriangleNodes()) {
+				n.used = true;
+			}
 		}
 		ArrayList<Node> rmNodes = new ArrayList<Node>();
 		for (Node n:parser.getNodes()) {

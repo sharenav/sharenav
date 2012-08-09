@@ -1366,6 +1366,13 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	/**
+	 * @return List of all triangleNodes of this way
+	 */
+	public List<Node> getTriangleNodes() {
+		return trianglePath.getNodes();
+	}
+
+	/**
 	 * @param wayHashMap
 	 * @param r
 	 */
@@ -1400,6 +1407,7 @@ public class Way extends Entity implements Comparable<Way> {
 			trianglePath = new Path();
 			if (deleteAreaOutlines) {
 				deletePath();
+				path = new Path();
 			}
 		}
 		for (Triangle t : triangles) {
