@@ -343,7 +343,7 @@ public class Way extends Entity {
 						}
 					}
 					logger.debug("expecting " + hcount + " housenumber nodes");
-					for (short i = 0; i < hcount; i++) {
+					for (int i = 0; i < hcount; i++) {
 						is.readLong();
 					}
 				}
@@ -398,7 +398,7 @@ public class Way extends Entity {
 		}
 		path = new short[count];
 		logger.debug("expecting " + count + " nodes");
-		for (short i = 0; i < count; i++) {
+		for (int i = 0; i < count; i++) {
 			path[i] = is.readShort();
 		}
 		if (outlineFlag && (f4 & WAY_FLAG4_HOLES) > 0 && (f & WAY_FLAG_AREA) > 0) {
@@ -571,7 +571,7 @@ public class Way extends Entity {
 		byte bearingBackward = 0;
 		// check if way contains both search connections
 		// System.out.println("search path nodes: " + path.length);
-		for (short i = 0; i < path.length; i++) {
+		for (int i = 0; i < path.length; i++) {
 			int idx = path[i];
 			// System.out.println("lat:" + t.nodeLat[idx] + "/" + searchCon1Lat);
 			if (idx < 0) {
@@ -883,7 +883,7 @@ public class Way extends Entity {
 		
 		// check if area way contains both search connections
 //		System.out.println("search area nodes: " + path.length);
-		for (short i = 0; i < path.length; i++) {
+		for (int i = 0; i < path.length; i++) {
 			int idx = path[i];
 			if (idx < 0) {
 				idx += 65536;
