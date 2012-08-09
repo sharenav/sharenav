@@ -101,7 +101,7 @@ public class Way extends Entity implements Comparable<Way> {
 	 */
 	public static long			lastUnhandledMaxSpeedWayId			= -1;
 
-	private static boolean saveAreaOutlines = false;
+	private static boolean writingAreaOutlines = false;
 	private static boolean deleteAreaOutlines = true;
 
 	public Way(long id) {
