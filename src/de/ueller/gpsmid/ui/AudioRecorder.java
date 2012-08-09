@@ -170,6 +170,7 @@ public class AudioRecorder  implements SelectionListener{
 			//#if polish.android
 			recorder.stop();
 			recorder.release();
+			recorder = null;
 			//#else
 			record.stopRecord();
 			record.commit();
