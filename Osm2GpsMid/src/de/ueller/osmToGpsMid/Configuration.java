@@ -1600,6 +1600,8 @@ public class Configuration {
 			confString += "  Use words for search: " + useWordSearch + "\n";
 			confString += "  Enable editing support: " + enableEditingSupport + "\n";
 			confString += "  Map precision in meters: " + mapPrecisionInMeters + "\n";
+			confString += "  triangleAreaFormat: " + triangleAreaFormat + "\n";
+			confString += "  outlineAreaFormat: " + outlineAreaFormat + "\n";
 			confString += "  Adding menu entries for languages: " + getUseLang() + " (" + getUseLangName() + ")" + "\n";
 			confString += "  Don't compress files ending with: " + getDontCompress() + "\n";
 			if (allLang) {
