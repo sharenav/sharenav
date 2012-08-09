@@ -1159,7 +1159,7 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public int getLineCount() {
-		if (isArea() && Configuration.getConfiguration().triangleAreaFormat) {
+		if (isArea() && Configuration.getConfiguration().triangleAreaFormat && !writingAreaOutlines) {
 			return checkTriangles().size();
 		} else {
 			return path.getLineCount();
@@ -1167,7 +1167,7 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public int getNodeCount() {
-		if (isArea() && Configuration.getConfiguration().triangleAreaFormat) {
+		if (isArea() && Configuration.getConfiguration().triangleAreaFormat && !writingAreaOutlines) {
 			return checkTriangles().size() * 3;
 		} else {
 			return path.getNodeCount();
