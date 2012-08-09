@@ -796,9 +796,9 @@ public class Way extends Entity implements Comparable<Way> {
 		int phoneIdx = -1;
 		byte layer = 0;
 		if (outlineFormat) {
-			saveAreaOutlines = true;
+			writingAreaOutlines = true;
 		} else {
-			saveAreaOutlines = false;
+			writingAreaOutlines = false;
 		}
 
 		if (config == null) {
@@ -835,7 +835,7 @@ public class Way extends Entity implements Comparable<Way> {
 		if (showNameAsForArea()) {
 			flags3 += WAY_FLAG3_NAMEASFORAREA;
 		}
-		if (holes != null && saveAreaOutlines) {
+		if (holes != null && writingAreaOutlines) {
 			flags4 += WAY_FLAG4_HOLES;
 		}
 		maxspeed = (int) getMaxSpeed();
@@ -983,7 +983,7 @@ public class Way extends Entity implements Comparable<Way> {
 			}
 
 		}
-		if (isArea() && !saveAreaOutlines) {
+		if (isArea() && !writingAreaOutlines) {
 			if (longWays) {
 				ds.writeShort(getNodeCount());
 			} else {
@@ -1008,7 +1008,7 @@ public class Way extends Entity implements Comparable<Way> {
 				ds.writeShort(n.renumberdId);
 			}
 		}
-		if (isArea() && saveAreaOutlines && holes != null) {
+		if (isArea() && writingAreaOutlines && holes != null) {
 			int holeCount = holes.size();
 			//System.out.println("Way.java: holecount " + holes.size());
 			//int n = 0;
@@ -1180,7 +1180,7 @@ public class Way extends Entity implements Comparable<Way> {
 
 	public Way split() {
 		if (isArea()) {
-			//if (saveAreaOutlines) {
+			//if (writingAreaOutlines) {
 			if (Configuration.getConfiguration().outlineAreaFormat) {
 				// FIXME write a splitter mode which works with outlined areas
 				return null;
