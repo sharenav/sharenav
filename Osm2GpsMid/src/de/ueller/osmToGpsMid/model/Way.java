@@ -101,7 +101,6 @@ public class Way extends Entity implements Comparable<Way> {
 	 */
 	public static long			lastUnhandledMaxSpeedWayId			= -1;
 
-	private static boolean triangulateAreas = true;
 	private static boolean saveAreaOutlines = false;
 	private static boolean deleteAreaOutlines = true;
 
@@ -797,10 +796,8 @@ public class Way extends Entity implements Comparable<Way> {
 		int phoneIdx = -1;
 		byte layer = 0;
 		if (outlineFormat) {
-			triangulateAreas = false;
 			saveAreaOutlines = true;
 		} else {
-			triangulateAreas = true;
 			saveAreaOutlines = false;
 		}
 
@@ -998,9 +995,6 @@ public class Way extends Entity implements Comparable<Way> {
 				ds.writeShort(tri.getVert()[2].getNode().renumberdId);
 			}
 		} else {
-			if (isArea() && triangulateAreas) {
-				System.err.println("Warning: can't yet write both an outline and a triangulation for an area");
-			}
 			if (longWays) {
 				ds.writeShort(path.getNodeCount());
 			} else {
