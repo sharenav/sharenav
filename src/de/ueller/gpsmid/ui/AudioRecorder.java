@@ -86,11 +86,13 @@ public class AudioRecorder  implements SelectionListener{
 			//#endif
 			String fileSubPart = "GpsMid-" + HelperRoutines.formatSimpleDateSecondNow();
 			//#if polish.android
-			// FIXME with the normal line tries to open /file:/sdcard/GpsMid-201.. and fails
+			// with the normal line tries to open /file:/sdcard/GpsMid-201.. and fails
 			//
-			basedirectory = "/sdcard/";
-			//#endif
+			// skip /file: prefix
+			String fileName = basedirectory.substring(6) + fileSubPart +".amr";
+			//#else
 			String fileName = basedirectory + fileSubPart +".amr";
+			//#endif
 			logger.info("Saving audio stream to " + fileName);
 			// Some JVMs seem to require the file to already exist before they can record to it
 			//#if polish.api.fileConnection
