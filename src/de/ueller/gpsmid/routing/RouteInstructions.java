@@ -19,6 +19,7 @@ import de.ueller.gpsmid.data.RoutePositionMark;
 import de.ueller.gpsmid.graphics.ImageCollector;
 import de.ueller.gpsmid.mapdata.Way;
 import de.ueller.gpsmid.mapdata.WayDescription;
+import de.ueller.gpsmid.mapdata.WaySegment;
 import de.ueller.gpsmid.tile.Tile;
 import de.ueller.gpsmid.ui.GpsMid;
 import de.ueller.gpsmid.ui.Trace;
@@ -123,6 +124,8 @@ public class RouteInstructions {
 	private static volatile Node closestPointOnDestWay = null;
 	
 	private static volatile float dstRouteToDestination = 0;
+	
+	private static WaySegment waySegment = null;
 	
 	public RouteInstructions(Trace trace) {
 		RouteInstructions.trace = trace;
@@ -334,6 +337,9 @@ public class RouteInstructions {
 						if (c.wayRouteInstruction == RI_AREA_CROSS) {
 							areaStart.setLatLonRad(c.to.lat, c.to.lon);
 						} else if (c.wayRouteInstruction == RI_AREA_CROSSED) {
+							if (waySegment == null) {
+								waySegment = new WaySegment();
+							}
 							// draw line for crossing area
 							IntPoint lineP1 = new IntPoint();
 							IntPoint lineP2 = new IntPoint();							
@@ -345,15 +351,9 @@ public class RouteInstructions {
 							lineP2.x-=xo;
 							lineP2.y-=yo;
 
-							pc.g.setStrokeStyle(Graphics.SOLID);
-							if (iNow > i) {
-								pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_PRIOR_ROUTELINE]);														
-							} else if (iNow < i) {
-								pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE]);														
-							}
 							if (iNow != i) {
 								// we are currently not crossing the area, so we simply draw a line in the given color
-						    	pc.g.drawLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y);
+						    	waySegment.drawWideLineSimple(Legend.COLORS[iNow > i ? Legend.COLOR_ROUTE_PRIOR_ROUTELINE : Legend.COLOR_ROUTE_ROUTELINE], lineP1, lineP2, 2, pc);
 							} else {
 								// we are currently crossing the area, so we need to divide the line and draw a route dot onto it
 								IntPoint centerP = new IntPoint();
@@ -362,10 +362,8 @@ public class RouteInstructions {
 								centerP.y-=yo;
 
 								IntPoint closestP = MoreMath.closestPointOnLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y, centerP.x, centerP.y);
-								pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_PRIOR_ROUTELINE]);														
-						    	pc.g.drawLine(lineP1.x, lineP1.y, closestP.x, closestP.y);
-								pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE]);														
-						    	pc.g.drawLine(closestP.x, closestP.y, lineP2.x, lineP2.y);
+								waySegment.drawWideLineSimple(Legend.COLORS[Legend.COLOR_ROUTE_PRIOR_ROUTELINE], lineP1, closestP, 2, pc);
+								waySegment.drawWideLineSimple(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE], closestP, lineP2, 2, pc);
 						    	drawRouteDot(pc.g, closestP, Configuration.getMinRouteLineWidth());
 							}
 						}
