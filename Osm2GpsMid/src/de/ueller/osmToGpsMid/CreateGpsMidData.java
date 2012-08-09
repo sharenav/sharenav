@@ -1587,10 +1587,12 @@ public class CreateGpsMidData implements FilenameFilter {
 		// find all nodes that are part of a way but not in interestNodes
 		for (Way w1 : ways) {
 			if (w1.isArea()) {
-				if (w1.checkTriangles() != null) {
-					for (Triangle tri : w1.checkTriangles()) {
-						for (int lo = 0; lo < 3; lo++) {
-							addUnusedNode(wayNodes, tri.getVert()[lo].getNode());
+				if (Configuration.getConfiguration().getTriangleAreaFormat()) {
+					if (w1.checkTriangles() != null) {
+						for (Triangle tri : w1.checkTriangles()) {
+							for (int lo = 0; lo < 3; lo++) {
+								addUnusedNode(wayNodes, tri.getVert()[lo].getNode());
+							}
 						}
 					}
 				}

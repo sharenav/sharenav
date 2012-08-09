@@ -1155,6 +1155,9 @@ public class Way extends Entity implements Comparable<Way> {
 	 * @return List of triangles for this way
 	 */
 	public List<Triangle> checkTriangles() {
+		if (!Configuration.getConfiguration().triangleAreaFormat) {
+			return null;
+		}
 		if (isArea() && triangles == null) {
 			triangulate();
 		}
@@ -1162,7 +1165,7 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public int getLineCount() {
-		if (isArea() && !saveAreaOutlines) {
+		if (isArea() && Configuration.getConfiguration().triangleAreaFormat) {
 			return checkTriangles().size();
 		} else {
 			return path.getLineCount();
@@ -1170,7 +1173,7 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public int getNodeCount() {
-		if (isArea() && !saveAreaOutlines) {
+		if (isArea() && Configuration.getConfiguration().triangleAreaFormat) {
 			return checkTriangles().size() * 3;
 		} else {
 			return path.getNodeCount();
@@ -1197,6 +1200,9 @@ public class Way extends Entity implements Comparable<Way> {
 
 
 	private Way splitArea() {
+		if (!Configuration.getConfiguration().triangleAreaFormat) {
+			return null;
+		}
 		if (triangles == null) {
 			triangulate();
 		}
@@ -1370,6 +1376,10 @@ public class Way extends Entity implements Comparable<Way> {
 	 * @param r
 	 */
 	public void triangulate() {
+		if (!Configuration.getConfiguration().triangleAreaFormat) {
+			return;
+		}
+
 		if (isArea()) {
 			Outline o = null;
 			o = new Outline();
