@@ -1381,15 +1381,10 @@ public class Way extends Entity implements Comparable<Way> {
 			o = new Outline();
 			o.setWayId(id);
 			
-			if (Configuration.getConfiguration().outlineAreaFormat) {
-				for (Node n : trianglePath.getNodes()) {
-					o.append(new Vertex(n, o));
-				}
-			} else {
-				for (Node n : getNodes()) {
-					o.append(new Vertex(n, o));
-				}
+			for (Node n : getNodes()) {
+				o.append(new Vertex(n, o));
 			}
+
 			Area a = new Area();
 			a.addOutline(o);
 			triangles = a.triangulate();
