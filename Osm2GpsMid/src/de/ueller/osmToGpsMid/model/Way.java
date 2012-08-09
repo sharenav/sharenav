@@ -837,6 +837,8 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 		if (holes != null && writingAreaOutlines) {
 			flags4 += WAY_FLAG4_HOLES;
+		} else {
+			flags &= ~WAY_FLAG4_HOLES;
 		}
 		maxspeed = (int) getMaxSpeed();
 		maxspeedwinter = (int) getMaxSpeedWinter();
