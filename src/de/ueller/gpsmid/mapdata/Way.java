@@ -1928,7 +1928,6 @@ public class Way extends Entity {
 					aPath.lineTo(l1b.x + pc.g.getTranslateX(), l1b.y + pc.g.getTranslateY());
 					aPath.lineTo(l1e.x + pc.g.getTranslateX(), l1e.y + pc.g.getTranslateY());
 					aPath.lineTo(l2e.x + pc.g.getTranslateX(), l2e.y + pc.g.getTranslateY());
-					aPath.lineTo(l2b.x + pc.g.getTranslateX(), l2b.y + pc.g.getTranslateY());
 					aPath.close();
 					pc.g.getCanvas().drawPath(aPath, pc.g.getPaint());
 					pc.g.getPaint().setStyle(Style.STROKE);
@@ -2329,7 +2328,6 @@ public class Way extends Entity {
 				}
 				//#if polish.android
 				//#if polish.api.areaoutlines
-				aPath.lineTo(p1.x + g.getTranslateX(), p1.y + g.getTranslateY());
 				aPath.close();
 				if (holes != null) {
 					for (short hole[] : holes) {
@@ -2347,7 +2345,6 @@ public class Way extends Entity {
 							p.forward(t.nodeLat[idx],t.nodeLon[idx],p2,t);
 							aPath.lineTo(p2.x + g.getTranslateX(), p2.y + g.getTranslateY());
 						}
-						aPath.lineTo(p1.x + g.getTranslateX(), p1.y + g.getTranslateY());
 						aPath.close();
 					}
 				}
