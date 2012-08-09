@@ -401,8 +401,11 @@ public class Way extends Entity {
 		for (int i = 0; i < count; i++) {
 			path[i] = is.readShort();
 		}
-		if (outlineFlag && (f4 & WAY_FLAG4_HOLES) > 0 && (f & WAY_FLAG_AREA) > 0) {
+		if ((f4 & WAY_FLAG4_HOLES) > 0 && (f & WAY_FLAG_AREA) > 0) {
 			int holeCount = is.readShort();
+			if (holeCount < 0) {
+				holeCount += 65536;
+			}
 			holes = new short[holeCount][];
 			for (int i = 0; i < holeCount; i++) {
 				count = is.readShort();
