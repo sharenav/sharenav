@@ -1103,7 +1103,7 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public Node getFirstNodeWithoutPOIType() {
-		for (Node n : (path != null ? path : trianglePath).getNodes()) {
+		for (Node n : ((path != null ? path : trianglePath).getNodes()) {
 			if (n.getType(config) == -1) {
 				return n;
 			}
@@ -1113,7 +1113,7 @@ public class Way extends Entity implements Comparable<Way> {
 
 	public ArrayList<RouteNode> getAllRouteNodesOnTheWay() {
 		ArrayList<RouteNode> returnNodes = new ArrayList<RouteNode>();
-		for (Node n : (path != null ? path : trianglePath).getNodes()) {
+		for (Node n : ((path != null && getNodeCount() > 0) ? path : trianglePath).getNodes()) {
 			if (n.routeNode != null) {
 				returnNodes.add(n.routeNode);
 			}
