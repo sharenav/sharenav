@@ -198,6 +198,9 @@ GpsMid 0.8
     - support for building bundled maps for Android now exists, see details about signing
       at end
     - a bundled .apk can now also be chosen as a map
+    - New map format with outline areas for Android exists, using this requires
+      a small modification to J2MEPolish, see the wiki page mentioned at the end
+      or README.txt in source
     - many stability / usability improvements including a bunch of bug fixes
     - targets now correspond to the J2ME build targets
     - multitouch two-finger rotate & pinch zoom 
