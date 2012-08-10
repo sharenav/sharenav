@@ -305,7 +305,7 @@ public class Way extends Entity {
 			}
 			if ( (f2 & WAY_FLAG2_ADDITIONALFLAG) == WAY_FLAG2_ADDITIONALFLAG ) {
 				f3 = is.readByte();
-				if ( (f3 & WAY_FLAG3_ADDITIONALFLAG) > 0 ) {
+				if ( (f3 & WAY_FLAG3_ADDITIONALFLAG) == WAY_FLAG3_ADDITIONALFLAG ) {
 					f4 = is.readByte();
 				}
 				if ( (f3 & WAY_FLAG3_NAMEASFORAREA) > 0) {
@@ -317,7 +317,6 @@ public class Way extends Entity {
 						urlIdx = is.readInt();
 					} else {
 						urlIdx = is.readShort();
-
 					}
 				}
 				if ( (f3 & WAY_FLAG3_PHONE) > 0 ) {
@@ -325,36 +324,13 @@ public class Way extends Entity {
 						phoneIdx = is.readInt();
 					} else {
 						phoneIdx = is.readShort();
-
-					}
-				}
-				if ( (f3 & WAY_FLAG3_HAS_HOUSENUMBERS) > 0 ) {
-					int hcount;
-					// Ignore the data for now
-					if ( (f3 & WAY_FLAG3_LONGHOUSENUMBERS) > 0 ) {
-						hcount = is.readShort();
-						if (hcount < 0) {
-							hcount += 65536;
-						}
-					} else {
-						hcount = is.readByte();
-						if (hcount < 0) {
-							hcount += 256;
-						}
-					}
-					logger.debug("expecting " + hcount + " housenumber nodes");
-					for (int i = 0; i < hcount; i++) {
-						is.readLong();
 					}
 				}
 			}
-
+			if ((f2 & WAY_FLAG2_MAXSPEED_WINTER) == WAY_FLAG2_MAXSPEED_WINTER) {
+				setFlagswinter(is.readByte());
+			}
 		}
-		
-		if ((f2 & WAY_FLAG2_MAXSPEED_WINTER) == WAY_FLAG2_MAXSPEED_WINTER) {
-			setFlagswinter(is.readByte());
-		}
-
 		layers[idx] = 0;
 		if ((f & WAY_FLAG_LAYER) == WAY_FLAG_LAYER) {
 			/**
@@ -363,6 +339,26 @@ public class Way extends Entity {
 			 */
 			layers[idx] = is.readByte();
 		}
+		if ( (f3 & WAY_FLAG3_HAS_HOUSENUMBERS) > 0 ) {
+			int hcount;
+			// Ignore the data for now
+			if ( (f3 & WAY_FLAG3_LONGHOUSENUMBERS) > 0 ) {
+				hcount = is.readShort();
+				if (hcount < 0) {
+					hcount += 65536;
+				}
+			} else {
+				hcount = is.readByte();
+				if (hcount < 0) {
+					hcount += 256;
+				}
+			}
+			logger.debug("expecting " + hcount + " housenumber nodes");
+			for (int i = 0; i < hcount; i++) {
+				is.readLong();
+			}
+		}
+
 		if ((f & WAY_FLAG_ONEWAY) == WAY_FLAG_ONEWAY) {
 			flags += WAY_ONEWAY;
 		}
@@ -409,6 +405,9 @@ public class Way extends Entity {
 			holes = new short[holeCount][];
 			for (int i = 0; i < holeCount; i++) {
 				count = is.readShort();
+				if (count < 0) {
+					count += 65536;
+				}
 				holes[i] = new short[count];
 				for (int j = 0; j < count; j++) {
 					// ignore holes for now
