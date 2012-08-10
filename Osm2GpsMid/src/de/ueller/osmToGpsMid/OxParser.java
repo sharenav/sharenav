@@ -229,11 +229,17 @@ public class OxParser extends OsmParser {
 					for (Way ww : duplicateWays) {
 						ww.cloneTags(w);
 						addWay(ww);
+						if (ww.isArea()) {
+							ww.saveOutline();
+						}
 					}
 					duplicateWays = null;
 				}
 				addWay(w);
-
+				if (w.isArea()) {
+					w.saveOutline();
+				}
+				
 				current = null;
 			}
 			if (qName.equals("relation")) {

@@ -181,6 +181,9 @@ public class OpbfParser extends OsmParser {
 					last_id = ref;
 				}
 				addWay(way);
+				if (way.isArea()) {
+					way.saveOutline();
+				}
 			}
 			wayTot += ways.size();
 			ele += ways.size();

@@ -150,6 +150,9 @@ public class Relations {
 							short type = w2.getType(conf);
 							//System.out.println("adding way: " + w2 + " newId = " + newId);
 							parser.addWay(w2);
+							if (w2.isArea()) {
+								w2.saveOutline();
+							}
 						}
 					}
 				} else if (conf.useHouseNumbers && ("associatedStreet".equals(r.getAttribute("type")) ||
@@ -304,6 +307,9 @@ public class Relations {
 							}
 						}
 						parser.addWay(w2);
+						if (w2.isArea()) {
+							w2.saveOutline();
+						}
 						outerWay = w2;
 						// FIXME? Possibly outline could have more
 						// values for the tag than what is used

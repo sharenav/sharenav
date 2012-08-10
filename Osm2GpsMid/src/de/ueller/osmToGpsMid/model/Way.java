@@ -72,7 +72,7 @@ public class Way extends Entity implements Comparable<Way> {
 	public Long id;
 
 	private Path					path								= null;
-	private Path					trianglePath								= null;
+	private Path					outlinePath								= null;
 	private ArrayList<Path> 		holes = null;
 	public HouseNumber			housenumber							= null;
 	public List<Triangle>		triangles							= null;
@@ -107,7 +107,6 @@ public class Way extends Entity implements Comparable<Way> {
 	public Way(long id) {
 		this.id = id;
 		this.path = new Path();
-		this.trianglePath = new Path();
 	}
 
 	/**
@@ -119,13 +118,14 @@ public class Way extends Entity implements Comparable<Way> {
 	public Way(long id, Way other) {
 		this.id = id;
 		this.path = new Path(other.path);
-		this.trianglePath = new Path(other.trianglePath);
+		if (other.outlinePath != null) {
+			this.outlinePath = new Path(other.outlinePath);
+		}
 	}
 
 	public Way(long id, ArrayList<Node> newPath) {
 		this.id = id;
 		this.path = new Path(newPath);
-		//this.trianglePath = new Path(newPath);
 	}
 
 	/**
@@ -138,7 +138,9 @@ public class Way extends Entity implements Comparable<Way> {
 		this.id = other.id;
 		this.type = other.type;
 		this.path = new Path(other.path, reverse);
-		this.trianglePath = new Path(other.trianglePath, reverse);
+		if (other.outlinePath != null) {
+			this.outlinePath = new Path(other.outlinePath, reverse);
+		}
 	}
 
 	/**
@@ -151,7 +153,6 @@ public class Way extends Entity implements Comparable<Way> {
 		this.id = other.id;
 		this.type = other.type;
 		this.path = new Path();
-		this.trianglePath = new Path();
 	}
 
 	public void addHole(Way holeWay) {
@@ -657,8 +658,8 @@ public class Way extends Entity implements Comparable<Way> {
 			if (path != null) {
 				path.extendBounds(bound);
 			}
-			if (trianglePath != null) {
-				trianglePath.extendBounds(bound);
+			if (outlinePath != null) {
+				outlinePath.extendBounds(bound);
 			}
 		}
 		return bound;
@@ -870,9 +871,16 @@ public class Way extends Entity implements Comparable<Way> {
 			System.out.println("ERROR! Invalid way type for way " + toString());
 		}
 
-		if (getNodeCount() > 255) {
-			longWays = true;
+		if (isArea() && writingAreaOutlines) {
+			if (getOutlineNodeCount() > 255) {
+				longWays = true;
+			}
+		} else {
+			if (getNodeCount() > 255) {
+				longWays = true;
+			}
 		}
+
 		if (housenumber != null) {
 			// FIXME maybe enable later for viewing way-related house numbers on map;
 			// disable for now, as GpsMid doesn't use this yet
@@ -996,18 +1004,59 @@ public class Way extends Entity implements Comparable<Way> {
 				ds.writeShort(tri.getVert()[1].getNode().renumberdId);
 				ds.writeShort(tri.getVert()[2].getNode().renumberdId);
 			}
-		} else {
+		} else if (isArea() && writingAreaOutlines) {
 			if (longWays) {
-				ds.writeShort(path.getNodeCount());
+				ds.writeShort(getOutlineNodeCount());
 			} else {
-				ds.writeByte(path.getNodeCount());
+				ds.writeByte(getOutlineNodeCount());
 			}
-			// FIXME if there are holes in the area, we should write the holes here too,
-			// probably requires changing map format. Probably a new flag bit for the way,
-			// has_holes, and if set, after the nodes there would be a count of the holes
-			// and then each hole stored like the outline.
-			for (Node n : path.getNodes()) {
+
+			int oCount = getOutlineNodeCount();
+			int c = 0;
+			Node startNode = null;
+			if (oCount > 0) {
+				for (Node n : getOutlineNodes()) {
+					if (c == 0) {
+						startNode = n;
+					}
+					if (c < oCount) {
+						ds.writeShort(n.renumberdId);
+					} else {
+						System.out.println("Error: skipping nodes, oCount = " + oCount + ", way " + this);
+					}
+					c++;
+				}
+				// patch up if getOutlineNodeCount() differs from written nodecount
+				if (c < oCount) {
+					while (c++ < oCount) {
+						//ds.writeShort(startNode.renumberdId);
+						System.out.println("Error: padding nodes, oCount = " + oCount + ", way " + this);
+
+						ds.writeShort(0);
+					}
+				}
+
+			}
+			if (c != getOutlineNodeCount()) {
+				System.out.println("Error: c (" + c + ") != outlineNodeCount(" + getOutlineNodeCount() + "), way " + this);
+			} else {
+				//System.out.println("outlineNodeCount OK, way " + this);
+			}
+		} else { // not an area
+			if (longWays) {
+				ds.writeShort(getNodeCount());
+			} else {
+				ds.writeByte(getNodeCount());
+			}
+			int c2 = 0;
+			for (Node n : getNodes()) {
 				ds.writeShort(n.renumberdId);
+				c2++;
+			}
+			if (c2 != getNodeCount()) {
+				System.out.println("Error: c2 (" + c2 + ") != nodeCount(" + getOutlineNodeCount() + "), way " + this);
+			} else {
+				//System.out.println("nodeCount OK, way " + this);
 			}
 		}
 		if (isArea() && writingAreaOutlines && holes != null) {
@@ -1099,7 +1148,7 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public Node getFirstNodeWithoutPOIType() {
-		for (Node n : ((path != null ? path : trianglePath).getNodes())) {
+		for (Node n : ((path != null ? path : outlinePath).getNodes())) {
 			if (n.getType(config) == -1) {
 				return n;
 			}
@@ -1109,7 +1158,7 @@ public class Way extends Entity implements Comparable<Way> {
 
 	public ArrayList<RouteNode> getAllRouteNodesOnTheWay() {
 		ArrayList<RouteNode> returnNodes = new ArrayList<RouteNode>();
-		for (Node n : ((path != null && getNodeCount() > 0) ? path : trianglePath).getNodes()) {
+		for (Node n : ((path != null && getNodeCount() > 0) ? path : outlinePath).getNodes()) {
 			if (n.routeNode != null) {
 				returnNodes.add(n.routeNode);
 			}
@@ -1137,8 +1186,8 @@ public class Way extends Entity implements Comparable<Way> {
 		if (path != null) {
 			path.replace(replaceNodes);
 		}
-		if (trianglePath != null) {
-			trianglePath.replace(replaceNodes);
+		if (outlinePath != null) {
+			outlinePath.replace(replaceNodes);
 		}
 	}
 
@@ -1161,18 +1210,34 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public int getLineCount() {
-		if (isArea() && Configuration.getConfiguration().triangleAreaFormat && !writingAreaOutlines) {
+		// FIXME if we're writing both formats, strictly taken this is incorrect,
+		// so if used for other than statistics, rewrite the logic
+		if (isArea() && Configuration.getConfiguration().triangleAreaFormat) {
 			return checkTriangles().size();
 		} else {
 			return path.getLineCount();
 		}
 	}
 
+	// For areas, triangle areas takes priority if both formats are enabled.
+	// Use getOutlineNodeCount() instead if you need node count for the outline
 	public int getNodeCount() {
-		if (isArea() && Configuration.getConfiguration().triangleAreaFormat && !writingAreaOutlines) {
+		if (isArea() && Configuration.getConfiguration().triangleAreaFormat) {
 			return checkTriangles().size() * 3;
 		} else {
 			return path.getNodeCount();
+		}
+	}
+
+	public int getOutlineNodeCount() {
+		if (!Configuration.getConfiguration().triangleAreaFormat || !isArea()) {
+			return path.getNodeCount();
+		} else {
+			if (outlinePath == null) {
+				System.out.println("outlinePath == null, way: " + this);
+				return 0;
+			}
+			return outlinePath.getNodeCount();
 		}
 	}
 
@@ -1182,13 +1247,7 @@ public class Way extends Entity implements Comparable<Way> {
 
 	public Way split() {
 		if (isArea()) {
-			//if (writingAreaOutlines) {
-			if (false && Configuration.getConfiguration().outlineAreaFormat) {
-				// FIXME write a splitter mode which works with outlined areas
-				return null;
-			} else {
-				return splitArea();
-			}
+			return splitArea();
 		} else {
 			return splitNormalWay();
 		}
@@ -1196,6 +1255,8 @@ public class Way extends Entity implements Comparable<Way> {
 
 
 	private Way splitArea() {
+		// FIXME write code to also split the outlines of the area
+
 		if (!Configuration.getConfiguration().triangleAreaFormat) {
 			return null;
 		}
@@ -1230,6 +1291,8 @@ public class Way extends Entity implements Comparable<Way> {
 		//clearBounds();
 		newWay.triangles = tri;
 		newWay.recreatePath();
+		//newWay.recreatePathAvoidDuplicates();
+		//recreatePathAvoidDuplicates();
 		recreatePath();
 		return newWay;
 	}
@@ -1256,7 +1319,7 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public boolean isValid() {
-		if ((path == null || path.getNodeCount() == 0) && (trianglePath == null || trianglePath.getNodeCount() == 0)) {
+		if ((path == null || path.getNodeCount() == 0) && (outlinePath == null || outlinePath.getNodeCount() == 0)) {
 			return false;
 		}
 		return true;
@@ -1367,6 +1430,13 @@ public class Way extends Entity implements Comparable<Way> {
 		return path.getNodes();
 	}
 
+	public List<Node> getOutlineNodes() {
+		if (outlinePath == null) {
+			outlinePath = new Path();
+		}
+		return outlinePath.getNodes();
+	}
+
 	/**
 	 * @param wayHashMap
 	 * @param r
@@ -1398,62 +1468,50 @@ public class Way extends Entity implements Comparable<Way> {
 	 * Regenerates this way's path object, rough version for speed
 	 */
 	public void recreatePath() {
-		if (Configuration.getConfiguration().outlineAreaFormat) {
-			deleteAreaOutlines = false;
-		} else {
-			deleteAreaOutlines = true;
-		}
 		if (isArea() && triangles.size() > 0) {
-			trianglePath = new Path();
-			if (deleteAreaOutlines) {
-				deletePath();
-			}
+			path = new Path();
 		}
 		for (Triangle t : triangles) {
 			for (int l = 0; l < 3; l++) {
 				Node n = t.getVert()[l].getNode();
-				//if (!trianglePath.getNodes().contains(n)) {
-					trianglePath.add(n);
+				//if (!path.getNodes().contains(n)) {
+					path.add(n);
 				//}
 			}
 		}
 		((ArrayList)triangles).trimToSize();
-		trimTrianglePath();
+		trimPath();
 		//clearBounds();
 	}
 	/**
 	 * Regenerates this way's path object, avoiding duplicates
 	 */
 	public void recreatePathAvoidDuplicates() {
-		if (Configuration.getConfiguration().outlineAreaFormat) {
-			deleteAreaOutlines = false;
-		} else {
-			deleteAreaOutlines = true;
-		}
 		if (isArea() && triangles.size() > 0) {
-			trianglePath = new Path();
-			if (deleteAreaOutlines) {
-				path = trianglePath;
-			}
+			path = new Path();
 		}
 		for (Triangle t : triangles) {
 			for (int l = 0; l < 3; l++) {
 				Node n = t.getVert()[l].getNode();
 				// FIXME this is costly
-				if (!trianglePath.getNodes().contains(n)) {
-					trianglePath.add(n);
+				if (!path.getNodes().contains(n)) {
+					path.add(n);
 				}
 			}
 		}
 		((ArrayList)triangles).trimToSize();
-		trimTrianglePath();
+		trimPath();
 		//clearBounds();
 	}
 
-	public void trimTrianglePath()
+	public void trimOutlinePath()
 	{
-		if (trianglePath != null )
-			trianglePath.trimPath();
+		if (outlinePath != null )
+			outlinePath.trimPath();
+	}
+	public void saveOutline()
+	{
+		outlinePath = path;
 	}
 	public void trimPath()
 	{

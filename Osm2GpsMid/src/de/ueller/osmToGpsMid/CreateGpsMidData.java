@@ -1597,7 +1597,7 @@ public class CreateGpsMidData implements FilenameFilter {
 					}
 				}
 				if (Configuration.getConfiguration().getOutlineAreaFormat()) {
-					for (Node n : w1.getNodes()) {
+					for (Node n : w1.getOutlineNodes()) {
 						addUnusedNode(wayNodes, n);
 					}
 					ArrayList<Path> holes = w1.getHoles();
