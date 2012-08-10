@@ -170,6 +170,10 @@ public class RouteSyntax {
 					if (Configuration.mapZipFile == null) {
 						Configuration.mapZipFile = new ZipFile(Configuration.getMapUrl(), -1);
 					}
+					if (Configuration.zipFileIsApk) {
+						syntaxDat = "assets/" + syntaxDat;
+					}
+
 					is = Configuration.mapZipFile.getInputStream(Configuration.mapZipFile.getEntry(syntaxDat));
 				}
 				//#else

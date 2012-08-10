@@ -182,7 +182,12 @@ public class NoiseMaker
 							Configuration.mapZipFile = new ZipFile(Configuration.getMapUrl(), -1);
 						}
 						// access the zip to find out at which position the uncompressed sound is at and what is the length
-						ZipEntry ze = Configuration.mapZipFile.getEntry(soundFileWithSuffix);
+						String prefix = "";
+						if (Configuration.zipFileIsApk) {
+							prefix = "assets/";
+						}
+
+						ZipEntry ze = Configuration.mapZipFile.getEntry(prefix + soundFileWithSuffix);
 						// then open the zip file and position media player there for playing
 						FileInputStream fis = new FileInputStream(Configuration.getMapUrl().substring("file://".length()));
 						sPlayer.setDataSource(fis.getFD(), ze.getOffset(), ze.getSize());
