@@ -121,6 +121,7 @@ GpsMid 0.8
     - Options to show or not show the big arrows or the small in-map arrows.
     - New option in Setup/Debug to show route calculation traces in map,
       connections requested from mainstreet net are drawn wider
+    - area crossing lines are drawn wider
     *** Search ***
     - The POI search distance is now configurable; default is 10 km. A high limit
       does not work in all areas, depending on number of map objects (tile size?).
@@ -199,7 +200,8 @@ GpsMid 0.8
       at end
     - a bundled .apk can now also be chosen as a map
     - New map format with outline areas for Android exists, using this requires
-      a small modification to J2MEPolish, see the wiki page mentioned at the end
+      if you compile GpsMid's source code yourself a small modification to J2MEPolish,
+      see the wiki page mentioned at the end
       or README.txt in source
     - many stability / usability improvements including a bunch of bug fixes
     - targets now correspond to the J2ME build targets
@@ -237,11 +239,14 @@ GpsMid 0.8
       - apks can be signed by Osm2GpsMid only if the platform has a correct jarsigner installed
         so it can can be accessed with a simple jarsigner call
       - it seems a GNU/Linux systems with java developer environment
-        offers jarsigner so it works, but an OS belonging to the Microsoft Windows family doesn't.
-	No reports from other platforms yet.
+        offers jarsigner so it works, on an OS belonging to the Microsoft Windows family
+        jarsigner is not in the java runtime environment, but is included in the JDK.
+        If signing with this jarsigner works is not successfully tested yet.
+        
+        No reports from other platforms yet.
     - for more info and instructions, see also
       https://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Android which is also
-      available from the phone's help menu
+      available from GpsMid's help menu
     *** Developer Map bundling tool ***
     - syntax changed for tools/bundlemap.sh
 
