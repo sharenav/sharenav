@@ -193,10 +193,16 @@ GpsMid 0.8
       .properties files with GpsMid-Generic-editing will work.
     - made full-connected be the default target (was full)
     *** Android Support ***
+    - Android version is now part of the release, and the Android .apks are inside Osm2GpsMid
+      for building bundled maps for Android
+    - support for building bundled maps for Android now exists, see details about signing
+      at end
+    - a bundled .apk can now also be chosen as a map
     - many stability / usability improvements including a bunch of bug fixes
+    - targets now correspond to the J2ME build targets
     - multitouch two-finger rotate & pinch zoom 
     - a bunch of bug fixes & UI improvements
-    - photo support for target android-offline
+    - photo support
     - update apk permissions to match what GpsMid requires
     - in routing choice added buttons for selection of route mode - no need to go through menu
     - huge icon menu images are used by default which makes the icons look much better
@@ -214,7 +220,6 @@ GpsMid 0.8
       (.properties parameter default dontCompress = wav,amr)
     - back key now by default required twice for exiting GpsMid, the old
       behaviour of exiting with one press of back key is optional
-    - a bundled .apk can now also be chosen as a map
     - Osm2GpsMid can now create unsigned and (depending on platform) signed .apk's
       - an .apk is produced if target name contains "android".
       - about signing: to be able to install this .apk into an
@@ -231,6 +236,9 @@ GpsMid 0.8
       - it seems a GNU/Linux systems with java developer environment
         offers jarsigner so it works, but an OS belonging to the Microsoft Windows family doesn't.
 	No reports from other platforms yet.
+    - for more info and instructions, see also
+      https://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Android which is also
+      available from the phone's help menu
     *** Developer Map bundling tool ***
     - syntax changed for tools/bundlemap.sh
 
