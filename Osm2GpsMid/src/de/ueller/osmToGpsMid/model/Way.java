@@ -1183,7 +1183,7 @@ public class Way extends Entity implements Comparable<Way> {
 	public Way split() {
 		if (isArea()) {
 			//if (writingAreaOutlines) {
-			if (Configuration.getConfiguration().outlineAreaFormat) {
+			if (false && Configuration.getConfiguration().outlineAreaFormat) {
 				// FIXME write a splitter mode which works with outlined areas
 				return null;
 			} else {
