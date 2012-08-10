@@ -417,6 +417,8 @@ GpsMid 0.7.3
     - process associatedStreet relations and store them in house number index when
       useHouseNumbers is true in .properties. House number search has not been added
       yet so house number searches are not yet available, but will be added to GpsMid later.
+    - names for islands and islet are now printed even when the island or islet has no place=island
+      tag but has a name
     *** Searching ***
     - add word search option. Can be switched on in GpsMid display settings.
       To be used, requires useWordSearch to be set to true in .properties so the necessary
