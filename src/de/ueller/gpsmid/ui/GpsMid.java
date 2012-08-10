@@ -588,7 +588,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 											new Runnable() {
 												public void run() {
 													Window window = MidletBridge.instance.getWindow();
-													window.setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+													window.setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 													WindowManager.LayoutParams params = window.getAttributes();
 													// use 1% as default value, at least on Galaxy Note it's otherwise the same as 10%
 													params.screenBrightness = ((float) ((Configuration.getBackLightLevel() == 1) ? -1 : Configuration.getBackLightLevel())) / (float) 100.0;
