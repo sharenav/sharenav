@@ -340,7 +340,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			for (int l=0; l<10 ; l++){
 				logger.debug(" " + is.readByte());
 			}
-			throwError(msg, null);
+			throwError(msg);
 			
 		} catch (IOException e) {
 			logger.error(Locale.get("queuedatareader.ErrorWhileVerify")/* Error while verify */ 
@@ -352,7 +352,10 @@ public class QueueDataReader extends QueueReader implements Runnable {
 	private void throwError(String string, SingleTile tt) throws IOException {
 		throw new IOException("MapMid-file corrupt: " + string + " zoomlevel=" + tt.zl + 
 				" fid=" + tt.fileId);
-		
+	}
+
+	private void throwError(String string) throws IOException {
+		throw new IOException("MapMid-file corrupt: " + string);
 	}
 
 	private void throwError(RuntimeException rte, String string, SingleTile tt) throws IOException {
