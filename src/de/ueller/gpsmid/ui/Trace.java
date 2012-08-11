@@ -665,6 +665,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return true;
 			case MotionEvent.ACTION_POINTER_DOWN:
 				rotationStarted = false;
+				pointerDragged = false;
+				pointerDraggedMuch = false;
 				mapBrowsing = true;
 				pinchZoomDistance = dist(event);
 				pinchZoomRotation = course + angle(event);
@@ -3838,7 +3840,18 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 		}
 
-		if (pointerDown) {
+		// check if there's been much movement, do this before the slide lock/unlock
+		// to avoid a single tap action when not sliding enough
+		if (Math.abs(x - Trace.touchX) > DRAGGEDMUCH_THRESHOLD
+				|| 
+			Math.abs(y - Trace.touchY) > DRAGGEDMUCH_THRESHOLD
+		) {
+			pointerDraggedMuch = true;
+			// avoid double tap triggering on fast consecutive drag actions starting at almost the same position
+			pressedPointerTime = 0; 
+		}
+		
+		if (pointerDown && pointerDraggedMuch) {
 			mapBrowsing = true;
 		}
 		updateLastUserActionTime();
@@ -3860,17 +3873,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (pointerActionDone) {
 			return;
 		}		
-		// check if there's been much movement, do this before the slide lock/unlock
-		// to avoid a single tap action when not sliding enough
-		if (Math.abs(x - Trace.touchX) > DRAGGEDMUCH_THRESHOLD
-				|| 
-			Math.abs(y - Trace.touchY) > DRAGGEDMUCH_THRESHOLD
-		) {
-			pointerDraggedMuch = true;
-			// avoid double tap triggering on fast consecutive drag actions starting at almost the same position
-			pressedPointerTime = 0; 
-		}
-		
 		// slide at least 1/4 display width to lock / unlock GpsMid		
 		if (tl.getActionIdAtPointer(touchX, touchY) == Trace.ICON_MENU) {
 			if ( tl.getActionIdAtPointer(x, y) ==  Trace.ICON_MENU
@@ -3891,7 +3893,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		
 				
 		// do not start map dragging on a touch control if only dragged slightly
-		if (!pointerDraggedMuch && tl.getElementIdAtPointer(touchX, touchY) >= 0) {
+		// on Android, not even when not on a touch control, so
+		// pinch zoom won't always turn off follow GPS mode
+		if (!pointerDraggedMuch
+		    //#if polish.android
+		    //#else
+		    && tl.getElementIdAtPointer(touchX, touchY) >= 0
+		    //#endif
+		    ) {
 			return;
 		}
 		
