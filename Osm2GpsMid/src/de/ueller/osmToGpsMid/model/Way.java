@@ -869,10 +869,16 @@ public class Way extends Entity implements Comparable<Way> {
 
 		boolean trianglesInOutlineMode = false;
 		if (isArea() && writingAreaOutlines) {
-			if (getOutlineNodeCount() == 0) {
+			if (getOutlineNodeCount() == 0 ||
+			    (this.containsKey("natural") && 
+			     (this.getAttribute("natural").equals("sea")
+			      || this.getAttribute("natural").equals("water")))) {
 				// work around by outputting triangles
+				// FIXME instead should trigger e.g. on
+				// whether the area is a multipolygon from relations
 				trianglesInOutlineMode = true;
 				flags4 |= WAY_FLAG4_TRIANGLES_IN_OUTLINE_MODE;
+				System.out.println("Marking way " + this + " for triangle use");
 				if (getNodeCount() > 255) {
 					longWays = true;
 				}
@@ -1498,6 +1504,10 @@ public class Way extends Entity implements Comparable<Way> {
 	 * Regenerates this way's path object, avoiding duplicates
 	 */
 	public void recreatePathAvoidDuplicates() {
+		if (Configuration.getConfiguration().outlineAreaFormat) {
+			//recreatePath();
+			//return;
+		}
 		if (isArea() && triangles.size() > 0) {
 			path = new Path();
 		}
