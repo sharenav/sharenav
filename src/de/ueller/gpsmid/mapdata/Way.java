@@ -96,6 +96,7 @@ public class Way extends Entity {
 	public static final byte WAY_FLAG4_ALERT = 1;
 	public static final byte WAY_FLAG4_CLICKABLE = 2;
 	public static final byte WAY_FLAG4_HOLES = 4;
+	public static final byte WAY_FLAG4_TRIANGLES_IN_OUTLINE_MODE = 8;
 
 	public static final byte DRAW_BORDER=1;
 	public static final byte DRAW_AREA=2;
@@ -117,6 +118,7 @@ public class Way extends Entity {
 	public static final int WAY_NAMEASFORAREA = 128 << ModShift;
 	public static final int WAY_RATHER_BIG = 256 << ModShift;
 	public static final int WAY_EVEN_BIGGER = 512 << ModShift;
+	public static final int WAY_TRIANGLES_IN_OUTLINE_MODE = 1024 << ModShift;
 
 	public static final byte PAINTMODE_COUNTFITTINGCHARS = 0;
 	public static final byte PAINTMODE_DRAWCHARS = 1;
@@ -397,6 +399,10 @@ public class Way extends Entity {
 		for (int i = 0; i < count; i++) {
 			path[i] = is.readShort();
 		}
+		if ((f4 & WAY_FLAG4_TRIANGLES_IN_OUTLINE_MODE) == WAY_FLAG4_TRIANGLES_IN_OUTLINE_MODE) {
+			flags += WAY_TRIANGLES_IN_OUTLINE_MODE;
+		}
+
 		if ((f4 & WAY_FLAG4_HOLES) > 0 && (f & WAY_FLAG_AREA) > 0) {
 			int holeCount = is.readShort();
 			if (holeCount < 0) {
@@ -2324,7 +2330,14 @@ public class Way extends Entity {
 					p.forward(t.nodeLat[idx],t.nodeLon[idx],p2,t);
 					//#if polish.android
 					//#if polish.api.areaoutlines
-					aPath.lineTo(p2.x + g.getTranslateX(), p2.y + g.getTranslateY());
+					if ((flags & WAY_TRIANGLES_IN_OUTLINE_MODE) == WAY_TRIANGLES_IN_OUTLINE_MODE && i1 % 3 == 0) {
+						aPath.close();
+						aPath.moveTo(p2.x + g.getTranslateX(), p2.y + g.getTranslateY());
+
+					} else {
+
+						aPath.lineTo(p2.x + g.getTranslateX(), p2.y + g.getTranslateY());
+					}
 					//#endif
 					//#endif
 				}

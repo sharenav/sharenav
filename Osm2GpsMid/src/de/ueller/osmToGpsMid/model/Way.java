@@ -68,6 +68,7 @@ public class Way extends Entity implements Comparable<Way> {
 	public static final byte WAY_FLAG4_ALERT = 1;
 	public static final byte WAY_FLAG4_CLICKABLE = 2;
 	public static final byte WAY_FLAG4_HOLES = 4;
+	public static final byte WAY_FLAG4_TRIANGLES_IN_OUTLINE_MODE = 8;
 
 	public Long id;
 
@@ -836,11 +837,6 @@ public class Way extends Entity implements Comparable<Way> {
 		if (showNameAsForArea()) {
 			flags3 += WAY_FLAG3_NAMEASFORAREA;
 		}
-		if (holes != null && writingAreaOutlines) {
-			flags4 += WAY_FLAG4_HOLES;
-		} else {
-			flags4 &= ~WAY_FLAG4_HOLES;
-		}
 		maxspeed = (int) getMaxSpeed();
 		maxspeedwinter = (int) getMaxSpeedWinter();
 		if (maxspeedwinter > 0) {
@@ -871,14 +867,30 @@ public class Way extends Entity implements Comparable<Way> {
 			System.out.println("ERROR! Invalid way type for way " + toString());
 		}
 
+		boolean trianglesInOutlineMode = false;
 		if (isArea() && writingAreaOutlines) {
-			if (getOutlineNodeCount() > 255) {
-				longWays = true;
+			if (getOutlineNodeCount() == 0) {
+				// work around by outputting triangles
+				trianglesInOutlineMode = true;
+				flags4 |= WAY_FLAG4_TRIANGLES_IN_OUTLINE_MODE;
+				if (getNodeCount() > 255) {
+					longWays = true;
+				}
+			} else {
+				if (getOutlineNodeCount() > 255) {
+					longWays = true;
+				}
 			}
 		} else {
 			if (getNodeCount() > 255) {
 				longWays = true;
 			}
+		}
+
+		if (holes != null && writingAreaOutlines && !trianglesInOutlineMode) {
+			flags4 += WAY_FLAG4_HOLES;
+		} else {
+			flags4 &= ~WAY_FLAG4_HOLES;
 		}
 
 		if (housenumber != null) {
@@ -993,7 +1005,7 @@ public class Way extends Entity implements Comparable<Way> {
 			}
 
 		}
-		if (isArea() && !writingAreaOutlines) {
+		if (isArea() && (!writingAreaOutlines || trianglesInOutlineMode)) {
 			if (longWays) {
 				ds.writeShort(getNodeCount());
 			} else {
@@ -1059,7 +1071,7 @@ public class Way extends Entity implements Comparable<Way> {
 				//System.out.println("nodeCount OK, way " + this);
 			}
 		}
-		if (isArea() && writingAreaOutlines && holes != null) {
+		if ((flags4 & WAY_FLAG4_HOLES) == WAY_FLAG4_HOLES) {
 			int holeCount = holes.size();
 			//System.out.println("Way.java: holecount " + holes.size());
 			//int n = 0;
@@ -1256,7 +1268,6 @@ public class Way extends Entity implements Comparable<Way> {
 
 	private Way splitArea() {
 		// FIXME write code to also split the outlines of the area
-
 		if (!Configuration.getConfiguration().triangleAreaFormat) {
 			return null;
 		}
