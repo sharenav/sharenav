@@ -766,8 +766,12 @@ public class Configuration {
 			generateSea = getString("generateSea").equalsIgnoreCase("true");
 			useSeaTiles = getString("useSeaTiles").equalsIgnoreCase("true");
 			signApk = getString("signApk").equalsIgnoreCase("true");
-			outlineAreaFormat = getString("outlineAreaFormat").equalsIgnoreCase("true");
 			triangleAreaFormat = getString("triangleAreaFormat").equalsIgnoreCase("true");
+			outlineAreaFormat = getString("outlineAreaFormat").equalsIgnoreCase("true");
+			if (outlineAreaFormat) {
+				System.out.println("WARNING: Turning on triangle area format, currently can't create a map with only outline area format");
+				triangleAreaFormat = true;
+			}
 			signApkPassword = getString("signApkPassword");
 			drawSeaOutlines = getString("drawSeaOutlines").equalsIgnoreCase("true");
 		}
