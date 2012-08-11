@@ -2323,7 +2323,7 @@ public class Way extends Entity {
 				//#endif
 				//#endif
 				for (int i1 = 1; i1 < path.length; ){
-					idx = path[i1++];	
+					idx = path[i1];	
 					if (idx < 0) {
 						idx += 65536;
 					}
