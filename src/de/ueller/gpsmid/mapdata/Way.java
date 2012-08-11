@@ -2322,7 +2322,7 @@ public class Way extends Entity {
 				aPath.moveTo(p1.x + g.getTranslateX(), p1.y + g.getTranslateY());
 				//#endif
 				//#endif
-				for (int i1 = 1; i1 < path.length; ){
+				for (int i1 = 1; i1 < path.length; i1++){
 					idx = path[i1];	
 					if (idx < 0) {
 						idx += 65536;
