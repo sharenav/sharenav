@@ -2330,7 +2330,8 @@ public class Way extends Entity {
 					p.forward(t.nodeLat[idx],t.nodeLon[idx],p2,t);
 					//#if polish.android
 					//#if polish.api.areaoutlines
-					if ((flags & WAY_TRIANGLES_IN_OUTLINE_MODE) == WAY_TRIANGLES_IN_OUTLINE_MODE && i1 % 3 == 0) {
+					if (((flags & WAY_TRIANGLES_IN_OUTLINE_MODE) == WAY_TRIANGLES_IN_OUTLINE_MODE) && (i1 % 3 == 0)) {
+						//System.out.println("Drawing triangle in outline mode");
 						aPath.close();
 						aPath.moveTo(p2.x + g.getTranslateX(), p2.y + g.getTranslateY());
 
@@ -2344,7 +2345,7 @@ public class Way extends Entity {
 				//#if polish.android
 				//#if polish.api.areaoutlines
 				aPath.close();
-				if (holes != null) {
+				if (holes != null && (flags & WAY_TRIANGLES_IN_OUTLINE_MODE) == 0) {
 					for (short hole[] : holes) {
 						idx = hole[0];
 						if (idx < 0) {
@@ -2363,7 +2364,6 @@ public class Way extends Entity {
 						aPath.close();
 					}
 				}
-				// FIXME set a proper winding method (even-odd?)
 				// FIXME currently this depends on a modified Graphics.java of J2MEPolish to expose the private canvas and paint
 				// variables in Graphics.java to other modules; must find a way to do this with normal J2MEPolish or to
 				// get a modification to J2MEPolish
