@@ -121,6 +121,10 @@ public class GuiWaypointSave extends Form implements CommandListener, SaveButton
 	public void saveWaypoint(PositionMark posMark) {
 		parent.gpx.addWayPt(waypt);
 
+		if (waypt.displayName.endsWith("*") && Configuration.getCfgBitState(Configuration.CFGBIT_FAVORITES_IN_ROUTE_ICON_MENU)) {
+			Trace.getInstance().recreateTraceLayout();
+		}
+
 		// Wait a bit before displaying the map again. Hopefully
 		// this avoids the sporadic freezing after saving a waypoint.
 		try {
