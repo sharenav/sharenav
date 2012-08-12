@@ -245,9 +245,13 @@ public class NmeaMessage {
 					receiver.receiveStatus(LocationMsgReceiver.STATUS_3D, mAllSatellites);
 				}
 			} else if ("VTG".equals(sentence)) {
-				head = getFloatToken((String)param.elementAt(1));
+				if (!"nan".equals((String)param.elementAt(1))) {
+					head = getFloatToken((String)param.elementAt(1));
+				}
 				//Convert from knots to m/s
-				speed = getFloatToken((String)param.elementAt(7)) * 0.5144444f;
+				if (!"nan".equals((String)param.elementAt(7))) {
+					speed = getFloatToken((String)param.elementAt(7)) * 0.5144444f;
+				}
 			} else if ("GSA".equals(sentence)) {
 				//#debug trace
 				logger.trace("Decoding GSA");
