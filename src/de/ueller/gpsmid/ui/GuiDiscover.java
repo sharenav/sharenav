@@ -1346,14 +1346,14 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			url = null;
 		}
 		Configuration.setMapUrl(url);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS, mapSrcOptions.isSelected(0));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS, mapSrcOptions.isSelected(1));
 		rereadMap();
 		//logger.fatal(Locale.get("guidiscover.NeedRestart")/*Need to restart GpsMid, otherwise map is in an inconsistant state*/ + " " + Configuration.getMapUrl());
 	}
 
 	private void rereadMap() {
 		Configuration.closeMapZipFile();
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS, mapSrcOptions.isSelected(0));
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS, mapSrcOptions.isSelected(1));
 		if (!Legend.isValid) {
 			Trace.clearTraceInstance();
 		}
@@ -1578,6 +1578,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		sel = new boolean[2];
 		perfTuneOpts.getSelectedFlags(sel);
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY, sel[0]);
+		if (sel[1] != Configuration.getCfgBitState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS)) {
+			rereadMap();
+		}
+
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS, sel[1]);
 
 		sel = new boolean[2];
