@@ -138,7 +138,7 @@
 			<include name="GpsMid*.jar"/>
 			<include name="GpsMid*.apk"/>
    			<include name="GpsMid*.zip"/>
-		</fileset>
+   					</fileset>
    		<fileset dir="${resources.dir}">
    			<include name="*.jar" />
    			<include name="*.apk" />
@@ -183,7 +183,8 @@
      		<include name="**/*.class" />
 		</fileset>
         <fileset dir="${resources.dir}">
-     		<include name="*.jar" />
+   			<exclude name="Osm2GpsMid*.jar"/>
+            <include name="*.jar" />
      		<include name="*.apk" />
         	<include name="*.xml" />
             <include name="*.inc" />
