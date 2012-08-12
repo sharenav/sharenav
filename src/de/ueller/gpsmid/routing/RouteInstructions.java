@@ -757,8 +757,13 @@ public class RouteInstructions {
 	}
 	
 	private boolean isOffRoute(Vector route, Node center) {
-		// never recalculate during route calculation
-		if (trace.routeCalc && !RouteLineProducer.isRunning()) {
+		if (
+			// never recalculate during route calculation			
+			(trace.routeCalc && !RouteLineProducer.isRunning())
+				||
+			// never recalculate when tiles are still requested as the route line might not be loaded yet		
+			(trace.getDataReader().getRequestQueueSize() > 0)
+		) {
 			return false;
 		}
 
