@@ -96,17 +96,15 @@ public class TraceLayout extends LayoutManager {
 			ele[i] = new LayoutElement(this);
 		}
 		
-		if ( maxX - minX < (maxY - minY) * 3 / 2 ) {
-			// portrait layout
-			createLayout(true);
-		} else {
-			// landscape layout
-			createLayout(false);
-		}
-		
+		createLayout(layoutIsPortrait());
+
 		validate();
 	}
 	
+	public boolean layoutIsPortrait() {
+		return ( maxX - minX < (maxY - minY) * 3 / 2 );
+	}		
+
 	/**
 	 * Layout
 	 */
