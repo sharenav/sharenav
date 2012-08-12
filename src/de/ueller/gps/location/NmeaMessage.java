@@ -140,6 +140,7 @@ public class NmeaMessage {
 		
         Vector param = StringTokenizer.getVector(nmea_sentence, spChar);
 		String sentence = (String)param.elementAt(0);
+		float f = 0.0f;
 		try {
 //			receiver.receiveMessage("got " + buffer.toString() );
 			if (lastMsgGSV && ! "GSV".equals(sentence)) {
@@ -151,21 +152,24 @@ public class NmeaMessage {
 			if ("GGA".equals(sentence)) {
 				// time
 				// Time of when fix was taken in UTC
-				int time_tmp = (int)getFloatToken((String)param.elementAt(1));
-				cal.set(Calendar.SECOND, time_tmp % 100);
-				cal.set(Calendar.MINUTE, (time_tmp / 100) % 100);
-				cal.set(Calendar.HOUR_OF_DAY, (time_tmp / 10000) % 100);
+				f = getFloatToken((String)param.elementAt(1));
+				if (f != Float.NaN) {
+					int time_tmp = (int) f;
+					cal.set(Calendar.SECOND, time_tmp % 100);
+					cal.set(Calendar.MINUTE, (time_tmp / 100) % 100);
+					cal.set(Calendar.HOUR_OF_DAY, (time_tmp / 10000) % 100);
+				}
 				
-				// lat
-				float lat = getLat((String)param.elementAt(2));
-				if ("S".equals(param.elementAt(3))) {
-					lat = -lat;
-				}
-				// lon
-				float lon = getLon((String)param.elementAt(4));
-				if ("W".equals(param.elementAt(5))) {
-					lon = -lon;
-				}
+//				// lat
+//				float lat = getLat((String)param.elementAt(2));
+//				if ("S".equals(param.elementAt(3))) {
+//					lat = -lat;
+//				}
+//				// lon
+//				float lon = getLon((String)param.elementAt(4));
+//				if ("W".equals(param.elementAt(5))) {
+//					lon = -lon;
+//				}
 				// quality
 				qual = getIntegerToken((String)param.elementAt(6));
 				
@@ -173,19 +177,28 @@ public class NmeaMessage {
 				mAllSatellites = getIntegerToken((String)param.elementAt(7));
 				
 				// Relative accuracy of horizontal position
-				pos.hdop = getFloatToken((String)param.elementAt(8));
+				f = getFloatToken((String)param.elementAt(8));
+				if (f != Float.NaN) {
+					pos.hdop = f;
+				}
 
 				// meters above mean sea level
-				alt = getFloatToken((String)param.elementAt(9));
+				f = getFloatToken((String)param.elementAt(9));
+				if (f != Float.NaN) {
+					alt = f;
+				}
 				// Height of geoid above WGS84 ellipsoid
 			} else if ("RMC".equals(sentence)) {
 				/* RMC encodes the recomended minimum information */
 				 
 				// Time of when fix was taken in UTC
-				int time_tmp = (int)getFloatToken((String)param.elementAt(1));
-				cal.set(Calendar.SECOND, time_tmp % 100);
-				cal.set(Calendar.MINUTE, (time_tmp / 100) % 100);
-				cal.set(Calendar.HOUR_OF_DAY, (time_tmp / 10000) % 100);
+				f = getFloatToken((String)param.elementAt(1));
+				if (f != Float.NaN) {
+					int time_tmp = (int) f;
+					cal.set(Calendar.SECOND, time_tmp % 100);
+					cal.set(Calendar.MINUTE, (time_tmp / 100) % 100);
+					cal.set(Calendar.HOUR_OF_DAY, (time_tmp / 10000) % 100);
+				}
 				
 				// Status A=active or V=Void.
 				String valSolution = (String)param.elementAt(2);
@@ -207,10 +220,16 @@ public class NmeaMessage {
 				if ("W".equals(param.elementAt(6))) {
 					lon = -lon;
 				}
-				// Speed over the ground in knots, but GpsMid uses m/s
-				speed = getFloatToken((String)param.elementAt(7)) * 0.5144444f;
+				f = getFloatToken((String)param.elementAt(7));
+				if (f != Float.NaN) {
+					// Speed over the ground in knots, but GpsMid uses m/s
+					speed = f * 0.5144444f;
+				}
 			    // Heading in degrees
-				head = getFloatToken((String)param.elementAt(8));
+				f = getFloatToken((String)param.elementAt(8));
+				if (f != Float.NaN) {
+					head = f;
+				}
 				// Date
 				int date_tmp = getIntegerToken((String)param.elementAt(9));
 				cal.set(Calendar.YEAR, 2000 + date_tmp % 100);
@@ -246,12 +265,14 @@ public class NmeaMessage {
 					receiver.receiveStatus(LocationMsgReceiver.STATUS_3D, mAllSatellites);
 				}
 			} else if ("VTG".equals(sentence)) {
-				if (!"nan".equals((String)param.elementAt(1))) {
-					head = getFloatToken((String)param.elementAt(1));
+				f = getFloatToken((String)param.elementAt(1));
+				if (f != Float.NaN) {
+					head = f;
 				}
-				//Convert from knots to m/s
-				if (!"nan".equals((String)param.elementAt(7))) {
-					speed = getFloatToken((String)param.elementAt(7)) * 0.5144444f;
+				f = getFloatToken((String)param.elementAt(7));
+				if (f != Float.NaN) {
+					//Convert from knots to m/s
+					speed = f * 0.5144444f;
 				}
 			} else if ("GSA".equals(sentence)) {
 				//#debug trace
@@ -290,9 +311,18 @@ public class NmeaMessage {
 				/**
 				 * PDOP & HDOP (dilution of precision)
 				 */
-				pos.pdop = getFloatToken((String)param.elementAt(15));
-				pos.hdop = getFloatToken((String)param.elementAt(16));
-				pos.vdop = getFloatToken((String)param.elementAt(17));
+				f =  getFloatToken((String)param.elementAt(15));
+				if (f != Float.NaN) {
+					pos.pdop = f;
+				}
+				f =  getFloatToken((String)param.elementAt(16));
+				if (f != Float.NaN) {
+					pos.hdop = f;
+				}
+				f =  getFloatToken((String)param.elementAt(17));
+				if (f != Float.NaN) {
+					pos.vdop = f;
+				}
 				/**
 			     *  Horizontal dilution of precision (HDOP)
 			     *  Vertical dilution of precision (VDOP)
@@ -354,7 +384,7 @@ public class NmeaMessage {
 	}
 
 	private int getIntegerToken(String s) {
-		if (s == null || s.length() == 0) {
+		if (s == null || s.length() == 0 || s.equals("nan")) {
 			return 0;
 		}
 		return Integer.parseInt(s);
@@ -364,11 +394,14 @@ public class NmeaMessage {
 		if (s == null || s.length() == 0) {
 			return 0;
 		}
+		if (s.equals("nan")) {
+			return Float.NaN;
+		}
 		return Float.parseFloat(s);
 	}
 
 	private float getLat(String s) {
-		if (s.length() < 2) {
+		if (s.length() < 2 || s.equals("nan")) {
 			return 0.0f;
 		}
 		int lat = Integer.parseInt(s.substring(0, 2));
@@ -377,7 +410,7 @@ public class NmeaMessage {
 	}
 
 	private float getLon(String s) {
-		if (s.length() < 3) {
+		if (s.length() < 3 || s.equals("nan")) {
 			return 0.0f;
 		}
 		int lon = Integer.parseInt(s.substring(0, 3));
