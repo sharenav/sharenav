@@ -1102,6 +1102,14 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				}
 			}
 			fw.write("\r\n");
+
+			fw.write("# Triangle area format (needed for J2ME).\r\n");
+			fw.write("triangleAreaFormat = " + config.getTriangleAreaFormat() + "\r\n");
+			fw.write("\r\n");
+			
+			fw.write("# Outline area format (good for Android).\r\n");
+			fw.write("outlineAreaFormat = " + config.getOutlineAreaFormat() + "\r\n");
+			fw.write("\r\n");
 			
 			if (!"".equals(config.getCellSource())) {
 				// quote possible backslashes
@@ -1112,20 +1120,27 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("cellIDnoLAC = " + config.getCellIDnoLAC() + "\r\n");
 			fw.write("\r\n");
 
+
+			fw.write("# Routing ability can be disabled to save space in the midlet by setting to false.\r\n");
+			fw.write("# Or set to one or more defined in the style-file, e.g. motorcar, bicycle, foot.\r\n");
+			fw.write("useRouting = " + config.useRouting + "\r\n");
+			fw.write("\r\n");
+			
+			fw.write("# Housenumber support.\r\n");
+			fw.write("useHouseNumbers = " + config.useHouseNumbers + "\r\n");
+			fw.write("\r\n");
+			
+			fw.write("# Editing support.\r\n");
+			fw.write("enableEditing = " + config.enableEditingSupport + "\r\n");
+			fw.write("\r\n");
+			
+			
 			fw.write("# Generate sea from coastlines.\r\n");
 			fw.write("generateSea = " + config.getGenerateSea() + "\r\n");
 			fw.write("\r\n");
 
-			fw.write("# Use sea tiles.\r\n");
+			fw.write("# Use sea tiles (experimentally speeds up sea generation).\r\n");
 			fw.write("useSeaTiles = " + config.getUseSeaTiles() + "\r\n");
-			fw.write("\r\n");
-
-			fw.write("# Outline area format (good for Android).\r\n");
-			fw.write("outlineAreaFormat = " + config.getOutlineAreaFormat() + "\r\n");
-			fw.write("\r\n");
-
-			fw.write("# Triangle area format (needed for J2ME).\r\n");
-			fw.write("triangleAreaFormat = " + config.getTriangleAreaFormat() + "\r\n");
 			fw.write("\r\n");
 
 			fw.write("# Sign created apk after creating.\r\n");
@@ -1167,19 +1182,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("# Example to not compress files ending with wav: dontCompress = wav\r\n");
 			fw.write("dontCompress = " + config.getDontCompress() + "\r\n");
 			fw.write("\r\n");			
-
-			fw.write("# Editing support.\r\n");
-			fw.write("enableEditing = " + config.enableEditingSupport + "\r\n");
-			fw.write("\r\n");
-
-			fw.write("# Housenumber support.\r\n");
-			fw.write("useHouseNumbers = " + config.useHouseNumbers + "\r\n");
-			fw.write("\r\n");
-
-			fw.write("# Routing ability can be disabled to save space in the midlet by setting to false.\r\n");
-			fw.write("# Or set to one or more defined in the style-file, e.g. motorcar, bicycle, foot.\r\n");
-			fw.write("useRouting = " + config.useRouting + "\r\n");
-			fw.write("\r\n");
 			
 			fw.write("# == Advanced parameters for configuring number of files in the midlet ===\r\n");
 			fw.write("#  With less files more memory will be required on the device to run GpsMid.\r\n");
