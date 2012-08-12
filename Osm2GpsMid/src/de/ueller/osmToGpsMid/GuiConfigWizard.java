@@ -1080,6 +1080,29 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				// quote possible backslashes
 				fw.write("mapSource = " + config.getPlanetName().replace("\\", "\\\\") + "\r\n");
 			}
+			
+			fw.write("# You can have up to 9 regions.\r\n");
+			fw.write("# Ways and POIs in any of the regions will be written to the bundle.\r\n");
+			Vector<Bounds> bounds = config.getBounds();
+			if (bounds != null) {
+				int i = 1;
+				for (Bounds b : bounds) {
+					fw.write(b.toPropertyString(i++));
+				}
+			}
+			fw.write("\r\n");
+			
+			fw.write("# Route corridor destinations\r\n");
+			fw.write("# Coordinates of route destinations which are used to calculate the route corridor.\r\n");
+			fw.write("# Osm2GpsMid " + config.getVersion() + " supports this only with Osm2GpsMid Wizard.\r\n");
+			if (config.getRouteList() != null) {
+				int i = 1;
+				for (Location lc : config.getRouteList()) {
+					fw.write(lc.toPropertyString(i++));
+				}
+			}
+			fw.write("\r\n");
+			
 			if (!"".equals(config.getCellSource())) {
 				// quote possible backslashes
 				fw.write("cellSource = " + config.getCellSource().replace("\\", "\\\\") + "\r\n");
@@ -1115,30 +1138,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 
 			fw.write("# Build word indexes.\r\n");
 			fw.write("useWordSearch = " + config.getUseWordSearch() + "\r\n");
-			fw.write("\r\n");
-
-			fw.write("# You can have up to 9 regions.\r\n");
-			fw.write("# Ways and POIs in any of the regions will be written to the bundle.\r\n");
-			Vector<Bounds> bounds = config.getBounds();
-			if (bounds != null) {
-				int i = 1;
-				for (Bounds b : bounds) {
-					fw.write(b.toPropertyString(i++));
-				}
-			}
-			fw.write("\r\n");
-			
-			fw.write("# Route corridor destinations\r\n");
-			fw.write("# Coordinates of route destinations which are used to calculate the route corridor.\r\n");
-			fw.write("# Osm2GpsMid " + config.getVersion() + " supports this only with Osm2GpsMid Wizard.\r\n");
-			if (config.getRouteList() != null) {
-				int i = 1;
-				for (Location lc : config.getRouteList()) {
-					fw.write(lc.toPropertyString(i++));
-				}
-			}
-			fw.write("\r\n");
-			
+			fw.write("\r\n");			
 
 			fw.write("# To choose a different device specific build, use the app property.\r\n");
 			fw.write("# GpsMid-Generic-full-connected (for net-connected use)");
