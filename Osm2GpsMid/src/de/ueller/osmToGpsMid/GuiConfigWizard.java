@@ -1081,7 +1081,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("midlet.name = " + config.getMidletName() + "\r\n");
 			fw.write("\r\n");
 		
-			if (config.getPlanetName() != null && !"".equals(config.getPlanetName())) {
+			if (config.getPlanetName() != null && !"".equals(config.getPlanetName()) && !CHOOSE_SRC.equals(config.getPlanetName())) {
 				// quote possible backslashes
 				fw.write("mapSource = " + config.getPlanetName().replace("\\", "\\\\") + "\r\n");
 			}
