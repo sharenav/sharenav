@@ -363,7 +363,7 @@ public class Configuration {
 	/** bit 145: Debug / Show tile requests dropped message */
 	public final static short CFGBIT_SHOW_TILE_REQUESTS_DROPPED = 145;
 	/** bit 146: Omit map source info */
-	public final static short CFGBIT_OMIT_MAP_INFO = 146;
+	public final static short CFGBIT_SHOW_MAP_CREDITS = 146;
 	
 	/**
 	 * These are the database record IDs for each configuration option
@@ -917,6 +917,7 @@ public class Configuration {
 			//#if polish.android
 			setCfgBitSavedState(CFGBIT_PREFER_OUTLINE_AREAS, true);
 			//#endif
+			setCfgBitSavedState(CFGBIT_SHOW_MAP_CREDITS, true);
 		}
 
 		

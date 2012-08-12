@@ -2645,6 +2645,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				}
 			}
 			
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_MAP_CREDITS)) {
+				tl.ele[TraceLayout.MAP_INFO].setText(getMapCreditsText());
+			}
+
 			setAlertSign(Legend.getNodeTypeDesc((short) alertNodeType));
 			
 			setSpeedingSign(maxSpeed);
@@ -2710,6 +2714,42 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (isShowingSplitCMS() && cmsl != null) {
 			cmsl.paint(g);
 		}
+	}
+
+	public String getMapCreditsText() {
+		String credits = Locale.get("trace.mapcredit")/*Map:*/;
+		boolean added = false;
+		if (Legend.getMapFlag(Legend.LEGEND_MAPFLAG_SOURCE_OSM_CC_BY_SA)) {
+			if (added) {
+				credits = credits + ",";
+			}
+			credits = credits + Locale.get("trace.mapcreditOsmCC");
+			added = true;
+		}
+		if (Legend.getMapFlag(Legend.LEGEND_MAPFLAG_SOURCE_OSM_ODBL)) {
+			if (added) {
+				credits = credits + ",";
+			}
+			credits = credits + Locale.get("trace.mapcreditOsmODbL");
+			added = true;
+		}
+		//#if polish.api.finland
+		if (Legend.getMapFlag(Legend.LEGEND_MAPFLAG_SOURCE_FI_LANDSURVEY)) {
+			if (added) {
+				credits = credits + ",";
+			}
+			credits = credits + Locale.get("trace.mapcreditFiLandSurvey");
+			added = true;
+		}
+		if (Legend.getMapFlag(Legend.LEGEND_MAPFLAG_SOURCE_FI_DIGIROAD)) {
+			if (added) {
+				credits = credits + ",";
+			}
+			credits = credits + Locale.get("trace.mapcreditFiDigiroad");
+			added = true;
+		}
+		//#endif
+		return credits;
 	}
 
 	public boolean isShowingSplitScreen() {

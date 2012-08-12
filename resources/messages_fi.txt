@@ -898,3 +898,4 @@ guidiscover.PreferOutline=Suosi kehäaluemuotoa
 guidiscover.ShowTileRequestsDropped=Näytä hylätyt karttatiilipyynnöt
 guiwebinfo.helpwikiandroid=GpsMid Androidilla (Gpsmid wiki)
 guidiscovericonmenu.AndroidWiki=Android-wikisivu
+trace.mapcreditOsmFiLandsurvey=Maanmittauslaitos
