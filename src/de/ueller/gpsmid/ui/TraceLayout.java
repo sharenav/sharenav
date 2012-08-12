@@ -533,7 +533,12 @@ public class TraceLayout extends LayoutManager {
 				return speedingSignWidth;
 			case SE_BIGNAVI_ICON1:
 			case SE_BIGNAVI_ICON2:
-				return getHeight() * (isPortraitLayout ? 12 : 22) / 100;
+				int height = getHeight() * (isPortraitLayout ? 12 : 22) / 100;
+				// grow arrows down if they are too small
+				if (height < ele[BIGNAVIICON1].getFontHeight() * 3 && (maxY - minY) >= 160) {
+					height = ele[BIGNAVIICON1].getFontHeight() * 3;
+				}
+				return height;
 		}
 		return 0;
 	}
@@ -648,12 +653,19 @@ public class TraceLayout extends LayoutManager {
 		ele[BIGNAVIICON1 + iconNumber].setText(" ");
 	}
 
+	private boolean showDistanceWithNaviIcons() {
+		return ((maxY - minY) >= 160);
+	}
+
 	private void showRouteIcon(Graphics g, int iconNumber, int x, int y) {
 		RouteIcon ri = routeIcon[iconNumber];
 		if (ri.origIcon != null) {
 			int height = getSpecialElementHeight(SE_BIGNAVI_ICON1, 0);
 			LayoutElement e = ele[BIGNAVIICON1];
-			height -= e.getFontHeight();
+			// grow icons if too small; the area will extend downwards
+			if (showDistanceWithNaviIcons()) {
+				height -= e.getFontHeight();
+			}
 			int width = height;
 			Image img = ImageCache.getScaledImage(ri.origIcon, height, height);
 			g.drawImage(img, x, y, Graphics.TOP|Graphics.LEFT);
@@ -664,7 +676,7 @@ public class TraceLayout extends LayoutManager {
 				g.setColor(0xFFFFFF);
 				g.drawString(""  + ri.roundaboutExitNr, x + height / 2, y + height / 2 - fontHeight/2, Graphics.TOP|Graphics.HCENTER);
 			}
-			if (iconNumber == 1 || ri.distance > 1) {
+			if ((iconNumber == 1 || ri.distance > 1) && showDistanceWithNaviIcons()) {
 				g.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 				String dist = HelperRoutines.formatDistance(ri.distance);
 				int distWidth = e.getFont().stringWidth(dist);
