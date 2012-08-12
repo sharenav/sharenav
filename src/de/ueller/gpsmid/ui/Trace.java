@@ -31,6 +31,7 @@ import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextField;
 //#if polish.android
+import de.enough.polish.android.lcdui.AndroidDisplay;
 import android.content.Context;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -38,6 +39,7 @@ import android.util.FloatMath;
 import android.view.InputEvent;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
@@ -116,6 +118,7 @@ import de.ueller.util.MoreMath;
 import de.ueller.util.ProjMath;
 
 //#if polish.android
+import android.view.Display;
 import de.enough.polish.android.lcdui.CanvasBridge;
 import de.enough.polish.android.midlet.MidletBridge;
 //#endif
@@ -267,6 +270,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public boolean pointerDown = false;
 	
 	private volatile boolean currentLayoutIsPortrait = true;
+	private volatile int currentRotation = 0;
 
 	private Position pos = new Position(0.0f, 0.0f,
 			PositionMark.INVALID_ELEVATION, 0.0f, 0.0f, 1,
@@ -805,7 +809,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			running=true;
 			//#if polish.android
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_GPS_CONNECTED, true);
+			currentRotation = getAndroidRotationAngle();
 			//#endif
+			currentLayoutIsPortrait = layoutIsPortrait();
 			startCompass();
 			int locprov = Configuration.getLocationProvider();
 			receiveMessage(Locale.get("trace.ConnectTo")/*Connect to */ + Configuration.LOCATIONPROVIDER[locprov]);
@@ -2309,7 +2315,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		
 		if (layoutIsPortrait() != currentLayoutIsPortrait) {
 			currentLayoutIsPortrait = layoutIsPortrait();
+
+			//#if polish.android
+			int angle = getAndroidRotationAngle();
+			compassDeviation += (angle - currentRotation);
+			currentRotation = angle;
+			//#else
 			compassDeviation += currentLayoutIsPortrait ? -90 : 90;
+			//#endif
 			if (compassDeviation < 0) {
 				compassDeviation += 360;
 			}
@@ -2329,6 +2342,28 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			cmsl.sizeChanged(w, h);
 		}
 	}
+
+	//#if polish.android
+	public int getAndroidRotationAngle() {
+		int angle = 0;
+		switch (MidletBridge.instance.getWindowManager().getDefaultDisplay().getRotation()) {
+		case Surface.ROTATION_0:
+			angle = 0;
+			break;
+		case Surface.ROTATION_90:
+			angle = 90;
+			break;
+		case Surface.ROTATION_180:
+			angle = 180;
+			break;
+		case Surface.ROTATION_270:
+			angle = 270;
+			break;
+		default:
+		}
+		return angle;
+	}
+	//#endif
 
 	private void setDisplayCoords(int w, int h) {
 		maxX = w;
