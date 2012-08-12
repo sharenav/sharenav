@@ -50,7 +50,8 @@ public class TraceLayout extends LayoutManager {
 	public static final int TRAVEL_MODE = 24;
 	public static final int BIGNAVIICON1 = 25;
 	public static final int BIGNAVIICON2 = 26;
-	public static final int ELE_COUNT = 27;
+	public static final int MAP_INFO = 27;
+	public static final int ELE_COUNT = 28;
 
 	// special element ids
 	public static final byte SE_SCALEBAR = 1;
@@ -289,6 +290,14 @@ public class TraceLayout extends LayoutManager {
 			);
 		e.setColor(Legend.COLORS[Legend.COLOR_RI_OFF_DISTANCE_TEXT]);
 		e.setVRelative(ele[CURRENT_TIME]);
+
+		e = ele[MAP_INFO]; addElement(e,
+				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
+				LayoutElement.FLAG_FONT_SMALL
+			);
+		// FIXME add a color for map info
+		e.setColor(Legend.COLORS[Legend.COLOR_RI_OFF_DISTANCE_TEXT]);
+		e.setVRelative(ele[ROUTE_OFFROUTE]);
 
 		e = ele[ZOOM_OUT]; addElement(e,
 				LayoutElement.FLAG_HALIGN_RIGHT |

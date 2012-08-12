@@ -86,6 +86,10 @@ public class CreateGpsMidData implements FilenameFilter {
        public final static int LEGEND_MAPFLAG_OUTLINE_AREA_BLOCK = 0x01;
        public final static int LEGEND_MAPFLAG_TRIANGLE_AREA_BLOCK = 0x02;
        public final static int LEGEND_MAPFLAG_WORDSEARCH = 0x04;
+       public final static int LEGEND_MAPFLAG_SOURCE_OSM_CC_BY_SA = 0x08;
+       public final static int LEGEND_MAPFLAG_SOURCE_OSM_ODBL = 0x10;
+       public final static int LEGEND_MAPFLAG_SOURCE_FI_LANDSURVEY = 0x20;
+       public final static int LEGEND_MAPFLAG_SOURCE_FI_DIGIROAD = 0x40;
 
 	public final static byte LEGEND_FLAG2_CLICKABLE = 0x01;
 
@@ -268,6 +272,15 @@ public class CreateGpsMidData implements FilenameFilter {
 		FileOutputStream foi;
 		String outputMedia;
 		Configuration.mapFlags = 0L;
+
+
+		// FIXME add .properties & GUI user interface for telling map data source
+
+		Configuration.mapFlags |= LEGEND_MAPFLAG_SOURCE_OSM_CC_BY_SA;
+		// Configuration.mapFlags |= LEGEND_MAPFLAG_SOURCE_OSM_ODBL;
+		// Configuration.mapFlags |= LEGEND_MAPFLAG_SOURCE_OSM_FI_LANDSURVEY;
+		// Configuration.mapFlags |= LEGEND_MAPFLAG_SOURCE_OSM_FI_DIGIROAD;
+
 		if (Configuration.getConfiguration().getTriangleAreaFormat()) {
 			Configuration.mapFlags |= LEGEND_MAPFLAG_TRIANGLE_AREA_BLOCK;
 		}
