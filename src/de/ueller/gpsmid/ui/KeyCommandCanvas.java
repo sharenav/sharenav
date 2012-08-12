@@ -83,8 +83,10 @@ public abstract class KeyCommandCanvas extends Canvas implements
 		//GpsMid.getInstance().alert("keycode", "keycode = " + keyCode, 3000);
 		if (keyCode == KeyEvent.KEYCODE_UNKNOWN) {
 			// #debug debug
-			logger.debug("  Turning key into SEARCH_CMD");
-			commandAction(Trace.getInstance().getCommand(Trace.SEARCH_CMD), (Displayable) null);
+			logger.debug("  Not turning key into SEARCH_CMD");
+			// ignore, the HTC Desire with ICS (BCM ROM) will give this keycode on
+			// multitouch action
+			//commandAction(Trace.getInstance().getCommand(Trace.SEARCH_CMD), (Displayable) null);
 			return;
 		}
 		//#endif
