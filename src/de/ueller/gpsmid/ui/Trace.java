@@ -4279,6 +4279,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						return true;
 					}
 				}
+				if (keyCode == KeyEvent.KEYCODE_SEARCH) {
+					// #debug debug
+					logger.debug("  Turning key into SEARCH_CMD");
+					commandAction(Trace.getInstance().getCommand(Trace.SEARCH_CMD), (Displayable) null);
+					return true;
+				}
 				return false;
 			}
 		});
