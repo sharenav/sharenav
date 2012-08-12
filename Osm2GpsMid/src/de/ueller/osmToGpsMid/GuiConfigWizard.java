@@ -1081,6 +1081,22 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				fw.write("mapSource = " + config.getPlanetName().replace("\\", "\\\\") + "\r\n");
 			}
 
+			fw.write("# To choose a different device specific build, use the app property.\r\n");
+			fw.write("# GpsMid-Generic-full-connected (for net-connected use)");
+			fw.write("# or GpsMid-Generic-full (for non-net-connected use) should work for most phones (except BlackBerry).\r\n");
+			String app = config.getAppParam();
+			fw.write("app = " + app + "\r\n");
+
+			Vector<String>apps = enumerateAppParam();
+			// write out available app parameters except for the selected one
+			for (String a: apps) {
+				a = "GpsMid-" + a;
+				if (! a.equals(app)) {
+					fw.write("#app = " + a + "\r\n");
+				}
+			}
+			fw.write("\r\n");
+			
 			fw.write("# Style-file containing which way, area and POI types to include in the Midlet.\r\n");
 			fw.write("# This will default to style-file.xml, set style-file=min-style-file.xml for a smaller version with less features in the map.\r\n");
 			fw.write("#	 If there is no internal version in Osm2GpsMid for the png / sound files, you must provide external versions\r\n");
@@ -1124,14 +1140,17 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("useRouting = " + config.useRouting + "\r\n");
 			fw.write("\r\n");
 			
+			fw.write("# Build word indexes.\r\n");
+			fw.write("useWordSearch = " + config.getUseWordSearch() + "\r\n");
+			fw.write("\r\n");			
+
 			fw.write("# Housenumber support.\r\n");
 			fw.write("useHouseNumbers = " + config.useHouseNumbers + "\r\n");
 			fw.write("\r\n");
 			
 			fw.write("# Editing support.\r\n");
 			fw.write("enableEditing = " + config.enableEditingSupport + "\r\n");
-			fw.write("\r\n");
-			
+			fw.write("\r\n");			
 			
 			fw.write("# Generate sea from coastlines.\r\n");
 			fw.write("generateSea = " + config.getGenerateSea() + "\r\n");
@@ -1139,61 +1158,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 
 			fw.write("# Use sea tiles (experimentally speeds up sea generation).\r\n");
 			fw.write("useSeaTiles = " + config.getUseSeaTiles() + "\r\n");
-			fw.write("\r\n");
-
-			fw.write("# Sign created apk after creating.\r\n");
-			fw.write("signApk = " + config.getSignApk() + "\r\n");
-			fw.write("\r\n");
-
-			fw.write("# Password for jarsigner for signing the apk.\r\n");
-			fw.write("# signApkPassword = " + "[ put your password here ]" + "\r\n");
-			fw.write("\r\n");
-
-			fw.write("# Build word indexes.\r\n");
-			fw.write("useWordSearch = " + config.getUseWordSearch() + "\r\n");
-			fw.write("\r\n");			
-
-			fw.write("# To choose a different device specific build, use the app property.\r\n");
-			fw.write("# GpsMid-Generic-full-connected (for net-connected use)");
-			fw.write("# or GpsMid-Generic-full (for non-net-connected use) should work for most phones (except BlackBerry).\r\n");
-			String app = config.getAppParam();
-			fw.write("app = " + app + "\r\n");
-
-			Vector<String>apps = enumerateAppParam();
-			// write out available app parameters except for the selected one
-			for (String a: apps) {
-				a = "GpsMid-" + a;
-				if (! a.equals(app)) {
-					fw.write("#app = " + a + "\r\n");
-				}
-			}
-			fw.write("\r\n");
-
-			fw.write("# Add this line to .manifest / .jad.\r\n");
-			fw.write("# e.g. MIDlet-Touch-Support:true to hide keyboard on Samsung Bada mobiles\r\n");				
-			fw.write("# or LGE-MIDlet-Display-Nav-Keypad:no on LG mobiles\r\n");				
-			fw.write("addToManifest = " + config.getAddToManifest() + "\r\n");
-			fw.write("\r\n");			
-			
-			fw.write("# File endings of files to not compress.\r\n");
-			fw.write("# e.g. for Android and WinCE uncompressed WAV files are required\r\n");
-			fw.write("# Example to not compress files ending with wav: dontCompress = wav\r\n");
-			fw.write("dontCompress = " + config.getDontCompress() + "\r\n");
-			fw.write("\r\n");			
-			
-			fw.write("# == Advanced parameters for configuring number of files in the midlet ===\r\n");
-			fw.write("#  With less files more memory will be required on the device to run GpsMid.\r\n");
-			fw.write("#  Larger dictionary depth will reduce the number of dictionary files in GpsMid.\r\n");
-			fw.write("maxDictDepth = " + config.getMaxDictDepth() + "\r\n");
-			fw.write("#  Larger tile size will reduce the number of tile files in the midlet.\r\n");
-			fw.write("# Maximum route tile size in bytes\r\n");
-			fw.write("routing.maxTileSize = " + config.getMaxRouteTileSize() + "\r\n");
-			fw.write("# Maximum tile size in bytes\r\n");
-			fw.write("maxTileSize = " + config.getMaxTileSize() + "\r\n");
-			fw.write("# Maximum ways contained in tiles for level 0-3\r\n");
-			for (int i=0;i < 4; i++) {
-				fw.write("maxTileWays" + i + " = " + config.getMaxTileWays(i) + "\r\n");
-			}
 			fw.write("\r\n");
 			
 			fw.write("# Sound formats to be included in the midlet, default is useSounds=amr.\r\n");
@@ -1237,6 +1201,41 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			}
 			fw.write("useSoundFilesWithSyntax = " + config.getSoundFiles() + "\r\n");
 			fw.write("\r\n");
+			
+			fw.write("# Sign created apk after creating.\r\n");
+			fw.write("signApk = " + config.getSignApk() + "\r\n");
+			fw.write("\r\n");
+
+			fw.write("# Password for jarsigner for signing the apk.\r\n");
+			fw.write("# signApkPassword = " + "[ put your password here ]" + "\r\n");
+			fw.write("\r\n");
+
+			fw.write("# Add this line to .manifest / .jad.\r\n");
+			fw.write("# e.g. MIDlet-Touch-Support:true to hide keyboard on Samsung Bada mobiles\r\n");				
+			fw.write("# or LGE-MIDlet-Display-Nav-Keypad:no on LG mobiles\r\n");				
+			fw.write("addToManifest = " + config.getAddToManifest() + "\r\n");
+			fw.write("\r\n");			
+			
+			fw.write("# File endings of files to not compress.\r\n");
+			fw.write("# e.g. for Android and WinCE uncompressed WAV files are required\r\n");
+			fw.write("# Example to not compress files ending with wav: dontCompress = wav\r\n");
+			fw.write("dontCompress = " + config.getDontCompress() + "\r\n");
+			fw.write("\r\n");			
+			
+			fw.write("# == Advanced parameters for configuring number of files in the midlet ===\r\n");
+			fw.write("#  With less files more memory will be required on the device to run GpsMid.\r\n");
+			fw.write("#  Larger dictionary depth will reduce the number of dictionary files in GpsMid.\r\n");
+			fw.write("maxDictDepth = " + config.getMaxDictDepth() + "\r\n");
+			fw.write("#  Larger tile size will reduce the number of tile files in the midlet.\r\n");
+			fw.write("# Maximum route tile size in bytes\r\n");
+			fw.write("routing.maxTileSize = " + config.getMaxRouteTileSize() + "\r\n");
+			fw.write("# Maximum tile size in bytes\r\n");
+			fw.write("maxTileSize = " + config.getMaxTileSize() + "\r\n");
+			fw.write("# Maximum ways contained in tiles for level 0-3\r\n");
+			for (int i=0;i < 4; i++) {
+				fw.write("maxTileWays" + i + " = " + config.getMaxTileWays(i) + "\r\n");
+			}
+			fw.write("\r\n");			
 			
 			fw.write("# Whether to include icons for icon menu and their size to include.\r\n");
 			fw.write("#  Possible values: false|small|true|big|large|huge, true is the default medium size\r\n");
