@@ -1191,8 +1191,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("#  Osm2GpsMid includes all sound files referenced in the syntax.cfg either from an internal folder\r\n");
 			fw.write("#  or the directory with the specified name relative to the style-file.\r\n");
 			fw.write("#  File Format examples are at:\r\n");
-			fw.write("#   English: http://gpsmid.cvs.sourceforge.net/viewvc/gpsmid/Osm2GpsMid/resources/media/sound/syntax.cfg?view=markup.\r\n");
-			fw.write("#   German: http://gpsmid.cvs.sourceforge.net/viewvc/gpsmid/Osm2GpsMid/resources/media/sound-de/syntax.cfg?view=markup.\r\n");
+			fw.write("#   English: http://gpsmid.git.sourceforge.net/git/gitweb.cgi?p=gpsmid/GpsMid;a=blob;f=Osm2GpsMid/resources/media/sound/syntax.cfg\r\n");
+			fw.write("#   German: http://gpsmid.git.sourceforge.net/git/gitweb.cgi?p=gpsmid/GpsMid;a=blob;f=Osm2GpsMid/resources/media/sound-de/syntax.cfg\r\n");
 			fw.write("#  Currently the following sound-files with syntax are internal to Osm2GpsMid:\r\n");
 			fw.write("#   English: sound  German: sound-de Finnish: sound-fi\r\n");			
 			fw.write("#  Example to include the Finnish and German sound files: useSoundFilesWithSyntax=sound-de, sound-fi\r\n");			
