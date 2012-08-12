@@ -88,7 +88,7 @@ public class GuiWaypointEnter extends Form implements CommandListener {
 					sb.deleteCharAt(i);
 					i = sb.toString().indexOf("'");					
 				}
-				s = sb.toString();
+				s = sb.toString().toLowerCase() ;
 				// parse pasted received position SMS in format, e. g. lat: 49.1234 lon: 11.56789
 				if (s.indexOf("lat:") >= 0 && s.indexOf("lon:") >= 0) {
 					int begin = s.indexOf("lat:") + 4;
