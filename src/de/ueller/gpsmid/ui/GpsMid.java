@@ -231,30 +231,6 @@ public class GpsMid extends MIDlet implements CommandListener {
 
 			phoneMaxMemory = determinePhoneMaxMemory();		
 
-			if (Legend.getMapFlag(Legend.LEGEND_MAPFLAG_TRIANGLE_AREA_BLOCK) == false &&
-			    Legend.getMapFlag(Legend.LEGEND_MAPFLAG_OUTLINE_AREA_BLOCK)) {
-				if (!Configuration.getCfgBitState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS)) {
-					// use outline format if triangle not available
-					// FIXME warn user
-					Configuration.setCfgBitState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS, true, false);
-				}
-			}
-
-			//#if polish.android
-			//#if polish.api.areaoutlines
-			//#else
-			// If we don't have area outlines, fall back to triangles
-			if (Legend.getMapFlag(Legend.LEGEND_MAPFLAG_TRIANGLE_AREA_BLOCK) &&
-			    Legend.getMapFlag(Legend.LEGEND_MAPFLAG_OUTLINE_AREA_BLOCK)) {
-				if (Configuration.getCfgBitState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS)) {
-					// use outline format if triangle not available
-					// FIXME warn user
-					Configuration.setCfgBitState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS, false, false);
-				}
-			}
-			//#endif
-			//#endif
-
 			if (errorMsg != null) {
 				log.fatal(errorMsg);
 			}
