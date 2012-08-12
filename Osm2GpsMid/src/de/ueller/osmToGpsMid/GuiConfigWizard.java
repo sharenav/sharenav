@@ -1079,6 +1079,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 					
 			fw.write("# Name of the Midlet on the phone\r\n");
 			fw.write("midlet.name = " + config.getMidletName() + "\r\n");
+			fw.write("\r\n");
 		
 			if (config.getPlanetName() != null && !"".equals(config.getPlanetName())) {
 				// quote possible backslashes
