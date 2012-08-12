@@ -1080,6 +1080,14 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				// quote possible backslashes
 				fw.write("mapSource = " + config.getPlanetName().replace("\\", "\\\\") + "\r\n");
 			}
+
+			fw.write("# Style-file containing which way, area and POI types to include in the Midlet.\r\n");
+			fw.write("# This will default to style-file.xml, set style-file=min-style-file.xml for a smaller version with less features in the map.\r\n");
+			fw.write("#	 If there is no internal version in Osm2GpsMid for the png / sound files, you must provide external versions\r\n");
+			fw.write("#	 in the current directory or sub-directories 'sound' and 'png' inside Osm2GpsMid.jar (when using internal style-file)\r\n");
+			fw.write("#	 or sub-directories 'sound' and 'png' in the same directory as the external style-file.\r\n");
+			fw.write("style-file = " + config.getStyleFileName().replace("\\", "\\\\") + "\r\n");
+			fw.write("\r\n");
 			
 			fw.write("# You can have up to 9 regions.\r\n");
 			fw.write("# Ways and POIs in any of the regions will be written to the bundle.\r\n");
@@ -1111,16 +1119,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("outlineAreaFormat = " + config.getOutlineAreaFormat() + "\r\n");
 			fw.write("\r\n");
 			
-			if (!"".equals(config.getCellSource())) {
-				// quote possible backslashes
-				fw.write("cellSource = " + config.getCellSource().replace("\\", "\\\\") + "\r\n");
-				fw.write("useCellID = " + config.getString("useCellID") + "\r\n");
-			}
-			fw.write("# Store cellids for phones without LAC.\r\n");
-			fw.write("cellIDnoLAC = " + config.getCellIDnoLAC() + "\r\n");
-			fw.write("\r\n");
-
-
 			fw.write("# Routing ability can be disabled to save space in the midlet by setting to false.\r\n");
 			fw.write("# Or set to one or more defined in the style-file, e.g. motorcar, bicycle, foot.\r\n");
 			fw.write("useRouting = " + config.useRouting + "\r\n");
@@ -1197,14 +1195,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				fw.write("maxTileWays" + i + " = " + config.getMaxTileWays(i) + "\r\n");
 			}
 			fw.write("\r\n");
-
-			fw.write("# Style-file containing which way, area and POI types to include in the Midlet.\r\n");
-			fw.write("# This will default to style-file.xml, set style-file=min-style-file.xml for a smaller version with less features in the map.\r\n");
-			fw.write("#	 If there is no internal version in Osm2GpsMid for the png / sound files, you must provide external versions\r\n");
-			fw.write("#	 in the current directory or sub-directories 'sound' and 'png' inside Osm2GpsMid.jar (when using internal style-file)\r\n");
-			fw.write("#	 or sub-directories 'sound' and 'png' in the same directory as the external style-file.\r\n");
-			fw.write("style-file = " + config.getStyleFileName().replace("\\", "\\\\") + "\r\n");
-			fw.write("\r\n");
 			
 			fw.write("# Sound formats to be included in the midlet, default is useSounds=amr.\r\n");
 			fw.write("#  Osm2GpsMid includes from all sound files wav, amr and mp3 variants.\r\n");
@@ -1252,6 +1242,17 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("#  Possible values: false|small|true|big|large|huge, true is the default medium size\r\n");
 			fw.write("useIcons = " + config.getUseIcons() + "\r\n");
 			fw.write("\r\n");
+
+			
+			if (!"".equals(config.getCellSource())) {
+				// quote possible backslashes
+				fw.write("cellSource = " + config.getCellSource().replace("\\", "\\\\") + "\r\n");
+				fw.write("useCellID = " + config.getString("useCellID") + "\r\n");
+			}
+			fw.write("# Store cellids for phones without LAC.\r\n");
+			fw.write("cellIDnoLAC = " + config.getCellIDnoLAC() + "\r\n");
+			fw.write("\r\n");			
+			
 			fw.write("# Name of the Midlet on the phone\r\n");
 			fw.write("midlet.name = " + config.getMidletName() + "\r\n");
 			fw.close();
