@@ -266,6 +266,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	 */
 	public boolean pointerDown = false;
 	
+	private volatile boolean currentLayoutIsPortrait = true;
+
 	private Position pos = new Position(0.0f, 0.0f,
 			PositionMark.INVALID_ELEVATION, 0.0f, 0.0f, 1,
 			System.currentTimeMillis());
@@ -2305,6 +2307,15 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		setDisplayCoords(w, h);
 		recreateTraceLayout();
 		
+		if (layoutIsPortrait() != currentLayoutIsPortrait) {
+			currentLayoutIsPortrait = layoutIsPortrait();
+			compassDeviation += currentLayoutIsPortrait ? -90 : 90;
+			if (compassDeviation < 0) {
+				compassDeviation += 360;
+			}
+			compassDeviation %= 360;
+		}
+
 		if (isShowingSplitIconMenu() && (traceIconMenu != null)) {
 			traceIconMenu.sizeChanged(w, h);
 		}
@@ -4343,6 +4354,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		setDisplayCoords(getWidth(), getHeight());
 		tl = new TraceLayout(minX, minY, maxX, maxY);
 	}
+
+	public boolean layoutIsPortrait() {
+		return (getWidth() < getHeight() * 3 / 2 );
+	}		
 
 	public void resetSize() {
 		sizeChanged(getWidth(), getHeight());

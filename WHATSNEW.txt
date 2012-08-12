@@ -169,6 +169,7 @@ GpsMid 0.8
     - Auto-switch between compass & movement now works even when previous setting was movement
     - Add option for rapid rotation (without this, rotation by compass happens whenever
       a GPS location is received)
+    - Adjust compass deviation on portrait/landscape switch
     *** Tacho ***
     - HDOP is shown in tachometer
     - Tacho is shown as a kind of "computer-mode screen" at the same time with map when in split-screen mode
