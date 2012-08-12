@@ -59,7 +59,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 31;
+	public final static int VERSION = 32;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -362,6 +362,8 @@ public class Configuration {
 	public final static short CFGBIT_PREFER_OUTLINE_AREAS = 144;
 	/** bit 145: Debug / Show tile requests dropped message */
 	public final static short CFGBIT_SHOW_TILE_REQUESTS_DROPPED = 145;
+	/** bit 146: Omit map source info */
+	public final static short CFGBIT_OMIT_MAP_INFO = 146;
 	
 	/**
 	 * These are the database record IDs for each configuration option
@@ -910,6 +912,11 @@ public class Configuration {
 			//#if polish.api.online
 			setCfgBitSavedState(CFGBIT_INTERNET_ACCESS, true);
 			//#endif			
+		}
+		if (configVersionStored < 32) {
+			//#if polish.android
+			setCfgBitSavedState(CFGBIT_PREFER_OUTLINE_AREAS, true);
+			//#endif
 		}
 
 		
