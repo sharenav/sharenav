@@ -262,6 +262,8 @@ public class Legend {
 	
 	public static int tileScaleLevel[] = { Integer.MAX_VALUE, 900000, 180000, 45000 }; 
 	public static boolean tileScaleLevelContainsRoutableWays[] = {true, true, true, true};
+	public static int lowestTileScaleLevelWithRoutableWays; 
+
 	
 	private static TravelMode midletTravelModes[];	
 
@@ -437,7 +439,11 @@ public class Legend {
 				tileScaleLevel[i] = - tileScaleLevel[i];
 				tileScaleLevelContainsRoutableWays[i] = false;
 			}
+			if (tileScaleLevelContainsRoutableWays[i]) {
+				lowestTileScaleLevelWithRoutableWays = tileScaleLevel[i];
+			}
 		}
+
 		
 		/*
 		 * Read Travel Modes

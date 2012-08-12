@@ -1701,6 +1701,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			
 			if (c == CMDS[ROUTING_START_CMD]) {
+				// never recalculate when zoomed out so far that not all routable ways are rendered		
+				if (scale > (Legend.lowestTileScaleLevelWithRoutableWays * Configuration.getMaxDetailBoostMultiplier())) {
+					receiveMessage(Locale.get("trace.ZoomedOutTooFarToCalculateRoute")); /* Zoomed out too far to calculate route */
+					return;
+				}
+
 				if (!routeCalc || RouteLineProducer.isRunning()) { // if not in route calc or already producing the route line
 					// if the route line is currently being produced stop it  
 					if (RouteLineProducer.isRunning()) {
