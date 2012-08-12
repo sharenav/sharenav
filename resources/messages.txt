@@ -1365,3 +1365,4 @@ trace.mapcreditFiLandSurveyURL=http://www.maanmittauslaitos.fi/en/opendata
 trace.mapcreditFiDigiroad=Digiroad
 trace.mapcreditFiDigiroadURL=http://www.digiroad.fi
 guidiscover.mapcredits=Show map credits
+guidiscover.nmeaerrors=Show unknown NMEA errors

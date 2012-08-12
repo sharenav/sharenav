@@ -12,6 +12,7 @@ import java.util.TimeZone;
 import java.util.Vector;
 
 import de.ueller.gps.Satellite;
+import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Position;
 import de.ueller.util.Logger;
 import de.ueller.util.StringTokenizer;
@@ -334,7 +335,7 @@ public class NmeaMessage {
 	            }
 			}
 		} catch (RuntimeException e) {
-			if (checkExceptionCount()) {
+			if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_NMEA_ERRORS) && checkExceptionCount()) {
 				logger.exception(Locale.get("nmeamessage.ErrorDecoding")/*Error while decoding */ + sentence, e);
 			}
 		}

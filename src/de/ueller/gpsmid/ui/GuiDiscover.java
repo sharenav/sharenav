@@ -351,18 +351,20 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//#style formItem
 		menuDebug.append(debugSeverity);
 
-		loggings = new String[5];
+		loggings = new String[6];
 		loggings[0] = Locale.get("guidiscover.ShowRouteConnections")/*Show route connections*/;
 		loggings[1] = Locale.get("guidiscover.ShowRouteCalcTraces")/*Show route calculation traces*/;
 		loggings[2] = Locale.get("guidiscover.ShowTurnRestrictions")/*Show turn restrictions*/;
 		loggings[3] = Locale.get("guidiscover.ShowInconsistentBearings")/*Show inconsistent bearings*/;
 		loggings[4] = Locale.get("guidiscover.ShowTileRequestsDropped")/*Show tile requests dropped */;
+		loggings[5] = Locale.get("guidiscover.nmeaerrors")/*Show unknown NMEA errors */;
 		debugOther = new ChoiceGroup(Locale.get("guidiscover.Other")/*Other:*/, ChoiceGroup.MULTIPLE, loggings, null);
 		debugOther.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_CONNECTIONS));
 		debugOther.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTECONNECTION_TRACES));
 		debugOther.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS));
 		debugOther.setSelectedIndex(3, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_BEARINGS));
 		debugOther.setSelectedIndex(4, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_TILE_REQUESTS_DROPPED));
+		debugOther.setSelectedIndex(5, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_NMEA_ERRORS));
 		//#style formItem
 		menuDebug.append(debugOther);
 	}
@@ -1625,6 +1627,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS, debugOther.isSelected(2));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_BEARINGS, debugOther.isSelected(3));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_TILE_REQUESTS_DROPPED, debugOther.isSelected(4));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_NMEA_ERRORS, debugOther.isSelected(5));
 		Logger.setGlobalLevel();
 		state = STATE_ROOT;
 		this.show();

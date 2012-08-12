@@ -364,6 +364,8 @@ public class Configuration {
 	public final static short CFGBIT_SHOW_TILE_REQUESTS_DROPPED = 145;
 	/** bit 146: Omit map source info */
 	public final static short CFGBIT_SHOW_MAP_CREDITS = 146;
+	/** bit 147: Show NMEA errors */
+	public final static short CFGBIT_SHOW_NMEA_ERRORS = 147;
 	
 	/**
 	 * These are the database record IDs for each configuration option
