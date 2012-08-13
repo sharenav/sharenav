@@ -100,12 +100,12 @@ public class MoreMath {
 	 * 
 	 * This constant has to be in synchrony with the value in Osm2GpsMid.
 	 */
-	public static final float FIXPT_MULT = PLANET_RADIUS / Legend.mapPrecision; 
+	public static float FIXPT_MULT = PLANET_RADIUS / Legend.mapPrecision; 
 
 	/**
 	 * 1 / FIXPT_MULT, this saves a floating point division.
 	 */
-	public static final float FIXPT_MULT_INV = 1.0f / FIXPT_MULT;
+	public static float FIXPT_MULT_INV = 1.0f / FIXPT_MULT;
 
 	// cannot construct
 	private MoreMath() {}
@@ -155,6 +155,11 @@ public class MoreMath {
 	public static final float asinh(float x) {
 //		logger.info("enter asinh " + x);
 		return MoreMath.log(x + ((float) Math.sqrt(x * x + 1)));
+	}
+
+	public static void setFIXPTValues() {
+		FIXPT_MULT = PLANET_RADIUS / Legend.mapPrecision; 
+		FIXPT_MULT_INV = 1.0f / FIXPT_MULT;
 	}
 
 	/**
