@@ -20,6 +20,7 @@ import de.ueller.gpsmid.routing.TravelMode;
 import de.ueller.gpsmid.ui.GpsMid;
 import de.ueller.gpsmid.ui.Trace;
 import de.ueller.util.Logger;
+import de.ueller.util.MoreMath;
 
 import de.enough.polish.util.Locale;
 
@@ -522,6 +523,9 @@ public class Legend {
 		mapPrecision = 1f;
 		if (enableMap69Precision) {
 			mapPrecision = ds.readFloat();
+			if (mapPrecision != 1f) {
+				MoreMath.setFIXPTValues();
+			}
 		}
 		if (enableMap72MapFlags) {
 			mapFlags = ds.readLong();
