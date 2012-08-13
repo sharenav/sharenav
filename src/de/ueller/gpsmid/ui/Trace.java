@@ -1057,8 +1057,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 
 	public void autoRouteRecalculate() {
-		if ( gpsRecenter && Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_AUTO_RECALC) ) {
-			if (Math.abs(System.currentTimeMillis()-oldRecalculationTime) >= 7000 ) {
+		if ( gpsRecenter
+				&&
+			 Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_AUTO_RECALC)
+			    &&
+			 !isZoomedOutTooFarForRouteCalculation()
+		) {
+			if (Math.abs(System.currentTimeMillis()-oldRecalculationTime) >= 7000) {
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
 					GpsMid.mNoiseMaker.playSound(RouteSyntax.getInstance().getRecalculationSound(), (byte) 5, (byte) 1 );
 				}
@@ -1069,7 +1074,17 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 		}
 	}
+	
+	private boolean isZoomedOutTooFarForRouteCalculation() {	
+		// never recalculate when zoomed out so far that not all routable ways are rendered		
+		if (scale > (Legend.lowestTileScaleLevelWithRoutableWays * Configuration.getMaxDetailBoostMultiplier())) {
+			receiveMessage(Locale.get("trace.ZoomedOutTooFarToCalculateRoute")); /* Zoomed out too far to calculate route */
+			return true;
+		}
+		return false;
+	}
 
+	
 	
 	public boolean isGpsConnected() {
 		return (locationProducer != null && solution != LocationMsgReceiver.STATUS_OFF);
@@ -1701,12 +1716,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			
 			if (c == CMDS[ROUTING_START_CMD]) {
-				// never recalculate when zoomed out so far that not all routable ways are rendered		
-				if (scale > (Legend.lowestTileScaleLevelWithRoutableWays * Configuration.getMaxDetailBoostMultiplier())) {
-					receiveMessage(Locale.get("trace.ZoomedOutTooFarToCalculateRoute")); /* Zoomed out too far to calculate route */
+				if (isZoomedOutTooFarForRouteCalculation()) {
 					return;
 				}
-
+				
 				if (!routeCalc || RouteLineProducer.isRunning()) { // if not in route calc or already producing the route line
 					// if the route line is currently being produced stop it  
 					if (RouteLineProducer.isRunning()) {
