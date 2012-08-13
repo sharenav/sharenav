@@ -252,6 +252,10 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 			} else if ((actualWay != null) && ((phone = trace.getUrl(actualWay.phoneIdx)) != null)) {
 				url = "tel:" + phone;
 			}
+			// remove spaces
+			//#if polish.android
+			url = url.replaceAll(" ", "");
+			//#endif
 		}
 		return url;
 	}
