@@ -1795,7 +1795,10 @@ public class CreateGpsMidData implements FilenameFilter {
 		double tmpLat = (MyMath.degToRad(n.lat - t.centerLat)) * MyMath.FIXPT_MULT;
 		double tmpLon = (MyMath.degToRad(n.lon - t.centerLon)) * MyMath.FIXPT_MULT;
 		if ((tmpLat > Short.MAX_VALUE) || (tmpLat < Short.MIN_VALUE)) {
-			System.err.println("ERROR: Numeric overflow of latitude, " + tmpLat + " for node: " + n.id + ", trying to handle");
+
+			// see https://sourceforge.net/tracker/index.php?func=detail&aid=3556775&group_id=192084&atid=939974 for details of how this relates to area outlines
+
+			System.err.println("WARNING: Numeric overflow of latitude, " + tmpLat + " for node: " + n.id + ", trying to handle");
 			if (tmpLat > Short.MAX_VALUE) {
 				tmpLat = Short.MAX_VALUE - 10;
 			}
@@ -1803,8 +1806,9 @@ public class CreateGpsMidData implements FilenameFilter {
 				tmpLat = Short.MIN_VALUE + 10;
 			}
 		}
+
 		if ((tmpLon > Short.MAX_VALUE) || (tmpLon < Short.MIN_VALUE)) {
-			System.err.println("ERROR: Numeric overflow of longitude, " + tmpLon + " for node: " + n.id + ", trying to handle");
+			System.err.println("WARNING: Numeric overflow of longitude, " + tmpLon + " for node: " + n.id + ", trying to handle");
 			if (tmpLon > Short.MAX_VALUE) {
 				tmpLon = Short.MAX_VALUE - 10;
 			}
