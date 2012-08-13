@@ -523,9 +523,7 @@ public class Legend {
 		mapPrecision = 1f;
 		if (enableMap69Precision) {
 			mapPrecision = ds.readFloat();
-			if (mapPrecision != 1f) {
-				MoreMath.setFIXPTValues();
-			}
+			MoreMath.setFIXPTValues();
 		}
 		if (enableMap72MapFlags) {
 			mapFlags = ds.readLong();
