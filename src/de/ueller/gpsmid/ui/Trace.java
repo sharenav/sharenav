@@ -3900,6 +3900,17 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			touchReleaseY = y;
 			// check for a single tap in a timer started after the maximum double tap delay
 			// if the timer will not be cancelled by a double tap, the timer will execute the single tap command
+			//#if polish.android
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_DOUBLE)) {
+				singleTapTimerTask = new TimerTask() {
+					public void run() {
+						if (!keyboardLocked) {
+							singleTap(touchReleaseX, touchReleaseY);
+						}
+					}
+				};
+			}
+			//#else
 			singleTapTimerTask = new TimerTask() {
 				public void run() {
 					if (!keyboardLocked) {
@@ -3907,9 +3918,19 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					}
 				}
 			};
+			//#endif
 			try {
 				// set timer to check if this is a single tap
+				//#if polish.android
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_DOUBLE)) {
+					GpsMid.getTimer().schedule(singleTapTimerTask, DOUBLETAP_MAXDELAY)
+;
+				} else {
+					singleTap(touchReleaseX, touchReleaseY);
+				}
+				//#else
 				GpsMid.getTimer().schedule(singleTapTimerTask, DOUBLETAP_MAXDELAY);
+				//#endif
 			} catch (Exception e) {
 				logger.error(Locale.get("trace.NoSingleTapTimerTask")/*No SingleTap TimerTask: */ + e.toString());
 			}
