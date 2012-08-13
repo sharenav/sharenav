@@ -43,7 +43,6 @@ public class Routing implements Runnable {
 	private RouteNode routeFrom;
 	private RouteNode routeTo;
 	private volatile RoutePositionMark fromMark;
-	private volatile RoutePositionMark toMark;	
 	private final Trace parent;
 	private int bestTotal;
 	private long nextUpdate;
@@ -105,6 +104,7 @@ public class Routing implements Runnable {
 	private static volatile RouteNode destPrevRn = null;
 	private static volatile int distToMainstreetNetRouteNode = 0;
 	private static volatile int currentTravelMask = 0;
+	private static volatile RoutePositionMark toMark;	
 
 	public Routing(Trace parent) throws IOException {
 		this.parent = parent;
@@ -831,32 +831,19 @@ public class Routing implements Runnable {
 			startNode.lat=fromMark.lat;
 			startNode.lon=fromMark.lon;
 
-			/* if the entity of the RoutePositionMark is not routable in the current travel mode
-			 * search again the closest way to the start position
-			 */			
-			if (fromMark.entity != null) {
-				Way w = (Way) fromMark.entity;
-				if (!w.isRoutableWay()) { 
-					fromMark.entity = null;
-				}
-			}
-			if (fromMark.entity == null) {
-				parent.receiveMessage(Locale.get("routing.SearchingStartWay")/*Searching start way*/);
-				parent.searchNextRoutableWay(fromMark);
-				if (fromMark.entity == null){
-					parent.receiveMessage(Locale.get("routing.NoWayFoundForStartPoint")/*No way found for start point*/);
-				}
+			/*
+			 * always search for the best start way in current travel mode
+			 */
+			parent.receiveMessage(Locale.get("routing.SearchingStartWay")/*Searching start way*/);
+			parent.searchNextRoutableWay(fromMark);
+			if (fromMark.entity == null){
+				parent.receiveMessage(Locale.get("routing.NoWayFoundForStartPoint")/*No way found for start point*/);
 			}
 
-			/* if the entity of the RoutePositionMark is not routable in the current travel mode
-			 * search again the closest way to the destination position
-			 */			
-			if (toMark.entity != null) {
-				Way w = (Way) toMark.entity;
-				if (!w.isRoutableWay()) { 
-					toMark.entity = null;
-				}
-			}
+			/*
+			 * search for the best destination way in current travel mode if travel mode did not change in the meanwhile
+			 * (toMark.entity will have been cleared by dropToConnectionsCache() in this case)
+			 */
 			if (toMark.entity == null) {
 				parent.receiveMessage(Locale.get("routing.SearchingDestinationWay")/*Searching destination way*/);
 				parent.searchNextRoutableWay(toMark);
@@ -1280,6 +1267,9 @@ public class Routing implements Runnable {
 		destRn = null;
 		destPrevRn = null;
 		distToMainstreetNetRouteNode = 0;
+		if (toMark != null) {
+			toMark.entity = null;
+		}
 	}
 
 	public void cancelRouting() {
