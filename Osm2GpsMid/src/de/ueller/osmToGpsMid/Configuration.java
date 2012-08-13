@@ -768,7 +768,7 @@ public class Configuration {
 			signApk = getString("signApk").equalsIgnoreCase("true");
 			triangleAreaFormat = getString("triangleAreaFormat").equalsIgnoreCase("true");
 			outlineAreaFormat = getString("outlineAreaFormat").equalsIgnoreCase("true");
-			if (outlineAreaFormat) {
+			if (outlineAreaFormat && !triangleAreaFormat) {
 				System.out.println("WARNING: Turning on triangle area format, currently can't create a map with only outline area format");
 				triangleAreaFormat = true;
 			}
