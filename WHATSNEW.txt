@@ -226,6 +226,8 @@ GpsMid 0.8
       (.properties parameter default dontCompress = wav,amr)
     - back key now by default required twice for exiting GpsMid, the old
       behaviour of exiting with one press of back key is optional
+    - switching double tap off now works on Android, in other words eliminates the
+      delay for single tap
     - Osm2GpsMid can now create unsigned and (depending on platform) signed .apk's
       - an .apk is produced if target name contains "android".
       - about signing: to be able to install this .apk into an
