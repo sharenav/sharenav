@@ -3901,7 +3901,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			// check for a single tap in a timer started after the maximum double tap delay
 			// if the timer will not be cancelled by a double tap, the timer will execute the single tap command
 			//#if polish.android
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_DOUBLE)) {
+			if (doubleTapActive()) {
 				singleTapTimerTask = new TimerTask() {
 					public void run() {
 						if (!keyboardLocked) {
@@ -3922,7 +3922,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			try {
 				// set timer to check if this is a single tap
 				//#if polish.android
-				if (Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_DOUBLE)) {
+				if (doubleTapActive()) {
 					GpsMid.getTimer().schedule(singleTapTimerTask, DOUBLETAP_MAXDELAY)
 ;
 				} else {
@@ -3958,6 +3958,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		return;
 	}
 	//#endif
+
+	public boolean doubleTapActive() {
+		return Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_DOUBLE);
+	}
 
 	public void pointerDragged (int x, int y) {
 		if (coordsForOthers(x, y)) {
@@ -4155,7 +4159,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private void doubleTap(int x, int y) {
 		// if not double tapping a control, then the map area must be double tapped and we zoom in
 		if (tl.getElementIdAtPointer(touchX, touchY) < 0) {
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_DOUBLE)) {
+			if (doubleTapActive()) {
 				// if this is a double press on the map, cancel the timer checking for a single press
 				if (singleTapTimerTask != null) {
 					singleTapTimerTask.cancel();
