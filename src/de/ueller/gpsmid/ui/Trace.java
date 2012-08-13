@@ -3898,45 +3898,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (!pointerActionDone && !keyboardLocked) {
 			touchReleaseX = x;
 			touchReleaseY = y;
-			// check for a single tap in a timer started after the maximum double tap delay
-			// if the timer will not be cancelled by a double tap, the timer will execute the single tap command
-			//#if polish.android
-			if (doubleTapActive(touchX, touchY)) {
-				singleTapTimerTask = new TimerTask() {
-					public void run() {
-						if (!keyboardLocked) {
-							singleTap(touchReleaseX, touchReleaseY);
-						}
-					}
-				};
-			}
-			//#else
-			singleTapTimerTask = new TimerTask() {
-				public void run() {
-					if (!keyboardLocked) {
-						singleTap(touchReleaseX, touchReleaseY);
-					}
-				}
-			};
-			//#endif
-			try {
-				// set timer to check if this is a single tap
 
-				// FIXME activate these tests also for J2ME after testing
-
-				//#if polish.android
-				if (doubleTapActive(x, y)) {
-					GpsMid.getTimer().schedule(singleTapTimerTask, DOUBLETAP_MAXDELAY)
-;
-				} else {
-					singleTap(touchReleaseX, touchReleaseY);
-				}
-				//#else
-				GpsMid.getTimer().schedule(singleTapTimerTask, DOUBLETAP_MAXDELAY);
-				//#endif
-			} catch (Exception e) {
-				logger.error(Locale.get("trace.NoSingleTapTimerTask")/*No SingleTap TimerTask: */ + e.toString());
-			}
+			startDoubleTapTimer();
 		
 			if (pointerDragged) {
 				pointerDragged(x , y);
@@ -3945,6 +3908,48 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 	}
 	
+	private void startDoubleTapTimer() {
+		// check for a single tap in a timer started after the maximum double tap delay
+		// if the timer will not be cancelled by a double tap, the timer will execute the single tap command
+		//#if polish.android
+		if (doubleTapActive(touchX, touchY)) {
+			singleTapTimerTask = new TimerTask() {
+				public void run() {
+					if (!keyboardLocked) {
+						singleTap(touchReleaseX, touchReleaseY);
+					}
+				}
+			};
+		}
+		//#else
+		singleTapTimerTask = new TimerTask() {
+			public void run() {
+				if (!keyboardLocked) {
+					singleTap(touchReleaseX, touchReleaseY);
+				}
+			}
+		};
+		//#endif
+		try {
+			// set timer to check if this is a single tap
+
+			// FIXME activate these tests also for J2ME after testing
+
+			//#if polish.android
+			if (doubleTapActive(x, y)) {
+				GpsMid.getTimer().schedule(singleTapTimerTask, DOUBLETAP_MAXDELAY)
+					;
+			} else {
+				singleTap(touchReleaseX, touchReleaseY);
+			}
+			//#else
+			GpsMid.getTimer().schedule(singleTapTimerTask, DOUBLETAP_MAXDELAY);
+			//#endif
+		} catch (Exception e) {
+			logger.error(Locale.get("trace.NoSingleTapTimerTask")/*No SingleTap TimerTask: */ + e.toString());
+		}
+	}
+
 	//#if polish.android
 	public void mtPointerDragged (float newscale) {
 		scale = newscale;
