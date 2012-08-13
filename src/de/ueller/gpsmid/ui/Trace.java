@@ -353,8 +353,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	/** indicates whether we already are checking for a single tap in the TimerTask */
 	private static volatile boolean checkingForSingleTap = false;
 	
-	//private final int DOUBLETAP_MAXDELAY = 300; before 2012-08-08
+	//#if polish.android
 	private final int DOUBLETAP_MAXDELAY = 1000;
+	//#else
+	private final int DOUBLETAP_MAXDELAY = 300 // before 2012-08-08 also for android
+	//#endif
 	private final int LONGTAP_DELAY = 1000;
 	
 	/** Flag if a route is currently being calculated */
