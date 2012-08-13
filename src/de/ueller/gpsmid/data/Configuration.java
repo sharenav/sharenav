@@ -919,6 +919,7 @@ public class Configuration {
 			//#if polish.android
 			setCfgBitSavedState(CFGBIT_PREFER_OUTLINE_AREAS, true);
 			setCfgBitSavedState(CFGBIT_COMPASS_ALWAYS_ROTATE, true);
+			setCfgBitSavedState(CFGBIT_COMPASS_AUTOCALIBRATE, true);
 			//#endif
 			setCfgBitSavedState(CFGBIT_SHOW_MAP_CREDITS, true);
 		}
