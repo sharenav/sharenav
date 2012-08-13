@@ -3899,7 +3899,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			touchReleaseX = x;
 			touchReleaseY = y;
 
-			startDoubleTapTimer();
+			startDoubleTapTimer(x, y);
 		
 			if (pointerDragged) {
 				pointerDragged(x , y);
@@ -3908,7 +3908,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 	}
 	
-	private void startDoubleTapTimer() {
+	private void startDoubleTapTimer(int x, int y) {
 		// check for a single tap in a timer started after the maximum double tap delay
 		// if the timer will not be cancelled by a double tap, the timer will execute the single tap command
 		//#if polish.android
