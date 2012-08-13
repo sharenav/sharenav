@@ -354,7 +354,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private static volatile boolean checkingForSingleTap = false;
 	
 	//#if polish.android
-	private final int DOUBLETAP_MAXDELAY = 1000;
+	private final int DOUBLETAP_MAXDELAY = 600;
 	//#else
 	private final int DOUBLETAP_MAXDELAY = 300; // before 2012-08-08 also for android
 	//#endif
