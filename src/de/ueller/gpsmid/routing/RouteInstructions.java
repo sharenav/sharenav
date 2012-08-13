@@ -760,9 +760,6 @@ public class RouteInstructions {
 		if (
 			// never recalculate during route calculation			
 			(trace.routeCalc && !RouteLineProducer.isRunning())
-				||
-			// never recalculate when tiles are still requested as the route line might not be loaded yet		
-			(trace.getDataReader().getRequestQueueSize() > 0)
 		) {
 			return false;
 		}
@@ -796,6 +793,12 @@ public class RouteInstructions {
 		) {
 			// use red background color
 			routeInstructionColor=Legend.COLORS[Legend.COLOR_RI_OFF_ROUTE_FULL];
+
+			// do not recalculate when tiles are still requested as the route line might not be loaded yet		
+			if (trace.getDataReader().getRequestQueueSize() > 0) {
+				return false;
+			}
+
 			//#mdebug debug
 			logger.debug("=== Off Route ===");
 			logger.debug("recalc startDst: " + startDstToFirstArrowAfterCalculation);
