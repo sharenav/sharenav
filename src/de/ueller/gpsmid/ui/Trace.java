@@ -3963,8 +3963,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	//#endif
 
 	public boolean doubleTapActive(int x, int y) {
-		return Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_DOUBLE)
-			&& tl.pointerHasDoubleTapAction(x, y);
+		return (Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_DOUBLE)
+			&& !tl.isAnyActionIdAtPointer(x, y))
+			|| tl.pointerHasDoubleTapAction(x, y);
 	}
 
 	public void pointerDragged (int x, int y) {
