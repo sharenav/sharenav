@@ -353,7 +353,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	/** indicates whether we already are checking for a single tap in the TimerTask */
 	private static volatile boolean checkingForSingleTap = false;
 	
-	private final int DOUBLETAP_MAXDELAY = 300;
+	//private final int DOUBLETAP_MAXDELAY = 300; before 2012-08-08
+	private final int DOUBLETAP_MAXDELAY = 1000;
 	private final int LONGTAP_DELAY = 1000;
 	
 	/** Flag if a route is currently being calculated */
@@ -3879,6 +3880,16 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (tl.getTouchedElement() != null) {
 			tl.clearTouchedElement();
 			repaint();
+		}
+		if (pointerDraggedMuch && 
+		    Math.abs(x - Trace.touchX) <= DRAGGEDMUCH_THRESHOLD
+				&& 
+			Math.abs(y - Trace.touchY) <= DRAGGEDMUCH_THRESHOLD
+		) {
+			// reset draggedmuch if we come back to the original
+			// touch place (e.g. finger was moved momentarily away and
+			// back due to a bump on the road).
+			pointerDraggedMuch = false;
 		}
 		
 		if (!pointerActionDone && !keyboardLocked) {
