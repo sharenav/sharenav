@@ -184,17 +184,21 @@ public class RouteFileTile extends RouteBaseTile {
 	}
 	
 	public RouteNode getRouteNode(int id, RouteTileRet retTile){
+		RouteNode ret = null;
 		if (minId <= id && maxId >= id){
 			if (tile==null){
 				try {
 					loadTile();
 				} catch (IOException e) {
-					e.printStackTrace();
+					logger.silentexception("loadTile failed", e);
 					return null;
 				}
 			}
-			return tile.getRouteNode(id);
+			ret = tile.getRouteNode(id, retTile);
+			if (ret != null) {
+				this.permanent = true;
+			}
 		}
-		return null;
+		return ret;
 	}	
 }
