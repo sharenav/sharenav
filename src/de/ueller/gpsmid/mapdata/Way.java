@@ -1786,11 +1786,11 @@ public class Way extends Entity {
 					yPoints[i] = yPoints[i + 1]; 
 					xPoints[i + 1] = originalFinalRouteSegX;
 					yPoints[i + 1] = originalFinalRouteSegY;
+					wDraw = w;
 					if (routeIsForwardOnWay) {
 						hl[i] = PATHSEG_DO_NOT_HIGHLIGHT;
 					} else {
 						hl[i] = route.size() - 2;
-						wDraw = w;
 						if (wDraw < Configuration.getMinRouteLineWidth()) {
 							wDraw = Configuration.getMinRouteLineWidth();
 						}
