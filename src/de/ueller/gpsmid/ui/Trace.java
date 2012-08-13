@@ -356,7 +356,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	//#if polish.android
 	private final int DOUBLETAP_MAXDELAY = 1000;
 	//#else
-	private final int DOUBLETAP_MAXDELAY = 300 // before 2012-08-08 also for android
+	private final int DOUBLETAP_MAXDELAY = 300; // before 2012-08-08 also for android
 	//#endif
 	private final int LONGTAP_DELAY = 1000;
 	
