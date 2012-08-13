@@ -918,6 +918,7 @@ public class Configuration {
 		if (configVersionStored < 32) {
 			//#if polish.android
 			setCfgBitSavedState(CFGBIT_PREFER_OUTLINE_AREAS, true);
+			setCfgBitSavedState(CFGBIT_COMPASS_ALWAYS_ROTATE, true);
 			//#endif
 			setCfgBitSavedState(CFGBIT_SHOW_MAP_CREDITS, true);
 		}
