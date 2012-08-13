@@ -227,8 +227,10 @@ public class LayoutManager extends Vector {
 		return false;
 	}
 
-	
-	
+	public boolean pointerHasDoubleTapAction(int x, int y) {
+		return getActionIdDoubleAtPointer(x, y) > 0;
+	}
+
 	public int getActionIdShiftedAtPointer(int x, int y, int shift) {
 		int i = getElementIdAtPointer(x, y);
 		if (i != -1) {			

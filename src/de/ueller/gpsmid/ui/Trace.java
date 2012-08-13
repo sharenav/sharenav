@@ -3901,7 +3901,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			// check for a single tap in a timer started after the maximum double tap delay
 			// if the timer will not be cancelled by a double tap, the timer will execute the single tap command
 			//#if polish.android
-			if (doubleTapActive()) {
+			if (doubleTapActive(touchX, touchY)) {
 				singleTapTimerTask = new TimerTask() {
 					public void run() {
 						if (!keyboardLocked) {
@@ -3921,8 +3921,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			//#endif
 			try {
 				// set timer to check if this is a single tap
+
+				// FIXME activate these tests also for J2ME after testing
+
 				//#if polish.android
-				if (doubleTapActive()) {
+				if (doubleTapActive(x, y)) {
 					GpsMid.getTimer().schedule(singleTapTimerTask, DOUBLETAP_MAXDELAY)
 ;
 				} else {
@@ -3959,8 +3962,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 	//#endif
 
-	public boolean doubleTapActive() {
-		return Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_DOUBLE);
+	public boolean doubleTapActive(int x, int y) {
+		return Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_DOUBLE)
+			&& tl.pointerHasDoubleTapAction(x, y);
 	}
 
 	public void pointerDragged (int x, int y) {
@@ -4159,7 +4163,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private void doubleTap(int x, int y) {
 		// if not double tapping a control, then the map area must be double tapped and we zoom in
 		if (tl.getElementIdAtPointer(touchX, touchY) < 0) {
-			if (doubleTapActive()) {
+			if (doubleTapActive(touchX, touchY)) {
 				// if this is a double press on the map, cancel the timer checking for a single press
 				if (singleTapTimerTask != null) {
 					singleTapTimerTask.cancel();
