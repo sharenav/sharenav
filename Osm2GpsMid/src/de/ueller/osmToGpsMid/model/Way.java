@@ -1522,7 +1522,9 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 	public void saveOutline()
 	{
-		outlinePath = path;
+		if (Configuration.getConfiguration().outlineAreaFormat) {
+			outlinePath = path;
+		}
 	}
 	public void trimPath()
 	{
