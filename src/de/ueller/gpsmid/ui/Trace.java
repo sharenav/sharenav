@@ -2656,7 +2656,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			if ( true ) {
 				sbTemp.setLength(0);
 				e = tl.ele[TraceLayout.REQUESTED_TILES];
-				if (tileReader.getRequestQueueSize() != 0) {
+				if (tileReader != null && tileReader.getRequestQueueSize() != 0) {
 					// Display the number of not yet loaded tiles.
 					sbTemp.append("T ");
 					sbTemp.append( tileReader.getRequestQueueSize());
