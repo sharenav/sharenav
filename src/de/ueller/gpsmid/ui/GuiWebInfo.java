@@ -259,8 +259,8 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 			url = url.replaceAll(" ", "");
 			url = url.replaceAll("/", "");
 			url = url.replaceAll("-", "");
-			url = url.replaceAll("(", "");
-			url = url.replaceAll(")", "");
+			url = url.replaceAll("\\(", "");
+			url = url.replaceAll("\\)", "");
 			//#endif
 		}
 		//#if polish.android
