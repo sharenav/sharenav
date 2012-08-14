@@ -206,8 +206,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	protected static final int TOGGLE_UNUSEABLEWAYS_DARKER = 71;
 	protected static final int HELP_ONLINE_WIKI_ANDROID_CMD = 72;
 	protected static final int ROUTING_RECALC_CMD = 73;
+	protected static final int ROUTING_START_WITH_OPTIONAL_MODE_SELECT_CMD = 74;
 
-	private final Command [] CMDS = new Command[74];
+	private final Command [] CMDS = new Command[75];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -583,6 +584,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		CMDS[ROUTING_STOP_CMD] = new Command(Locale.get("trace.StopRouting")/*Stop routing*/,Command.ITEM, 100);
 		CMDS[ONLINE_INFO_CMD] = new Command(Locale.get("trace.OnlineInfo")/*Online info*/,Command.ITEM, 100);
 		CMDS[ROUTING_START_WITH_MODE_SELECT_CMD] = new Command(Locale.get("trace.CalculateRoute2")/*Calculate route...*/,Command.ITEM, 100);
+		CMDS[ROUTING_START_WITH_OPTIONAL_MODE_SELECT_CMD] = new Command(Locale.get("trace.CalculateRoute3")/*Calculate route...*/,Command.ITEM, 100);
 		CMDS[RETRIEVE_NODE] = new Command(Locale.get("trace.AddPOI")/*Add POI to OSM...*/,Command.ITEM, 100);
 		CMDS[ICON_MENU] = new Command(Locale.get("trace.Menu")/*Menu*/,Command.OK, 100);
 		CMDS[SETUP_CMD] = new Command(Locale.get("trace.Setup")/*Setup*/, Command.ITEM, 25);
@@ -1649,7 +1651,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						if (routeCalc || route != null) {
 							commandAction(ROUTING_STOP_CMD);
 						} else {
-							commandAction(ROUTING_START_WITH_MODE_SELECT_CMD);
+							commandAction(ROUTING_START_WITH_OPTIONAL_MODE_SELECT_CMD);
 						}
 						break;
 					}
@@ -1696,12 +1698,21 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				if (routeCalc || route != null) {
 					commandAction(ROUTING_STOP_CMD);
 				} else {
-					commandAction(ROUTING_START_WITH_MODE_SELECT_CMD);
+					commandAction(ROUTING_START_WITH_OPTIONAL_MODE_SELECT_CMD);
 				}
 				return;
 			}
 
 			if (c == CMDS[ROUTING_START_WITH_MODE_SELECT_CMD]) {
+				gpsRecenter = true;
+				gpsRecenterInvalid = true;
+				gpsRecenterStale = true;
+				GuiRoute guiRoute = new GuiRoute(this, false);
+				guiRoute.show();
+				return;
+			}
+
+			if (c == CMDS[ROUTING_START_WITH_OPTIONAL_MODE_SELECT_CMD]) {
 				gpsRecenter = true;
 				gpsRecenterInvalid = true;
 				gpsRecenterStale = true;
@@ -1719,11 +1730,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return;
 			}
 			if (c == CMDS[ROUTING_STOP_CMD]) {
-				stopRouting();
+				stopRouting(true);
 				return;
 			}
 			if (c == CMDS[ROUTING_RECALC_CMD]) {
-				stopRouting();
+				stopRouting(false);
 				startRouting();
 				return;
 			}
@@ -2135,15 +2146,19 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 	}
 
-	private void stopRouting() {
+	private void stopRouting(boolean showAlert) {
 				NoiseMaker.stopPlayer();
 				if (routeCalc) {
 					if (routeEngine != null) {
 						routeEngine.cancelRouting();
 					}
-					alert(Locale.get("trace.RouteCalculation")/*Route Calculation*/, Locale.get("trace.Cancelled")/*Cancelled*/, 1500);
+					if (showAlert) {
+						alert(Locale.get("trace.RouteCalculation")/*Route Calculation*/, Locale.get("trace.Cancelled")/*Cancelled*/, 1500);
+					}
 				} else {
-					alert(Locale.get("trace.Routing")/*Routing*/, Locale.get("generic.Off")/*Off*/, 750);
+					if (showAlert) {
+						alert(Locale.get("trace.Routing")/*Routing*/, Locale.get("generic.Off")/*Off*/, 750);
+					}
 				}
 				endRouting();
 				routingsMenu = null; // refresh routingsMenu

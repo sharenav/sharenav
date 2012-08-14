@@ -1368,3 +1368,4 @@ guidiscover.mapcredits=Show map credits
 guidiscover.nmeaerrors=Show unknown NMEA errors
 trace.ZoomedOutTooFarToCalculateRoute=Zoomed out too far to calculate route
 trace.ReCalculateRoute=Recalculate route
+trace.CalculateRoute3=Calculate route, ask for options if set
