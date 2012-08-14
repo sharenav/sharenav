@@ -461,6 +461,9 @@ public class KeySelectMenu extends Canvas implements
 		// #debug debug
 		logger.debug("PointerReleased: " + x + "," + y);
 		long currTime = System.currentTimeMillis();
+		if (fontSize == 0) {
+			return;
+		}
 		int clickIdx = (y - scrollOffset) / fontSize;
 		if (gsl != null) {
 		    gsl.clearTouchedElement();

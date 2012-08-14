@@ -1671,6 +1671,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 		pointerYPressed = y;
 
 		/** if clicking above or below the search results show a text field to enter the search string */
+		if (fontSize == 0) {
+			return;
+		}
 		int clickIdx = (y - renderDiff - scrollOffset)/fontSize;
 		if ( (state == STATE_MAIN || state == STATE_FAVORITES)
 			&& (clickIdx < 0 || clickIdx >= result.size() || ((clickIdx + 1) * fontSize + scrollOffset) > maxY)
@@ -1725,6 +1728,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	public void autoPointerRelease(int x, int y) {
+		int clickIdx = 0;
+		if (fontSize == 0) {
+			return;
+		}
 		int clickIdx = (y - renderDiff - scrollOffset)/fontSize;
 		long currTime = System.currentTimeMillis();
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)
