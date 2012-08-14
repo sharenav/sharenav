@@ -205,8 +205,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	protected static final int CMS_CMD = 70;
 	protected static final int TOGGLE_UNUSEABLEWAYS_DARKER = 71;
 	protected static final int HELP_ONLINE_WIKI_ANDROID_CMD = 72;
+	protected static final int ROUTING_RECALC_CMD = 73;
 
-	private final Command [] CMDS = new Command[73];
+	private final Command [] CMDS = new Command[74];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -578,6 +579,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		CMDS[PAN_DOWN2_CMD] = new Command(Locale.get("trace.down2")/*down 2*/,Command.ITEM, 100);
 		CMDS[TOGGLE_AUDIO_REC] = new Command(Locale.get("trace.AudioRecording")/*Audio recording*/,Command.ITEM, 100);
 		CMDS[ROUTING_START_CMD] = new Command(Locale.get("trace.CalculateRoute")/*Calculate route*/,Command.ITEM, 100);
+		CMDS[ROUTING_RECALC_CMD] = new Command(Locale.get("trace.ReCalculateRoute")/*Recalculate route*/,Command.ITEM, 100);
 		CMDS[ROUTING_STOP_CMD] = new Command(Locale.get("trace.StopRouting")/*Stop routing*/,Command.ITEM, 100);
 		CMDS[ONLINE_INFO_CMD] = new Command(Locale.get("trace.OnlineInfo")/*Online info*/,Command.ITEM, 100);
 		CMDS[ROUTING_START_WITH_MODE_SELECT_CMD] = new Command(Locale.get("trace.CalculateRoute2")/*Calculate route...*/,Command.ITEM, 100);
