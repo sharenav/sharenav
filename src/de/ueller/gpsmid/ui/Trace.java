@@ -679,7 +679,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				pinchZoomOrigAngle = angle(event);
 				pinchZoomScale = scale;
 				mtPointerId = event.getPointerId(1);
-				doubleTap(touchX, touchY);
+				if (tl.isAnyActionIdAtPointer(touchX, touchY)) {
+					doubleTap(touchX, touchY);
+				} else {
+					doubleTap(truncatedX, truncatedY);
+				}
 				pointerActionDone = true;
 				return true;
 			case MotionEvent.ACTION_POINTER_UP:
