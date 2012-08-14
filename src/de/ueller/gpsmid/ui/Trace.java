@@ -3858,7 +3858,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		};
 		try {
 			// set timer to continue check if this is a long tap
-			GpsMid.getTimer().schedule(longTapTimerTask, LONGTAP_DELAY);
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_LONG)) {
+				GpsMid.getTimer().schedule(longTapTimerTask, LONGTAP_DELAY);
+			}
 		} catch (Exception e) {
 			logger.error(Locale.get("trace.NoLongTapTimerTask")/*No LongTap TimerTask: */ + e.toString());
 		}
@@ -4245,7 +4247,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private void longTap() {
 		// if not tapping a control, then the map area must be tapped so we do the long tap action for the map area
 		if (tl.getElementIdAtPointer(touchX, touchY) < 0 && panProjection != null) {							
-			if (!pointerDraggedMuch && Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_LONG)) {
+			if (!pointerDraggedMuch) {
 				pointerActionDone = true;
 				//#debug debug
 				logger.debug("long tap map");										
