@@ -17,6 +17,7 @@ import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.ui.GpsMid;
 import de.ueller.gpsmid.util.StringEntry;
 
+import de.ueller.util.BufferedInputStream;
 import de.ueller.util.CancelMonitorInterface;
 import de.ueller.util.IntTree;
 import de.ueller.util.Logger;
@@ -99,7 +100,7 @@ public class Names implements Runnable {
 	}
 
 	private void readIndex() throws IOException {
-		InputStream is = Configuration.getMapResource("/names-idx.dat");
+		BufferedInputStream is = new BufferedInputStream(Configuration.getMapResource("/names-idx.dat"));
 //		logger.info("read names-idx");
 		DataInputStream ds = new DataInputStream(is);
 
@@ -162,7 +163,7 @@ public class Names implements Runnable {
 	private void readData(IntTree queue) throws IOException {
 		int idx = queue.popFirstKey();
 		int fid = 0;
-		InputStream is = null;
+		BufferedInputStream is = null;
 		int count = 0;
 		int actIdx = 0;
 
@@ -172,7 +173,7 @@ public class Names implements Runnable {
 			/* Lookup in which names file the entry is contained */
 			for (int i = fid; i < startIndexes.length; i++) {
 				if (startIndexes[i] > idx) {
-					is = Configuration.getMapResource("/names-" + fid + ".dat");
+					is = new BufferedInputStream(Configuration.getMapResource("/names-" + fid + ".dat"));
 					count = startIndexes[i] - startIndexes[fid];
 					actIdx = startIndexes[fid];
 					break;
@@ -289,7 +290,7 @@ public class Names implements Runnable {
 						return hits;
 					}
 				}
-				InputStream is = Configuration.getMapResource("/names-" + fid + ".dat");
+				BufferedInputStream is = new BufferedInputStream(Configuration.getMapResource("/names-" + fid + ".dat"));
 				count = startIndexes[fid + 1] - startIndexes[fid];				
 				if (is == null) {
 					break;
