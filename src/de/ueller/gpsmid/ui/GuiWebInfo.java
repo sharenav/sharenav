@@ -257,6 +257,11 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 			url = url.replaceAll(" ", "");
 			//#endif
 		}
+		//#if polish.android
+		String urls[] = url.split(";");
+		// FIXME enable for J2ME also, present each url or phone number in menu
+		url = urls[0];
+		//#endif
 		return url;
 	}
 
