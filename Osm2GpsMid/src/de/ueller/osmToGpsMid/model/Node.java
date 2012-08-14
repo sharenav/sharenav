@@ -52,9 +52,6 @@ public class Node extends Entity {
 	public static final int CLC_FLAG_TRAFFICSIGNALS = 64;
 	public static final int CLC_FLAG_TRAFFICSIGNALS_ROUTENODE = 32;
 
-	private final static String urlTags[] = { "website", "contact:website", "website:mobile", "contact:webcam" };
-	private final static String phoneTags[] = { "contact:phone" };
-
 	public Node() {
 	}
 	
@@ -147,48 +144,6 @@ public class Node extends Entity {
 		return null;
 	}
 	
-	@Override
-	public String getUrl() {
-		// FIXME add website, contact:website, webcam etc. support via style
-		// file, tag urls together with ";"
-		// later also create a way to pass style-file-defined URL types
-		// to GPsMid
-		String url = getAttribute("url");
-		for (String urlTag : urlTags) {
-			url = addWithSemicolon(url, getAttribute(urlTag));
-		}
-		if (url != null) {
-			return url;
-		}
-		return null;
-	}
-
-	@Override
-	public String getPhone() {
-		// FIXME add website, contact:website, webcam etc. support via style
-		// file, tag urls together with ";"
-		// later also create a way to pass style-file-defined URL types
-		// to GPsMid
-		String phone = getAttribute("phone");
-		for (String phoneTag : phoneTags) {
-			phone = addWithSemicolon(phone, getAttribute(phoneTag));
-		}
-		if (phone != null) {
-			return phone;
-		}
-		return null;
-	}
-
-	public String addWithSemicolon(String orig, String toadd) {
-		if (orig == null || "".equals(orig)) {
-			return toadd;
-		} else if (toadd != null && !"".equals(toadd)) {
-			return orig + ";" + toadd;
-		} else { // new == null
-			return orig;
-		}
-	}
-
 	public String getPlace() {
 		String place = (getAttribute("place"));
 //		System.out.println("Read place for id=" + id + " as=" + place);

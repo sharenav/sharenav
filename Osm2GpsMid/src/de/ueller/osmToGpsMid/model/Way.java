@@ -431,34 +431,6 @@ public class Way extends Entity implements Comparable<Way> {
 		return null;
 	}
 
-	@Override
-	public String getUrl() {
-		if (type > -1) {
-			WayDescription desc = Configuration.getConfiguration().getWayDesc(type);
-			if (desc != null) {
-				if (containsKey("url")){
-					String url = getAttribute("url");
-					return url!=null ? url.trim() : "";
-				}
-			}
-		}
-		return null;
-	}
-	
-	@Override
-	public String getPhone() {
-		if (type > -1) {
-			WayDescription desc = Configuration.getConfiguration().getWayDesc(type);
-			if (desc != null) {
-				if (containsKey("phone")){
-					String phone = getAttribute("phone");
-					return phone!=null ? phone.trim() : ""; // prepend "tel:" ?
-				}
-			}
-		}
-		return null;
-	}
-	
 	public byte getZoomlevel(Configuration c) {
 		Bounds b = null;
 		byte tileLevelFromDiameter = 0;
