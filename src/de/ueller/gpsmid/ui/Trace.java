@@ -225,12 +225,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private PowerManager pm = null;
 	//#endif
 
-	//#if polish.android
 	// FIXME should be set based on something like pixels per inch value
 	private final static int DRAGGEDMUCH_THRESHOLD = 24;
-	//#else
-	private final static int DRAGGEDMUCH_THRESHOLD = 8;
-	//#endif
 
 //	private SirfInput si;
 	private volatile LocationMsgProducer locationProducer;
@@ -3897,10 +3893,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 			startDoubleTapTimer(x, y);
 		
+			//#if not polish.android
 			if (pointerDragged) {
 				pointerDragged(x , y);
 				return;
 			}
+			//#endif
 		}
 	}
 	
@@ -3908,7 +3906,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		// check for a single tap in a timer started after the maximum double tap delay
 		// if the timer will not be cancelled by a double tap, the timer will execute the single tap command
 		//#if polish.android
-		if (doubleTapActive(touchX, touchY)) {
+		if (doubleTapActive(x, y)) {
 			singleTapTimerTask = new TimerTask() {
 				public void run() {
 					if (!keyboardLocked) {
@@ -3933,8 +3931,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 			//#if polish.android
 			if (doubleTapActive(x, y)) {
-				GpsMid.getTimer().schedule(singleTapTimerTask, DOUBLETAP_MAXDELAY)
-					;
+				GpsMid.getTimer().schedule(singleTapTimerTask, DOUBLETAP_MAXDELAY);
 			} else {
 				singleTap(touchReleaseX, touchReleaseY);
 			}
@@ -3999,6 +3996,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			pointerDraggedMuch = true;
 			// avoid double tap triggering on fast consecutive drag actions starting at almost the same position
 			pressedPointerTime = 0; 
+			// zero long press timer which will fire otherwise with setting
+			// pressedPointerTime to 0; we don't want a pointer dragged much
+			// to be interpreted as a long tap
+			if (longTapTimerTask != null) {
+				longTapTimerTask.cancel();
+			}
 		}
 		
 		if (pointerDown && pointerDraggedMuch) {
