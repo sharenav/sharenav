@@ -15,6 +15,7 @@ import de.ueller.gpsmid.ui.GpsMid;
 import de.ueller.gpsmid.ui.GuiGpx;
 import de.ueller.util.Logger;
 
+import de.enough.polish.util.Locale;
 
 /** Alert to display the progress of an operation. */
 public class ProgressDisplay implements CommandListener {
@@ -35,13 +36,16 @@ public class ProgressDisplay implements CommandListener {
 	 * @param title The title of the alert
 	 */
 	public void showProgressDisplay(String title) {
+		// FIXME add proper Android code
 		if (progressDisplay == null) {
 			progressDisplay = new Alert(title);
 			progressDisplay.setCommandListener(this);
 			progressDisplay.setTimeout(Alert.FOREVER);
 			// Creates a progress bar - not used in this case but it should be 
 			// created when the alert is first created so it's present later.
+			//#if not polish.android
 			progressbar = new Gauge(null, false, Gauge.INDEFINITE, Gauge.CONTINUOUS_RUNNING);
+			//#endif
 		} else {
 			progressDisplay.setTitle(title);
 			progressDisplay.setIndicator(null);
@@ -50,7 +54,11 @@ public class ProgressDisplay implements CommandListener {
 		sbProgress = new StringBuffer();
 		// At least on Sony Ericsson phones, the alert won't be shown
 		// until it contains some text, so let's put in something. 
+		//#if polish.android
+		progressDisplay.setString(Locale.get("generic.OK"));
+		//#else
 		progressDisplay.setString(" ");		
+		//#endif
 		try {
 			GpsMid.getInstance().show(progressDisplay);
 			progressCloseable = false;
@@ -91,17 +99,23 @@ public class ProgressDisplay implements CommandListener {
 			progressDisplay.setTimeout(Alert.FOREVER);
 			// Create a progress bar that gives an indication about how much has 
 			// already been exported.
+			//#if not polish.android
 			progressbar = new Gauge(null, false, progEndValue, progrMode);
+			//#endif
 		} else {
 			progressDisplay.setTitle(title);
+			//#if not polish.android
 			progressbar.setMaxValue(progEndValue);
 			progressbar.setValue(progrMode);
+			//#endif
 		}
 		try {
 			/* MicroEmulator throws an exception:
 			 *  java.lang.IllegalArgumentException: This gauge cannot be added to an Alert
 			 */ 
+			//#if not polish.android
 			progressDisplay.setIndicator(progressbar);			
+			//#endif
 		} catch (Exception e) {
 			logger.info("Could not set progressbar, " + e.getMessage());
 		}
@@ -109,7 +123,11 @@ public class ProgressDisplay implements CommandListener {
 		sbProgress = new StringBuffer();
 		// At least on Sony Ericsson phones, the alert won't be shown
 		// until it contains some text, so let's put in something. 
+		//#if polish.android
+		progressDisplay.setString(Locale.get("generic.OK"));
+		//#else
 		progressDisplay.setString(" ");		
+		//#endif
 		try {
 			GpsMid.getInstance().show(progressDisplay);
 			progressCloseable = false;
