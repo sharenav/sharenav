@@ -2583,10 +2583,6 @@ public class Configuration {
 	
 	public static int getTouchMarkerDiameter() {
 		// FIXME switch this based on pixels-per-inch value and/or make user-configurable
-		//#if polish.android
 		return 80;
-		//#else
-		return 40;
-		//#endif
 	}
 }
