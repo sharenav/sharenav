@@ -1728,7 +1728,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	public void autoPointerRelease(int x, int y) {
-		int clickIdx = 0;
 		if (fontSize == 0) {
 			return;
 		}
