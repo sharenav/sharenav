@@ -679,7 +679,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				pinchZoomOrigAngle = angle(event);
 				pinchZoomScale = scale;
 				mtPointerId = event.getPointerId(1);
-				if (tl.isAnyActionIdAtPointer(touchX, touchY)) {
+				if (tl.pointerHasDoubleTapAction(touchX, touchY)) {
 					doubleTap(touchX, touchY);
 				} else {
 					doubleTap(truncatedX, truncatedY);
