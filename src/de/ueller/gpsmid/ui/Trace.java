@@ -1723,8 +1723,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return;
 			}
 			if (c == CMDS[ROUTING_RECALC_CMD]) {
-				startRouting();
 				stopRouting();
+				startRouting();
 				return;
 			}
 			if (c == CMDS[ZOOM_IN_CMD]) {
