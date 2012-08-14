@@ -252,9 +252,15 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 			} else if ((actualWay != null) && ((phone = trace.getUrl(actualWay.phoneIdx)) != null)) {
 				url = "tel:" + phone;
 			}
-			// remove spaces
+			// remove spaces and other special chars
+			// FIXME check if better to just remove anything non-numeric
+			// what, doesn't Android recognize SIP phone strings?
 			//#if polish.android
 			url = url.replaceAll(" ", "");
+			url = url.replaceAll("/", "");
+			url = url.replaceAll("-", "");
+			url = url.replaceAll("(", "");
+			url = url.replaceAll(")", "");
 			//#endif
 		}
 		//#if polish.android
