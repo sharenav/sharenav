@@ -1367,3 +1367,4 @@ trace.mapcreditFiDigiroadURL=http://www.digiroad.fi
 guidiscover.mapcredits=Show map credits
 guidiscover.nmeaerrors=Show unknown NMEA errors
 trace.ZoomedOutTooFarToCalculateRoute=Zoomed out too far to calculate route
+trace.ReCalculateRoute=Recalculate route
