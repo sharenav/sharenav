@@ -4133,14 +4133,29 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				// System.out.println("Checking for clickable markers");
 				boolean markerClicked = false;
 				ClickableCoords coords = getClickableMarker(x, y);
-				if (coords != null && internetAccessAllowed()) {
-					markerClicked = true;
-					if (coords.url != null) {
-						GuiWebInfo.openUrl(coords.url);
-						return;
+				if (coords != null) {
+					if (internetAccessAllowed()) {
+						markerClicked = true;
+						if (coords.url != null) {
+							GuiWebInfo.openUrl(coords.url);
+							return;
+						} else {
+							longTap(true);
+						}
 					} else {
-						longTap(true);
+						String text = "";
+						if (coords.url != null) {
+							text += coords.url;
+						}
+						if (coords.phone != null) {
+							if (text.length() != 0) {
+								text += " / ";
+							}
+							text += coords.phone;
+						}
+						alert("Contact", text, 5000);
 					}
+						
 				}
 				if (!markerClicked && !tl.bigOnScreenButtons) {
 					tl.setOnScreenButtonSize(true);
