@@ -93,7 +93,7 @@
         <entry key="signApk" value="false"/>
         <entry key="signApkPassword" value=""/>
         <entry key="drawSeaOutlines" value="false"/>
-        <entry key="dontCompress" value="wav,amr,png"/>
+        <entry key="dontCompress" value="wav,amr,png,mp3"/>
    		<entry key="cellSource" value=""/>
    		<entry key="midlet.name" value="GpsMid"/>
    		<entry key="map.name" value=""/>
