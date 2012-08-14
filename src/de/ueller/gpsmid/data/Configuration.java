@@ -920,6 +920,7 @@ public class Configuration {
 			setCfgBitSavedState(CFGBIT_PREFER_OUTLINE_AREAS, true);
 			setCfgBitSavedState(CFGBIT_COMPASS_ALWAYS_ROTATE, true);
 			setCfgBitSavedState(CFGBIT_MAPTAP_DOUBLE, false);
+			setCfgBitSavedState(CFGBIT_CLICKABLE_MAPOBJECTS, true);
 			//#endif
 			setCfgBitSavedState(CFGBIT_SHOW_MAP_CREDITS, true);
 		}
