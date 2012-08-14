@@ -72,7 +72,8 @@ GpsMid 0.8
       Favorites which don't fit in the first icon menu screen can be gotten to by
       vertical scroll (drag or cursor down) of the icon menu.
     - Clickable markers for POIs: URLs and phone numbers on map are now optionally touchable links which open the URL in a web browser,
-      and with a long tap open a context menu (Here&Online). On keyboard-only phones, the same is achieved by positioning
+      and with a long tap (or with a single tap if there's no URL) open a context menu
+      (Here&Online). On keyboard-only phones, the same is achieved by positioning
       the cursor marker inside a marker area and choosing Here&Online.
       The default style doesn't have any POIs defined as clickable, see the wiki documentation
       on how to modify the style file to add clickability to POI types.

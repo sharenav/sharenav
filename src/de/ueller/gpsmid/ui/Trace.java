@@ -4100,6 +4100,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					if (coords.url != null) {
 						GuiWebInfo.openUrl(coords.url);
 						return;
+					} else {
+						longTap();
 					}
 				}
 				if (!markerClicked && !tl.bigOnScreenButtons) {
