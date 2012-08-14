@@ -1715,49 +1715,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			
 			if (c == CMDS[ROUTING_START_CMD]) {
-				if (isZoomedOutTooFarForRouteCalculation()) {
-					return;
-				}
-				
-				if (!routeCalc || RouteLineProducer.isRunning()) { // if not in route calc or already producing the route line
-					// if the route line is currently being produced stop it  
-					if (RouteLineProducer.isRunning()) {
-						RouteInstructions.abortRouteLineProduction();						
-					}
-					routeCalc = true;
-					if (Configuration.getContinueMapWhileRouteing() != Configuration.continueMap_Always ) {
-	  				   stopImageCollector();
-					}
-					RouteInstructions.resetOffRoute(route, center);
-					// center of the map is the route source
-					RoutePositionMark routeSource = new RoutePositionMark(center.radlat, center.radlon);
-					logger.info("Routing source: " + routeSource);
-					routeEngine = new Routing(this);
-					routeEngine.solve(routeSource, dest);
-//					resume();
-				}
-				routingsMenu = null; // refresh routingsMenu
+				startRouting();
 				return;
 			}
 			if (c == CMDS[ROUTING_STOP_CMD]) {
-				NoiseMaker.stopPlayer();
-				if (routeCalc) {
-					if (routeEngine != null) {
-						routeEngine.cancelRouting();
-					}
-					alert(Locale.get("trace.RouteCalculation")/*Route Calculation*/, Locale.get("trace.Cancelled")/*Cancelled*/, 1500);
-				} else {
-					alert(Locale.get("trace.Routing")/*Routing*/, Locale.get("generic.Off")/*Off*/, 750);
-				}
-				endRouting();
-				routingsMenu = null; // refresh routingsMenu
-				// redraw immediately
-				synchronized (this) {
-					if (imageCollector != null) {
-						imageCollector.newDataReady();
-					}
-				}
-				routingsMenu = null; // refresh routingsMenu
+				stopRouting();
 				return;
 			}
 			if (c == CMDS[ZOOM_IN_CMD]) {
@@ -2139,6 +2101,56 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	}
 	
+	private void startRouting() {
+		try {
+			if (isZoomedOutTooFarForRouteCalculation()) {
+				return;
+			}
+				
+			if (!routeCalc || RouteLineProducer.isRunning()) { // if not in route calc or already producing the route line
+				// if the route line is currently being produced stop it  
+				if (RouteLineProducer.isRunning()) {
+					RouteInstructions.abortRouteLineProduction();						
+				}
+				routeCalc = true;
+				if (Configuration.getContinueMapWhileRouteing() != Configuration.continueMap_Always ) {
+					stopImageCollector();
+				}
+				RouteInstructions.resetOffRoute(route, center);
+				// center of the map is the route source
+				RoutePositionMark routeSource = new RoutePositionMark(center.radlat, center.radlon);
+				logger.info("Routing source: " + routeSource);
+				routeEngine = new Routing(this);
+				routeEngine.solve(routeSource, dest);
+//					resume();
+			}
+			routingsMenu = null; // refresh routingsMenu
+		} catch (Exception e) {
+ 			logger.exception(Locale.get("trace.InTraceCommandAction")/*In Trace.commandAction*/, e);
+		}
+	}
+
+	private void stopRouting() {
+				NoiseMaker.stopPlayer();
+				if (routeCalc) {
+					if (routeEngine != null) {
+						routeEngine.cancelRouting();
+					}
+					alert(Locale.get("trace.RouteCalculation")/*Route Calculation*/, Locale.get("trace.Cancelled")/*Cancelled*/, 1500);
+				} else {
+					alert(Locale.get("trace.Routing")/*Routing*/, Locale.get("generic.Off")/*Off*/, 750);
+				}
+				endRouting();
+				routingsMenu = null; // refresh routingsMenu
+				// redraw immediately
+				synchronized (this) {
+					if (imageCollector != null) {
+						imageCollector.newDataReady();
+					}
+				}
+				routingsMenu = null; // refresh routingsMenu
+	}
+
 	private void startImageCollector() throws Exception {
 		//#debug info
 		logger.info("Starting ImageCollector");
