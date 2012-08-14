@@ -1722,6 +1722,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				stopRouting();
 				return;
 			}
+			if (c == CMDS[ROUTING_RECALC_CMD]) {
+				startRouting();
+				stopRouting();
+				return;
+			}
 			if (c == CMDS[ZOOM_IN_CMD]) {
 				scale = scale / 1.5f;
 				autoZoomed = false;

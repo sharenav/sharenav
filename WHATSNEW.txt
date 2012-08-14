@@ -123,6 +123,7 @@ GpsMid 0.8
     - New option in Setup/Debug to show route calculation traces in map,
       connections requested from mainstreet net are drawn wider
     - area crossing lines are drawn wider
+    - double tap or two-finger tap on distance field will trigger a route recalculation
     *** Search ***
     - The POI search distance is now configurable; default is 10 km. A high limit
       does not work in all areas, depending on number of map objects (tile size?).
