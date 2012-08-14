@@ -3870,7 +3870,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				// and the pointer did not move or if it was pressed on a control and not moved much
 				if (!pointerActionDone) {
 					if (System.currentTimeMillis() - pressedPointerTime >= LONGTAP_DELAY){
-						longTap();
+						longTap(false);
 					}
 				}
 			}
@@ -4139,7 +4139,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						GuiWebInfo.openUrl(coords.url);
 						return;
 					} else {
-						longTap();
+						longTap(true);
 					}
 				}
 				if (!markerClicked && !tl.bigOnScreenButtons) {
@@ -4261,10 +4261,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		return null;
 	}
 
-	private void longTap() {
+	private void longTap(boolean force) {
 		// if not tapping a control, then the map area must be tapped so we do the long tap action for the map area
 		if (tl.getElementIdAtPointer(touchX, touchY) < 0 && panProjection != null) {							
-			if (!pointerDraggedMuch && Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_LONG)) {
+			if (!pointerDraggedMuch && (Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_LONG) || force)) {
 				pointerActionDone = true;
 				//#debug debug
 				logger.debug("long tap map");										
