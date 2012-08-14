@@ -921,6 +921,7 @@ public class Configuration {
 			setCfgBitSavedState(CFGBIT_COMPASS_ALWAYS_ROTATE, true);
 			setCfgBitSavedState(CFGBIT_MAPTAP_DOUBLE, false);
 			setCfgBitSavedState(CFGBIT_CLICKABLE_MAPOBJECTS, true);
+			setCfgBitSavedState(CFGBIT_SHOW_ACCURACY, true);
 			//#endif
 			setCfgBitSavedState(CFGBIT_SHOW_MAP_CREDITS, true);
 		}
