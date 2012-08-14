@@ -1041,8 +1041,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				title = Locale.get("guidiscover.MapZipFileOrDirectory")/*Map ZipFile or Directory*/;
 				// get initialDir from form
 				String url = mapSrc.getString(1);
-				// skip "Filesystem: "
-				url = url.substring(url.indexOf(":") + 2);
+				// skip "Filesystem: " or equivalent
+				url = url.substring(Locale.get("guidiscover.Filesystem").length());
 				initialDir = url;
 				break;
 			case STATE_GPX:
@@ -1343,8 +1343,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		Configuration.setBuiltinMap((mapSrc.getSelectedIndex() == 0));
 		// extract map url from form and save it to Configuration
 		String url = mapSrc.getString(1);
-		// skip "Filesystem: "
-		url = url.substring(url.indexOf(":") + 2);
+		// skip "Filesystem: " or translation
+		url = url.substring(Locale.get("guidiscover.Filesystem").length());
 		// no valid url, i.e. "Please select..."
 		if (url.indexOf(":") == -1) {
 			url = null;
