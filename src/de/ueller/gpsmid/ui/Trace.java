@@ -4154,12 +4154,20 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				if (coords != null) {
 					if (internetAccessAllowed()) {
 						markerClicked = true;
-						if (coords.url != null) {
-							GuiWebInfo.openUrl(coords.url);
-							return;
-						} else {
-							longTap(true);
-						}
+						// TODO maybe later add an
+						// option or options to have 
+						// marker click directly either
+						// * open the URL
+						// * edit node in OSM
+						// * save a waypoint
+						// * log the place to a webservice
+						// * something else
+						// if (coords.url != null) {
+						//	GuiWebInfo.openUrl(coords.url);
+						//	return;
+						//} else {
+						longTap(true);
+						//}
 					} else {
 						String text = "";
 						if (coords.url != null) {
