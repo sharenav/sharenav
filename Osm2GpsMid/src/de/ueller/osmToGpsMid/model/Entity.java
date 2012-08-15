@@ -11,8 +11,8 @@ public class Entity extends SmallArrayMap<String,String> {
 
 	private static Configuration config = null;
 
-	private final static String urlTags[] = { "website", "contact:website", "website:mobile", "contact:webcam" };
-	private final static String phoneTags[] = { "contact:phone" };
+	public final static String urlTags[] = { "url", "website", "contact:website", "website:mobile", "contact:webcam" };
+	public final static String phoneTags[] = { "phone", "contact:phone" };
 
 	/**
 	 * the OSM id of this node
@@ -62,12 +62,12 @@ public class Entity extends SmallArrayMap<String,String> {
 		// file, tag urls together with ";"
 		// later also create a way to pass style-file-defined URL types
 		// to GPsMid
-		String url = getAttribute("url");
+		String url = null;
 		for (String urlTag : urlTags) {
 			url = addWithSemicolon(url, getAttribute(urlTag));
 		}
 		if (url != null) {
-			System.out.println("Node url: " + url);
+			//System.out.println("Entity url: " + url);
 			return url;
 		}
 		return null;
@@ -78,12 +78,12 @@ public class Entity extends SmallArrayMap<String,String> {
 		// file, tag urls together with ";"
 		// later also create a way to pass style-file-defined URL types
 		// to GPsMid
-		String phone = getAttribute("phone");
+		String phone = null;
 		for (String phoneTag : phoneTags) {
 			phone = addWithSemicolon(phone, getAttribute(phoneTag));
 		}
 		if (phone != null) {
-			System.out.println("Node phone: " + phone);
+			//System.out.println("Entity phone: " + phone);
 			return phone;
 		}
 		return null;
