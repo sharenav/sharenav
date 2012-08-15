@@ -163,7 +163,7 @@ public class ImageCache {
 		// file system image
 		try {
 			img = Image.createImage(fileName);
-			System.out.println("Caching " + id.toString());				
+			// System.out.println("Caching " + id.toString());				
 		} catch (IOException ioe) {
 			logger.error("Cannot load " + fileName);
 			return null;
@@ -180,7 +180,7 @@ public class ImageCache {
 	 */
 	public static Image cacheImage(Image img, ImgId id) {
 		if (img != null) {
-			System.out.println("Caching " + id.toString());				
+			// System.out.println("Caching " + id.toString());				
 			imageCache.put(id, new CacheEntry(img));
 		}
 		return img;
@@ -245,7 +245,7 @@ public class ImageCache {
 			CacheEntry cachedImage = (CacheEntry) imageCache.get(id);
 			if (Math.abs(now - cachedImage.lastUsedTime) > minUnusedMillis) {
 				remove.addElement(id);
-				System.out.println("Uncaching " + id.toString());
+				// System.out.println("Uncaching " + id.toString());
 			}
 	    }
 		
