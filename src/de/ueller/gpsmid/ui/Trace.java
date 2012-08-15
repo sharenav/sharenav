@@ -3286,6 +3286,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 
 	/**
+	 *
+	 * Show marker texts, if marker under cursor
+	 */
+	public void showMarker(Graphics g) {
+	}
+
+	/**
 	 * Draws the position square, the movement line and the center cross.
 	 * 
 	 * @param g Graphics context for drawing
