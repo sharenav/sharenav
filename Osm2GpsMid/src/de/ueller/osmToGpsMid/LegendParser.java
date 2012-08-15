@@ -38,6 +38,7 @@ import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.model.ConditionTuple;
 import de.ueller.osmToGpsMid.model.Connection;
 import de.ueller.osmToGpsMid.model.Damage;
+import de.ueller.osmToGpsMid.model.Entity;
 import de.ueller.osmToGpsMid.model.EntityDescription;
 import de.ueller.osmToGpsMid.model.POIdescription;
 import de.ueller.osmToGpsMid.model.RouteAccessRestriction;
@@ -311,11 +312,20 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 		relevantKeys.add("restriction");
 		relevantKeys.add("bridge");
 		relevantKeys.add("tunnel");
-		relevantKeys.add("phone");
-		relevantKeys.add("url");
 		relevantKeys.add("place");
 		relevantKeys.add("area");
 		relevantKeys.add("layer");
+		if (config.useUrlTags) {
+			for (String urlTag : Entity.urlTags) {
+				relevantKeys.add(urlTag);
+			}
+		}
+		if (config.usePhoneTags) {
+			for (String phoneTag : Entity.phoneTags) {
+				relevantKeys.add(phoneTag);
+			}
+		}
+		relevantKeys.add("phone");
 		// FIXME: switch this on a flag, if true, index all
 		// nodes with addr:housenumber, regardless of whether there's a housenumberindex element
 		if (config.useHouseNumbers) {
