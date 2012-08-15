@@ -1587,40 +1587,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return;
 			}
 			if (c == CMDS[ONLINE_INFO_CMD] && internetAccessAllowed()) {
-				// if we clicked a clickable marker, get coords from the marker instead of tap
-				int x = centerP.x;
-				int y = centerP.y;
-				int xOverScan = 0;
-				int yOverScan = 0;
-				if (imageCollector != null) {
-					xOverScan = imageCollector.xScreenOverscan;
-					yOverScan = imageCollector.yScreenOverscan;
-					panProjection=imageCollector.getCurrentProjection();
-				} else {
-					panProjection = null;
-				}
-
-				ClickableCoords coords = getClickableMarker(x - xOverScan, y - yOverScan);
-				if (coords != null) {
-					x = coords.x;
-					y = coords.y;
-				}
-				// long tap map to open a place-related menu
-				// use the place of touch instead of old center as position,
-				centerNode=panProjection.inverse(x,
-								   y, centerNode);
-				Position oPos = new Position(centerNode.radlat, centerNode.radlon,
-							     0.0f, 0.0f, 0.0f, 0, 0);
-				GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, true, coords != null ? coords.url : null,
-								 coords != null ? coords.phone : null,
-								 coords != null ? coords.nodeID : -1);
-				gWeb.show();
-				//#if 0
-					alert(Locale.get("trace.NoOnlineCapa")/*No online capabilites*/,
-					      Locale.get("trace.SetAppGeneric")/*Set app=GpsMid-Generic-editing and enableEditing=true in*/ +
-					      Locale.get("trace.PropertiesFile")/*.properties file and recreate GpsMid with Osm2GpsMid.*/,
-							Alert.FOREVER);
-				//#endif
+				contextMenu();
 			}
 			if (c == CMDS[BACK_CMD]) {
 				show();
@@ -2148,6 +2115,43 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		} catch (Exception e) {
  			logger.exception(Locale.get("trace.InTraceCommandAction")/*In Trace.commandAction*/, e);
 		}
+	}
+
+	private void contextMenu() {
+		// if we clicked a clickable marker, get coords from the marker instead of tap
+		int x = centerP.x;
+		int y = centerP.y;
+		int xOverScan = 0;
+		int yOverScan = 0;
+		if (imageCollector != null) {
+			xOverScan = imageCollector.xScreenOverscan;
+			yOverScan = imageCollector.yScreenOverscan;
+			panProjection=imageCollector.getCurrentProjection();
+		} else {
+			panProjection = null;
+		}
+
+		ClickableCoords coords = getClickableMarker(x - xOverScan, y - yOverScan);
+		if (coords != null) {
+			x = coords.x;
+			y = coords.y;
+		}
+		// long tap map to open a place-related menu
+		// use the place of touch instead of old center as position,
+		centerNode=panProjection.inverse(x,
+						 y, centerNode);
+		Position oPos = new Position(centerNode.radlat, centerNode.radlon,
+					     0.0f, 0.0f, 0.0f, 0, 0);
+		GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, true, coords != null ? coords.url : null,
+						 coords != null ? coords.phone : null,
+						 coords != null ? coords.nodeID : -1);
+		gWeb.show();
+		//#if 0
+		alert(Locale.get("trace.NoOnlineCapa")/*No online capabilites*/,
+		      Locale.get("trace.SetAppGeneric")/*Set app=GpsMid-Generic-editing and enableEditing=true in*/ +
+		      Locale.get("trace.PropertiesFile")/*.properties file and recreate GpsMid with Osm2GpsMid.*/,
+		      Alert.FOREVER);
+		//#endif
 	}
 
 	private void stopRouting(boolean showAlert) {
@@ -4304,7 +4308,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	private void longTap(boolean force) {
 		// if not tapping a control, then the map area must be tapped so we do the long tap action for the map area
-		if (tl.getElementIdAtPointer(touchX, touchY) < 0 && panProjection != null) {							
+		if (tl.getElementIdAtPointer(touchX, touchY) < 0 && panProjection != null) {
 			if (!pointerDraggedMuch && (Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_LONG) || force || getClickableMarker(touchX, touchY) != null)) {
 				pointerActionDone = true;
 				//#debug debug
