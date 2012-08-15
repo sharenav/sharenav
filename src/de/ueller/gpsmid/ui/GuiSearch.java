@@ -1701,11 +1701,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 					tapAutoReleaseTimerTask = null;
 					// if no action (e.g. from double tap) is already done
 					// and the pointer did not move or if it was pressed on a control and not moved much
-					//#if polish.android
-					// on Android, have long tap trigger the function from
-					// the other screen of virtual kb
-					cursorKeypad = !cursorKeypad;
-					//#endif
 					if (!pointerDraggedMuch) {
 						if (System.currentTimeMillis() - pressedPointerTime >= TAP_AUTORELEASE_DELAY){
 							/* automatically release the pointer as a workaround for S60V5 devices
@@ -1743,6 +1738,13 @@ public class GuiSearch extends Canvas implements CommandListener,
 				) {
 				//gsl.setTouchedElement((LayoutElement) gsl.elementAt(touchedElementId));
 				//doRepaint();
+				//#if polish.android
+				// on Android, have long tap trigger the function from
+				// the other screen of virtual kb
+				if (!pointerActionDone) {
+					cursorKeypad = !cursorKeypad;
+				}
+				//#endif
 				if (touchedElementId == GuiSearchLayout.KEY_1) {
 					if (cursorKeypad) {
 						destroy();
