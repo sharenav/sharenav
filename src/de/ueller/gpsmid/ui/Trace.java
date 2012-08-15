@@ -2127,7 +2127,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 	}
 
-	private void contextMenu() {
+	private ClickableCoords getCenterMarkerCoords() {
 		// if we clicked a clickable marker, get coords from the marker instead of tap
 		int x = centerP.x;
 		int y = centerP.y;
@@ -2140,13 +2140,18 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		} else {
 			panProjection = null;
 		}
+		return getClickableMarker(x - xOverScan, y - yOverScan);
+	}
 
-		ClickableCoords coords = getClickableMarker(x - xOverScan, y - yOverScan);
+	private void contextMenu() {
+		int x = 0;
+		int y = 0;
+		ClickableCoords coords = getCenterMarkerCoords();
 		if (coords != null) {
 			x = coords.x;
 			y = coords.y;
 		}
-		// long tap map to open a place-related menu
+		// open a place&marker-related menu
 		// use the place of touch instead of old center as position,
 		centerNode=panProjection.inverse(x,
 						 y, centerNode);
