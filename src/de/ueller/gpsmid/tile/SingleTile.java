@@ -522,6 +522,7 @@ public class SingleTile extends Tile implements QueueableTile {
 					int dia = Configuration.getTouchMarkerDiameter();
 					// FIXME create a specific color (semi-transparent would be good) for this
 					pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE]);
+					pc.g.setStrokeStyle(Graphics.SOLID);
 					pc.g.drawArc(pc.swapLineP.x - dia / 2, pc.swapLineP.y -
 						     (Legend.isNodeImageCentered(t) ? dia / 2 : dia / 2 + img.getHeight() / 2 ), dia, dia, 0, 360);
 					//System.out.println("url: " + url + " phone: " + phone);
