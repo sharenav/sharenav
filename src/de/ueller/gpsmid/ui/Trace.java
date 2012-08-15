@@ -3313,6 +3313,24 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				// gps position rectangle
 				g.drawRect(posX - 4, posY - 4, 8, 8);
 				g.drawLine(posX, posY, px, py);
+				// draw accuracy circle for position
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ACCURACY)
+					&& pc.getP().isOrthogonal()) {
+					Position pos = getCurrentPosition();
+					if (pos.accuracy != Float.NaN && pos.accuracy > 0) {
+						int diaM = (int) pos.accuracy * 2;
+						int dia = 0;
+
+						Node n = new Node();
+						float scale = pc.getP().getScale();
+						Projection p = new Proj2D(center,scale,maxX - minX, maxY - minY);
+						p.inverse(posX, posY, n);
+						n.radlat += MoreMath.RADIANT_PER_METER * diaM;
+						IntPoint ip = p.forward(n);
+						dia = ip.y - posY;
+						pc.g.drawArc(posX - dia / 2, posY - dia / 2, dia, dia, 0, 360);
+					}
+				}
 			}
 			}
 		} catch (Exception e) {

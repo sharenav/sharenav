@@ -37,7 +37,7 @@ GpsMid 0.8
     - Some workarounds (mainly useful for sea rendering) for map data overflows which can
       appear due to shortcomings of Osm2GpsMid
     - Map switch can now be done without restarting GpsMid
-    - Accuracy of fix can be shown with GPS status
+    - Accuracy of fix can be shown with GPS status and with a circle around GPS position
     - Number of satellites is show in some more cases also in NoFix situations.
     - New option in map features to draw ways not usable by the current travel mode darker
     - On new GpsMid installations on devices with a display height or width > 400
@@ -124,7 +124,6 @@ GpsMid 0.8
       connections requested from mainstreet net are drawn wider
     - area crossing lines are drawn wider
     - double tap or two-finger tap on distance field will trigger a route recalculation
-    - showing GPS accuracy is now on by default
     - long tap on distance now always asks for route (re)calc options
     *** Search ***
     - The POI search distance is now configurable; default is 10 km. A high limit
@@ -235,6 +234,7 @@ GpsMid 0.8
       Android for faster response on hightlighting map control buttons.
     - double tap is better recognized now
     - on multi-touch devices, two-finger tap works the same as double tap
+    - showing GPS accuracy is now on by default
     - Osm2GpsMid can now create unsigned and (depending on platform) signed .apk's
       - an .apk is produced if target name contains "android".
       - about signing: to be able to install this .apk into an
