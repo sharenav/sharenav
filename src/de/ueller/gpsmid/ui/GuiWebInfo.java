@@ -55,7 +55,9 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		mPos = pos;
 		mNodeID = nodeID;
 		if (longtap) {
-			this.append(Locale.get("guisearch.nearestpois")/*Nearest POIs*/, null);
+			if (mNodeID == -1) {
+				this.append(Locale.get("guisearch.nearestpois")/*Nearest POIs*/, null);
+			}
 			this.append(Locale.get("guiwaypoint.AsDestination")/*As destination*/, null);
 			this.append(Locale.get("trace.CalculateRoute")/*Calculate route*/, null);
 		}
