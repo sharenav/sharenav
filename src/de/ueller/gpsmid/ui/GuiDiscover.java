@@ -1354,6 +1354,13 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS, mapSrcOptions.isSelected(1));
 		rereadMap();
 		//logger.fatal(Locale.get("guidiscover.NeedRestart")/*Need to restart GpsMid, otherwise map is in an inconsistant state*/ + " " + Configuration.getMapUrl());
+		//#if polish.android
+		if (!Legend.getMapFlag(Legend.LEGEND_MAPFLAG_OUTLINE_AREA_BLOCK)) {
+		        GpsMid.getInstance().alert(Locale.get("guidiscover.mapalert"),
+						  Locale.get("guidiscover.noarea"),
+						  Alert.FOREVER);
+		}
+		//#endif
 	}
 
 	private void rereadMap() {
