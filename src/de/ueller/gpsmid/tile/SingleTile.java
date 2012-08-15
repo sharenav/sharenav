@@ -501,14 +501,15 @@ public class SingleTile extends Tile implements QueueableTile {
 			// && Legend.isNodeClickable(t)) would limit to only those specified in style file
 			// && pc.trace.tl.bigOnScreenButtons would limit activity to only when single-clicked
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS)) {
-				String url = null;
-				if (Legend.enableUrlTags && urlIdx[i] != -1) {
-						url = pc.trace.getUrl(urlIdx[i]);
-				}
-				String phone = null;
-				if (Legend.enablePhoneTags && phoneIdx[i] != -1) {
-						phone = pc.trace.getUrl(phoneIdx[i]);
-				}
+				// We don't really need url or phone for anything here
+				// String url = null;
+				//if (Legend.enableUrlTags && urlIdx[i] != -1) {
+				//		url = pc.trace.getUrl(urlIdx[i]);
+				//}
+				//String phone = null;
+				//if (Legend.enablePhoneTags && phoneIdx[i] != -1) {
+				//		phone = pc.trace.getUrl(phoneIdx[i]);
+				//}
 				int nodeID = -1;
 				//#if polish.api.bigsearch
 				//#if polish.api.osm-editing
@@ -517,14 +518,15 @@ public class SingleTile extends Tile implements QueueableTile {
 				}
 				//#endif
 				//#endif
-				if (url != null || phone != null || Legend.isNodeClickable(t)) {
+				if (Legend.enableUrlTags && urlIdx[i] != -1 || Legend.enablePhoneTags && phoneIdx[i] != -1 || Legend.isNodeClickable(t)) {
 					int dia = Configuration.getTouchMarkerDiameter();
 					// FIXME create a specific color (semi-transparent would be good) for this
 					pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE]);
 					pc.g.drawArc(pc.swapLineP.x - dia / 2, pc.swapLineP.y -
 						     (Legend.isNodeImageCentered(t) ? dia / 2 : dia / 2 + img.getHeight() / 2 ), dia, dia, 0, 360);
 					//System.out.println("url: " + url + " phone: " + phone);
-					pc.trace.addClickableMarker(pc.swapLineP.x, pc.swapLineP.y, url, phone, nodeID);
+					// don't get urls or phones yet
+					pc.trace.addClickableMarker(pc.swapLineP.x, pc.swapLineP.y, urlIdx[i], phoneIdx[i], nodeID);
 				}
 			}
 			// FIXME check and cleanup after the functionality is in good enough condition

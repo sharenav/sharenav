@@ -519,8 +519,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public class ClickableCoords {
 		int x;
 		int y;
-		String url;
-		String phone;
+		int urlIdx;
+		int phoneIdx;
 		int nodeID;
 	}
 
@@ -2152,8 +2152,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						 y, centerNode);
 		Position oPos = new Position(centerNode.radlat, centerNode.radlon,
 					     0.0f, 0.0f, 0.0f, 0, 0);
-		GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, true, coords != null ? coords.url : null,
-						 coords != null ? coords.phone : null,
+		String url = getUrl(coords.urlIdx);
+		String phone = getUrl(coords.phoneIdx);
+		GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, true, coords != null ? url : null,
+						 coords != null ? phone : null,
 						 coords != null ? coords.nodeID : -1);
 		gWeb.show();
 		//#if 0
@@ -4166,36 +4168,35 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				boolean markerClicked = false;
 				ClickableCoords coords = getClickableMarker(x, y);
 				if (coords != null) {
-					if (internetAccessAllowed()) {
-						markerClicked = true;
-						// TODO maybe later add an
-						// option or options to have 
-						// marker click directly either
-						// * open the URL
-						// * edit node in OSM
-						// * save a waypoint
-						// * log the place to a webservice
-						// * something else
-						// if (coords.url != null) {
-						//	GuiWebInfo.openUrl(coords.url);
-						//	return;
-						//} else {
-						longTap(true);
-						//}
-					} else {
-						String text = "";
-						if (coords.url != null) {
-							text += coords.url;
-						}
-						if (coords.phone != null) {
-							if (text.length() != 0) {
-								text += " / ";
-							}
-							text += coords.phone;
-						}
-						alert("Contact", text, 5000);
-					}
-						
+					//if (internetAccessAllowed()) {
+					markerClicked = true;
+					// TODO maybe later add an
+					// option or options to have 
+					// marker click directly either
+					// * open the URL
+					// * edit node in OSM
+					// * save a waypoint
+					// * log the place to a webservice
+					// * something else
+					// if (coords.url != null) {
+					//	GuiWebInfo.openUrl(coords.url);
+					//	return;
+					//} else {
+					longTap(true);
+					//}
+					//} else {
+					//String text = "";
+					//if (coords.url != null) {
+					//text += coords.url;
+					//}
+					//if (coords.phone != null) {
+					//if (text.length() != 0) {
+					//text += " / ";
+					//}
+					//text += coords.phone;
+					//}
+					//alert("Contact", text, 5000);
+					//}
 				}
 				if (!markerClicked && !tl.bigOnScreenButtons) {
 					tl.setOnScreenButtonSize(true);
@@ -4334,10 +4335,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				// use the place of touch instead of old center as position,
 				pickPointEnd=panProjection.inverse(touchX + imageCollector.xScreenOverscan,
 								   touchY + imageCollector.yScreenOverscan, pickPointEnd);
+				String url = getUrl(coords.urlIdx);
+				String phone = getUrl(coords.phoneIdx);
 				Position oPos = new Position(pickPointEnd.radlat, pickPointEnd.radlon,
 							     0.0f, 0.0f, 0.0f, 0, 0);
-				GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, true, coords != null ? coords.url : null,
-								 coords != null ? coords.phone : null,
+				GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, true, coords != null ? url : null,
+								 coords != null ? phone : null,
 								 coords != null ? coords.nodeID : -1);
 				gWeb.show();
 			}
@@ -4933,12 +4936,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 	//#endif
 
-    public void addClickableMarker(int x, int y, String url, String phone, int nodeID) {
+    public void addClickableMarker(int x, int y, int urlIdx, int phoneIdx, int nodeID) {
 		ClickableCoords coords = new ClickableCoords();
 		coords.x = x - imageCollector.xScreenOverscan;
 		coords.y = y - imageCollector.yScreenOverscan;
-		coords.url = url;
-		coords.phone = phone;
+		coords.urlIdx = urlIdx;
+		coords.phoneIdx = phoneIdx;
 		coords.nodeID = nodeID;
 		clickableMarkers.addElement(coords);
 	}
