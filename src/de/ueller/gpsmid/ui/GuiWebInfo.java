@@ -61,25 +61,6 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 			this.append(Locale.get("guiwaypoint.AsDestination")/*As destination*/, null);
 			this.append(Locale.get("trace.CalculateRoute")/*Calculate route*/, null);
 		}
-		//#if polish.api.online
-		//this.append("Wikipedia (Web)", null);
-		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WIKIPEDIA_RSS)) {
-			this.append(Locale.get("guiwebinfo.WikipediaRSS")/*Wikipedia (RSS)*/, null);
-		}
-		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEATHER)) {
-			this.append(Locale.get("guiwebinfo.Weather")/*Weather*/, null);
-		}
-		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_GEOHACK)) {
-			this.append(Locale.get("guiwebinfo.GeoHack")/*GeoHack*/, null);
-		}
-//#if polish.api.finland
-		if (Legend.enableUrlTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_TOPOMAP)) {
-			this.append(Locale.get("guiwebinfo.TopoMapFi")/*Topographic Map (Finland)*/, null);
-		}
-		this.append(Locale.get("guiwebinfo.ReittiopasAddress"), null);
-		this.append(Locale.get("guiwebinfo.ReittiopasStop"), null);
-//#endif
-		//#endif
 		if (Legend.enableUrlTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITE)) {
 			//System.out.println("actualWay: " + actualWay + " urlIdx: " + actualWay.urlIdx + " url: " + trace.getUrl(actualWay.urlIdx));
 			String url = null;
@@ -107,6 +88,25 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		}		
 		//#endif 
 		//#endif 
+		//#if polish.api.online
+		//this.append("Wikipedia (Web)", null);
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WIKIPEDIA_RSS)) {
+			this.append(Locale.get("guiwebinfo.WikipediaRSS")/*Wikipedia (RSS)*/, null);
+		}
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEATHER)) {
+			this.append(Locale.get("guiwebinfo.Weather")/*Weather*/, null);
+		}
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_GEOHACK)) {
+			this.append(Locale.get("guiwebinfo.GeoHack")/*GeoHack*/, null);
+		}
+//#if polish.api.finland
+		if (Legend.enableUrlTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_TOPOMAP)) {
+			this.append(Locale.get("guiwebinfo.TopoMapFi")/*Topographic Map (Finland)*/, null);
+		}
+		this.append(Locale.get("guiwebinfo.ReittiopasAddress"), null);
+		this.append(Locale.get("guiwebinfo.ReittiopasStop"), null);
+//#endif
+		//#endif
 		// FIXME add "search for name on the web" for POI names once the code to select POIS is in place
 		this.addCommand(BACK_CMD);
 		this.setCommandListener(this);
