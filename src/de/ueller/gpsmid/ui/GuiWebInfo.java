@@ -55,6 +55,9 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		mPos = pos;
 		mNodeID = nodeID;
 		if (longtap) {
+			if (!trace.hasPointerEvents() && Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
+				this.append(Locale.get("trace.Menu")/*Menu*/, null);
+			}
 			if (mNodeID == -1) {
 				this.append(Locale.get("guisearch.nearestpois")/*Nearest POIs*/, null);
 			}
@@ -124,7 +127,9 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		}
 		if (c == SELECT_CMD) {
 			String site = getString(getSelectedIndex());
-			if (site.equals(Locale.get("guisearch.nearestpois")/*Nearest POIs*/)) {
+			if (site.equals(Locale.get("trace.Menu")/*Menu*/)) {
+				trace.showIconMenu();
+			} else if (site.equals(Locale.get("guisearch.nearestpois")/*Nearest POIs*/)) {
 				try {
 					GuiSearch guiSearch = new GuiSearch(trace, GuiSearch.ACTION_NEARBY_POI);
 					guiSearch.show();

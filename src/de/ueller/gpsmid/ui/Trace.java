@@ -1904,10 +1904,20 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 
 			if (c == CMDS[ICON_MENU] && Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
-				if (isShowingSplitScreen()) {
-					stopShowingSplitScreen();
+				// make markers accessible on keyboard-only phones
+				if (!hasPointerEvents() && Configuration.getCfgBitState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS)) {
+					touchX = pc.getP().getImageCenter().x - imageCollector.xScreenOverscan;
+					touchY = pc.getP().getImageCenter().y - imageCollector.yScreenOverscan;
+				}
+
+				if (!hasPointerEvents() && Configuration.getCfgBitState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS) && getClickableMarker(touchX, touchY) != null) {
+					contextMenu();
 				} else {
-					showIconMenu();
+					if (isShowingSplitScreen()) {
+						stopShowingSplitScreen();
+					} else {
+						showIconMenu();
+					}
 				}
 				return;
 			}
