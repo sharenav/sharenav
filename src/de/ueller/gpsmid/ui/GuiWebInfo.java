@@ -80,16 +80,22 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		//#endif
 		if (Legend.enableUrlTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITE)) {
 			//System.out.println("actualWay: " + actualWay + " urlIdx: " + actualWay.urlIdx + " url: " + trace.getUrl(actualWay.urlIdx));
-			String url;
+			String url = null;
 			if (mPoiUrl != null || ((actualWay != null) && ((url = trace.getUrl(actualWay.urlIdx)) != null))) {
-				this.append(Locale.get("guiwebinfo.Website")/*Website*/, null);
+				if (mPoiUrl != null) {
+					url = mPoiUrl;
+				}
+				this.append(Locale.get("guiwebinfo.Website")/*Website*/ + " " + url, null);
 			}
 		}
 		if (Legend.enablePhoneTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_PHONE)) {
 			//System.out.println("actualWay: " + actualWay + " phoneIdx: " + actualWay.phoneIdx + " phone: " + trace.getUrl(actualWay.phoneIdx));
-			String phone;
+			String phone = null;
 			if (mPoiPhone != null || ((actualWay != null) && ((phone = trace.getUrl(actualWay.phoneIdx)) != null))) {
-				this.append(Locale.get("guiwebinfo.Phone")/*Phone*/, null);
+				if (mPoiPhone != null) {
+					phone = mPoiPhone;
+				}
+				this.append(Locale.get("guiwebinfo.Phone")/*Phone*/ + " " + phone, null);
 			}
 		}
 		//#if polish.api.bigsearch
@@ -238,14 +244,14 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 				+ seclon
 				+ ((mPos.longitude < 0)?"_W_":"_E_");
 		}
-		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.Website")/*Website*/)) {
+		if (site.startsWith(Locale.get("guiwebinfo.Website")/*Website*/)) {
 			if (mPoiUrl != null) {
 				url = mPoiUrl;
 			} else if (actualWay != null) {
 				url = trace.getUrl(actualWay.urlIdx);
 			}
 		}
-		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.Phone")/*Phone*/)) {
+		if (site.startsWith(Locale.get("guiwebinfo.Phone")/*Phone*/)) {
 			String phone;
 			if (mPoiPhone != null) {
 				url = "tel:" + mPoiPhone;
