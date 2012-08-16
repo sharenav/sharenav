@@ -1425,7 +1425,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					guiSearch = new GuiSearch(this, GuiSearch.ACTION_DEFAULT);
 					guiSearch.sizeChanged(getWidth(), getHeight());
 					setDisplayCoords();
-					restartImageCollector();
 				} else {
 					guiSearch = new GuiSearch(this, GuiSearch.ACTION_DEFAULT);
 					guiSearch.show();
@@ -1900,7 +1899,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					cmsl.setOnScreenButtonSize(false);
 					//cmsl.sizeChanged(getWidth(), getHeight());
 					setDisplayCoords();
-					restartImageCollector();
 				}
 				return;
 			}
@@ -1937,7 +1935,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					showingSplitCMS = false;
 					setDisplayCoords();
 					guiDiscoverIconMenu.sizeChanged(getWidth(), getHeight());
-					restartImageCollector();
 				}
 				return;
 			}
@@ -2473,10 +2470,17 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		maxX = w;
 		maxY = h;
 		mapMaxX = w;
-		mapMaxY = h;
 		mapRenderDiff = 0;
 		if (isShowingSplitScreen()) {
-			mapMaxY = h / 2;
+			if (mapMaxY != h / 2) {
+				mapMaxY = h / 2;
+				restartImageCollector();
+			}
+		} else {
+			if (mapMaxY != h) {
+				mapMaxY = h;
+				restartImageCollector();
+			}
 		}
 	}
 
@@ -4810,7 +4814,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			showingTraceIconMenu = true;
 			setDisplayCoords();
 			traceIconMenu.sizeChanged(getWidth(), getHeight());
-			restartImageCollector();
 		} else {
 			traceIconMenu.show();
 		}
