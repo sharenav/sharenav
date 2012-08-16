@@ -146,8 +146,10 @@ public class GuiGpx extends List implements CommandListener,
 					for (int i = 0; i < processTracks.size(); i++){
 						numAllPtsInTrack += ((PersistEntity)processTracks.elementAt(i)).getTrackSize();
 					}
-					progress.showProgressDisplay(Locale.get("guigpx.ExportingTracks")
-							/*Exporting tracks*/, numAllPtsInTrack);
+					if (progress != null) {
+						progress.showProgressDisplay(Locale.get("guigpx.ExportingTracks")
+									     /*Exporting tracks*/, numAllPtsInTrack);
+					}
 				} catch (ClassCastException cce) {
 					logger.exception(Locale.get("guigpx.ClassCastExceptionInCommandAction")
 							/*ClassCastException in commandAction*/, cce);
@@ -208,8 +210,10 @@ public class GuiGpx extends List implements CommandListener,
 			if (processTracks.size() > 0)
 			{
 				mJob = JOB_DELETE_TRKS;
-				progress.showProgressDisplay(Locale.get("guigpx.DeletingTracks")/*Deleting tracks*/);
-				progress.addProgressText(Locale.get("guigpx.Deleting")/*Deleting */ + processTracks.size() + " " + Locale.get("guigpx.Tracks")/*track(s)*/ + ".\n");
+				if (progress != null) {
+					progress.showProgressDisplay(Locale.get("guigpx.DeletingTracks")/*Deleting tracks*/);
+					progress.addProgressText(Locale.get("guigpx.Deleting")/*Deleting */ + processTracks.size() + " " + Locale.get("guigpx.Tracks")/*track(s)*/ + ".\n");
+				}
 				parent.gpx.deleteTracks(processTracks, this);
 			}
 			return;
@@ -256,7 +260,9 @@ public class GuiGpx extends List implements CommandListener,
 	}
 	
 	public void startProgress(String title) {
-		progress.showProgressDisplay(title);
+		if (progress != null) {
+			progress.showProgressDisplay(title);
+		}
 	}
 	
 	public void setProgress(String message) {
@@ -264,7 +270,9 @@ public class GuiGpx extends List implements CommandListener,
 	}
 	
 	public void updateProgress(String message) {
-		progress.addProgressText(message);
+		if (progress != null) {
+			progress.addProgressText(message);
+		}
 	}
 	
 	/**
@@ -272,7 +280,9 @@ public class GuiGpx extends List implements CommandListener,
 	 * Updates the progress bar by increasing the progress by the given value.
 	 */
 	public void updateProgressValue(int inc) {
-		progress.updateProgressValue(inc);
+		if (progress != null) {
+			progress.updateProgressValue(inc);
+		}
 	}
 
 	public void completedUpload(boolean success, String message) {
@@ -300,8 +310,10 @@ public class GuiGpx extends List implements CommandListener,
 			}
 			initTracks();
 		}
-		progress.addProgressText(alertMsg);
-		progress.finishProgressDisplay();
+		if (progress != null) {
+			progress.addProgressText(alertMsg);
+			progress.finishProgressDisplay();
+		}
 		mJob = JOB_IDLE;
 	}
 
