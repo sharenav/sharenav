@@ -4369,7 +4369,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (clickableMarkers != null) {
 			for (int i = 0; i < clickableMarkers.size(); i++) {
 				ClickableCoords coords = (ClickableCoords)clickableMarkers.elementAt(i);
-				System.out.println("Marker coords: " + coords.x + " " + coords.y);
+				// System.out.println("Marker coords: " + coords.x + " " + coords.y);
 				if (Math.abs(coords.x - x) <= Configuration.getTouchMarkerDiameter() / 2
 				    && Math.abs(coords.y - y) <= Configuration.getTouchMarkerDiameter() / 2) {
 					return coords;
