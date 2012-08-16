@@ -91,6 +91,7 @@
         <entry key="outlineAreaFormat" value="false"/>
         <entry key="triangleAreaFormat" value="true"/>
         <entry key="signApk" value="false"/>
+        <entry key="jarsignerPath" value="jarsigner"/>
         <entry key="signApkPassword" value=""/>
         <entry key="drawSeaOutlines" value="false"/>
         <entry key="dontCompress" value="wav,amr,png,mp3"/>

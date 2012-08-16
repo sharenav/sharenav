@@ -422,6 +422,9 @@ public class Configuration {
 		/** Password for jarsigner for .apk signing */
 		public String signApkPassword = ""; 
 
+		/** Path for jarsigner for .apk signing */
+		public String jarsignerPath = "jarsigner"; 
+
 		/** Do we want store areas as outlines */
 		public boolean outlineAreaFormat = false; 
 
@@ -766,6 +769,7 @@ public class Configuration {
 			generateSea = getString("generateSea").equalsIgnoreCase("true");
 			useSeaTiles = getString("useSeaTiles").equalsIgnoreCase("true");
 			signApk = getString("signApk").equalsIgnoreCase("true");
+			jarsignerPath = getString("jarsignerPath");
 			triangleAreaFormat = getString("triangleAreaFormat").equalsIgnoreCase("true");
 			outlineAreaFormat = getString("outlineAreaFormat").equalsIgnoreCase("true");
 			if (outlineAreaFormat && !triangleAreaFormat) {
@@ -947,6 +951,10 @@ public class Configuration {
 
 		public boolean getSignApk() {
 			return signApk;
+		}
+
+		public String getJarsignerPath() {
+			return jarsignerPath;
 		}
 
 		public String getSignApkPassword() {

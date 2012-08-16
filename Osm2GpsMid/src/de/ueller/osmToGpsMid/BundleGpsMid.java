@@ -294,8 +294,7 @@ public class BundleGpsMid implements Runnable {
 		}
 		packDir(zf, src, "");
 		String bundleName = n.getAbsolutePath();
-		String jarSigner = "jarsigner";
-		// jarSigner = "/usr/lib/jvm/default-java/bin/jarsigner";
+		String jarSigner = config.getJarsignerPath();
 		zf.close();
 
 		if (config.sourceIsApk && config.signApk) {
