@@ -199,7 +199,9 @@ GpsMid 0.8
     - J2ME build target Gpsmid-Generic-editing renamed to GpsMid-Generic-full-connected
       to better describe what the target does. Backwards compatibility exists so even
       .properties files with GpsMid-Generic-editing will work.
-    - made full-connected be the default target (was full)
+    - made full-connected (same as previous "editing") be the default target (was full)
+    - bigger base scale for >= 800 pixel resolution
+    - tweak base scale limit for smaller devices
     *** Android Support ***
     - Android version is now part of the release, and the Android .apks are inside Osm2GpsMid
       for building bundled maps for Android

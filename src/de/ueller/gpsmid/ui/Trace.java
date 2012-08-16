@@ -631,9 +631,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_NAVI_ARROWS_BIG, true);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_TRAVEL_MODE_IN_MAP, true);
 			}
-			if (Math.max(getWidth(), getHeight()) > 400) {
-				Configuration.setBaseScale(24);				
-				Configuration.setMinRouteLineWidth(5);								
+			if (Math.min(getWidth(), getHeight()) > 400) {
+				Configuration.setBaseScale(24);
+				Configuration.setMinRouteLineWidth(5);
+			}
+			if (Math.min(getWidth(), getHeight()) >= 800) {
+				Configuration.setBaseScale(26);
+				Configuration.setMinRouteLineWidth(6);
 			}
 			if (hasPointerEvents()) {
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_LARGE_FONT, true);
