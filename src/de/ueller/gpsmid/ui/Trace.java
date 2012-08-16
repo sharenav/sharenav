@@ -711,11 +711,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				if (imageCollector != null && imageCollector.isRunning() && mCount > 1 && mtPointerId != INVALID_POINTER_ID) {
 					mtPointerDragged(pinchZoomDistance / dist(event) * pinchZoomScale);
 					// possible FIXME should we skip this if we're getting compass readings?
-					float diff = pinchZoomOrigAngle - angle(event);
-					if (diff > 180) {
-						diff = 360 - diff;
-					}
-					if (Math.abs(diff) > 30) {
+					if (angleDiff((int) pinchZoomOrigAngle, (int) angle(event)) > 30) {
 						rotationStarted = true;
 					}
 					if (rotationStarted) {
@@ -4091,6 +4087,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		return;
 	}
 	//#endif
+
+	public int angleDiff(int a, int b) {
+		int diff = a - b;
+		if (diff > 180) {
+			diff = 360 - diff;
+		}
+		return diff;
+	}
 
 	public boolean doubleTapActive(int x, int y) {
 		return (Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_DOUBLE)
