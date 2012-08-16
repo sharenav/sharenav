@@ -2482,6 +2482,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				restartImageCollector();
 			}
 		}
+		repaint();
 	}
 
 	// used when splitscreen mode changes
