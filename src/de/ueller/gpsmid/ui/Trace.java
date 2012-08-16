@@ -2217,13 +2217,19 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		// FIXME pass layout params to imagecollector
 		//setDisplayCoords();
 		//tl = new TraceLayout(minX, minY, maxX, maxY);
-		imageCollector = new ImageCollector(tiles, this.getWidth(), this.getHeight(), this, images);
+
+		// ImageCollector must not be started with 0x0 image size
+		int x = (maxX - minX > 0) ? (maxX - minX) : this.getWidth();
+		int y = (maxY - minY > 0) ? (maxY - minY) : this.getHeight();
+		System.out.println("Starting image colector " + x + " | " + y);
+
+		imageCollector = new ImageCollector(tiles, x, y, this, images);
 //		projection = ProjFactory.getInstance(center,course, scale, getWidth(), getHeight());
 //		pc.setP(projection);
 		pc.center = center.copy();
 		pc.scale = scale;
-		pc.xSize = this.getWidth();
-		pc.ySize = this.getHeight();
+		pc.xSize = x;
+		pc.ySize = y;
 	}
 
 	private void stopImageCollector(){
@@ -2349,7 +2355,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 
 	public void restartImageCollector() {
-		setDisplayCoords(getWidth(), getHeight());
+		setDisplayCoords((maxX - minX), (maxY - minY));
 		updateLastUserActionTime();
 		if (imageCollector != null) {
 			stopImageCollector();
@@ -2375,6 +2381,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			System.out.println("Size of Canvas changed to " + w + "|" + h);
 			stopImageCollector();
 			try {
+				setDisplayCoords(w, h);
 				startImageCollector();
 				imageCollector.resume();
 				imageCollector.newDataReady();
@@ -4568,7 +4575,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 	
 	public void recreateTraceLayout() {
-		setDisplayCoords(getWidth(), getHeight());
+		setDisplayCoords((maxX - minX), (maxY - minY));
 		tl = new TraceLayout(minX, minY, maxX, maxY);
 	}
 
