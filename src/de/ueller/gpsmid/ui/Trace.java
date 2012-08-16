@@ -2147,9 +2147,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		int x = 0;
 		int y = 0;
 		ClickableCoords coords = getCenterMarkerCoords();
+		String url = null;
+		String phone = null;
 		if (coords != null) {
 			x = coords.x;
 			y = coords.y;
+			url = getUrl(coords.urlIdx);
+			phone = getUrl(coords.phoneIdx);
 		}
 		// open a place&marker-related menu
 		// use the place of touch instead of old center as position,
@@ -2157,8 +2161,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						 y, centerNode);
 		Position oPos = new Position(centerNode.radlat, centerNode.radlon,
 					     0.0f, 0.0f, 0.0f, 0, 0);
-		String url = getUrl(coords.urlIdx);
-		String phone = getUrl(coords.phoneIdx);
 		GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, true, coords != null ? url : null,
 						 coords != null ? phone : null,
 						 coords != null ? coords.nodeID : -1);
@@ -4338,23 +4340,25 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				logger.debug("long tap map");										
 				// if we clicked a clickable marker, get coords from the marker instead of tap
 				ClickableCoords coords = getClickableMarker(touchX, touchY);
+				String url = null;
+				String phone = null;
 				if (coords != null) {
 					touchX = coords.x;
 					touchY = coords.y;
+					url = getUrl(coords.urlIdx);
+					phone = getUrl(coords.phoneIdx);
 				}
-
 				// long tap map to open a place-related menu
 				// use the place of touch instead of old center as position,
 				pickPointEnd=panProjection.inverse(touchX + imageCollector.xScreenOverscan,
 								   touchY + imageCollector.yScreenOverscan, pickPointEnd);
-				String url = getUrl(coords.urlIdx);
-				String phone = getUrl(coords.phoneIdx);
 				Position oPos = new Position(pickPointEnd.radlat, pickPointEnd.radlon,
 							     0.0f, 0.0f, 0.0f, 0, 0);
 				GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc, true, coords != null ? url : null,
 								 coords != null ? phone : null,
 								 coords != null ? coords.nodeID : -1);
 				gWeb.show();
+
 			}
 			return;
 		// long tapping a control											
