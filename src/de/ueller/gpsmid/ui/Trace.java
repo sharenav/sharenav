@@ -3574,16 +3574,18 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		coursegps = newcourse;
 		/*  don't rotate too fast
 		 */
-		if ((newcourse - course)> 180) {
-			course = course + 360;
+		int courseToSet = course;
+
+		if ((newcourse - courseToSet) > 180) {
+			courseToSet = courseToSet + 360;
 		}
                                                               
-		if ((course-newcourse)> 180) {
+		if ((courseToSet - newcourse) > 180) {
 			newcourse = newcourse + 360;
 		}
                                                  
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
-			course = newcourse;
+			courseToSet = newcourse;
 		} else {
 			// FIXME I think this is too slow a turn at least when course is
 			// of good quality, turning should be faster. This probably alleviates
@@ -3598,11 +3600,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			// jkpj 2010-01-17
 		        // on 2011-04-11: jkpj switched from 1/4 rotation back to 3/4 rotation,
 		        // returning to what it was supposed to do before 2010-11-30.
-			course = course + ((newcourse - course)*3)/4 + 360;
+			courseToSet = courseToSet + ((newcourse - courseToSet)*3)/4 + 360;
 		}
-		while (course > 360) {
-			course -= 360;
-		}
+		course = courseToSet % 360;
 		validateCourse();
 	}
 
