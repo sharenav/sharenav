@@ -1561,7 +1561,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 				} else if (url.startsWith("btgoep:")) {
 					tmp = Class.forName("de.ueller.gpsmid.importexport.ObexExportSession");
 				} else if (url.startsWith("http:")) {
-					tmp = Class.forName("de.ueller.midlet.gps.GuiGPXOSMUpload");
+					tmp = Class.forName("de.ueller.midlet.gpsmid.ui.GuiGpxOsmUpload");
 				}
 				if (tmp != null) {
 					logger.info("Got class: " + tmp);
