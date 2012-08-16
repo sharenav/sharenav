@@ -4090,6 +4090,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	public int angleDiff(int a, int b) {
 		int diff = a - b;
+		if (diff < 0) {
+			diff += 360;
+		}
 		if (diff > 180) {
 			diff = 360 - diff;
 		}
