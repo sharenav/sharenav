@@ -4017,7 +4017,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (!pointerActionDone && !keyboardLocked) {
 			touchReleaseX = x;
 			touchReleaseY = y;
-
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_SINGLE)
+			    && (!Configuration.getCfgBitState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS) || getClickableMarker(x, y) == null)
+			    && !tl.isAnyActionIdAtPointer(x, y)
+			    && !pointerDraggedMuch) {
+				highlightOnScreenButtons();
+			}
 			startDoubleTapTimer(x, y);
 		
 			//#if not polish.android
