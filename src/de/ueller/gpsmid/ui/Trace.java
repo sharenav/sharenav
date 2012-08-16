@@ -2293,8 +2293,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		this.gpx = new Gpx();
 		this.audioRec = new AudioRecorder();
 		setDict(gpx, (byte) DictReader.GPXZOOMLEVEL);
-		startImageCollector();
-		recreateTraceLayout();
+		resetSize();
+		// resetSize() does these
+		// startImageCollector();
+		// recreateTraceLayout();
 	}
 
 	public void shutdown() {
