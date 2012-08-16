@@ -239,6 +239,8 @@ GpsMid 0.8
     - double tap is better recognized now
     - on multi-touch devices, two-finger tap works the same as double tap
     - showing GPS accuracy is now on by default
+    - rotation by autoswitch (movement when can get a reliable rotation from moving,
+      compass otherwise) is now default
     - Osm2GpsMid can now create unsigned and (depending on platform) signed .apk's
       - an .apk is produced if target name contains "android".
       - about signing: to be able to install this .apk into an
