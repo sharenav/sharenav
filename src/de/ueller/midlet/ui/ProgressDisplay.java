@@ -55,7 +55,7 @@ public class ProgressDisplay implements CommandListener {
 		// At least on Sony Ericsson phones, the alert won't be shown
 		// until it contains some text, so let's put in something. 
 		//#if polish.android
-		progressDisplay.setString(Locale.get("generic.OK"));
+		progressDisplay.setString(Locale.get("progressdisplay.trying"));
 		//#else
 		progressDisplay.setString(" ");		
 		//#endif
