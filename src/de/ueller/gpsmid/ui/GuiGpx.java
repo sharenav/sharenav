@@ -280,9 +280,11 @@ public class GuiGpx extends List implements CommandListener,
 	 * Updates the progress bar by increasing the progress by the given value.
 	 */
 	public void updateProgressValue(int inc) {
+		//#if not polish.android
 		if (progress != null) {
 			progress.updateProgressValue(inc);
 		}
+		//#endif
 	}
 
 	public void completedUpload(boolean success, String message) {
