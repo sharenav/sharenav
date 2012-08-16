@@ -2355,7 +2355,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 
 	public void restartImageCollector() {
-		setDisplayCoords((maxX - minX), (maxY - minY));
+		// don't re-half in split-screen mode
+		// setDisplayCoords((maxX - minX), (maxY - minY));
 		updateLastUserActionTime();
 		if (imageCollector != null) {
 			stopImageCollector();
@@ -4575,7 +4576,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 	
 	public void recreateTraceLayout() {
-		setDisplayCoords((maxX - minX), (maxY - minY));
+		// don't re-half screen size in split-screen mode
+		// setDisplayCoords((maxX - minX), (maxY - minY));
 		tl = new TraceLayout(minX, minY, maxX, maxY);
 	}
 
