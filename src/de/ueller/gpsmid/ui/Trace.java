@@ -2212,8 +2212,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		Images images = new Images();
 		pc = new PaintContext(this, images);
 		/* move responsibility for overscan to ImageCollector
-		int w = (this.getWidth() * 125) / 100;
-		int h = (this.getHeight() * 125) / 100;
+		int w = (this.getMapWidth() * 125) / 100;
+		int h = (this.getMapHeight() * 125) / 100;
 		*/
 		
 		// Ensure that only one image collector runs at the same time.
@@ -2235,7 +2235,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		System.out.println("Starting image colector " + x + " | " + y);
 
 		imageCollector = new ImageCollector(tiles, x, y, this, images);
-//		projection = ProjFactory.getInstance(center,course, scale, getWidth(), getHeight());
+//		projection = ProjFactory.getInstance(center,course, scale, getMapWidth(), getMapHeight());
 //		pc.setP(projection);
 		pc.center = center.copy();
 		pc.scale = scale;
@@ -2460,6 +2460,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		return angle;
 	}
 	//#endif
+
+	private int getMapWidth() {
+		return mapMaxX - mapMinX;
+	}
+
+	private int getMapHeight() {
+		return mapMaxY - mapMinY;
+	}
 
 	private void setDisplayCoords(int w, int h) {
 		maxX = w;
