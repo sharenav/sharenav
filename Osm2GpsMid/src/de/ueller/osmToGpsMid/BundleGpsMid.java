@@ -322,13 +322,13 @@ public class BundleGpsMid implements Runnable {
 				signer = Runtime.getRuntime().exec(command);
 				// Runtime.getRuntime().exec(jarSigner + " -verbose -digestalg SHA1 -sigalg MD5withRSA " + bundleName + " gpsmid");
 			} catch (IOException ioe) {
-				System.out.println("Wasn't able to sign " + bundleName);
+				showSigningMessage(bundleName);
 			}
 			if (signer != null) {
 				try {
 					signer.waitFor();
 				} catch (InterruptedException ie) {
-					System.out.println("Wasn't able to sign " + bundleName + ", interrupted");
+					showSigningMessage(bundleName);
 				}
 			}
 		}
@@ -342,6 +342,12 @@ public class BundleGpsMid implements Runnable {
 				   getDuration(endTime.getTimeInMillis() - startTime.getTimeInMillis()));
 	}
 	
+	public static void showSigningMessage(String bundleName) {
+		System.out.println("Error: Wasn't able to sign " + bundleName);
+		System.out.println("You may need to set up jarsigner path and/or settings for signing, see the GpsMid Wiki Properties page under \"Signing an apk\"");
+			System.out.println("You may also need to install the java development environment");
+	}
+
 	private static String getDuration(long duration) {
 		final int millisPerSecond = 1000;
 		final int millisPerMinute = 1000*60;
