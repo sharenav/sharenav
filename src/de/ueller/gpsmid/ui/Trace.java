@@ -4252,35 +4252,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					//}
 				}
 				if (!markerClicked && !tl.bigOnScreenButtons) {
-					tl.setOnScreenButtonSize(true);
-		
-					// to enable clickable markers only when single-tapped
-					//if (Configuration.getCfgBitState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS)) {
-					//	newDataReady();
-					//}
-
-					// set timer to continuously check if the last user interaction is old enough to make the buttons small again
-					final long BIGBUTTON_DURATION = 5000;
-					bigButtonTimerTask = new TimerTask() {
-						public void run() {
-							if (System.currentTimeMillis() - lastUserActionTime > BIGBUTTON_DURATION ) {
-								// make the on screen touch buttons small again
-								tl.setOnScreenButtonSize(false);
-								requestRedraw();						
-								// to enable clickable markers only when single-tapped
-								//if (Configuration.getCfgBitState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS)) {
-								//	newDataReady();
-								//}
-								bigButtonTimerTask.cancel();
-							}
-						}
-					};
-					try {
-						GpsMid.getTimer().schedule(bigButtonTimerTask, BIGBUTTON_DURATION, 500);
-					} catch (Exception e) {
-						logger.error("Error scheduling bigButtonTimerTask: " + e.toString());
-					}
-	
+					highlightOnScreenButtons();
 				}
 			}
 			repaint();
@@ -4315,6 +4287,37 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 	}
 	
+	private void highlightOnScreenButtons() {
+		tl.setOnScreenButtonSize(true);
+		
+		// to enable clickable markers only when single-tapped
+		//if (Configuration.getCfgBitState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS)) {
+		//	newDataReady();
+		//}
+
+		// set timer to continuously check if the last user interaction is old enough to make the buttons small again
+		final long BIGBUTTON_DURATION = 5000;
+		bigButtonTimerTask = new TimerTask() {
+			public void run() {
+				if (System.currentTimeMillis() - lastUserActionTime > BIGBUTTON_DURATION ) {
+					// make the on screen touch buttons small again
+					tl.setOnScreenButtonSize(false);
+					requestRedraw();						
+					// to enable clickable markers only when single-tapped
+					//if (Configuration.getCfgBitState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS)) {
+					//	newDataReady();
+					//}
+					bigButtonTimerTask.cancel();
+				}
+			}
+		};
+		try {
+			GpsMid.getTimer().schedule(bigButtonTimerTask, BIGBUTTON_DURATION, 500);
+		} catch (Exception e) {
+			logger.error("Error scheduling bigButtonTimerTask: " + e.toString());
+		}
+	
+	}
 	private void doubleTap(int x, int y) {
 		// if not double tapping a control, then the map area must be double tapped and we zoom in
 		if (tl.getElementIdAtPointer(touchX, touchY) < 0) {
