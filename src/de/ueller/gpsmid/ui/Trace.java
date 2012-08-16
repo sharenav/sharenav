@@ -5010,11 +5010,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
     
     public boolean internetAccessAllowed() {
-    	if (Configuration.getCfgBitState(Configuration.CFGBIT_INTERNET_ACCESS)) {
-        	return true;
-    	}
-		alert("GpsMid", Locale.get("trace.OnlineFeaturesDisabledIn") + " " + Locale.get("traceiconmenu.Setup") + " / " + Locale.get("guidiscovericonmenu.Online"), 5000); // Online features are disabled in Setup / Online 
-		return false;
+	    if (Configuration.getCfgBitState(Configuration.CFGBIT_INTERNET_ACCESS)) {
+		    return true;
+	    }
+	    GpsMid.getInstance().alert("GpsMid", Locale.get("trace.OnlineFeaturesDisabledIn") + " " + Locale.get("traceiconmenu.Setup") + " / " + Locale.get("guidiscovericonmenu.Online"), 5000); // Online features are disabled in Setup / Online 
+	    return false;
     }
     
 }
