@@ -131,7 +131,7 @@ public class TraceLayout extends LayoutManager {
 		e.setSpecialElementID(SE_SCALEBAR);
 		e.setActionID(Trace.MAPFEATURES_CMD);
 
-		int bigNaviX = (getHeight() >= 320 ? 5 : 30);
+		int bigNaviX = ((maxY - minY) >= 320 ? 5 : 30);
 		e = ele[BIGNAVIICON1]; addElement(e,
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 				LayoutElement.FLAG_FONT_SMALL
@@ -535,7 +535,7 @@ public class TraceLayout extends LayoutManager {
 				return speedingSignWidth;
 			case SE_BIGNAVI_ICON1:
 			case SE_BIGNAVI_ICON2:
-				int height = getHeight() * (isPortraitLayout ? 12 : 22) / 100;
+				int height = (maxY - minY) * (isPortraitLayout ? 12 : 22) / 100;
 				// grow arrows down if they are too small
 				if (height < ele[BIGNAVIICON1].getFontHeight() * 3 && (maxY - minY) >= 160) {
 					height = ele[BIGNAVIICON1].getFontHeight() * 3;
