@@ -73,10 +73,13 @@ GpsMid 0.8
       vertical scroll (drag or cursor down) of the icon menu.
     - Clickable markers for POIs: URLs and phone numbers on map are now optionally touchable links which open the URL in a web browser,
       and with a long tap (or with a single tap if there's no URL) open a context menu
-      (Here&Online). On keyboard-only phones, the same is achieved by positioning
-      the cursor marker inside a marker area and choosing Here&Online.
-      The default style doesn't have any POIs defined as clickable, see the wiki documentation
-      on how to modify the style file to add clickability to POI types.
+      (Here&Online). On keyboard-only phones, the same is achieved by either clicking
+      the "fire button" or positioning the cursor marker inside a marker area and choosing Here&Online.
+      The default style doesn't have any POIs defined as clickable, but map objects
+      which have URL and/or POI information will be clickable, if map is built
+      with url&phone support enabled. See the wiki documentation
+      on how to modify the style file to add clickability to POI types and how to modify
+      map creation .properties to enable url & phone storing in map.
     - Long tap on map now opens a context menu which now has nearby POI search in addition to the
       previously-existing online functions; also has options to route to and set as destination.
       Long tap on a clickable marker POI allows for opening POI url, phone or editing POI tags.
