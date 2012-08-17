@@ -24,6 +24,7 @@ import javax.microedition.io.file.FileConnection;
 import de.enough.polish.android.midlet.MidletBridge;
 import android.content.res.AssetManager;
 import android.content.Context;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 //#endif
@@ -40,7 +41,9 @@ import de.ueller.gpsmid.routing.Routing;
 import de.ueller.gpsmid.routing.TravelMode;
 import de.ueller.gpsmid.ui.GuiDiscover;
 import de.ueller.gpsmid.ui.Trace;
+//#if not polish.android
 import de.ueller.util.BufferedInputStream;
+//#endif
 import de.ueller.util.BufferedReader;
 import de.ueller.util.IntTree;
 import de.ueller.util.Logger;
@@ -1672,9 +1675,9 @@ public class Configuration {
 					throw new IOException();
 				}
 				// FIXME: Android: test, if this works on Android before committing
-//				if (getCfgBitState(CFGBIT_BUFFEREDINPUTSTREAM)) {
-//					return new BufferedInputStream(is);
-//				}
+				if (getCfgBitState(CFGBIT_BUFFEREDINPUTSTREAM)) {
+					return new BufferedInputStream(is);
+				}
 				return is;
 			} catch (IOException ioe) {
 				throw new IOException(Locale.get("configuration.ExFNFCouldnt")
