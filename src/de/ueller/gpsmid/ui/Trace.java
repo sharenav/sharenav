@@ -1702,6 +1702,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			
 			if (c == CMDS[ROUTING_START_CMD]) {
+				this.show();
 				startRouting();
 				return;
 			}
