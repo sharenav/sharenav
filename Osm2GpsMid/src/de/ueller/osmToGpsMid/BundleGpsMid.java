@@ -11,6 +11,7 @@
 
 package de.ueller.osmToGpsMid;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -283,7 +284,7 @@ public class BundleGpsMid implements Runnable {
 			rewriteManifestFile(c, false);
 			renameCopying(c);
 		}
-		FileOutputStream fo = new FileOutputStream(n);
+		BufferedOutputStream fo = new BufferedOutputStream(new FileOutputStream(n));
 		ZipOutputStream zf = new ZipOutputStream(fo);
 		zf.setLevel(9);
 		if (compressed == false) {
