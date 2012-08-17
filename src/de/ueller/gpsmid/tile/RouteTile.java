@@ -617,6 +617,7 @@ public class RouteTile extends RouteBaseTile {
 						endMarker + " but expected " + 0xdeadbeaf);
 			}
 		}
+		cs.close();
 	}
 	public String toString() {
 		return "RT" + "-" + fileId + ":" + lastUse + ((permanent)?" perm":"");
