@@ -1372,3 +1372,4 @@ trace.CalculateRoute3=Calculate route, ask for options if set
 guidiscover.mapalert=Map alert
 guidiscover.noarea=The map doesn't have the outline area format. For better performance, you should use a map with area outline format. See the GpsMid Wiki Android page for more information.
 progressdisplay.trying=Trying to transfer...
+guidiscover.UseBufferedInputStream=Use BufferedInputStream

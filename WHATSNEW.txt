@@ -28,6 +28,8 @@ GpsMid 0.8
     - adjustment to routing parameters for faster route calculation - routes
       should be as good as before, please report if you get worse routes than
       earlier
+    - There's a new experimental option "Use BufferedInputstream" in Setup / Map Source
+      that mostly speeds up map reading from directories (not from zip) and from the internal map.
     *** Map Display ***
     - Optional travel mode display (& setting on touch screen phones) on map
     - Fixed an error that prevented to load all route / map tiles of the Germany map from thju

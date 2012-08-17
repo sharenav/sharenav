@@ -40,6 +40,7 @@ import de.ueller.gpsmid.routing.Routing;
 import de.ueller.gpsmid.routing.TravelMode;
 import de.ueller.gpsmid.ui.GuiDiscover;
 import de.ueller.gpsmid.ui.Trace;
+import de.ueller.util.BufferedInputStream;
 import de.ueller.util.BufferedReader;
 import de.ueller.util.IntTree;
 import de.ueller.util.Logger;
@@ -366,6 +367,8 @@ public class Configuration {
 	public final static short CFGBIT_SHOW_MAP_CREDITS = 146;
 	/** bit 147: Show NMEA errors */
 	public final static short CFGBIT_SHOW_NMEA_ERRORS = 147;
+	/** bit 148: Buffered file reading */
+	public final static short CFGBIT_BUFFEREDINPUTSTREAM = 148;
 	
 	/**
 	 * These are the database record IDs for each configuration option
@@ -1637,6 +1640,9 @@ public class Configuration {
 			is = QueueReader.class.getResourceAsStream(name);
 			//#endif
 			if (is != null) {
+				if (getCfgBitState(CFGBIT_BUFFEREDINPUTSTREAM)) {
+					return new BufferedInputStream(is);
+				}
 				return is;
 			} else if (!Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS)) {
 				// getResourceAsStream() simply returns null on SE JP-5 phones if 
@@ -1665,6 +1671,11 @@ public class Configuration {
 					// might return null instead of throwing an IOE, see above.
 					throw new IOException();
 				}
+				// FIXME: Android: test, if this works on Android before committing
+//				if (getCfgBitState(CFGBIT_BUFFEREDINPUTSTREAM)) {
+//					return new BufferedInputStream(is);
+//				}
+				return is;
 			} catch (IOException ioe) {
 				throw new IOException(Locale.get("configuration.ExFNFCouldnt")
 						/*Could not find file */ + name +
@@ -1683,6 +1694,10 @@ public class Configuration {
 					// might return null instead of throwing an IOE, see above.
 					throw new IOException();
 				}
+				if (getCfgBitState(CFGBIT_BUFFEREDINPUTSTREAM)) {
+					return new BufferedInputStream(is);
+				}
+				return is;
 			} catch (IOException ioe) {
 				throw new IOException(Locale.get("configuration.ExFNFCouldnt")
 						/*Could not find file */ + name +
