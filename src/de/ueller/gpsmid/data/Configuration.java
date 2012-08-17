@@ -1644,7 +1644,7 @@ public class Configuration {
 			//#endif
 			if (is != null) {
 				if (getCfgBitState(CFGBIT_BUFFEREDINPUTSTREAM)) {
-					return new BufferedInputStream(is);
+					return new BufferedInputStream(is, 512);
 				}
 				return is;
 			} else if (!Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS)) {
@@ -1676,7 +1676,7 @@ public class Configuration {
 				}
 				// FIXME: Android: test, if this works on Android before committing
 				if (getCfgBitState(CFGBIT_BUFFEREDINPUTSTREAM)) {
-					return new BufferedInputStream(is);
+					return new BufferedInputStream(is, 512);
 				}
 				return is;
 			} catch (IOException ioe) {
@@ -1698,7 +1698,7 @@ public class Configuration {
 					throw new IOException();
 				}
 				if (getCfgBitState(CFGBIT_BUFFEREDINPUTSTREAM)) {
-					return new BufferedInputStream(is);
+					return new BufferedInputStream(is, 512);
 				}
 				return is;
 			} catch (IOException ioe) {
