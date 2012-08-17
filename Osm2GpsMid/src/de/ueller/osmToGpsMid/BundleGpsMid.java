@@ -320,7 +320,7 @@ public class BundleGpsMid implements Runnable {
 			}
 			try {
 				String jarsignerOutputLine = null;
-				//System.out.println("Signing with external program: " + commandPart1 + passStringShown + commandPart2);
+				System.out.println("Signing with external program (property jarsignerPath=" + command[0] + ")");
 				signer = Runtime.getRuntime().exec(command);
 				// Runtime.getRuntime().exec(jarSigner + " -verbose -digestalg SHA1 -sigalg MD5withRSA " + bundleName + " gpsmid");
 
