@@ -130,11 +130,11 @@
 		<deviceRequirements unless="test">
 			<or>
 				<requirement name="Identifier" value="Generic/full-connected" />
+				<!--
 				<requirement name="Identifier" value="Generic/full" />
 				<requirement name="Identifier" value="Generic/midsize" />
 				<requirement name="Identifier" value="Generic/minimal" />
 				<requirement name="Identifier" value="Generic/blackberry" />
-				<!--
 				<requirement name="Identifier" value="Generic/newfeatures" />
 				<requirement name="Identifier" value="Motorola/Motorazr_V3i" />
 				<requirement name="Identifier" value="Sony-Ericsson/K750" />
@@ -319,10 +319,10 @@
 		<deviceRequirements unless="test">
 			<or>
 				<requirement name="Identifier" value="Generic/android-full-connected" />
+<!--
 				<requirement name="Identifier" value="Generic/android-full" />
 				<requirement name="Identifier" value="Generic/android-midsize" />
 				<requirement name="Identifier" value="Generic/android-minimal" />
-<!--
 				<requirement name="Identifier" value="Generic/android-full-connected-outlines" />
 				<requirement name="Identifier" value="Generic/android-full-outlines" />
 				<requirement name="Identifier" value="Generic/android-midsize-outlines" />
@@ -441,7 +441,6 @@
 			</obfuscator>
 			
 			<!-- sign key="gpsmid" keystore="gpsmidkey.jks"	password="${password}" unless="test" /> -->
-			<sign key="gpsmid" keystore="gpsmidkey.jks"     password="${password}" />
 			
 			<!-- debug settings: only include debug setting when the test-property is true -->
 			<debug if="logging" showLogOnError="true" verbose="true" level="debug">
