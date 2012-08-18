@@ -183,6 +183,11 @@ public class CellDB {
 				if (conf.getCellIDnoLAC() || lacCells.size() < 20) {
 					String fname = conf.getTempDir() + "/c" + c.mcc + c.mnc
 							+ ".id";
+					if (conf.sourceIsApk) {
+						fname = conf.getTempDir() +
+							"/assets" + "/c" + c.mcc + c.mnc
+							+ ".id";
+					}
 					f = new File(fname);
 					if (!f.exists()) {
 						f.createNewFile();
@@ -199,6 +204,11 @@ public class CellDB {
 				if (lacCells.size() >= 20) {
 					String fname = conf.getTempDir() + "/c" + c.mcc + c.mnc
 							+ c.lac + ".id";
+					if (conf.sourceIsApk) {
+						fname = conf.getTempDir() +
+							"/assets" + "/c" + c.mcc + c.mnc
+							+ c.lac + ".id";
+					}
 					f = new File(fname);
 					f.createNewFile();
 					dos = new DataOutputStream(new FileOutputStream(f));
