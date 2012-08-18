@@ -298,6 +298,13 @@ public class BundleGpsMid implements Runnable {
 		packDir(zf, src, "");
 		String bundleName = n.getAbsolutePath();
 		String jarSigner = config.getJarsignerPath();
+
+		// resolve Windows environment variables case-insensitive
+		java.util.Map<String, String> env = System.getenv();
+        for (String envName : env.keySet()) {
+              jarSigner = jarSigner.replaceAll("(?i)%" + envName + "%", Matcher.quoteReplacement(env.get(envName)));
+        }
+		
 		zf.close();
 
 		if (config.sourceIsApk && config.signApk) {
