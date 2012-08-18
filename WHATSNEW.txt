@@ -18,6 +18,7 @@ GpsMid 0.8
     - The number of not loaded tiles are displayed in the left upper corner,
       and a * sign after the number if the map is actually being rendered (thx walter9)
     - Names for area labels are now only resolved if there's any chance to render two letters of it
+    - In Setup / Map Source you can now set "load names last" to get the map data loaded before the names are loaded
     - There's a new experimental option "Use BufferedInputstream" in Setup / Map Source
       that mostly speeds up map reading from directories (not from zip) and from the internal map,
       this also improves Routing Performance.

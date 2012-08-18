@@ -372,6 +372,8 @@ public class Configuration {
 	public final static short CFGBIT_SHOW_NMEA_ERRORS = 147;
 	/** bit 148: Buffered file reading */
 	public final static short CFGBIT_BUFFEREDINPUTSTREAM = 148;
+	/** bit 149: resolve names after map tiles are read */
+	public final static short CFGBIT_RESOLVE_NAMES_LAST = 149;
 	
 	/**
 	 * These are the database record IDs for each configuration option
