@@ -298,17 +298,18 @@ public class GuiSearch extends Canvas implements CommandListener,
 			addCommand(EDIT1_CMD);			
 			//#endif
 			//#endif
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
-				addCommand(ROUTE2_CMD);			
-			} else {
-				addCommand(OK2_CMD);
-			}
-		} else if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
+			//if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
+			addCommand(ROUTE2_CMD);			
+			//} else {
+			//	addCommand(OK2_CMD);
+			//}
+		} else {
+			// if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
 			addCommand(ROUTE1_CMD);			
 			addCommand(OK2_CMD);
-		} else {
-			addCommand(OK1_CMD);
-			addCommand(ROUTE2_CMD);			
+			//} else {
+			//addCommand(OK1_CMD);
+			//addCommand(ROUTE2_CMD);			
 		}
 		addCommand(DISP_CMD);
 		addCommand(DEL_CMD);
@@ -1268,20 +1269,20 @@ public class GuiSearch extends Canvas implements CommandListener,
 				destroy();
 				parent.show();
 			} else {
-				if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
-					commandAction( ROUTE1_CMD, (Displayable) null);
-				} else {
-					commandAction( OK1_CMD, (Displayable) null);
-				}
+				//if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
+				commandAction( ROUTE1_CMD, (Displayable) null);
+				//} else {
+				//	commandAction( OK1_CMD, (Displayable) null);
+				//}
 			}
 			return;
 //#else
 		} else if (keyCode == 10 || action == FIRE) {
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
-				commandAction( ROUTE1_CMD, (Displayable) null);
-			} else {
-				commandAction( OK1_CMD, (Displayable) null);				
-			}
+			//if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
+			commandAction( ROUTE1_CMD, (Displayable) null);
+			//} else {
+			//	commandAction( OK1_CMD, (Displayable) null);				
+			//}
 			return;
 //#endif
 		} else if (action == UP) {

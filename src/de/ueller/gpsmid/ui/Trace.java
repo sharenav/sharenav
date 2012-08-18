@@ -4687,9 +4687,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			logger.info("Setting destination to " + dest.toString());
 			
 			// move map only to the destination, if GUI is not optimized for routing
-			if (! Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
-				commandAction(SHOW_DEST_CMD);
-			}
+			//if (! Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
+			//	commandAction(SHOW_DEST_CMD);
+			//}
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTOSAVE_DESTPOS)) {
 				Configuration.setDestPos(new Node(dest.lat, dest.lon, true));
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SAVED_DESTPOS_VALID, true);

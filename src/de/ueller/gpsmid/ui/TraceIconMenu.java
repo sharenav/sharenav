@@ -92,13 +92,13 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 		mp.createAndAddIcon(Locale.get("generic.Exit")/*Exit*/, "i_exit", Trace.EXIT_CMD);
 
 		// determine preferred ordering
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
-			createAndAddRoutingMenu();
-			createAndAddRecordingMenu();
-		} else {
-			createAndAddRecordingMenu();			
-			createAndAddRoutingMenu();
-		}
+		//if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
+		createAndAddRoutingMenu();
+		createAndAddRecordingMenu();
+		//} else {
+		//	createAndAddRecordingMenu();			
+		//	createAndAddRoutingMenu();
+		//}
 		// Osm
 		mp = createAndAddMenuPage(Locale.get("traceiconmenu.OsmTop")/* Osm */, 3, 3);
 		iconEditWay =		mp.createAndAddIcon(Locale.get("traceiconmenu.EditWay")/*Edit way*/, "i_editway", Trace.RETRIEVE_XML);

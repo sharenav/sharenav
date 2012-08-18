@@ -181,7 +181,8 @@ public class Configuration {
 	// bit 54: Flag whether iconMenus should be fullscreen
 	public final static short CFGBIT_ICONMENUS_FULLSCREEN = 54;
 	// bit 55: Flag whether iconMenus should be optimized for routing
-	public final static short CFGBIT_ICONMENUS_ROUTING_OPTIMIZED = 55;
+	// public final static short CFGBIT_ICONMENUS_ROUTING_OPTIMIZED = 55;
+	// removed 2012-08-19
 	// bit 56: Flag whether night style should be applied
 	public final static short CFGBIT_NIGHT_MODE = 56;
 	// bit 57: Flag whether turbo route calc should be used
@@ -802,7 +803,7 @@ public class Configuration {
 								1L << CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP |
 								1L << CFGBIT_SHOW_AIR_DISTANCE_IN_MAP |
 								1L << CFGBIT_ICONMENUS |
-								1L << CFGBIT_ICONMENUS_ROUTING_OPTIMIZED |
+				// 1L << CFGBIT_ICONMENUS_ROUTING_OPTIMIZED |
 								1L << CFGBIT_ICONMENUS_FULLSCREEN;
 
 			cfgBits_64_to_127 |=	1L << CFGBIT_SHOW_ALTITUDE_IN_MAP |
