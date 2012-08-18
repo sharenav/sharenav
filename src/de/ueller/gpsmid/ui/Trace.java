@@ -2973,9 +2973,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 	
 	private void showCurrentAlert(Graphics g) {
-		Font font = g.getFont();
-		// request same font in bold for title
-		Font titleFont = Font.getFont(font.getFace(), Font.STYLE_BOLD, font.getSize());
+		Font font = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_MEDIUM);
+		// same font for title
+		Font titleFont = font;
 		int fontHeight = font.getHeight();
 		// add alert title height plus extra space of one line for calculation of alertHeight
 		int y = titleFont.getHeight() + 2 + fontHeight;
