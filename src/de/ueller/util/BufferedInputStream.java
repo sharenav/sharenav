@@ -53,7 +53,7 @@ import java.io.IOException;
  * @since   JDK1.0
  */
 public
-class BufferedInputStream extends FilterInputStream {
+class BufferedInputStream extends InputStream {
 
     private static int defaultBufferSize = 512;
 
@@ -134,7 +134,9 @@ class BufferedInputStream extends FilterInputStream {
      * @see     java.io.BufferedInputStream#reset()
      */
     protected int marklimit;
-
+   
+    private InputStream in;
+    
     /**
      * Check to make sure that this stream has not been closed
      */
@@ -168,7 +170,7 @@ class BufferedInputStream extends FilterInputStream {
      * @exception IllegalArgumentException if size <= 0.
      */
     public BufferedInputStream(InputStream in, int size) {
-	super(in);
+        this.in = in;
         if (size <= 0) {
             throw new IllegalArgumentException("Buffer size <= 0");
         }
