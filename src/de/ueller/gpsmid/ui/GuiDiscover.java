@@ -473,7 +473,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		mapSrcOptions = new ChoiceGroup(Locale.get("guidiscover.Options")/*Options*/, ChoiceGroup.MULTIPLE, mapOptions, null);
 		
 		String [] performanceOptions;
-		int i=3;
+		int i = 3;
 		//#if polish.android
 		i++;
 		//#endif
@@ -686,7 +686,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//#style formItem
 		menuDisplayOptions.append(sizeOpts);
 
-		String [] mapInfos = new String[10];
+		String [] mapInfos = new String[9];
 		mapInfos[0] = Locale.get("guidiscover.Pointofcompass")/*Point of compass in rotated map*/;
 		mapInfos[1] = Locale.get("guidiscover.Scalebar")/*Scale bar*/;
 		mapInfos[2] = Locale.get("guidiscover.Speed")/*Speed when driving*/;
@@ -696,7 +696,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		mapInfos[6] = Locale.get("guidiscover.Clock")/*Clock with current time*/;
 		mapInfos[7] = Locale.get("guidiscover.Accuracy")/*Accuracy with GPS status*/;
 		mapInfos[8] = Locale.get("guiroute.TravelBy")/*Travel by:*/;
-		mapInfos[9] = Locale.get("guidiscover.clickMarkers")/*Clickable markers*/;
 		mapInfoOpts = new ChoiceGroup(Locale.get("guidiscover.Infos")/*Infos in Map Screen:*/,
 				Choice.MULTIPLE, mapInfos, null);
 		//#style formItem
@@ -1184,7 +1183,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				mapInfoOpts.setSelectedIndex(6, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP));
 				mapInfoOpts.setSelectedIndex(7, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_ACCURACY));
 				mapInfoOpts.setSelectedIndex(8, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_TRAVEL_MODE_IN_MAP));
-				mapInfoOpts.setSelectedIndex(9, Configuration.getCfgBitSavedState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS));
 				clockOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_GPS_TIME));
 				clockOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_GPS_TIME_FALLBACK));
 				metricUnits.setSelectedIndex(Configuration.getCfgBitSavedState(Configuration.CFGBIT_METRIC) ? 0 : 1, true);
@@ -1573,7 +1571,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP, mapInfoOpts.isSelected(6));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_ACCURACY, mapInfoOpts.isSelected(7));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_TRAVEL_MODE_IN_MAP, mapInfoOpts.isSelected(8));
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS, mapInfoOpts.isSelected(9));
 		
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_GPS_TIME, clockOpts.isSelected(0));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_GPS_TIME_FALLBACK, clockOpts.isSelected(1));

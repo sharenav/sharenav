@@ -73,17 +73,19 @@ public class GuiSetupGui extends Form implements CommandListener {
 			append(imenuOpts);
 		
 			if (Configuration.getHasPointerEvents()) {
-				String [] touch = new String[3];
+				String [] touch = new String[4];
 				int i = 0;
 				touch[i++] = Locale.get("guisetupgui.longMapTap");
 				touch[i++] = Locale.get("guisetupgui.doubleMapTap");
 				touch[i++] = Locale.get("guisetupgui.singleMapTap");
+				touch[i++] = Locale.get("guisetupgui.clickableMarkers");
 				mapTapFeatures = new ChoiceGroup(Locale.get("guisetupgui.MapTapFeatures")/*Map Touch Features*/, 
 						Choice.MULTIPLE, touch, null);
 				i = 0;
 				mapTapFeatures.setSelectedIndex(i++, Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_LONG));
 				mapTapFeatures.setSelectedIndex(i++, Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_DOUBLE));
 				mapTapFeatures.setSelectedIndex(i++, Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_SINGLE));
+				mapTapFeatures.setSelectedIndex(i++, Configuration.getCfgBitState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS));
 				append(mapTapFeatures);
 			}
 
@@ -227,6 +229,7 @@ public class GuiSetupGui extends Form implements CommandListener {
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTAP_LONG, mapTapFeatures.isSelected(i++));
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTAP_DOUBLE, mapTapFeatures.isSelected(i++));
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTAP_SINGLE, mapTapFeatures.isSelected(i++));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS, mapTapFeatures.isSelected(i++));
 			}
 
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_EXIT_APPLICATION_WITH_BACK_BUTTON, otherGroup.isSelected(0));
