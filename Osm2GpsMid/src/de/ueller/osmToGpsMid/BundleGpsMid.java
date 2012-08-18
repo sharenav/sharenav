@@ -598,8 +598,16 @@ public class BundleGpsMid implements Runnable {
 			File target = new File(tmpDir);
 			createPath(target);
 			if (config.sourceIsApk) {
+				// create /assets
 				File targetAssets = new File(tmpDir + "/assets");
 				createPath(targetAssets);
+				// unsign the APK by deleting files from META-INF (e.g. from debug signing) to be able to sign the APK with the private key
+				File f = new File(tmpDir + "/META-INF/MANIFEST.MF");
+				f.delete();
+				f = new File(tmpDir + "/META-INF/CERT.SF");
+				f.delete();
+				f = new File(tmpDir + "/META-INF/CERT.RSA");
+				f.delete();
 			}
 			
 			OsmParser parser = config.getPlanetParser();
