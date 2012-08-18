@@ -64,6 +64,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		" Sualeh Fatehi ",
 		" Nikolay Klimchuk",
 		" Simon Turner",
+		"Sun Microsystems, Inc",
 		Locale.get("splash.MuellerHoenicke"),
 		Locale.get("splash.Application")/*Application:*/,
 		Locale.get("splash.Application2")/* licensed under GPL2*/,
