@@ -321,7 +321,7 @@ public class BundleGpsMid implements Runnable {
 			}
 			try {
 				String jarsignerOutputLine = null;
-				System.out.println("Signing with external program " + command[0] + "(set property jarsignerPath=<jarsigner-path-or-commandname> to change")");
+				System.out.println("Signing with external program " + command[0] + "(set property jarsignerPath=<jarsigner-path-or-commandname> to change");
 				ProcessBuilder pBuilder = new ProcessBuilder(command);
 				pBuilder.redirectErrorStream(true);
 				signer = pBuilder.start();
