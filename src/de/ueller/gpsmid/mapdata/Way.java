@@ -178,6 +178,7 @@ public class Way extends Entity {
 	private static int [] hl = new int[100];
 	private static Font areaFont;
 	private static int areaFontHeight;
+	private static int areaFontMinRenderWidth;
 	private static Font pathFont;
 	private static int pathFontHeight;
 	private static int pathFontMaxCharWidth;
@@ -2462,26 +2463,6 @@ public class Way extends Entity {
 			}
 		}
 
-		String name = null;
-		if ( Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE)) {
-			name = wayDesc.description;
-		} else {			
-			if (nameIdx != -1) {
-				name = Trace.getInstance().getName(nameIdx);
-			}
-		}
-		// if zoomed in enough, show description 
-		if (pc.scale < wayDesc.maxDescriptionScale) {
-		// show way description
-			if (name == null) {
-				name = wayDesc.description;
-			} else {
-				name = name + " (" + wayDesc.description + ")";
-			}
-		}
-		if (name == null) {
-			return;
-		}
 		IntPoint lineP2 = pc.lineP2;
 		Projection p = pc.getP();
 		int x;
@@ -2519,14 +2500,50 @@ public class Way extends Entity {
 				maxY = y;
 			}
 		}
-	
+
+		// if area is not wide enough to draw at least a dot into it, return
+		if ((maxX - minX) < 3 ) {
+			return;
+		}
+		
 		// System.out.println("name:" + name + " ClipX:" + clipX + " ClipMaxX:" + clipMaxX + " ClipY:" + clipY + " ClipMaxY:" + clipMaxY + " minx:" + minX + " maxX:"+maxX + " miny:"+minY+ " maxY" + maxY);
 
 		Font originalFont = pc.g.getFont();
 		if (areaFont == null) {
 			areaFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
 			areaFontHeight = areaFont.getHeight();
+			areaFontMinRenderWidth = areaFont.stringWidth("ii");
 		}
+		
+		pc.g.setColor(Legend.COLORS[Legend.COLOR_AREA_LABEL_TEXT]);
+		
+		String name = null;
+		if ( Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE)) {
+			name = wayDesc.description;
+		// if the area has a name, resolve it
+		} else if (nameIdx != -1) {
+			// if not at least "ii" would be renderable, just paint a dot to indicate there would be a name available
+			if ((maxX - minX) < areaFontMinRenderWidth) {
+				pc.g.drawRect((minX + maxX) / 2, (minY + maxY) / 2, 0, 0 );
+				return;			
+			}		
+			// resolve the name
+			name = Trace.getInstance().getName(nameIdx);
+		}
+		
+		// if zoomed in enough, show description 
+		if (pc.scale < wayDesc.maxDescriptionScale) {
+		// show way description
+			if (name == null) {
+				name = wayDesc.description;
+			} else {
+				name = name + " (" + wayDesc.description + ")";
+			}
+		}
+		if (name == null) {
+			return;
+		}
+
 		// find out how many chars of the name fit into the area
 		int i = name.length() + 1;
 		int w;
@@ -2534,26 +2551,23 @@ public class Way extends Entity {
 			i--;
 			w = areaFont.substringWidth(name, 0, i);
 		} while (w > (maxX - minX) && i > 1);
-		// is area wide enough to draw at least a dot into it?
-		if ((maxX - minX) >= 3 ) {
-			pc.g.setColor(Legend.COLORS[Legend.COLOR_AREA_LABEL_TEXT]);
-			// if at least two chars have fit or name is a fitting single char, draw name
-			if (i > 1 || (i == name.length() && w <= (maxX - minX))  ) {
-				pc.g.setFont(areaFont);
-				// center vertically in area
-				int y1 = (minY + maxY - areaFontHeight) / 2;
-				// draw centered into area
-				pc.g.drawSubstring(name, 0, i, (minX + maxX - w) / 2, y1, Graphics.TOP | Graphics.LEFT);
-				// if name fits not completely, append "..."
-				if (i != name.length()) {
-					pc.g.drawString("...", (minX + maxX + w) / 2, y1, Graphics.TOP | Graphics.LEFT);
-				}
-				pc.g.setFont(originalFont);
-				// else draw a dot to indicate there's a name for this area available
-			} else {
-				pc.g.drawRect((minX + maxX) / 2, (minY + maxY) / 2, 0, 0 );
+
+		// if at least two chars have fit or name is a fitting single char, draw name
+		if (i > 1 || (i == name.length() && w <= (maxX - minX))  ) {
+			pc.g.setFont(areaFont);
+			// center vertically in area
+			int y1 = (minY + maxY - areaFontHeight) / 2;
+			// draw centered into area
+			pc.g.drawSubstring(name, 0, i, (minX + maxX - w) / 2, y1, Graphics.TOP | Graphics.LEFT);
+			// if name fits not completely, append "..."
+			if (i != name.length()) {
+				pc.g.drawString("...", (minX + maxX + w) / 2, y1, Graphics.TOP | Graphics.LEFT);
 			}
-		}		
+			pc.g.setFont(originalFont);
+			// else draw a dot to indicate there's a name for this area available
+		} else {
+			pc.g.drawRect((minX + maxX) / 2, (minY + maxY) / 2, 0, 0 );
+		}
 	}
 	
 	public void setColor(PaintContext pc,WayDescription wayDesc,boolean routing,boolean isCurrentRoutePath, boolean highlight) {
