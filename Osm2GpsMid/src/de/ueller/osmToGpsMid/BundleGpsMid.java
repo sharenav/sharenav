@@ -330,6 +330,10 @@ public class BundleGpsMid implements Runnable {
 
 				//DataInputStream jarsignerOutputDataStream = new InputStream(signer.getInputStream());
 				BufferedReader jarsignerOutput = new BufferedReader(new InputStreamReader(signer.getInputStream()));
+				// if jarsigner asks for a password, this makes it stop
+				// asking and show the query/error output
+				signer.getOutputStream().flush();
+				signer.getOutputStream().close();
 				while ((jarsignerOutputLine = jarsignerOutput.readLine()) != null) {
 					System.out.println(jarsignerOutputLine);
 				}
