@@ -287,15 +287,15 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 	public static String getStaticUrlForSite(String site) {
 		String url = null;
 		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.helptouch")/*Online help (touchscreen)*/)) {
-			url = "https://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Touchscreen_Layout";
+			url = "http://gpsmid.sourceforge.net/help/touch.php";
 		}
 
 		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.helpwiki")/*Online help (Gpsmid wiki)*/)) {
-			url = "https://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Main_Page";				
+			url = "http://gpsmid.sourceforge.net/help/wiki.php";				
 		}
 		//#if polish.android
 		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.helpwikiandroid")/*GpsMid on Android help (Gpsmid wiki)*/)) {
-			url = "https://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Android";				
+			url = "http://gpsmid.sourceforge.net/help/android.php";
 		}
 		//#endif
 		return url;
