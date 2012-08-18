@@ -47,10 +47,10 @@ public class FileExportSession implements ExportSession {
 		//#if polish.android
 		try {
 			url += name + ".gpx";
-			//#debug info
-			logger.info("Opening file " + filename);
 			String filename = url.substring("file://".length());
 			session = new File(filename);
+			//#debug info
+			logger.info("Opening file " + filename);
 			if (session == null)
 				throw new IOException("Couldn't open file " + filename);
 			oS = new FileOutputStream(session);
