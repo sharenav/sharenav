@@ -1707,7 +1707,16 @@ public class GuiSearch extends Canvas implements CommandListener,
 							 * which start drawing blue circles but give no pointerReleased() event
 							 * when holding down the pointer just a few ms with the finger
 							 */
+							//#if polish.android
+							MidletBridge.instance.runOnUiThread(
+								new Runnable() {
+									public void run() {
+										autoPointerRelease(pointerXPressed, pointerYPressed);
+									}
+								});
+							//#else
 							autoPointerRelease(pointerXPressed, pointerYPressed);
+							//#endif
 						}
 					}
 				}
