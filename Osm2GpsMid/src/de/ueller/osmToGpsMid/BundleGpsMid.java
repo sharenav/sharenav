@@ -11,6 +11,7 @@
 
 package de.ueller.osmToGpsMid;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -283,7 +284,7 @@ public class BundleGpsMid implements Runnable {
 			rewriteManifestFile(c, false);
 			renameCopying(c);
 		}
-		FileOutputStream fo = new FileOutputStream(n);
+		BufferedOutputStream fo = new BufferedOutputStream(new FileOutputStream(n));
 		ZipOutputStream zf = new ZipOutputStream(fo);
 		zf.setLevel(9);
 		if (compressed == false) {
@@ -319,7 +320,7 @@ public class BundleGpsMid implements Runnable {
 			}
 			try {
 				String jarsignerOutputLine = null;
-				//System.out.println("Signing with external program: " + commandPart1 + passStringShown + commandPart2);
+				System.out.println("Signing with external program (property jarsignerPath=" + command[0] + ")");
 				signer = Runtime.getRuntime().exec(command);
 				// Runtime.getRuntime().exec(jarSigner + " -verbose -digestalg SHA1 -sigalg MD5withRSA " + bundleName + " gpsmid");
 

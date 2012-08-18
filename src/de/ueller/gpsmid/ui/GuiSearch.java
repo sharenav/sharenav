@@ -463,7 +463,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					destroy();
 				}
 				if (c == ROUTE1_CMD || c == ROUTE2_CMD) {
-					parent.performIconAction(Trace.ROUTING_START_WITH_OPTIONAL_MODE_SELECT_CMD, null);
+					parent.commandAction(Trace.ROUTING_START_WITH_OPTIONAL_MODE_SELECT_CMD);
 				}
 				return;
 			}

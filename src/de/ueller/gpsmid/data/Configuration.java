@@ -372,6 +372,8 @@ public class Configuration {
 	public final static short CFGBIT_SHOW_NMEA_ERRORS = 147;
 	/** bit 148: Buffered file reading */
 	public final static short CFGBIT_BUFFEREDINPUTSTREAM = 148;
+	/** bit 149: resolve names after map tiles are read */
+	public final static short CFGBIT_RESOLVE_NAMES_LAST = 149;
 	
 	/**
 	 * These are the database record IDs for each configuration option
@@ -1644,7 +1646,7 @@ public class Configuration {
 			//#endif
 			if (is != null) {
 				if (getCfgBitState(CFGBIT_BUFFEREDINPUTSTREAM)) {
-					return new BufferedInputStream(is);
+					return new BufferedInputStream(is, 512);
 				}
 				return is;
 			} else if (!Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS)) {
@@ -1676,7 +1678,7 @@ public class Configuration {
 				}
 				// FIXME: Android: test, if this works on Android before committing
 				if (getCfgBitState(CFGBIT_BUFFEREDINPUTSTREAM)) {
-					return new BufferedInputStream(is);
+					return new BufferedInputStream(is, 512);
 				}
 				return is;
 			} catch (IOException ioe) {
@@ -1698,7 +1700,7 @@ public class Configuration {
 					throw new IOException();
 				}
 				if (getCfgBitState(CFGBIT_BUFFEREDINPUTSTREAM)) {
-					return new BufferedInputStream(is);
+					return new BufferedInputStream(is, 512);
 				}
 				return is;
 			} catch (IOException ioe) {

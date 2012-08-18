@@ -2085,7 +2085,7 @@ end -->
   				<description desc = "Residential"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "19"/>
+  				<scale scale = "18"/>
   				<lineColor color = "00D2D2D2" colorAtNight="00373636"/>  	
 				<force_to layer = "-2"/>
   			</Wvalue>
@@ -2320,7 +2320,7 @@ end -->
   				<description desc = "Beach"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "19"/>
+  				<scale scale = "18"/>
   				<lineColor color = "00FFFF9F" colorAtNight="00636000"/>				
 				<force_to layer = "-2"/>
 			</Wvalue>

@@ -15,6 +15,7 @@ import java.util.Vector;
 
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.ui.GpsMid;
+import de.ueller.gpsmid.ui.Trace;
 import de.ueller.gpsmid.util.StringEntry;
 
 import de.ueller.util.CancelMonitorInterface;
@@ -51,6 +52,7 @@ public class Names implements Runnable {
 	}
 
 	public void run() {
+		Trace trace = Trace.getInstance();
 		try {
 			readIndex();
 			while (! shutdown) {
@@ -65,11 +67,15 @@ public class Names implements Runnable {
 						continue;
 					}
 				}
+				boolean resolveNamesLast = Configuration.getCfgBitState(Configuration.CFGBIT_RESOLVE_NAMES_LAST);
 				//Sleep for 500ms to give time for several
 				//name requests to come in, as this increases
 				//efficiency. Should not effect perceived
 				//Speed much
-				Thread.sleep(500);
+				do {
+					Thread.sleep(500);
+				// sleep while reading tiles for better tile loading performance
+				} while (resolveNamesLast && trace.getDataReader() != null && trace.getDataReader().getRequestQueueSize() > 0);
 				// change to give cleanup a chance
 				if (addQueue2.size() != 0) {
 					synchronized (addQueue2) {					
@@ -77,6 +83,9 @@ public class Names implements Runnable {
 						addQueue2.removeAll();					
 					}
 					readData(queue2);
+					if (resolveNamesLast) {
+						trace.newDataReady();
+					}
 				}
 				if (cleanup) {
 					cleanupStringCache();
