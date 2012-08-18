@@ -243,7 +243,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup rawLogCG;
 	private ChoiceGroup mapSrc;
 	private ChoiceGroup mapSrcOptions;
-	private ChoiceGroup mapPerfOptions;
+	private ChoiceGroup perfTuneOptions;
 	private ChoiceGroup rotationGroup;
 	private ChoiceGroup nightModeGroup;
 	private ChoiceGroup uiLangGroup;
@@ -257,7 +257,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup visualOpts;
 	private TextField	tfDestLineWidth;
 	private TextField	tfTimeDiff;
-	private ChoiceGroup perfTuneOpts;
 	private ChoiceGroup metricUnits;
 	private ChoiceGroup distanceViews;
 	private TextField	tfAutoRecenterToGpsSecs;
@@ -467,21 +466,34 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		menuSelectMapSource.append(mapLocationImage);
 		//#endif
 
-		String [] preferInternal = new String[2];
-		preferInternal[0] = Locale.get("guidiscover.PreferBuiltInPNGs")/*Prefer built-in POI PNGs (faster startup e.g. on some Nokias)*/;
-		preferInternal[1] = Locale.get("guidiscover.PreferBuiltInSounds")/*Prefer built-in sounds*/;
-		mapSrcOptions = new ChoiceGroup(Locale.get("guidiscover.Options")/*Options*/, ChoiceGroup.MULTIPLE, preferInternal, null);
-
-		String [] performanceOptions = new String[2];
-		performanceOptions[0] = Locale.get("guidiscover.UseBufferedInputStream")/*use BufferedImputStream*/;
-		performanceOptions[1] = Locale.get("guidiscover.LoadNamesLast")/*load names last*/;
-		mapPerfOptions = new ChoiceGroup(Locale.get("guidiscover.PerformanceOptions")/*Options*/, ChoiceGroup.MULTIPLE, performanceOptions, null);
+		String [] mapOptions = new String[3];
+		mapOptions[0]  = Locale.get("guidiscover.mapcredits")/*Show map credits*/;
+		mapOptions[1] = Locale.get("guidiscover.PreferBuiltInPNGs")/*Prefer built-in POI PNGs (faster startup e.g. on some Nokias)*/;
+		mapOptions[2] = Locale.get("guidiscover.PreferBuiltInSounds")/*Prefer built-in sounds*/;
+		mapSrcOptions = new ChoiceGroup(Locale.get("guidiscover.Options")/*Options*/, ChoiceGroup.MULTIPLE, mapOptions, null);
 		
+		String [] performanceOptions;
+		int i=3;
+		//#if polish.android
+		i++;
+		//#endif
+		performanceOptions = new String[i];
+		
+		i = 0;
+		//#if polish.android
+		performanceOptions[i++] = Locale.get("guidiscover.PreferOutline")/*Prefer outline area format*/;
+		//#endif
+		performanceOptions[i++] = Locale.get("guidiscover.UseBufferedInputStream")/*use BufferedImputStream*/;
+		performanceOptions[i++] = Locale.get("guidiscover.LoadNamesLast")/*load names last*/;
+		performanceOptions[i++] = Locale.get("guidiscover.simplify")/*Simplify map when busy*/;
+		perfTuneOptions = new ChoiceGroup(Locale.get("guidiscover.PerfTuneOptions")/*Performance tuning options:*/, ChoiceGroup.MULTIPLE, performanceOptions, null);
+	
 		//#style formItem
 		menuSelectMapSource.append(mapSrc);
 		//#style formItem
 		menuSelectMapSource.append(mapSrcOptions);
-		menuSelectMapSource.append(mapPerfOptions);
+		//#style formItem
+		menuSelectMapSource.append(perfTuneOptions);
 		menuSelectMapSource.setCommandListener(this);
 	}
 
@@ -603,15 +615,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		tfDestLineWidth = new TextField(Locale.get("guidiscover.DestLineWidth")/*width of dest line*/, Integer.toString(Configuration.getDestLineWidth()), 1, TextField.DECIMAL);
 		//#style formItem
 		menuDisplayOptions.append(tfDestLineWidth);
-		
-		String [] perfTune = new String[2];
-		perfTune[0] = Locale.get("guidiscover.simplify")/*Simplify map when busy*/;
-		perfTune[1] = Locale.get("guidiscover.PreferOutline")/*Prefer outline area format*/;
-
-		perfTuneOpts = new ChoiceGroup(Locale.get("guidiscover.PerfTuneOptions")/*Performance tuning options:*/, Choice.MULTIPLE, perfTune, null);
-		//#style formItem
-		menuDisplayOptions.append(perfTuneOpts);
-		
+				
 		String [] metricUnit = new String[2];
 		metricUnit[0] = Locale.get("guidiscover.metricunits")/*metric units*/;
 		metricUnit[1] = Locale.get("guidiscover.englishunits")/*English units*/;
@@ -682,7 +686,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//#style formItem
 		menuDisplayOptions.append(sizeOpts);
 
-		String [] mapInfos = new String[11];
+		String [] mapInfos = new String[10];
 		mapInfos[0] = Locale.get("guidiscover.Pointofcompass")/*Point of compass in rotated map*/;
 		mapInfos[1] = Locale.get("guidiscover.Scalebar")/*Scale bar*/;
 		mapInfos[2] = Locale.get("guidiscover.Speed")/*Speed when driving*/;
@@ -693,7 +697,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		mapInfos[7] = Locale.get("guidiscover.Accuracy")/*Accuracy with GPS status*/;
 		mapInfos[8] = Locale.get("guiroute.TravelBy")/*Travel by:*/;
 		mapInfos[9] = Locale.get("guidiscover.clickMarkers")/*Clickable markers*/;
-		mapInfos[10] = Locale.get("guidiscover.mapcredits")/*Show map credits*/;
 		mapInfoOpts = new ChoiceGroup(Locale.get("guidiscover.Infos")/*Infos in Map Screen:*/,
 				Choice.MULTIPLE, mapInfos, null);
 		//#style formItem
@@ -1182,12 +1185,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				mapInfoOpts.setSelectedIndex(7, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_ACCURACY));
 				mapInfoOpts.setSelectedIndex(8, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_TRAVEL_MODE_IN_MAP));
 				mapInfoOpts.setSelectedIndex(9, Configuration.getCfgBitSavedState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS));
-				mapInfoOpts.setSelectedIndex(10, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_MAP_CREDITS));
 				clockOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_GPS_TIME));
 				clockOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_GPS_TIME_FALLBACK));
 				metricUnits.setSelectedIndex(Configuration.getCfgBitSavedState(Configuration.CFGBIT_METRIC) ? 0 : 1, true);
-				perfTuneOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY));
-				perfTuneOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS));
 				visualOpts.setSelectedIndex(0, ! Configuration.getCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS));
 				visualOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUND_WAY_ENDS));
 				SingleTile.newPOIFont();
@@ -1199,7 +1199,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				sellight[1] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED);
 				sellight[2] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_KEEPALIVE);
 				sellight[3] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_MIDP2);
-				byte i = 4;
+				int i = 4;
 				//#if polish.api.nokia-ui
 					sellight[i++] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_NOKIA);
 					sellight[i++] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH);
@@ -1246,15 +1246,18 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 								 Locale.get("guidiscover.PleaseSelectMapDirFirst")/*<Please select map directory or other .jar/zip file first>*/ :
 							Configuration.getMapUrl() ), null);
 				mapSrc.setSelectedIndex(Configuration.usingBuiltinMap() ? 0 : 1, true);
-				mapSrcOptions.setSelectedIndex(0,
-						Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS));
-				mapSrcOptions.setSelectedIndex(1,
-						Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS));
+				mapSrcOptions.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_MAP_CREDITS));
+				mapSrcOptions.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS));
+				mapSrcOptions.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS));
 
-				mapPerfOptions.setSelectedIndex(0,
-						Configuration.getCfgBitSavedState(Configuration.CFGBIT_BUFFEREDINPUTSTREAM));
-				mapPerfOptions.setSelectedIndex(1,
-						Configuration.getCfgBitSavedState(Configuration.CFGBIT_RESOLVE_NAMES_LAST));
+				int j = 0;
+				//#if polish.android
+				perfTuneOptions.setSelectedIndex(j++, Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS));
+				//#endif
+				perfTuneOptions.setSelectedIndex(j++, Configuration.getCfgBitSavedState(Configuration.CFGBIT_BUFFEREDINPUTSTREAM));
+				perfTuneOptions.setSelectedIndex(j++, Configuration.getCfgBitSavedState(Configuration.CFGBIT_RESOLVE_NAMES_LAST));
+				perfTuneOptions.setSelectedIndex(j++, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY));
+
 				GpsMid.getInstance().show(menuSelectMapSource);
 				state = STATE_MAP;
 				break;
@@ -1362,11 +1365,17 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			url = null;
 		}
 		Configuration.setMapUrl(url);
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS, mapSrcOptions.isSelected(0));
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS, mapSrcOptions.isSelected(1));
-		
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BUFFEREDINPUTSTREAM, mapPerfOptions.isSelected(0));
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_RESOLVE_NAMES_LAST, mapPerfOptions.isSelected(1));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_MAP_CREDITS, mapSrcOptions.isSelected(0));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS, mapSrcOptions.isSelected(1));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS, mapSrcOptions.isSelected(2));
+		int i=0;
+		//#if polish.android
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS, perfTuneOptions.isSelected(i++));
+		//#endif
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BUFFEREDINPUTSTREAM, perfTuneOptions.isSelected(i++));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_RESOLVE_NAMES_LAST, perfTuneOptions.isSelected(i++));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY, perfTuneOptions.isSelected(i++));
+
 		rereadMap();
 		//logger.fatal(Locale.get("guidiscover.NeedRestart")/*Need to restart GpsMid, otherwise map is in an inconsistant state*/ + " " + Configuration.getMapUrl());
 		//#if polish.android
@@ -1565,7 +1574,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_ACCURACY, mapInfoOpts.isSelected(7));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_TRAVEL_MODE_IN_MAP, mapInfoOpts.isSelected(8));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS, mapInfoOpts.isSelected(9));
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_MAP_CREDITS, mapInfoOpts.isSelected(10));
 		
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_GPS_TIME, clockOpts.isSelected(0));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_GPS_TIME_FALLBACK, clockOpts.isSelected(1));
@@ -1602,15 +1610,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_METRIC, (metricUnits.getSelectedIndex() == 0));
 		
-		sel = new boolean[2];
-		perfTuneOpts.getSelectedFlags(sel);
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY, sel[0]);
-		if (sel[1] != Configuration.getCfgBitState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS)) {
-			rereadMap();
-		}
-
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_OUTLINE_AREAS, sel[1]);
-
 		sel = new boolean[2];
 		visualOpts.getSelectedFlags(sel);
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS, ! sel[0]);
