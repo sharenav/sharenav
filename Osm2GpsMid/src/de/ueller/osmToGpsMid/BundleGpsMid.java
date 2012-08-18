@@ -338,12 +338,19 @@ public class BundleGpsMid implements Runnable {
 					System.out.println(jarsignerOutputLine);
 				}
 			} catch (IOException ioe) {
+				System.out.println("Error: IO exception " + ioe);
 				showSigningMessage(bundleName);
 			}
 			if (signer != null) {
 				try {
 					signer.waitFor();
+					int exitStatus = signer.exitValue();
+					if (exitStatus != 0) {
+						System.out.println("ERROR: jarsigner exited with exit status " + exitStatus + ", signing failed");
+						showSigningMessage(bundleName);
+					}
 				} catch (InterruptedException ie) {
+					System.out.println("Error: interrupted execution " + ie);
 					showSigningMessage(bundleName);
 				}
 			}
