@@ -21,6 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.ProcessBuilder;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -320,8 +321,11 @@ public class BundleGpsMid implements Runnable {
 			}
 			try {
 				String jarsignerOutputLine = null;
-				System.out.println("Signing with external program (property jarsignerPath=" + command[0] + ")");
-				signer = Runtime.getRuntime().exec(command);
+				System.out.println("Signing with external program " + command[0] + "(set property jarsignerPath=<jarsigner-path-or-commandname> to change")");
+				ProcessBuilder pBuilder = new ProcessBuilder(command);
+				pBuilder.redirectErrorStream(true);
+				signer = pBuilder.start();
+				//signer = Runtime.getRuntime().exec(command);
 				// Runtime.getRuntime().exec(jarSigner + " -verbose -digestalg SHA1 -sigalg MD5withRSA " + bundleName + " gpsmid");
 
 				//DataInputStream jarsignerOutputDataStream = new InputStream(signer.getInputStream());
