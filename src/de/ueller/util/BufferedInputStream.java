@@ -55,7 +55,7 @@ import java.io.IOException;
 public
 class BufferedInputStream extends InputStream {
 
-    private static int defaultBufferSize = 512;
+    private static int defaultBufferSize = 2048;
 
     /**
      * The internal buffer array where the data is stored. When necessary,
