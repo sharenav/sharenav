@@ -1217,8 +1217,10 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				fw.write("# or maybe something like jarsignerPath = /usr/lib/jvm/default-java/bin/jarsigner\r\n");
 				fw.write("# or jarsignerPath = %ProgramFiles%\\\\Java\\\\jdk1.6.0_24\\\\bin\\\\jarsigner.exe on Windows\r\n");
 				fw.write("# could be also jarsignerPath = %ProgramFiles(x86)%\\\\Java\\\\jdk1.6.0_24\\\\jdk1.6.0_24\\\\bin\\\\jarsigner.exe on Windows\r\n");
+				fw.write("# or jarsignerPath = C:\\\\Program Files\\\\Java\\\\jdk1.6.0_24\\\\jdk1.6.0_24\\\\bin\\\\jarsigner.exe on Windows\r\n");
+				fw.write("# or jarsignerPath = C:\\\\Program Files(x86)\\\\Java\\\\jdk1.6.0_24\\\\jdk1.6.0_24\\\\bin\\\\jarsigner.exe on Windows\r\n");
 				fw.write("# or could have e.g. jdk1.6.0_24, jdk1.6.0_26, jdk1.6.0_29, jdk1.6.0_31, jdk1.6.0_33 or jdk1.7.0_05 instead of jdk1.6.0_24\r\n");
-				fw.write("# How to interpret the above: You must manually replace '%ProgramFiles%' with\r\n");
+				fw.write("# How to interpret the above: If the example lines have % constucts, you must manually replace e.g. '%ProgramFiles%' with\r\n");
 				fw.write("#'C:\\\\Program Files or equivalent for your computer when editing .properties\r\n");
 				fw.write("# Quoting: If you have a path containing '\\', you must write it as '\\\\'\r\n");
 				if (!"".equals(config.getJarsignerPath())) {
