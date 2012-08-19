@@ -4590,8 +4590,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 	}
 
-	public void show() {
-		//#if polish.android
+	//#if polish.android
+	public void activateAndroidListeners() {
 		View androidView = (View) CanvasBridge.current();
 		androidView.setOnKeyListener(new OnKeyListener()
 		{
@@ -4624,8 +4624,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 		});
 		androidView.setOnTouchListener(this);
-		//#endif
+	}
+	//#endif
 
+	public void show() {
+		//#if polish.android
+		activateAndroidListeners();
+		//#endif
 		//Display.getDisplay(parent).setCurrent(this);
 		Legend.freeDrawnWayAndAreaSearchImages();
 		GpsMid.getInstance().show(this);
