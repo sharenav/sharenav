@@ -145,7 +145,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private final Command BACK_CMD = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.BACK, 2);
 
 	/** Soft button for discovering BT. */
+    	//#if polish.android
+        // hard-code to make the back key exit settings in textual menu
+	private final Command OK_CMD = new Command(Locale.get("generic.OK")/*Ok*/, Command.OK, 1);
+    	//#else
 	private final Command OK_CMD = new Command(Locale.get("generic.OK")/*Ok*/, GpsMidMenu.OK, 1);
+    	//#endif
 
 	private final Command STORE_BT_URL = new Command(Locale.get("guidiscover.Select")/*Select*/, Command.OK, 2);
 
