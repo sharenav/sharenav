@@ -1761,6 +1761,29 @@ public class Way extends Entity {
 
 		Vector route = pc.trace.getRoute();
 		
+		//#if polish.api.areaoutlines
+		// Draw streets as lines
+		setColor(pc, wayDesc, false, 
+			 false, 
+			 (highlight == HIGHLIGHT_DEST));
+		Paint paint = pc.g.getPaint();
+		paint.setStyle(Style.STROKE);
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_ROUND_WAY_ENDS)) {
+			paint.setStrokeJoin(Paint.Join.ROUND);
+			paint.setStrokeCap(Paint.Cap.ROUND);
+		}
+		float strokeWidth = paint.getStrokeWidth();
+		paint.setStrokeWidth(w);
+		//pc.g.getPaint().setPathEffect(null);
+		Path wPath = new Path();
+		wPath.moveTo(xPoints[0] + pc.g.getTranslateX(), yPoints[0] + pc.g.getTranslateY());
+		for (int i = 1; i < count+1; i++) {
+			wPath.lineTo(xPoints[i] + pc.g.getTranslateX(), yPoints[i] + pc.g.getTranslateY());
+		}
+		pc.g.getCanvas().drawPath(wPath, paint);
+		paint.setStrokeWidth(strokeWidth);
+		//#else
+
 		for (int i = 0; i < count; i++) {
 			wDraw = w;
 			// draw route line wider
@@ -2108,6 +2131,7 @@ public class Way extends Entity {
 				i--;
 			}
 		} 
+		//#endif
 		
 		if (isOneway()) {
 			// Loop through all waysegments for painting the OnewayArrows as overlay
