@@ -375,6 +375,8 @@ public class Configuration {
 	public final static short CFGBIT_BUFFEREDINPUTSTREAM = 148;
 	/** bit 149: resolve names after map tiles are read */
 	public final static short CFGBIT_RESOLVE_NAMES_LAST = 149;
+	/** bit 150: show device (Android for now) native keyboard in search */
+	public final static short CFGBIT_SEARCH_SHOW_NATIVE_KEYBOARD = 150;
 	
 	/**
 	 * These are the database record IDs for each configuration option
@@ -936,6 +938,7 @@ public class Configuration {
 			setCfgBitSavedState(CFGBIT_COMPASS_DIRECTION, true);
 			setCfgBitSavedState(CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION, true);
 			setCfgBitSavedState(CFGBIT_ICONMENUS_FULLSCREEN, false);
+			setCfgBitSavedState(CFGBIT_SEARCH_SHOW_NATIVE_KEYBOARD, true);
 			//#endif
 			setCfgBitSavedState(CFGBIT_SHOW_MAP_CREDITS, true);
 			setCfgBitSavedState(CFGBIT_DISTANCE_VIEW, true);

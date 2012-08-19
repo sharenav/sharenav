@@ -1375,3 +1375,4 @@ guidiscover.UseBufferedInputStream=Use BufferedInputStream
 guidiscover.PerformanceOptions=Performance Tweaks
 guidiscover.LoadNamesLast=Load names last
 guisetupgui.clickableMarkers=Clickable Markers
+guisetupgui.ShowNativeKeyboard=Show native keyboard in search

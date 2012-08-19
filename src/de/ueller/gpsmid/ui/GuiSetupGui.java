@@ -94,6 +94,9 @@ public class GuiSetupGui extends Form implements CommandListener {
 			if (Configuration.getHasPointerEvents()) {
 				iMax++;
 			}
+			//#if polish.android
+			iMax++;
+			//#endif
 			String [] search = null;
 			search = new String[iMax];
 			int searchnum = 0;
@@ -103,6 +106,9 @@ public class GuiSetupGui extends Form implements CommandListener {
 			    search[searchnum++] = Locale.get("guisetupgui.numberkeypad")/*Enable virtual keypad*/;
 			}
 			search[searchnum++] = Locale.get("guisetupgui.SuppressSearchWarning")/*Suppress warning about exceeding max results*/;
+			//#if polish.android
+			search[searchnum++] = Locale.get("guisetupgui.ShowNativeKeyboard")/*Show native keyboard in search*/;
+			//#endif
 			searchSettings = new ChoiceGroup(Locale.get("guisetupgui.searchopts")/*Search options:*/, Choice.MULTIPLE, search, null);
 			/* only display search settings available on the device */
 			// maximum search option entries
@@ -113,6 +119,9 @@ public class GuiSetupGui extends Form implements CommandListener {
 			    searchSettings.setSelectedIndex(searchnum++, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD));
 			}
 			searchSettings.setSelectedIndex(searchnum++, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SUPPRESS_SEARCH_WARNING));
+			//#if polish.android
+			searchSettings.setSelectedIndex(searchnum++, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_SHOW_NATIVE_KEYBOARD));
+			//#endif
 			append(searchSettings);
 			String [] searchLayout = new String[2];
 			searchLayout[0] = Locale.get("guidiscover.SearchWholeNames")/*Search for whole names*/;
@@ -223,6 +232,9 @@ public class GuiSetupGui extends Form implements CommandListener {
 			}
 
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_SUPPRESS_SEARCH_WARNING, searchSettings.isSelected(i++));
+			//#if polish.android
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_SEARCH_SHOW_NATIVE_KEYBOARD, searchSettings.isSelected(i++));
+			//#endif
 		
 			i = 0;
 			if (Configuration.getHasPointerEvents()) {

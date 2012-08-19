@@ -15,6 +15,7 @@ import java.util.Hashtable;
 //import java.util.Enumeration;
 //#endif
 //#if polish.android
+import android.view.inputmethod.InputMethodManager;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
@@ -272,6 +273,13 @@ public class GuiSearch extends Canvas implements CommandListener,
 		}
 
 		//#if polish.android
+		// perhaps this should be optional
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_SEARCH_SHOW_NATIVE_KEYBOARD)) {
+			InputMethodManager imm = (InputMethodManager) MidletBridge.instance.getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+			cursorKeypad = true;
+		}
+
 		AndroidDisplay ad = AndroidDisplay.getDisplay(GpsMid.getInstance());
 		ad.setOnKeyListener(new OnKeyListener()
 		{
