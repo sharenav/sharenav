@@ -322,12 +322,14 @@
 	The Generic/android-*-outlines targets provide much better performance for map rendering
 	if used together with a map created with property "outlineAreaFormat = true"
 	Currently the Generic/android-*-outlines targets however require a small modification
-	to src/de/enough/polish/android/lcdui/Graphics.java, add the following lines to it,
+	to the file src/de/enough/polish/android/lcdui/Graphics.java INSIDE lib/enough-j2mepolish-build.jar
+	in your J2MEPolish installation. 
+	Add the following lines to Graphics.java inside enough-j2mepolish-build.jar,
 	e.g. after the method: fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3)
 	    public Canvas getCanvas() {	return this.canvas;	}
 		public Paint getPaint() { return this.paint; }
-	This modification does not require a recompilation of J2MEPolish
-	as Graphics.java from J2MEPolish gets compiled during the Android build process.     			
+	This modification does not require a recompilation of J2MEPolish.
+	as the files inside enough-j2mepolish-build from J2MEPolish get compiled during the Android build process.     			
 -->
 				<requirement name="Identifier" value="Generic/android-full-connected-outlines" />
 				<requirement name="Identifier" value="Generic/android-full-outlines" />
