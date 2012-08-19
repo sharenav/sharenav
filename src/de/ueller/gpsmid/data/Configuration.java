@@ -941,6 +941,8 @@ public class Configuration {
 			setCfgBitSavedState(CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION, true);
 			setCfgBitSavedState(CFGBIT_ICONMENUS_FULLSCREEN, false);
 			setCfgBitSavedState(CFGBIT_SEARCH_SHOW_NATIVE_KEYBOARD, true);
+			//#else
+			setCfgBitSavedState(CFGBIT_ICONMENUS_SETUP, getCfgBitState(CFGBIT_ICONMENUS));
 			//#endif
 			setCfgBitSavedState(CFGBIT_SHOW_MAP_CREDITS, true);
 			setCfgBitSavedState(CFGBIT_DISTANCE_VIEW, true);
