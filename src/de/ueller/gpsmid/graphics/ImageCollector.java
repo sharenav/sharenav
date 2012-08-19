@@ -177,8 +177,6 @@ public class ImageCollector implements Runnable {
 					pc[nextCreate].state = PaintContext.STATE_IN_CREATE;
 				}
 				
-				tr.resetClickableMarkers();
-
 				iDrawState = 2;
 
 				createPC = pc[nextCreate];
@@ -285,6 +283,10 @@ public class ImageCollector implements Runnable {
 						if (needRedraw && skippableLayer) {
 							continue;
 						}
+					}
+
+					if (layersToRender[layer] == Tile.LAYER_NODE) {
+						tr.resetClickableMarkers();
 					}
 
 					// render only highlight layers which actually have highlighted path segments
