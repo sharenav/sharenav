@@ -330,27 +330,4 @@ public class Node extends Entity {
 		return true;
 	}
 	
-	/**
-	 * Check node tags for routeAccessRestriction from style-file
-	 * 
-	 * @param travelModeNr
-	 *            : e.g. for motorcar or bicycle
-	 * @return -1 if restricted, 1 if permitted, 0 if neither
-	 */
-	public int isAccessPermittedOrForbiddenFor(int travelModeNr) {
-		String value;
-		for (RouteAccessRestriction rAccess : TravelModes.getTravelMode(travelModeNr).getRouteAccessRestrictions()) {
-			value = getAttribute(rAccess.key);
-			if (value != null && rAccess.values.indexOf(value) != -1) {
-				if (rAccess.permitted) {
-					return 1;
-				} else {
-					return -1;
-				}
-			}
-		}
-		return 0;
-	}
-
-	
 }
