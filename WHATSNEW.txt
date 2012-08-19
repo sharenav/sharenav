@@ -109,8 +109,8 @@ GpsMid 0.8
     - Help tab added to icon menu
     - Links to online help for touchscreen and GpsMid wiki in Online menu
     - Display & touch screen helper in help menu
-    - settings don't use the icon menu by default; new option for enabled icon menu for
-      setup
+    - settings don't use the icon menu by default on new installes; new option to enable
+      icon menu for setup. On J2ME, copy the old setting from trace icon menu.
     *** Routing Usability ****
     - Optional big navigation icons for next two instructions including their distance in upper left corner
     - When turn restriction checking is on, take account also the driving direction
