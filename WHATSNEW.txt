@@ -217,9 +217,13 @@ GpsMid 0.8
     - a bundled .apk can now also be chosen as a map
     - New map format with outline areas for Android exists, using this requires
       if you compile GpsMid's source code yourself a small modification to J2MEPolish,
-      see the wiki page mentioned at the end
-      or README.txt in source
-    - many stability / usability improvements including a bunch of bug fixes
+      see the wiki page mentioned at the end or README.txt in source.
+      Primary motivation for this is performance, but in the future it can save
+      map storage space, too. (Currently it only increases storage space as
+      the old format is supported, too).
+    - performance improvements for way drawing when area GpsMid was compiled with
+      the area outlines option and street borders are switched off (this is the default on Android)
+    - many stability, usability & performance improvements and a big bunch of bug fixes
     - targets now correspond to the J2ME build targets
     - multitouch two-finger rotate & pinch zoom 
     - a bunch of bug fixes & UI improvements
