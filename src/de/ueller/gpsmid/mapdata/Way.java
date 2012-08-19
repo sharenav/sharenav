@@ -943,7 +943,7 @@ public class Way extends Entity {
 
 		/** width of the way to be painted */
 		int w = 0;
-		byte highlight=HIGHLIGHT_NONE;
+		int highlight=HIGHLIGHT_NONE;
 		
 		/**
 		 * If the static array is not large enough, increase it
@@ -1731,7 +1731,7 @@ public class Way extends Entity {
 	}
 	
 	private void draw(PaintContext pc, SingleTile t, int w, int xPoints[], int yPoints[], 
-			int hl[], int count, byte highlight,boolean ortho /*, byte mode*/) {
+			int hl[], int count, int highlight,boolean ortho /*, byte mode*/) {
 		
 		IntPoint closestP = new IntPoint();
 		int wClosest = 0;
