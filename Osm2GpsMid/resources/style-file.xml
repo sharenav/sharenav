@@ -669,29 +669,27 @@ scale alias 1: zoomed out 21x
 -->
 	</key>
 	<key tag="barrier">
-<!--
 	  <value name ="bollard">
 		<description desc = "Bollard"/>
 		<image src="bollard.png"/>
 		<namekey tag="name"/>
-		<scale scale="23"/>
+		<scale scale="21"/>
 		<textscale scale="26"/>
 	  </value>	
 	  <value name ="gate">
 		<description desc = "Gate"/>
 		<image src="gate.png"/>
 		<namekey tag="name"/>
-		<scale scale="23"/>
+		<scale scale="21"/>
 		<textscale scale="26"/>
 	  </value>	
 	  <value name ="lift_gate">
 		<description desc = "Lift gate"/>
 		<image src="lift_gate.png"/>
 		<namekey tag="name"/>
-		<scale scale="23"/>
+		<scale scale="21"/>
 		<textscale scale="26"/>
 	  </value>
--->
 	  <value name="toll_booth">
 		<description desc = "Toll station"/>
 		<image src="toll_station.png"/>		
