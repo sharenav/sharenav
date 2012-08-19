@@ -53,6 +53,7 @@ GpsMid 0.8
     - Option to set a time difference in minutes between device time and display time
       (to work around platforms which for some reason give incorrect time
       e.g. due to deficiencies in JVM time zone code)
+    - distances are now shown by default in km & m instead of just in meters
    	*** Style-file ***
     - new attribute 'allowedForRoutableWays' in style-file.xml for configuring if a tile scale level is allowed
       to contain routable ways (default is "true"). If a tile scale level does not contain

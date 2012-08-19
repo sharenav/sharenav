@@ -938,6 +938,7 @@ public class Configuration {
 			setCfgBitSavedState(CFGBIT_ICONMENUS_FULLSCREEN, false);
 			//#endif
 			setCfgBitSavedState(CFGBIT_SHOW_MAP_CREDITS, true);
+			setCfgBitSavedState(CFGBIT_DISTANCE_VIEW, true);
 		}
 
 		
