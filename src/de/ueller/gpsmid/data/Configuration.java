@@ -377,6 +377,8 @@ public class Configuration {
 	public final static short CFGBIT_RESOLVE_NAMES_LAST = 149;
 	/** bit 150: show device (Android for now) native keyboard in search */
 	public final static short CFGBIT_SEARCH_SHOW_NATIVE_KEYBOARD = 150;
+	/** bit 151: Flag whether iconMenus should be used for settings */
+	public final static short CFGBIT_ICONMENUS_SETUP = 151;
 	
 	/**
 	 * These are the database record IDs for each configuration option

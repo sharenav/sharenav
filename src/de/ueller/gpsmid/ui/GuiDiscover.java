@@ -1763,7 +1763,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	public void show() {
 		switch (state) {
 			case STATE_ROOT:
-				if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS)) {
+				if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_SETUP)) {
 					showIconMenu();
 				} else {
 					GpsMid.getInstance().show(menu);

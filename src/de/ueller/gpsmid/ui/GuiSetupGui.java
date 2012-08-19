@@ -46,25 +46,28 @@ public class GuiSetupGui extends Form implements CommandListener {
 			memField = new TextField(Locale.get("guisetupgui.DefineMaxMem")/*Define maxMem (kbyte)*/,
 					Long.toString(mem), 8, TextField.DECIMAL);
 			append(memField);
-			String [] imenu = new String[6];
+			String [] imenu = new String[7];
 			imenu[0] = Locale.get("guisetupgui.UseIconMenu")/*Use icon menu*/;
-			imenu[1] = Locale.get("guisetupgui.FullscreenIconMenu")/*Fullscreen icon menu*/;
-			imenu[2] = Locale.get("guisetupgui.SplitscreenIconMenu")/*Split screen icon menu*/;
-			imenu[3] = Locale.get("guisetupgui.LargeTabButtons")/*Large tab buttons*/;
-			imenu[4] = Locale.get("guisetupgui.IconsMappedOnKeys")/*Icons mapped on keys*/;
+			imenu[1] = Locale.get("guisetupgui.UseSetupIconMenu")/*Use icon menu for settings*/;
+			imenu[2] = Locale.get("guisetupgui.FullscreenIconMenu")/*Fullscreen icon menu*/;
+			imenu[3] = Locale.get("guisetupgui.SplitscreenIconMenu")/*Split screen icon menu*/;
+			imenu[4] = Locale.get("guisetupgui.LargeTabButtons")/*Large tab buttons*/;
+			imenu[5] = Locale.get("guisetupgui.IconsMappedOnKeys")/*Icons mapped on keys*/;
 			//imenu[5] = Locale.get("guisetupgui.OptimiseForRouting")/*Optimise for routing*/;
-			imenu[5] = Locale.get("guisetupgui.FavoritesInRouteIconMenu")/*Favorites in route icon menu*/;
+			imenu[6] = Locale.get("guisetupgui.FavoritesInRouteIconMenu")/*Favorites in route icon menu*/;
 			imenuOpts = new ChoiceGroup(Locale.get("guisetupgui.IconMenu")/*Icon Menu:*/, 
 					Choice.MULTIPLE, imenu, null);
 			imenuOpts.setSelectedIndex(0, 
 					Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS));
 			imenuOpts.setSelectedIndex(1, 
-					Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
+					Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_SETUP));
 			imenuOpts.setSelectedIndex(2, 
-					Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN));
+					Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
 			imenuOpts.setSelectedIndex(3, 
-					Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS));
+					Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN));
 			imenuOpts.setSelectedIndex(4, 
+					Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS));
+			imenuOpts.setSelectedIndex(5, 
 					Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS));
 			//imenuOpts.setSelectedIndex(5, 
 			//		Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED));
@@ -190,24 +193,27 @@ public class GuiSetupGui extends Form implements CommandListener {
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS, imenuOpts.isSelected(0));
 				trace.addAllCommands();
 			}
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN,
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_SETUP,
 					imenuOpts.isSelected(1));
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN,
+					imenuOpts.isSelected(2));
 			if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)
-			    && !imenuOpts.isSelected(2)) {
+			    && !imenuOpts.isSelected(3)) {
 				trace.stopShowingSplitScreen();
 			}
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN,
-					imenuOpts.isSelected(2));
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS,
 					imenuOpts.isSelected(3));
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS,
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS,
 					imenuOpts.isSelected(4));
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS,
+					imenuOpts.isSelected(5));
 			//Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED,
 			//		imenuOpts.isSelected(5));
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_FAVORITES_IN_ROUTE_ICON_MENU,
-					imenuOpts.isSelected(5));
+					imenuOpts.isSelected(6));
 			// When the GUI is to be optimized for routing and we have a default
 			// backlight method, turn the backlight on.
+			// boolean optimizedForRouting = imenuOpts.isSelected(5);
 			boolean optimizedForRouting = imenuOpts.isSelected(5);
 			if (initialSetup && optimizedForRouting) {
 				if (Configuration.getDefaultDeviceBacklightMethodCfgBit() != 0) {
