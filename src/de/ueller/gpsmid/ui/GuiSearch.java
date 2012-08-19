@@ -1897,6 +1897,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 				} else if (touchedElementId == GuiSearchLayout.KEY_BACKSPACE) {
 					keyPressed(8);
 				} else if (touchedElementId == GuiSearchLayout.KEY_KEYPAD) {
+					//#if polish.android
+					if (cursorKeypad && Configuration.getCfgBitState(Configuration.CFGBIT_SEARCH_SHOW_NATIVE_KEYBOARD)) {
+						enableNativeKeyboard();
+					}
+					//#endif
 					cursorKeypad = !cursorKeypad;
 				} else if (touchedElementId == GuiSearchLayout.KEY_CLOSE) {
 					hideKeypad = true;
