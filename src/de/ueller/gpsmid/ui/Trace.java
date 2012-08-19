@@ -2126,6 +2126,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				routeEngine.solve(routeSource, dest);
 //					resume();
 			}
+			// redraw immediately
+			synchronized (this) {
+				if (imageCollector != null) {
+					imageCollector.newDataReady();
+				}
+			}
 			routingsMenu = null; // refresh routingsMenu
 		} catch (Exception e) {
  			logger.exception(Locale.get("trace.InTraceCommandAction")/*In Trace.commandAction*/, e);
