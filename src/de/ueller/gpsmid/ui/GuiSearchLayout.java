@@ -34,10 +34,18 @@ public class GuiSearchLayout extends LayoutManager {
 	public static final int KEY_STAR = 12;
 	public static final int KEY_0 = 13;
 	public static final int KEY_POUND = 14;
+	//#if polish.android
+	public static final int TEXT = 15;
+	//#endif
 
+	//#if polish.android
+	public static final int ELE_COUNT = 16;
+	//#else
 	public static final int ELE_COUNT = 15;
+	//#endif
 
 	public static final byte SE_KEY = 1;
+	public static final byte SE_TEXT = 2;
 
 	public boolean usingVerticalLayout = false;
 	
@@ -275,6 +283,22 @@ public class GuiSearchLayout extends LayoutManager {
 		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
+
+		//#if polish.android
+		e = ele[TEXT];
+		addElement(e,
+			LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_TOP |
+			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+			LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
+			LayoutElement.FLAG_FONT_LARGE
+		);
+		Font font = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_LARGE);
+		//e.setAdditionalOffsX(xdiff);
+		//e.setAdditionalOffsY(ydiff - font.getHeight());
+		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
+		e.setSpecialElementID(SE_TEXT);
+		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
+		//#endif
 	}
 	
 	/*
@@ -297,6 +321,13 @@ public class GuiSearchLayout extends LayoutManager {
 			g.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 			g.drawString(text, left, top, Graphics.TOP|Graphics.LEFT);
 			break;
+		case SE_TEXT:
+			g.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_BORDER]);
+			// problem with Nokia 5230 (S60r5), works with android&microemulator
+			//g.drawSubstring(text, 0, 5, left+buttonw/2, top+buttonh/2, Graphics.HCENTER|Graphics.VCENTER);
+			g.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
+			g.drawString(text, left, top, Graphics.TOP|Graphics.LEFT);
+			break;
 		}
 	}
 	
@@ -305,6 +336,9 @@ public class GuiSearchLayout extends LayoutManager {
 		switch(id) {
 		case SE_KEY:
 			return buttonw;
+		case SE_TEXT:
+			Font tFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_LARGE);
+			return tFont.stringWidth(ele[id].getText());
 		}
 		return 0;
 	}
@@ -313,6 +347,8 @@ public class GuiSearchLayout extends LayoutManager {
 		switch(id) {
 		case SE_KEY:
 			return buttonh;
+		case SE_TEXT:
+			return ele[id].getFontHeight();
 		}
 		return 0;
 	}

@@ -112,6 +112,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	private final Vector result = new Vector();
 	
+	private StringBuffer sb = null;
+
 	// this array is used to get a copy of the waypoints for the favorites
 	public PositionMark[] wayPts = null;
 	public boolean showAllWayPts = false;
@@ -886,6 +888,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 	protected void paint(Graphics gc) {
 		//#debug debug
 		logger.debug("Painting search screen with offset: " + scrollOffset);
+		//#if polish.android
+		int extraOffset = gsl.ele[GuiSearchLayout.TEXT].getFontHeight();
+		//#else
+		int extraOffset = 0;
+		//#endif
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_LARGE_FONT)) {
 			Font fontLarge = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_LARGE);  
 			gc.setFont(fontLarge);
@@ -894,7 +901,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (fontSize == 0) {
 			fontSize = gc.getFont().getHeight();
 		}		
-		int yc=scrollOffset + renderDiff;
+		int yc=scrollOffset + renderDiff + extraOffset;
 		int reducedName=0;
 		gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BACKGROUND]);
 		gc.fillRect(0, renderDiff, maxX, maxY);
@@ -1144,6 +1151,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 						gsl.ele[i].setText(letters[i]);
 					}
 				}
+				//#if polish.android
+				if (sb != null) {
+					gsl.ele[GuiSearchLayout.TEXT].setText(sb.toString());
+				}
+				//#endif
 				gsl.paint(gc);
 			}
 		}
@@ -1744,7 +1756,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (fontSize == 0) {
 			return;
 		}
-		int clickIdx = (y - renderDiff - scrollOffset)/fontSize;
+		//#if polish.android
+		int extraOffset = gsl.ele[GuiSearchLayout.TEXT].getFontHeight();
+		//#else
+		int extraOffset = 0;
+		//#endif
+		int clickIdx = (y - renderDiff - scrollOffset - extraOffset)/fontSize;
 		long currTime = System.currentTimeMillis();
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)
 		    && !hideKeypad
@@ -2064,7 +2081,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	public void setTitle() {
-		StringBuffer sb = new StringBuffer();
+		sb = new StringBuffer();
 		switch (state) {
 			case STATE_MAIN:
 				//#if polish.api.bigsearch
@@ -2115,7 +2132,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 		        case STATE_FULLTEXT:
 				sb.append(Locale.get("guisearch.fulltextresults")/*Fulltext Results*/); break;			
 		}
+		//#if polish.android
+		gsl.ele[GuiSearchLayout.TEXT].setText(sb.toString());
+		//#else
 		setTitle(sb.toString());
+		//#endif
 	}
 	
 	private String getName(int idx) {
