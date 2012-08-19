@@ -1696,8 +1696,16 @@ public class GuiSearch extends Canvas implements CommandListener,
 			return;
 		}
 		int clickIdx = (y - renderDiff - scrollOffset)/fontSize;
+		//#if polish.android
+		if (clickIdx == 0) {
+			InputMethodManager imMan = (InputMethodManager) MidletBridge.instance.getSystemService(Context.INPUT_METHOD_SERVICE);
+			imMan.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+			cursorKeypad = true;
+		}
+		//#endif
+
 		if ( (state == STATE_MAIN || state == STATE_FAVORITES)
-			&& (clickIdx < 0 || clickIdx >= result.size() || ((clickIdx + 1) * fontSize + scrollOffset) > maxY)
+		     && (clickIdx < 0 || clickIdx >= result.size() || ((clickIdx + 1) * fontSize + scrollOffset) > maxY)
 		     && (hideKeypad || !Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD))
 
 		) {
