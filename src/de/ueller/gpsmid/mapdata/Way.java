@@ -1762,6 +1762,7 @@ public class Way extends Entity {
 		Vector route = pc.trace.getRoute();
 		
 		//#if polish.api.areaoutlines
+		if (highlight == HIGHLIGHT_NONE && Configuration.getCfgBitState(Configuration.CFGBIT_NOSTREETBORDERS)) {
 		// Draw streets as lines
 		setColor(pc, wayDesc, false, 
 			 false, 
@@ -1771,6 +1772,9 @@ public class Way extends Entity {
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_ROUND_WAY_ENDS)) {
 			paint.setStrokeJoin(Paint.Join.ROUND);
 			paint.setStrokeCap(Paint.Cap.ROUND);
+		} else {
+			paint.setStrokeJoin(Paint.Join.BEVEL);
+			paint.setStrokeCap(Paint.Cap.BUTT);
 		}
 		float strokeWidth = paint.getStrokeWidth();
 		paint.setStrokeWidth(w);
@@ -1782,8 +1786,8 @@ public class Way extends Entity {
 		}
 		pc.g.getCanvas().drawPath(wPath, paint);
 		paint.setStrokeWidth(strokeWidth);
-		//#else
-
+		} else {
+		//#endif
 		for (int i = 0; i < count; i++) {
 			wDraw = w;
 			// draw route line wider
@@ -2130,9 +2134,10 @@ public class Way extends Entity {
 				// if this is a divided seg, in the next step draw the second part
 				i--;
 			}
-		} 
+		}
+		//#if polish.api.areaoutlines
+		}
 		//#endif
-		
 		if (isOneway()) {
 			// Loop through all waysegments for painting the OnewayArrows as overlay
 			// TODO: Maybe, we can integrate this one day in the main loop. Currently, we have troubles
