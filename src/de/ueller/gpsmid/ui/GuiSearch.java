@@ -1105,7 +1105,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		}
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)) {
 			gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
-			if (hasPointerEvents() && ! hideKeypad) {
+			if (hasPointerEvents()) {
 				if (gsl == null) {
 					gsl = new GuiSearchLayout(0, renderDiff, width, height);
 				}
@@ -1141,7 +1141,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					letters = keypadLetters;
 				}
 				if (hideKeypad) {
-					String hideLetters[] = { " ", "  X  " };
+					String hideLetters[] = { " ", "" };
 					letters = hideLetters;
 				}
 				for (int i = 0; i < 15 ; i++) {
@@ -1698,6 +1698,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (clickIdx == 0) {
 			enableNativeKeyboard();
 			cursorKeypad = true;
+			hideKeypad = false;
 		}
 		//#endif
 
