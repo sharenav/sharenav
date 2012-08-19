@@ -135,6 +135,8 @@ GpsMid 0.8
     - long tap on distance now always asks for route (re)calc options
     - routing UI has been made more clear by making the formerly optional
       "optimize for routing" option non-optional ("always optimized for routing")
+    - Osm2GpsMid does not create route data to route over barrier=* nodes anymore
+      (permissive routeAccessRestriction rules from style-file.xml / routeModes.inc will be respected)
     *** Search ***
     - The POI search distance is now configurable; default is 10 km. A high limit
       does not work in all areas, depending on number of map objects (tile size?).

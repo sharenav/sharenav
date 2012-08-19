@@ -72,7 +72,7 @@ public class Way extends Entity implements Comparable<Way> {
 
 	public Long id;
 
-	private Path					path								= null;
+	public Path					path								= null;
 	private Path					outlinePath								= null;
 	private ArrayList<Path> 		holes = null;
 	public HouseNumber			housenumber							= null;

@@ -18,6 +18,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -415,6 +416,8 @@ public class RouteData {
 	 * @param routeNode
 	 */
 	private void addConnection(RouteNode from, RouteNode to, int dist, Way w, byte bs, byte be) {
+		/** travel modes with no barrier detected */
+		int noBarrierTravelModes = 0xFFFFFFFF;
 		
 		byte againstDirectionTravelModes = 0;		
 		
@@ -422,6 +425,42 @@ public class RouteData {
 		int times[] = new int[TravelModes.travelModeCount];
 		for (int i = 0; i < TravelModes.travelModeCount; i++) {
 			if (w.isAccessForRouting(i)) {
+				// check for barriers in non-area ways
+				if (!w.isArea()) {
+					int a = 0;
+					boolean fromNodeFound = false;
+					boolean toNodeFound = false;
+					for (Iterator<Node> si = w.path.iterator(); si.hasNext();) {
+						Node t = si.next();
+						if (from.node.id == t.id /* && a != 0 && si.hasNext() */) {
+							fromNodeFound = true;
+						}
+						if (to.node.id == t.id /* && a != 0 && si.hasNext() */) {
+							toNodeFound = true;
+						}
+						if (
+							(
+								(fromNodeFound && !toNodeFound)
+								||
+								(toNodeFound && !fromNodeFound)
+							)
+							&&
+							t.isBarrier()
+						) {
+							if (t.isAccessPermittedOrForbiddenFor(i) <= 0) {
+//								if (noBarrierTravelModes == 0xFFFFFFFF) {
+//									System.out.println("Barrier found on " + w.toString() + " at \n" + t.toUrl());
+//								}
+//								System.out.println("    affects route mode " + i);
+								noBarrierTravelModes &= ~(1 << i);
+								break;
+							}
+						}
+						a++;
+					}
+				}
+
+				
 				TravelMode tm = TravelModes.getTravelMode(i);
 				if (w.isExplicitArea()) {
 					tm.numAreaCrossConnections++;
@@ -454,9 +493,22 @@ public class RouteData {
 			}
 		}
 		
+		boolean allBarriered = true;
+		for (int i = 0; i < TravelModes.travelModeCount; i++) {
+			if ( (noBarrierTravelModes & (1<<i)) > 0) {
+				allBarriered = false;
+			}
+		}
+		if (allBarriered) {
+//			System.out.println("Connection barriered for all route modes");
+			// avoid to create a connection that cannot be travelled in any route mode
+			return;
+		}
+		
 		nodes.put(from.node.id, from);
 		nodes.put(to.node.id, to);
 		Connection c = new Connection(to, dist, times, bs, be, w);
+		c.connTravelModes &= noBarrierTravelModes; // disable connection for travelmodes that are barriered
 		from.addConnected(c);
 		to.addConnectedFrom(c);
 		// roundabouts don't need to be explicitly tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
@@ -471,6 +523,7 @@ public class RouteData {
 
 			// flag connections useable for travel modes you can go against the ways direction
 			cr.connTravelModes = againstDirectionTravelModes;
+			cr.connTravelModes &= noBarrierTravelModes; // disable connection for travelmodes that are barriered
 			cr.connTravelModes |= w.wayTravelModes & (Connection.CONNTYPE_MAINSTREET_NET | Connection.CONNTYPE_MOTORWAY | Connection.CONNTYPE_TRUNK_OR_PRIMARY);
 			
 			for (int i=0; i < TravelModes.travelModeCount; i++) {

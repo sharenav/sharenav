@@ -333,7 +333,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			relevantKeys.add("addr:housenumber");
 			relevantKeys.add("addr:street");
 		}
-		//relevantKeys.add("barrier");
+		relevantKeys.add("barrier");
 		//relevantKeys.add("direction");
 		//relevantKeys.add("crossing");
 		
