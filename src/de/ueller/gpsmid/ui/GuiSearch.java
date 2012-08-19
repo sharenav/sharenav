@@ -275,10 +275,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 		}
 
 		//#if polish.android
-		// perhaps this should be optional
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_SEARCH_SHOW_NATIVE_KEYBOARD)) {
-			InputMethodManager imm = (InputMethodManager) MidletBridge.instance.getSystemService(Context.INPUT_METHOD_SERVICE);
-			imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+			enableNativeKeyboard();
 			cursorKeypad = true;
 		}
 
@@ -1698,8 +1696,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		int clickIdx = (y - renderDiff - scrollOffset)/fontSize;
 		//#if polish.android
 		if (clickIdx == 0) {
-			InputMethodManager imMan = (InputMethodManager) MidletBridge.instance.getSystemService(Context.INPUT_METHOD_SERVICE);
-			imMan.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+			enableNativeKeyboard();
 			cursorKeypad = true;
 		}
 		//#endif
@@ -1759,6 +1756,13 @@ public class GuiSearch extends Canvas implements CommandListener,
 		}
 		clickIdxAtSlideStart = clickIdx;
 	}
+
+	//#if polish.android
+	public void enableNativeKeyboard() {
+		InputMethodManager imMan = (InputMethodManager) MidletBridge.instance.getSystemService(Context.INPUT_METHOD_SERVICE);
+		imMan.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+	}
+	//#endif
 
 	public void autoPointerRelease(int x, int y) {
 		if (fontSize == 0) {
