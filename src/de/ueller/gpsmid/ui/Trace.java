@@ -4605,7 +4605,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 								commandAction(Trace.ICON_MENU);
 							}
 						}
-						return true;
+						// but if icon menu is not enabled, return false so
+						// J2MEPolish will handle this and user gets a text
+						// menu
+						return Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS);
 					}
 				}
 				if (keyCode == KeyEvent.KEYCODE_SEARCH) {
