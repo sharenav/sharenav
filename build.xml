@@ -336,11 +336,11 @@
 				<requirement name="Identifier" value="Generic/android-full-outlines" />
 				<requirement name="Identifier" value="Generic/android-midsize-outlines" />
 				<requirement name="Identifier" value="Generic/android-minimal-outlines" />
-<!--
 				<requirement name="Identifier" value="Generic/android-full-connected" />
 				<requirement name="Identifier" value="Generic/android-full" />
 				<requirement name="Identifier" value="Generic/android-midsize" />
 				<requirement name="Identifier" value="Generic/android-minimal" />
+<!--
 
 				<requirement name="Identifier" value="Generic/android-offline" />
 				<requirement name="Identifier" value="Generic/android-online" />
