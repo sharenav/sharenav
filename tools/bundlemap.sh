@@ -92,10 +92,10 @@ fi
 zip -q "$midtarget" -d META-INF/
 zip -q "$midtarget" -d c/\* t\*/\* s\*.d dict\*.dat d\*/\*.d names\*.dat legend.dat
 #cp -p "$midtarget"  "$midtarget".copy
-if [ "$android" ]
-then
+#if [ "$android" ]
+#then
   unzip -q -o "$mid" META-INF/*
-fi
+#fi
 
 if [ "$android" ]
 then
