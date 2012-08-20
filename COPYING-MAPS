@@ -1,0 +1,33 @@
+May contain open map data by The National Land Survey of Finland, for
+example data from the National Land Survey of Finland Topographic
+Database 06/2012.
+
+For more information:
+
+http://www.maanmittauslaitos.fi/en/opendata
+http://www.maanmittauslaitos.fi/en/NLS_open_data_licence_version1_20120501
+
+-----
+
+Saattaa sisältää Maanmittauslaitoksen avointa kartta-aineistoa,
+esimerkiksi Maanmittauslaitoksen Maastotietokannan 06/2012 aineistoa.
+
+Lisätietoja:
+
+http://www.maanmittauslaitos.fi/avoindata
+http://www.maanmittauslaitos.fi/avoindata_lisenssi_versio1_20120501
+
+-----
+
+May contain map data from Finnish Digiroad, a National Road and Street Database.
+For more information about copyright and other legalities, see http://www.digiroad.fi/en_GB/
+
+-----
+
+Saattaa sisältää aineistoa Digiroad:ista, Suomen tie- ja katuverkon tarkat sijainnit sekä tärkeimmät ominaisuustiedot sisältävästä tietojärjestelmästä. Lisätietoja http://www.digiroad.fi/
+
+-----
+
+Map data contents is described by binary format map legend flags
+in the file "legend.dat". Unless user has changed settings, credits
+for map data are shown on displayed map.

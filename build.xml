@@ -190,6 +190,7 @@
 				<root dir="resources/map" includeSubDirs="true" includeBaseDir="false" if="test"/>
 				<fileset dir="" includes="**/COPYING"/>
 				<fileset dir="" includes="**/COPYING-OSM"/>
+				<fileset dir="" includes="**/COPYING-MAPS"/>
 
 				<!-- you can add resources based on complex criterias: 
 				<fileset 
@@ -401,6 +402,7 @@
 				<root dir="resources/map" includeSubDirs="true" includeBaseDir="false" if="test"/>
 				<fileset dir="" includes="**/COPYING"/>
 				<fileset dir="" includes="**/COPYING-OSM"/>
+				<fileset dir="" includes="**/COPYING-MAPS"/>
 
 				<!-- you can add resources based on complex criterias: 
 				<fileset 
