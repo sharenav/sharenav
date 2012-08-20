@@ -4,7 +4,7 @@
 
 # written to be run in main GpsMid directory
 
-# needed for signing android .apk
+# needed for signing android .apk; for Android, mapdir must be named "assets"
 # todo: deduce from environment
 
 #jarsigner=jarsigner
@@ -96,7 +96,15 @@ if [ "$android" ]
 then
   unzip -q -o "$mid" META-INF/*
 fi
-zip "$midtarget" -u `find $mapdir|grep -v META-INF`
+
+if [ "$android" ]
+then
+    zip "$midtarget" -u `find $mapdir|grep -v META-INF`
+else
+    cd "$mapdir"
+    zip ../"$midtarget" -u `find |grep -v META-INF|sed 's/^.\//'`
+    cd ..
+fi
 
 zip -q "$midtarget" -d META-INF
 zip -q "$midtarget" -d META-INF/MANIFEST.MF
