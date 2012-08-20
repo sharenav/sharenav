@@ -58,7 +58,7 @@ else
   jar=`ls -t dist/GpsMid-Generic-$midtarget-*.jar 2>/dev/null|head -1`
   if [ "$jar" ]
   then
-     ver=`echo $apk|sed "s/dist\/GpsMid-Generic-$midtarget-//" | sed "s/\.jar//"`
+     ver=`echo $jar|sed "s/dist\/GpsMid-Generic-$midtarget-//" | sed "s/\.jar//"`
   fi
   mid=dist/GpsMid-Generic-$midtarget-$ver.jar
 fi
