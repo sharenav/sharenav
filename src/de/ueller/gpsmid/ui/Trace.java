@@ -2909,7 +2909,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			if (added) {
 				credits = credits + ",";
 			}
-			credits = credits + Locale.get("trace.mapcreditFiLandSurvey");
+			credits = credits + Locale.get("trace.mapcreditFiLandSurvey12");
 			added = true;
 		}
 		if (Legend.getMapFlag(Legend.LEGEND_MAPFLAG_SOURCE_FI_DIGIROAD)) {
