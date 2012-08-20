@@ -18,7 +18,7 @@ ant -Ddevice=Generic/blackberry
 
 ant 
 
-#scp -p dist/*.apk $user,gpsmid@web.sf.net:htdocs/prebuild
+#scp -p dist/*.jar $user,gpsmid@web.sf.net:htdocs/prebuild
 
 
 ssh $user,gpsmid@shell.sf.net create
@@ -53,4 +53,4 @@ done
 
 ln -f -s `ls -t *full-connected*jar|head -1` GpsMid-latest-debug.jar
 
-tar cf - *.apk | ssh $user,gpsmid@shell.sf.net 'cd /home/project-web/gpsmid/htdocs/prebuild ; tar xpf -'
+tar cf - *.jar | ssh $user,gpsmid@shell.sf.net 'cd /home/project-web/gpsmid/htdocs/prebuild ; tar xpf -'
