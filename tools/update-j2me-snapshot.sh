@@ -16,7 +16,7 @@ ant -Ddevice=Generic/blackberry
 
 # normal build 
 
-ant 
+ant j2mepolish
 
 #scp -p dist/*.jar $user,gpsmid@web.sf.net:htdocs/prebuild
 
@@ -42,7 +42,7 @@ ant -Ddevice=Generic/blackberry
 
 # normal build 
 
-ant  debug
+ant  debug j2mepolish
 
 cd dist
 
