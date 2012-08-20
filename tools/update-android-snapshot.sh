@@ -21,7 +21,7 @@ ssh $user,gpsmid@shell.sf.net create
 
 cd dist
 
-ln -f -s `ls -t *droid*full-connec*apk|head -1` GpsMid-latest.apk
+ln -f -s `ls -t *droid*full-connected-outlin*apk|head -1` GpsMid-latest.apk
 
 tar cf - *.apk | ssh $user,gpsmid@shell.sf.net 'cd /home/project-web/gpsmid/htdocs/prebuild ; tar xpf -'
 
