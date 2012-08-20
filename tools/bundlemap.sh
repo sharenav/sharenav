@@ -19,9 +19,9 @@ then
     shift
 fi
 
-ver=0.7.71-map71
-andtarget=android-online
-midtarget=editing
+ver=0.7.76-map72
+andtarget=android-full-connected-outlines
+midtarget=full-connected
 
 if [ "$#" != 2 -a "$#" != 1 ]
 then
