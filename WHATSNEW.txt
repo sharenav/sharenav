@@ -54,6 +54,8 @@ GpsMid 0.8
       (to work around platforms which for some reason give incorrect time
       e.g. due to deficiencies in JVM time zone code)
     - distances are now shown by default in km & m instead of just in meters
+    - show map credits by default, credits are a clickable link to map / map licence info.
+      Can be switched off in settings.
    	*** Style-file ***
     - new attribute 'allowedForRoutableWays' in style-file.xml for configuring if a tile scale level is allowed
       to contain routable ways (default is "true"). If a tile scale level does not contain
@@ -168,7 +170,7 @@ GpsMid 0.8
     - no more messages about invalid turn restriction if ways of the relation are tagged with access=no
     *** Sea generation ***
     - greatly faster sea generation algorithm with option useSeaTiles = true
-      in .properties file. It divides the map into roughly 20km * 20km areas
+      in .properties file. It divides the map into smallish areas
       which are processed one at a time, total time taken is a small fraction
       of the time taken without useSeaTiles and map data is smaller.
       There are however more map artifacts when using the option and shortcomings

@@ -1377,3 +1377,4 @@ guisetupgui.ShowNativeKeyboard=Show native keyboard in search
 guisetupgui.UseSetupIconMenu=Use icon menu for settings
 trace.mapcreditFiLandSurvey12=NLS Finland Topographic Database 06/2012
 trace.mapcreditFiLandSurvey12URL=http://www.maanmittauslaitos.fi/en/NLS_open_data_licence_version1_20120501
+trace.showmapcredit=Show map credit/license webpage
