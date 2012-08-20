@@ -102,7 +102,7 @@ then
     zip "$midtarget" -u `find $mapdir|grep -v META-INF`
 else
     cd "$mapdir"
-    zip ../"$midtarget" -u `find |grep -v META-INF|sed 's/^.\//'`
+    zip ../"$midtarget" -u `find |grep -v META-INF|sed 's/^.\///'`
     cd ..
 fi
 
