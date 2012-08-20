@@ -613,6 +613,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		CMDS[TOUCH_HELP_CMD] = new Command(Locale.get("trace.touchhelp")/*Touchscreen functions*/,Command.ITEM,100);
 		CMDS[CMS_CMD] = new Command(Locale.get("trace.Tacho")/*Tacho*/, Command.ITEM, 100);
 		CMDS[TOGGLE_UNUSEABLEWAYS_DARKER] = new Command(Locale.get("trace.ToggleUnuseableWaysDarker")/*Toggle unuseable ways darker */, Command.ITEM, 100);
+		CMDS[OPEN_MAP_CREDIT_URL] = new Command(Locale.get("trace.showmapcredit")/*Show map credit/license webpage*/, Command.ITEM, 100);
 
 		addAllCommands();
 		
