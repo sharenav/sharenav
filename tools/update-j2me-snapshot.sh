@@ -27,11 +27,18 @@ cd dist
 
 ln -f -s `ls -t *full-connected*jar|head -1` GpsMid-latest.jar
 
+cd ..
+
+for i in full-connected full midisize minimal blackberry
+do
+    ./tools/bundlemap.sh minimap $i
+done
+
 tar cf - GpsMid-Generic*.jar GpsMid-latest.jar | ssh $user,gpsmid@shell.sf.net 'cd /home/project-web/gpsmid/htdocs/prebuild ; tar xpf -'
 
 # debug build
 
-cd ..
+# cd ..
 
 ant clean
 
@@ -50,6 +57,14 @@ for i in *.jar
 do
  mv $i `echo $i | sed 's/Generic-/Generic-debug-/'`
 done
+
+cd ..
+
+for i in full-connected full midisize minimal blackberry
+do
+    ./tools/bundlemap.sh minimap $i
+done
+
 
 ln -f -s `ls -t *full-connected*jar|head -1` GpsMid-latest-debug.jar
 
