@@ -43,7 +43,7 @@ then
     andtarget="$2"
   fi
 
-  apk=`ls -t dist/GpsMid-Generic-$andtarget-*.apk 2>/dev/null|head -1`
+  apk=`ls -t dist/GpsMid-Generic-$andtarget-0*.apk 2>/dev/null|head -1`
   if [ "$apk" ]
   then
      ver=`echo $apk|sed "s/dist\/GpsMid-Generic-$andtarget-//" | sed "s/\.apk//"`
@@ -55,7 +55,7 @@ else
     midtarget="$2"
   fi
 
-  jar=`ls -t dist/GpsMid-Generic-$midtarget-*.jar 2>/dev/null|head -1`
+  jar=`ls -t dist/GpsMid-Generic-$midtarget-0*.jar 2>/dev/null|head -1`
   if [ "$jar" ]
   then
      ver=`echo $jar|sed "s/dist\/GpsMid-Generic-$midtarget-//" | sed "s/\.jar//"`
