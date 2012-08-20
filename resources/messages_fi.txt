@@ -920,5 +920,6 @@ guidiscover.LoadNamesLast=Lataa nimet viimeiseksi
 guisetupgui.clickableMarkers=Kosketettavat karttamerkit
 guisetupgui.ShowNativeKeyboard=Näytä näppäimistö haussa
 guisetupgui.UseSetupIconMenu=Käytä kuvakevalikkoa asetuksiin
-trace.mapcreditFiLandsurvey12=Maanmittauslaitoksen Maastotietokanta 06/2012
+trace.mapcreditFiLandSurvey12=Maanmittauslaitoksen Maastotietokanta 06/2012
 trace.mapcreditFiLandSurvey12URL=http://www.maanmittauslaitos.fi/avoindata_lisenssi_versio1_20120501
+trace.showmapcredit=Avaa kartan tieto- tai lisenssisivu
