@@ -61,6 +61,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 
 	/** A menu list instance */
 	private static final String[] elements = {
+		//#if polish.android
+		Locale.get("generic.Back")/*Back*/, 
+		//#endif
 		Locale.get("guidiscover.LocationReceiver")/*Location Receiver*/, 
 		Locale.get("guidiscover.RecordingRules")/*Recording Rules*/,
 		/*		"Languages & Units", */
@@ -94,6 +97,47 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	 * The following MENU_ITEM constants have to be in sync
 	 * with the position in the elements array of the main menu.
 	 */
+	int i = 0;
+	//#if polish.android
+	protected static final int MENU_ITEM_BACK = 0;
+	protected static final int MENU_ITEM_LOCATION = 1;
+	protected static final int MENU_ITEM_GPX_FILTER = 2;
+	protected static final int MENU_ITEM_DISP_OPT = 3;
+	protected static final int MENU_ITEM_SOUNDS_OPT = 4;
+	protected static final int MENU_ITEM_ROUTING_OPT = 5;
+	protected static final int MENU_ITEM_GPX_DEVICE = 6;
+	protected static final int MENU_ITEM_GUI_OPT = 7;
+	protected static final int MENU_ITEM_MAP_SRC = 8;
+	protected static final int MENU_ITEM_DEBUG_OPT = 9;
+	protected static final int MENU_ITEM_KEYS_OPT = 10;
+	protected static final int MENU_ITEM_OPENCELLID_OPT = 11;
+	//#if polish.api.osm-editing
+	protected static final int MENU_ITEM_OSM_OPT = 12;
+	protected static final int MENU_ITEM_ONLINE_OPT = 13;
+	//#if polish.api.mmapi
+	protected static final int MENU_ITEM_CAMERA_OPT = 14;
+	protected static final int MENU_ITEM_EXPORT_CONFIG = 15;
+	protected static final int MENU_ITEM_IMPORT_CONFIG = 16;
+	protected static final int MENU_ITEM_BLUETOOTH = 17;
+	//#else
+	protected static final int MENU_ITEM_EXPORT_CONFIG = 14;
+	protected static final int MENU_ITEM_IMPORT_CONFIG = 15;
+	protected static final int MENU_ITEM_BLUETOOTH = 16;
+	//#endif
+	//#else
+	protected static final int MENU_ITEM_ONLINE_OPT = 12;
+	//#if polish.api.mmapi
+	protected static final int MENU_ITEM_CAMERA_OPT = 13;
+	protected static final int MENU_ITEM_EXPORT_CONFIG = 14;
+	protected static final int MENU_ITEM_IMPORT_CONFIG = 15;
+	protected static final int MENU_ITEM_BLUETOOTH = 16;
+	//#else
+	protected static final int MENU_ITEM_EXPORT_CONFIG = 13;
+	protected static final int MENU_ITEM_IMPORT_CONFIG = 14;
+	protected static final int MENU_ITEM_BLUETOOTH = 15;
+	//#endif
+	//#endif
+	//#else
 	protected static final int MENU_ITEM_LOCATION = 0;
 	protected static final int MENU_ITEM_GPX_FILTER = 1;
 	protected static final int MENU_ITEM_DISP_OPT = 2;
@@ -131,6 +175,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	protected static final int MENU_ITEM_BLUETOOTH = 14;
 	//#endif
 	//#endif
+	//#endif
 
 	private int numLangDifference = 0;
 
@@ -145,12 +190,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private final Command BACK_CMD = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.BACK, 2);
 
 	/** Soft button for discovering BT. */
-    	//#if polish.android
-        // hard-code to make the back key exit settings in textual menu
-	private final Command OK_CMD = new Command(Locale.get("generic.OK")/*Ok*/, Command.OK, 1);
-    	//#else
 	private final Command OK_CMD = new Command(Locale.get("generic.OK")/*Ok*/, GpsMidMenu.OK, 1);
-    	//#endif
 
 	private final Command STORE_BT_URL = new Command(Locale.get("guidiscover.Select")/*Select*/, Command.OK, 2);
 
@@ -862,6 +902,17 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			return;
 		}
 		if (c == BACK_CMD) {
+			//#if polish.andoid
+			if (state == STATE_ROOT) {
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SETUP)
+				    && Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)) {
+					Trace.getInstance().performIconAction(IconActionPerformer.BACK_ACTIONID, null);
+				} else {
+					destroy();
+					Trace.getInstance().show();
+				}
+			}
+			//#endif
 			if (state == STATE_BT_GPX) {
 				state = STATE_GPX;
 			} else if (state == STATE_BT_GPS) {
@@ -933,6 +984,17 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		if (c == OK_CMD) {
 			switch (state) {
 			case STATE_ROOT:
+				//#if polish.android
+				if (menu.getSelectedIndex() == MENU_ITEM_BACK) {
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SETUP)
+					    && Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)) {
+						Trace.getInstance().performIconAction(IconActionPerformer.BACK_ACTIONID, null);
+					} else {
+						Trace.getInstance().show();
+					}
+					return;
+				}
+				//#endif
 				showSetupDialog(menu.getSelectedIndex());
 				break;
 			case STATE_BT_GPS:
