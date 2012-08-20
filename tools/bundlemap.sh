@@ -94,7 +94,7 @@ zip -q "$midtarget" -d c/\* t\*/\* s\*.d dict\*.dat d\*/\*.d names\*.dat legend.
 #cp -p "$midtarget"  "$midtarget".copy
 #if [ "$android" ]
 #then
-  unzip -q -o "$mid" META-INF/*
+  unzip -q -o "$mid" META-INF/\*
 #fi
 
 if [ "$android" ]
