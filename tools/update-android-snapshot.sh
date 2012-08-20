@@ -1,7 +1,7 @@
 #!/bin/sh
 #
-# update the Osm2GpsMid snapshots
-#
+# update the Android GpsMid "bare binaries" snapshots
+# FIXME: bundle a small map with the app
 
 user=SOURCEFORGE_USERNAME_HERE
 . ./android.properties
