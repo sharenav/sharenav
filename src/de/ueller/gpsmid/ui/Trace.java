@@ -273,6 +273,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public boolean pointerDown = false;
 	
 	private volatile boolean currentLayoutIsPortrait = true;
+	private volatile int previousAngle = 0;
 	private volatile int currentRotation = 0;
 
 	private Position pos = new Position(0.0f, 0.0f,
@@ -822,6 +823,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			currentRotation = getAndroidRotationAngle();
 			//#endif
 			currentLayoutIsPortrait = deviceLayoutIsPortrait();
+			//#if polish.android
+			previousAngle = getAndroidRotationAngle();
+			//#else
+			previousAngle = deviceLayoutIsPortrait() ? 0 : 90;
+			//#endif
 			startCompass();
 			int locprov = Configuration.getLocationProvider();
 			receiveMessage(Locale.get("trace.ConnectTo")/*Connect to */ + Configuration.LOCATIONPROVIDER[locprov]);
@@ -2408,21 +2414,21 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		refreshWindowLayout(w, h);
 		recreateTraceLayout();
 		
-		if (deviceLayoutIsPortrait() != currentLayoutIsPortrait) {
-			currentLayoutIsPortrait = deviceLayoutIsPortrait();
+		//#if polish.android
+		int newAngle = getAndroidRotationAngle();
+		//#else
+		int newAngle = deviceLayoutIsPortrait() ? 0 : 90;
+		//#endif
 
-			//#if polish.android
-			int angle = getAndroidRotationAngle();
-			compassDeviation += (angle - currentRotation);
-			currentRotation = angle;
-			//#else
-			compassDeviation += currentLayoutIsPortrait ? -90 : 90;
-			//#endif
+		if (newAngle != previousAngle) {
+			currentLayoutIsPortrait = deviceLayoutIsPortrait();
+			compassDeviation += (newAngle - previousAngle);
 			if (compassDeviation < 0) {
 				compassDeviation += 360;
 			}
 			compassDeviation %= 360;
 		}
+		previousAngle = newAngle;
 
 		if (isShowingSplitIconMenu() && (traceIconMenu != null)) {
 			traceIconMenu.sizeChanged(w, h);
@@ -3653,6 +3659,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			center.setLatLonDeg(pos.latitude, pos.longitude);
 			speed = (int) (pos.speed * 3.6f);
 			fspeed = pos.speed * 3.6f;
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
+				deviateCompass();
+			}
 			// auto-fallback mode where course is from GPS at high speeds and from compass
 			// at low speeds
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null && !Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_AND_MOVEMENT_DIRECTION)) {
@@ -4643,11 +4652,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 
 	public boolean mapLayoutIsPortrait() {
-		return ((mapMaxX - mapMaxY) < (mapMaxY - mapMinY) * 3 / 2 );
+		return ((mapMaxX - mapMinX) < (mapMaxY - mapMinY) * 3 / 2 );
 	}		
 
 	public boolean deviceLayoutIsPortrait() {
-		return ((maxX - maxY) < (maxY - minY) * 3 / 2 );
+		return ((maxX - minX) < (maxY - minY) * 3 / 2 );
 	}		
 
 	public void resetSize() {
