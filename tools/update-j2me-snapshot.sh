@@ -25,7 +25,7 @@ ssh $user,gpsmid@shell.sf.net create
 
 cd dist
 
-ln -f -s `ls -t *full-connected-outl*jar|head -1` GpsMid-latest.jar
+ln -f -s `ls -t *full-connected*jar|head -1` GpsMid-latest.jar
 
 tar cf - GpsMid-Generic*.jar | ssh $user,gpsmid@shell.sf.net 'cd /home/project-web/gpsmid/htdocs/prebuild ; tar xpf -'
 
