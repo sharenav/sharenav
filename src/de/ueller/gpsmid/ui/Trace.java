@@ -207,8 +207,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	protected static final int HELP_ONLINE_WIKI_ANDROID_CMD = 72;
 	protected static final int ROUTING_RECALC_CMD = 73;
 	protected static final int ROUTING_START_WITH_OPTIONAL_MODE_SELECT_CMD = 74;
+	protected static final int OPEN_MAP_CREDIT_URL = 75;
 
-	private final Command [] CMDS = new Command[75];
+	private final Command [] CMDS = new Command[76];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -1784,6 +1785,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return;
 			}
 			//#endif
+			if (c == CMDS[OPEN_MAP_CREDIT_URL] && internetAccessAllowed()) {
+				GuiWebInfo.openUrl(GuiWebInfo.getStaticUrlForSite(Locale.get("trace.showmapcredit")));
+				return;
+			}
 			if (c == CMDS[KEYS_HELP_CMD]) {
 				GuiKeyShortcuts gks = new GuiKeyShortcuts(this);
 				gks.show();

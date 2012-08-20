@@ -298,6 +298,7 @@ public class TraceLayout extends LayoutManager {
 		// FIXME add a color for map info
 		e.setColor(Legend.COLORS[Legend.COLOR_RI_OFF_DISTANCE_TEXT]);
 		e.setVRelative(ele[ROUTE_OFFROUTE]);
+		e.setActionID(Trace.OPEN_MAP_CREDIT_URL);
 
 		e = ele[ZOOM_OUT]; addElement(e,
 				LayoutElement.FLAG_HALIGN_RIGHT |
