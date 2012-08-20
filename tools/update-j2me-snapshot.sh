@@ -62,10 +62,10 @@ cd ..
 
 for i in full-connected full midisize minimal blackberry
 do
-    ./tools/bundlemap.sh minimap $i
+    ./tools/bundlemap.sh minimap debug-$i
 done
 
 
 ln -f -s `ls -t *full-connected*jar|head -1` GpsMid-latest-debug.jar
 
-tar cf - *.jar | ssh $user,gpsmid@shell.sf.net 'cd /home/project-web/gpsmid/htdocs/prebuild ; tar xpf -'
+tar cf - GpsMid-Generic-debug-*.jar GpsMid-latest-debug.jar | ssh $user,gpsmid@shell.sf.net 'cd /home/project-web/gpsmid/htdocs/prebuild ; tar xpf -'
