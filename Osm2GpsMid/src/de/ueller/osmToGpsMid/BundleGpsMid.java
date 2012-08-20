@@ -178,8 +178,11 @@ public class BundleGpsMid implements Runnable {
 		File copying2 = new File(tmpDir + "/COPYING.txt");
 		File copyingosm = new File(tmpDir + "/COPYING-OSM");
 		File copyingosm2 = new File(tmpDir + "/COPYING-OSM.txt");
+		File copyingmaps = new File(tmpDir + "/COPYING-MAPS");
+		File copyingmaps2 = new File(tmpDir + "/COPYING-MAPS.txt");
 		copying.renameTo(copying2);
 		copyingosm.renameTo(copyingosm2);
+		copyingmaps.renameTo(copyingmaps2);
 	}
 	/**
 	 * Rewrite or remove the Manifest file to change the bundle name to reflect the one
