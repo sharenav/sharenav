@@ -70,9 +70,33 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		Locale.get("splash.Application2")/* licensed under GPL2*/,
 		Locale.get("splash.Application3")/* http://www.gnu.org/*/,
 		Locale.get("splash.MapData")/*Map data:*/,
-		Locale.get("splash.MapData2")/* from OpenStreetMap*/,
-		Locale.get("splash.MapData3")/* licensed under CC 2.0*/,
-		Locale.get("splash.MapData4")/* http://creativecommons.org/*/,
+		Legend.getMapFlag(Legend.LEGEND_MAPFLAG_SOURCE_OSM_ODBL) ?
+		Locale.get("trace.mapcreditOsmODbL")
+		:
+		(
+		Legend.getMapFlag(Legend.LEGEND_MAPFLAG_SOURCE_FI_LANDSURVEY) ?
+		Locale.get("trace.mapcreditFiLandSurvey12")
+		:
+		Locale.get("splash.MapData2")
+		),
+		Legend.getMapFlag(Legend.LEGEND_MAPFLAG_SOURCE_OSM_ODBL) ?
+		""
+		:
+		(
+		Legend.getMapFlag(Legend.LEGEND_MAPFLAG_SOURCE_FI_LANDSURVEY) ?
+		""
+		:
+		Locale.get("splash.MapData3")/* licensed under CC 2.0*/
+		),
+		Legend.getMapFlag(Legend.LEGEND_MAPFLAG_SOURCE_OSM_ODBL) ?
+		Locale.get("trace.mapcreditOsmODbLURL")
+		:
+		(
+		Legend.getMapFlag(Legend.LEGEND_MAPFLAG_SOURCE_FI_LANDSURVEY) ?
+		Locale.get("trace.mapcreditFiLandSurvey12URL")
+		:
+		Locale.get("splash.MapData4")/* http://creativecommons.org/*/
+		),
 		Locale.get("splash.skip")/* Press '*' to skip this */,
 		Locale.get("splash.screen")/* screen at startup. */,
 		"Press '#' if you want to",
