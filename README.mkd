@@ -1,7 +1,7 @@
 Installing GpsMid
 -----------------
 You need to choose the right variant of GpsMid for your phone.
-If you are unsure, try <GpsMid-Generic-full-0.7.8-map71> or read the Wiki page
+If you are unsure, try <GpsMid-Generic-full-0.8-map72> or read the Wiki page
 [http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=DevicesList](http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=DevicesList) 
 where users have collected their experiences with different phone models.
 
@@ -14,12 +14,12 @@ entry from its context menu.
 
 Map data
 --------
-<Osm2GpsMid-0.7.8-map71.jar> is needed to create the binary map data for GpsMid.
+<Osm2GpsMid-0.8-map72.jar> is needed to create the binary map data for GpsMid.
 Java 1.5 or later must be installed on your PC to run it.
 The process is explained here:
 [http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Getting_started](http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Getting_started)
 
-<Osm2GpsMid-0.7.8-map71-debug.jar> creates debug versions of GpsMid. Normally,
+<Osm2GpsMid-0.8-map72-debug.jar> creates debug versions of GpsMid. Normally,
 you won't need to use it.
 
 Alternatively, you can download pre-built map data from

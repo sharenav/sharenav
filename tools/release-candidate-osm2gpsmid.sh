@@ -4,9 +4,12 @@
 #
 
 user=YOUR_SOURCEFORGE_USERNAME_HERE
-numver=0.7.75
-rcver=rc-v0.7.8
-ver=$numver-map71
+
+. android.properties
+
+numver=0.7.98
+rcver=rc-v0.8
+ver=$numver-map72
 
 ant clean
 #

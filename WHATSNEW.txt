@@ -1,9 +1,3 @@
-TODO: (perhaps done?)
-**** REWORK clickable to tell what the user has to do to get them working
-**** REWORK/REMOVE Predefined Waypoints
-**** add icon menu improvements 
-
-
 GpsMid 0.8
     *** Map Performance ***
     - Zooming far out, panning around and zooming somewhere else in is now much faster.
