@@ -7,8 +7,8 @@
 # needed for signing android .apk; for Android, mapdir must be named "assets"
 # todo: deduce from environment
 
-#jarsigner=jarsigner
-jarsigner=/usr/lib/jvm/default-java/bin/jarsigner
+jarsigner=jarsigner
+#jarsigner=/usr/lib/jvm/default-java/bin/jarsigner
 
 # uncomment to enable android signing with a real key
 #passparam="-keystore /some/where.jks -storepass IWontTell"
