@@ -71,7 +71,7 @@ public class GuiSetupGui extends Form implements CommandListener {
 					Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS));
 			//imenuOpts.setSelectedIndex(5, 
 			//		Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED));
-			imenuOpts.setSelectedIndex(5, 
+			imenuOpts.setSelectedIndex(6, 
 					Configuration.getCfgBitSavedState(Configuration.CFGBIT_FAVORITES_IN_ROUTE_ICON_MENU));
 			append(imenuOpts);
 		
