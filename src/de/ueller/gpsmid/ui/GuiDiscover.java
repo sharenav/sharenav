@@ -1852,6 +1852,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	public void show() {
 		switch (state) {
 			case STATE_ROOT:
+				//#if polish.android
+				menu.setSelectedIndex(MENU_ITEM_BACK, true);
+				//#endif
 				if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_SETUP)) {
 					showIconMenu();
 				} else {
