@@ -5,7 +5,7 @@
 
 user=YOUR_SOURCEFORGE_USERNAME_HERE
 
-. android.properties
+. ./android.properties
 
 numver=0.7.98
 rcver=rc-v0.8
@@ -20,6 +20,10 @@ ant -Ddevice=Generic/blackberry
 # normal build 
 
 ant
+
+# normal android build
+ant  -propertyfile android.properties android
+
 cd Osm2GpsMid
 #ant clean
 ant
@@ -30,6 +34,9 @@ cp -p dist/Osm2GpsMid-$ver.jar .
 ant clean
 ant debug -Ddevice=Generic/blackberry
 ant debug j2mepolish
+
+# debug android build
+ant  -propertyfile android.properties debug android
 
 cd Osm2GpsMid
 #ant clean
