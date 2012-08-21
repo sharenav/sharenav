@@ -1,6 +1,8 @@
 /*
  * GpsMid - Copyright (c) 2008 Jyrki Kuoppala jkpj at users dot sourceforge dot net 
  * See Copying
+ * FIXME integrate this with layout manager, it's a nightmare to maintain
+ * with the co-dependent element ids and special cases for special elements
  */
 package de.ueller.gpsmid.ui;
 
@@ -117,6 +119,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.TITLEBAR].setVRelative(tl.ele[TraceLayout.WAYNAME]);
 		helpEle[TraceLayout.TITLEBAR].setAdditionalOffsY(0);
 		helpEle[TraceLayout.TITLEBAR].setAdditionalOffsX(20);
+		helpEle[TraceLayout.TITLEBAR].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.SCALEBAR],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -126,6 +129,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.SCALEBAR].setVRelative(tl.ele[TraceLayout.SCALEBAR]);
 		helpEle[TraceLayout.SCALEBAR].setAdditionalOffsY(14);
 		helpEle[TraceLayout.SCALEBAR].setAdditionalOffsX(8);
+		helpEle[TraceLayout.SCALEBAR].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.POINT_OF_COMPASS],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -143,6 +147,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.SOLUTION].setVRelative(tl.ele[TraceLayout.SOLUTION]);
 		helpEle[TraceLayout.SOLUTION].setAdditionalOffsY(16);
 		helpEle[TraceLayout.SOLUTION].setAdditionalOffsX(-24);
+		helpEle[TraceLayout.POINT_OF_COMPASS].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.ALTITUDE],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -152,6 +157,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.ALTITUDE].setVRelative(tl.ele[TraceLayout.ALTITUDE]);
 		helpEle[TraceLayout.ALTITUDE].setAdditionalOffsY(16);
 		helpEle[TraceLayout.ALTITUDE].setAdditionalOffsX(-24);
+		helpEle[TraceLayout.ALTITUDE].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.RECORDED_COUNT],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -161,6 +167,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.RECORDED_COUNT].setVRelative(tl.ele[TraceLayout.RECORDED_COUNT]);
 		helpEle[TraceLayout.RECORDED_COUNT].setAdditionalOffsY(16);
 		helpEle[TraceLayout.RECORDED_COUNT].setAdditionalOffsX(-24);
+		helpEle[TraceLayout.RECORDED_COUNT].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.CELLID],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -170,6 +177,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.CELLID].setVRelative(tl.ele[TraceLayout.CELLID]);
 		helpEle[TraceLayout.CELLID].setAdditionalOffsY(16);
 		helpEle[TraceLayout.CELLID].setAdditionalOffsX(-24);
+		helpEle[TraceLayout.CELLID].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.AUDIOREC],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -179,6 +187,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.AUDIOREC].setVRelative(tl.ele[TraceLayout.AUDIOREC]);
 		helpEle[TraceLayout.AUDIOREC].setAdditionalOffsY(16);
 		helpEle[TraceLayout.AUDIOREC].setAdditionalOffsX(-24);
+		helpEle[TraceLayout.AUDIOREC].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.WAYNAME],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -188,6 +197,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.WAYNAME].setVRelative(tl.ele[TraceLayout.WAYNAME]);
 		helpEle[TraceLayout.WAYNAME].setAdditionalOffsY(16);
 		helpEle[TraceLayout.WAYNAME].setAdditionalOffsX(-24);
+		helpEle[TraceLayout.WAYNAME].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.ROUTE_INTO],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -197,6 +207,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.ROUTE_INTO].setVRelative(tl.ele[TraceLayout.ROUTE_INTO]);
 		helpEle[TraceLayout.ROUTE_INTO].setAdditionalOffsY(8);
 		helpEle[TraceLayout.ROUTE_INTO].setAdditionalOffsX(28);
+		helpEle[TraceLayout.ROUTE_INTO].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.ROUTE_INSTRUCTION],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -206,6 +217,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.ROUTE_INSTRUCTION].setVRelative(tl.ele[TraceLayout.ROUTE_INSTRUCTION]);
 		helpEle[TraceLayout.ROUTE_INSTRUCTION].setAdditionalOffsY(8);
 		helpEle[TraceLayout.ROUTE_INSTRUCTION].setAdditionalOffsX(28);
+		helpEle[TraceLayout.ROUTE_INSTRUCTION].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.ROUTE_DISTANCE],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -215,6 +227,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.ROUTE_DISTANCE].setVRelative(tl.ele[TraceLayout.ROUTE_DISTANCE]);
 		helpEle[TraceLayout.ROUTE_DISTANCE].setAdditionalOffsY(8);
 		helpEle[TraceLayout.ROUTE_DISTANCE].setAdditionalOffsX(28);
+		helpEle[TraceLayout.ROUTE_DISTANCE].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.SPEED_CURRENT],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -224,6 +237,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.SPEED_CURRENT].setVRelative(tl.ele[TraceLayout.SPEED_CURRENT]);
 		helpEle[TraceLayout.SPEED_CURRENT].setAdditionalOffsY(8);
 		helpEle[TraceLayout.SPEED_CURRENT].setAdditionalOffsX(28);
+		helpEle[TraceLayout.SPEED_CURRENT].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.CURRENT_TIME],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -233,6 +247,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.CURRENT_TIME].setVRelative(tl.ele[TraceLayout.CURRENT_TIME]);
 		helpEle[TraceLayout.CURRENT_TIME].setAdditionalOffsY(-14);
 		helpEle[TraceLayout.CURRENT_TIME].setAdditionalOffsX(-8);
+		helpEle[TraceLayout.CURRENT_TIME].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.ETA],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -242,6 +257,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.ETA].setVRelative(tl.ele[TraceLayout.ETA]);
 		helpEle[TraceLayout.ETA].setAdditionalOffsY(-20);
 		helpEle[TraceLayout.ETA].setAdditionalOffsX(-8);
+		helpEle[TraceLayout.ETA].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.ROUTE_OFFROUTE],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -251,6 +267,15 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.ROUTE_OFFROUTE].setVRelative(tl.ele[TraceLayout.ROUTE_OFFROUTE]);
 		helpEle[TraceLayout.ROUTE_OFFROUTE].setAdditionalOffsY(-20);
 		helpEle[TraceLayout.ROUTE_OFFROUTE].setAdditionalOffsX(-8);
+		helpEle[TraceLayout.ROUTE_OFFROUTE].setActionID(0);
+
+		tl.addElement(helpEle[TraceLayout.MAP_INFO],
+				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
+				LayoutElement.FLAG_FONT_SMALL);
+		helpEle[TraceLayout.MAP_INFO].setVRelative(tl.ele[TraceLayout.MAP_INFO]);
+		helpEle[TraceLayout.MAP_INFO].setAdditionalOffsY(8);
+		helpEle[TraceLayout.MAP_INFO].setAdditionalOffsX(28);
+		helpEle[TraceLayout.MAP_INFO].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.ZOOM_OUT],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -260,6 +285,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.ZOOM_OUT].setVRelative(tl.ele[TraceLayout.ZOOM_OUT]);
 		helpEle[TraceLayout.ZOOM_OUT].setAdditionalOffsY(4);
 		helpEle[TraceLayout.ZOOM_OUT].setAdditionalOffsX(-24);
+		helpEle[TraceLayout.ZOOM_OUT].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.ZOOM_IN],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -269,6 +295,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.ZOOM_IN].setVRelative(tl.ele[TraceLayout.ZOOM_IN]);
 		helpEle[TraceLayout.ZOOM_IN].setAdditionalOffsY(16);
 		helpEle[TraceLayout.ZOOM_IN].setAdditionalOffsX(-24);
+		helpEle[TraceLayout.ZOOM_IN].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.SHOW_DEST],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -278,6 +305,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.SHOW_DEST].setVRelative(tl.ele[TraceLayout.SHOW_DEST]);
 		helpEle[TraceLayout.SHOW_DEST].setAdditionalOffsY(16);
 		helpEle[TraceLayout.SHOW_DEST].setAdditionalOffsX(28);
+		helpEle[TraceLayout.SHOW_DEST].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.RECENTER_GPS],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -287,6 +315,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.RECENTER_GPS].setVRelative(tl.ele[TraceLayout.RECENTER_GPS]);
 		helpEle[TraceLayout.RECENTER_GPS].setAdditionalOffsY(4);
 		helpEle[TraceLayout.RECENTER_GPS].setAdditionalOffsX(28);
+		helpEle[TraceLayout.RECENTER_GPS].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.RECORDINGS],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -296,6 +325,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.RECORDINGS].setVRelative(tl.ele[TraceLayout.RECORDINGS]);
 		helpEle[TraceLayout.RECORDINGS].setAdditionalOffsY(8);
 		helpEle[TraceLayout.RECORDINGS].setAdditionalOffsX(28);
+		helpEle[TraceLayout.RECORDINGS].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.SEARCH],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -305,6 +335,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.SEARCH].setVRelative(tl.ele[TraceLayout.SEARCH]);
 		helpEle[TraceLayout.SEARCH].setAdditionalOffsY(8);
 		helpEle[TraceLayout.SEARCH].setAdditionalOffsX(28);
+		helpEle[TraceLayout.SEARCH].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.SPEEDING_SIGN],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -314,6 +345,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.SPEEDING_SIGN].setVRelative(tl.ele[TraceLayout.SPEEDING_SIGN]);
 		helpEle[TraceLayout.SPEEDING_SIGN].setAdditionalOffsY(8);
 		helpEle[TraceLayout.SPEEDING_SIGN].setAdditionalOffsX(28);
+		helpEle[TraceLayout.SPEEDING_SIGN].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.REQUESTED_TILES],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -323,6 +355,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.REQUESTED_TILES].setVRelative(tl.ele[TraceLayout.REQUESTED_TILES]);
 		helpEle[TraceLayout.REQUESTED_TILES].setAdditionalOffsY(8);
 		helpEle[TraceLayout.REQUESTED_TILES].setAdditionalOffsX(28);
+		helpEle[TraceLayout.REQUESTED_TILES].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.TRAVEL_MODE],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -332,6 +365,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.TRAVEL_MODE].setVRelative(tl.ele[TraceLayout.TRAVEL_MODE]);
 		helpEle[TraceLayout.TRAVEL_MODE].setAdditionalOffsY(8);
 		helpEle[TraceLayout.TRAVEL_MODE].setAdditionalOffsX(28);
+		helpEle[TraceLayout.TRAVEL_MODE].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.ELE_COUNT],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -341,6 +375,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.ELE_COUNT].setVRelative(tl.ele[TraceLayout.SHOW_DEST]);
 		helpEle[TraceLayout.ELE_COUNT].setAdditionalOffsY(0);
 		helpEle[TraceLayout.ELE_COUNT].setAdditionalOffsX(28);
+		helpEle[TraceLayout.ELE_COUNT].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.ELE_COUNT+1],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -350,6 +385,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.ELE_COUNT+1].setVRelative(tl.ele[TraceLayout.TITLEBAR]);
 		helpEle[TraceLayout.ELE_COUNT+1].setAdditionalOffsY(60);
 		helpEle[TraceLayout.ELE_COUNT+1].setAdditionalOffsX(-28);
+		helpEle[TraceLayout.ELE_COUNT+1].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.ELE_COUNT+2],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -359,6 +395,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.ELE_COUNT+2].setVRelative(tl.ele[TraceLayout.TITLEBAR]);
 		helpEle[TraceLayout.ELE_COUNT+2].setAdditionalOffsY(4);
 		helpEle[TraceLayout.ELE_COUNT+2].setAdditionalOffsX(-28);
+		helpEle[TraceLayout.ELE_COUNT+2].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.ELE_COUNT+3],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -368,6 +405,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.ELE_COUNT+3].setVRelative(tl.ele[TraceLayout.TITLEBAR]);
 		helpEle[TraceLayout.ELE_COUNT+3].setAdditionalOffsY(4);
 		helpEle[TraceLayout.ELE_COUNT+3].setAdditionalOffsX(-28);
+		helpEle[TraceLayout.ELE_COUNT+3].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.ELE_COUNT+4],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -377,6 +415,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.ELE_COUNT+4].setVRelative(tl.ele[TraceLayout.TITLEBAR]);
 		helpEle[TraceLayout.ELE_COUNT+4].setAdditionalOffsY(4);
 		helpEle[TraceLayout.ELE_COUNT+4].setAdditionalOffsX(-28);
+		helpEle[TraceLayout.ELE_COUNT+4].setActionID(0);
 
 		tl.addElement(helpEle[TraceLayout.ELE_COUNT+5],
 			      LayoutElement.FLAG_FONT_MEDIUM |
@@ -386,6 +425,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		helpEle[TraceLayout.ELE_COUNT+5].setVRelative(tl.ele[TraceLayout.TITLEBAR]);
 		helpEle[TraceLayout.ELE_COUNT+5].setAdditionalOffsY(18);
 		helpEle[TraceLayout.ELE_COUNT+5].setAdditionalOffsX(-38);
+		helpEle[TraceLayout.ELE_COUNT+5].setActionID(0);
 	}
 
 	private void rotateMode() {
@@ -394,7 +434,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 	}
 
 	private void showMode() {
-		helpEle[TraceLayout.ELE_COUNT+5].setText(modes[mode] + " (" + (mode + 1) + "/" + modes.length + ")");
+		helpEle[TraceLayout.ELE_COUNT+addHelpEle-1].setText(modes[mode] + " (" + (mode + 1) + "/" + modes.length + ")");
 	}
 
 	protected void paint(Graphics g) {
@@ -481,8 +521,9 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 	protected void pointerPressed(int x, int y) {
 		// remember the LayoutElement the pointer is pressed down at, this will also highlight it on the display
 		int touchedElementId = tl.getElementIdAtPointer(x, y);
+		System.out.println("pointerpressed: elementid " + touchedElementId);
 		if (touchedElementId > TraceLayout.ELE_COUNT) {
-			touchedElementId -= (TraceLayout.ELE_COUNT);
+			touchedElementId -= (TraceLayout.ELE_COUNT - 2);
 		}
 		if (touchedElementId >= 0) {
 			tl.setTouchedElement((LayoutElement) tl.elementAt(touchedElementId));
@@ -500,7 +541,9 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		int eleId = tl.getElementId(e);
 		if (e != null) {
 			tl.clearTouchedElement();
-			if (eleId == TraceLayout.ELE_COUNT+5) {
+			System.out.println("eleId: " + eleId);
+			System.out.println("eleId comparison: " + (TraceLayout.ELE_COUNT+addHelpEle-1));
+			if (eleId == TraceLayout.ELE_COUNT+addHelpEle-1) {
 				rotateMode();
 			}
 			if (eleId > TraceLayout.ELE_COUNT) {
@@ -514,6 +557,19 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 						GpsMid.getInstance().alert(Locale.get("traceiconmenu.HelpPage"),
 									   modes[mode] + ": " + helpEle[eleId+TraceLayout.ELE_COUNT].getText(), 20000);
 					} else {
+						// FIXME something disorganized apparently with navi icons and other special elements (navi * 2, scalebar, speeding sign), subtract 1 for each
+						if (eleId >= 5 && eleId < 13) {
+							eleId -= 2;
+						} else if (eleId >= 13 && eleId < 19) {
+							eleId -= 2;
+						} else if (eleId >= 19 && eleId < 28) {
+							eleId -= 3;
+						} else if (eleId >= 28 && eleId < TraceLayout.ELE_COUNT) {
+							eleId -= 4;
+						}
+						if (eleId >= TraceLayout.ELE_COUNT) {
+							//eleId += 4;
+						}
 						GpsMid.getInstance().alert(Locale.get("traceiconmenu.HelpPage"),
 									   modes[mode] + ": " + helpEle[eleId].getText(), 20000);
 					}
