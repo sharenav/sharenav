@@ -21,9 +21,10 @@ ssh $user,gpsmid@shell.sf.net create
 
 cd dist
 
-ln -f -s `ls -t *droid*full-connected-outlin*apk|head -1` GpsMid-latest.apk
 
 cd ..
+
+ln -f -s `ls -t *droid*full-connected-outlin*apk|head -1` GpsMid-latest.apk
 
 for i in full-connected full midsize minimal
 do
