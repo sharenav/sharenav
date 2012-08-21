@@ -925,6 +925,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				state = STATE_GPX;
 			} else {
 				state = STATE_ROOT;
+				//#if polish.android
+				menu.setSelectedIndex(MENU_ITEM_BACK, true);
+				//#endif
 			}
 			show();
 			return;
@@ -1025,6 +1028,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				}
 				Configuration.setGpxUrl(str);
 				state = STATE_ROOT;
+				//#if polish.android
+				menu.setSelectedIndex(MENU_ITEM_BACK, true);
+				//#endif
 				show();
 				break;
 			case STATE_LOC_PROV:
@@ -1044,6 +1050,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					state = STATE_BT_OPT;
 				} else {
 					state = STATE_ROOT;
+					//#if polish.android
+					menu.setSelectedIndex(MENU_ITEM_BACK, true);
+					//#endif
 				}
 				String w=tfAltitudeCorrection.getString();
 				Configuration.setAltitudeCorrection(
@@ -1060,6 +1069,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				btAutoRecon.getSelectedFlags(selraw);
 				Configuration.setBtAutoRecon(selraw[0]);
 				state = STATE_ROOT;
+				//#if polish.android
+				menu.setSelectedIndex(MENU_ITEM_BACK, true);
+				//#endif
 				show();
 				break;
 			case STATE_MAP:
@@ -1077,6 +1089,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				Configuration.setOsmPwd(tfOsmPassword.getString());
 				Configuration.setOsmUrl(tfOsmUrl.getString());
 				state = STATE_ROOT;
+				//#if polish.android
+				menu.setSelectedIndex(MENU_ITEM_BACK, true);
+				//#endif
 				this.show();
 				break;
 			//#endif
@@ -1463,6 +1478,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		trace = Trace.getInstance();
 		trace.recreateTraceLayout();
 		state = STATE_ROOT;
+		//#if polish.android
+		menu.setSelectedIndex(MENU_ITEM_BACK, true);
+		//#endif
 		show();
 	}
 
@@ -1690,6 +1708,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		);
 
 		state = STATE_ROOT;
+		//#if polish.android
+		menu.setSelectedIndex(MENU_ITEM_BACK, true);
+		//#endif
 		show();
 
 		parent.restartBackLightTimer();
@@ -1773,6 +1794,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				onlineOptionGroup.isSelected(5));
 
 		state = STATE_ROOT;
+		//#if polish.android
+		menu.setSelectedIndex(MENU_ITEM_BACK, true);
+		//#endif
 		if (internetAccessGroup.isSelected(0) != oldInternetAccess) {
 			Trace.uncacheIconMenu();
 		}
@@ -1795,6 +1819,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//Configuration.setCfgBitSavedState(Configuration.CFGBIT_CELLID_FALLBACK,
 		//			     opencellidFlags[4]);
 		state = STATE_ROOT;
+		//#if polish.android
+		menu.setSelectedIndex(MENU_ITEM_BACK, true);
+		//#endif
 		this.show();
 		//#if polish.api.online
 		//#else
@@ -1903,6 +1930,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		case STATE_IMPORT_CONFIG:
 		case STATE_EXPORT_CONFIG:
 			state = STATE_ROOT;
+			//#if polish.android
+			menu.setSelectedIndex(MENU_ITEM_BACK, true);
+			//#endif
 			break;
 		}
 		//#endif
@@ -1935,11 +1965,17 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		case STATE_EXPORT_CONFIG:
 			ConfigExportImport.exportConfig(url_trunc + "GpsMid.cfg");
 			state = STATE_ROOT;
+			//#if polish.android
+			menu.setSelectedIndex(MENU_ITEM_BACK, true);
+			//#endif
 			show();
 			break;
 		case STATE_IMPORT_CONFIG:
 			ConfigExportImport.importConfig(url);
 			state = STATE_ROOT;
+			//#if polish.android
+			menu.setSelectedIndex(MENU_ITEM_BACK, true);
+			//#endif
 			show();
 			break;
 		//#endif
