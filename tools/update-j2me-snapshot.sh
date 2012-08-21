@@ -29,7 +29,7 @@ ln -f -s `ls -t *full-connected*jar|head -1` GpsMid-latest.jar
 
 cd ..
 
-for i in full-connected full midisize minimal blackberry
+for i in full-connected full midsize minimal blackberry
 do
     ./tools/bundlemap.sh minimap $i
 done
@@ -60,7 +60,7 @@ done
 
 cd ..
 
-for i in full-connected full midisize minimal blackberry
+for i in full-connected full midsize minimal blackberry
 do
     ./tools/bundlemap.sh minimap debug-$i
 done
