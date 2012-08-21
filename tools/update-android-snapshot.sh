@@ -43,7 +43,7 @@ cd dist
 
 for i in *.apk
 do
- mv $i `echo $i | sed 's/Generic-android/Generic-android-debug-/'`
+ mv $i `echo $i | sed 's/Generic-android/Generic-android-debug/'`
 done
 
 cd ..
