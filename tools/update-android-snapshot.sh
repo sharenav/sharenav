@@ -27,15 +27,13 @@ cd ..
 
 for i in full-connected full midsize minimal
 do
-    ./tools/bundlemap.sh -a assets $i
+    ./tools/bundlemap.sh -a assets android-$i-outlines
 done
 
 
 tar cf - *.apk | ssh $user,gpsmid@shell.sf.net 'cd /home/project-web/gpsmid/htdocs/prebuild ; tar xpf -'
 
 # debug build
-
-cd ..
 
 ant clean
 
@@ -45,14 +43,14 @@ cd dist
 
 for i in *.apk
 do
- mv $i `echo $i | sed 's/Generic-/Generic-debug-/'`
+ mv $i `echo $i | sed 's/Generic-android/Generic-android-debug-/'`
 done
 
 cd ..
 
 for i in full-connected full midsize minimal
 do
-    ./tools/bundlemap.sh -a assets debug-$i-outlines
+    ./tools/bundlemap.sh -a assets android-debug-$i-outlines
 done
 
 ln -f -s `ls -t *droid*apk|head -1` GpsMid-latest-debug.apk
