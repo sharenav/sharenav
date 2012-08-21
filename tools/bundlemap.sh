@@ -19,7 +19,7 @@ then
     shift
 fi
 
-ver=0.7.76-map72
+ver=0.7.99-map72
 andtarget=android-full-connected-outlines
 midtarget=full-connected
 
