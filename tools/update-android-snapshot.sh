@@ -23,6 +23,14 @@ cd dist
 
 ln -f -s `ls -t *droid*full-connected-outlin*apk|head -1` GpsMid-latest.apk
 
+cd ..
+
+for i in full-connected full midsize minimal
+do
+    ./tools/bundlemap.sh -a assets $i
+done
+
+
 tar cf - *.apk | ssh $user,gpsmid@shell.sf.net 'cd /home/project-web/gpsmid/htdocs/prebuild ; tar xpf -'
 
 # debug build
@@ -38,6 +46,13 @@ cd dist
 for i in *.apk
 do
  mv $i `echo $i | sed 's/Generic-/Generic-debug-/'`
+done
+
+cd ..
+
+for i in full-connected full midsize minimal
+do
+    ./tools/bundlemap.sh -a assets debug-$i-outlines
 done
 
 ln -f -s `ls -t *droid*apk|head -1` GpsMid-latest-debug.apk
