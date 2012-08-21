@@ -2151,7 +2151,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 				sb.append(Locale.get("guisearch.fulltextresults")/*Fulltext Results*/); break;			
 		}
 		//#if polish.android
-		gsl.ele[GuiSearchLayout.TEXT].setText(sb.toString());
+		if (gsl != null) {
+			gsl.ele[GuiSearchLayout.TEXT].setText(sb.toString());
+		}
 		//#else
 		setTitle(sb.toString());
 		//#endif
