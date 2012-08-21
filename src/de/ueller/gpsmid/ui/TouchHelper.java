@@ -521,7 +521,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 	protected void pointerPressed(int x, int y) {
 		// remember the LayoutElement the pointer is pressed down at, this will also highlight it on the display
 		int touchedElementId = tl.getElementIdAtPointer(x, y);
-		System.out.println("pointerpressed: elementid " + touchedElementId);
+		// System.out.println("pointerpressed: elementid " + touchedElementId);
 		if (touchedElementId > TraceLayout.ELE_COUNT) {
 			touchedElementId -= (TraceLayout.ELE_COUNT - 2);
 		}
@@ -541,8 +541,8 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		int eleId = tl.getElementId(e);
 		if (e != null) {
 			tl.clearTouchedElement();
-			System.out.println("eleId: " + eleId);
-			System.out.println("eleId comparison: " + (TraceLayout.ELE_COUNT+addHelpEle-1));
+			// System.out.println("eleId: " + eleId);
+			// System.out.println("eleId comparison: " + (TraceLayout.ELE_COUNT+addHelpEle-1));
 			if (eleId == TraceLayout.ELE_COUNT+addHelpEle-1) {
 				rotateMode();
 			}
