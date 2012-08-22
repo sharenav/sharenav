@@ -520,6 +520,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private float pinchZoomRotation = 0;
 	private float pinchZoomOrigAngle = 0;
 	private boolean rotationStarted = false;
+	private boolean zoomStarted = false;
 	private CanvasBridge canvas;
 	//#endif
 
@@ -716,10 +717,16 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				int mCount = event.getPointerCount();
 				// pinch zoom when at map screen but not in other screens
 				if (imageCollector != null && imageCollector.isRunning() && mCount > 1 && mtPointerId != INVALID_POINTER_ID) {
-					mtPointerDragged(pinchZoomDistance / dist(event) * pinchZoomScale);
 					// possible FIXME should we skip this if we're getting compass readings?
 					if (angleDiff((int) pinchZoomOrigAngle, (int) angle(event)) > 30) {
 						rotationStarted = true;
+					}
+					if (!rotationStarted && ((pinchZoomDistance / dist(event)) > 1.08f || (pinchZoomDistance / dist(event)) < 0.92f)) {
+						zoomStarted = true;
+					}
+					// stop zoom when rotation starts, to avoid bug id 3560292 
+					if (zoomStarted && !rotationStarted) {
+						mtPointerDragged(pinchZoomDistance / dist(event) * pinchZoomScale);
 					}
 					if (rotationStarted) {
 						mtPointerRotated((360*3 + pinchZoomRotation - angle(event)) % 360);
