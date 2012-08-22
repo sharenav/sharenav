@@ -20,7 +20,7 @@ then
 fi
 
 ver=0.7.99-map72
-andtarget=android-full-connected-outlines
+andtarget=android-full-connected
 midtarget=full-connected
 
 if [ "$#" != 2 -a "$#" != 1 ]
