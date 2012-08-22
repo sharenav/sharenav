@@ -277,7 +277,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 		//#if polish.android
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_SEARCH_SHOW_NATIVE_KEYBOARD)) {
 			enableNativeKeyboard();
-			cursorKeypad = true;
+			if (!Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)) {
+				cursorKeypad = true;
+			}
 		}
 
 		AndroidDisplay ad = AndroidDisplay.getDisplay(GpsMid.getInstance());
@@ -1697,7 +1699,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 		//#if polish.android
 		if (clickIdx == 0) {
 			enableNativeKeyboard();
-			cursorKeypad = true;
+			if (!Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)) {
+				cursorKeypad = true;
+			}
 			hideKeypad = false;
 		}
 		//#endif
@@ -1760,8 +1764,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	//#if polish.android
 	public void enableNativeKeyboard() {
-		InputMethodManager imMan = (InputMethodManager) MidletBridge.instance.getSystemService(Context.INPUT_METHOD_SERVICE);
-		imMan.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+		if (!Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)) {
+			InputMethodManager imMan = (InputMethodManager) MidletBridge.instance.getSystemService(Context.INPUT_METHOD_SERVICE);
+			imMan.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+		}
 	}
 	//#endif
 
