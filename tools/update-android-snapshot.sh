@@ -24,11 +24,11 @@ cd dist
 
 cd ..
 
-ln -f -s `ls -t *droid*full-connected-outlin*apk|head -1` GpsMid-latest.apk
+ln -f -s `ls -t *droid*full-connected*apk|head -1` GpsMid-latest.apk
 
 for i in full-connected full midsize minimal
 do
-    ./tools/bundlemap.sh -a assets android-$i-outlines
+    ./tools/bundlemap.sh -a assets android-$i
 done
 
 
@@ -51,7 +51,7 @@ cd ..
 
 for i in full-connected full midsize minimal
 do
-    ./tools/bundlemap.sh -a assets android-debug-$i-outlines
+    ./tools/bundlemap.sh -a assets android-debug-$i
 done
 
 ln -f -s `ls -t *droid*apk|head -1` GpsMid-latest-debug.apk

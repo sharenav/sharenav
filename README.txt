@@ -30,7 +30,10 @@ J2MEPolish modification for Android
 -----------------------------------
 
 To be able to draw areas faster on Android, a modification can be made
-to J2MEPolish 2.3.  The modification is made to a part of J2MEPolish
+to J2MEPolish 2.3 or daily before 2012-08-22. In daily J2MEPolish
+2012-08-22 or after and release version 2.3.1 the modification
+has been included in J2MEPolish, so no modification needs to be
+applied on them. The modification is made to a part of J2MEPolish
 which is source code to be compiled in the J2MEPolish build process
 for Android, so a recompilation of J2MEPolish is not required for
 applying the modification.
@@ -68,22 +71,23 @@ diff -u -r distrib-src/de/enough/polish/android/lcdui/Graphics.java src/de/enoug
  	 * Renders a series of device-independent RGB+transparency values in a
  	 * specified region.  The values are stored in
 
+A simpler way:
+
+You need not change the file inside the jar. You can change
+j2mepolish\j2mepolish-src\j2me\src\de\enough\polish\android\lcdui\Graphics.java,
+then uncomment the line with polish.client.source property in
+build.xml in GpsMid root directory and set this path
+properly, for example:
+
+  <property name="polish.client.source" value="${polish.home}/j2mepolish-src/j2me/src" />
+
 Using the J2MEPolish modification
 ---------------------------------
 
 Using Osm2GpsMid
 ================
 
-Osm2GpsMid contains .apks for both varieties - the plain ones are without area
-outlines, those with "-outlines" suffix are build with the outline feature active.
-
-Building from source
-====================
-
-By default, if you build GpsMid from source, it doesn't require or
-use the J2MEPolish modification.
-
-To use the area outline code, modify J2MEPolish, then modify build.xml
-to include the "-outlines" targets.  This happens by moving the
-"-outlines" -containing lines above the "<!--" mark, in other word by
-uncommenting these lines.
+As new versions of J2MEPolish now contain the modification, the ordinary
+GpsMid requires either the new version or the modification. The difference
+between "outlines" and previous (working without the J2MEPolish modification)
+has been dropped, and the "outlines" is no longer used in targets.
