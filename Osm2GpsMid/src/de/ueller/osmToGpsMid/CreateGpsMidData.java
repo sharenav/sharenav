@@ -281,7 +281,7 @@ public class CreateGpsMidData implements FilenameFilter {
 		// Configuration.mapFlags |= LEGEND_MAPFLAG_SOURCE_FI_LANDSURVEY;
 		// Configuration.mapFlags |= LEGEND_MAPFLAG_SOURCE_FI_DIGIROAD;
 
-		if (Configuration.getConfiguration().getTriangleAreaFormat()) {
+		if (Configuration.getConfiguration().writeTriangleAreaFormat) {
 			Configuration.mapFlags |= LEGEND_MAPFLAG_TRIANGLE_AREA_BLOCK;
 		}
 		if (Configuration.getConfiguration().getOutlineAreaFormat()) {
@@ -1657,12 +1657,24 @@ public class CreateGpsMidData implements FilenameFilter {
 			writeNode(n, ds, SEGNODE, t);
 		}
 		ds.writeByte(0x55); // Magic number
-		if (Configuration.getConfiguration().getTriangleAreaFormat()) {
+		if (Configuration.getConfiguration().writeTriangleAreaFormat) {
 			ds.writeShort(ways.size());
 			for (Way w : ways) {
 				w.write(ds, names1, urls1, t, false);
 			}
 			ds.writeByte(0x56); // Magic number
+		} else {
+			// triangulate anyway, as it may be needed for fallback to
+			// triangle format, just don't write the data
+			// FIXME: later only triangulate when fallback required
+			//for (Way w : ways) {
+			//	Bounds b = w.getBounds();
+			//	if (w.isArea()) {
+			//		if (w.triangles == null) {
+			//			w.triangulate();
+			//		}
+			//	}
+			//}
 		}
 		if (Configuration.getConfiguration().getOutlineAreaFormat()) {
 			ds.writeShort(ways.size());

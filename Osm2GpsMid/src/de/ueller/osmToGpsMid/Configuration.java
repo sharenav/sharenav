@@ -430,6 +430,7 @@ public class Configuration {
 
 		/** Do we want store areas as triangles */
 		public boolean triangleAreaFormat = true; 
+		public boolean writeTriangleAreaFormat = true; 
 
 		/** Path name of the style-file */
 		public String styleFile;
@@ -771,9 +772,11 @@ public class Configuration {
 			signApk = getString("signApk").equalsIgnoreCase("true");
 			jarsignerPath = getString("jarsignerPath");
 			triangleAreaFormat = getString("triangleAreaFormat").equalsIgnoreCase("true");
+			writeTriangleAreaFormat = getString("triangleAreaFormat").equalsIgnoreCase("true");
 			outlineAreaFormat = getString("outlineAreaFormat").equalsIgnoreCase("true");
 			if (outlineAreaFormat && !triangleAreaFormat) {
-				System.out.println("WARNING: Turning on triangle area format, currently can't create a map with only outline area format");
+				System.out.println("WARNING: Turning on triangle generation, currently can't create a map without generating triangles even when using outline area format");
+				System.out.println("Triangle block however will not written to data");
 				triangleAreaFormat = true;
 			}
 			signApkPassword = getString("signApkPassword");

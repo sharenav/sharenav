@@ -823,6 +823,9 @@ public class Way extends Entity implements Comparable<Way> {
 				// work around by outputting triangles
 				trianglesInOutlineMode = true;
 				flags4 |= WAY_FLAG4_TRIANGLES_IN_OUTLINE_MODE;
+				if (triangles == null) {
+					w.triangulate();
+				}
 				if (getNodeCount() > 255) {
 					longWays = true;
 				}
