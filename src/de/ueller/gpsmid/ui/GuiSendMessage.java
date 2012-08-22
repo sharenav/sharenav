@@ -40,8 +40,10 @@ public class GuiSendMessage extends Form implements CommandListener {
 		this.parent = tr;
 		try {
 			tfMessage = new TextField(Locale.get("guisendmessage.MessageText")/*Message text*/,
-						        Locale.get("guisendmessage.Lat")/*Lat: */ + tr.center.radlat * MoreMath.FAC_RADTODEC +
-						        Locale.get("guisendmessage.Lon")/* Lon: */ + tr.center.radlon * MoreMath.FAC_RADTODEC +
+								"Lat: " + tr.center.radlat * MoreMath.FAC_RADTODEC +
+								"Lon: " + tr.center.radlon * MoreMath.FAC_RADTODEC +
+//						        Locale.get("guisendmessage.Lat")/*Lat: */ + tr.center.radlat * MoreMath.FAC_RADTODEC +
+//						        Locale.get("guisendmessage.Lon")/* Lon: */ + tr.center.radlon * MoreMath.FAC_RADTODEC +
 							" ",
 							160,
 							TextField.ANY
