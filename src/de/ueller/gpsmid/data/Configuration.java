@@ -946,6 +946,7 @@ public class Configuration {
 			//#endif
 			setCfgBitSavedState(CFGBIT_SHOW_MAP_CREDITS, true);
 			setCfgBitSavedState(CFGBIT_DISTANCE_VIEW, true);
+			setCfgBitSavedState(CFGBIT_SHOW_TRAVEL_MODE_IN_MAP, true);
 		}
 
 		
