@@ -674,9 +674,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		int truncatedX = (int)x;
 		int truncatedY = (int)y;
 
-		int action = event.getAction();
+		int action = event.getActionMasked();
 		CanvasBridge.current().requestFocus();
-		switch(action & MotionEvent.ACTION_MASK) {
+		switch(action) {
 			case MotionEvent.ACTION_DOWN:
 				CanvasBridge.current().onTouch(view, event);
 				pointerId = event.getPointerId(0);
