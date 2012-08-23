@@ -683,6 +683,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				mtPointerId = INVALID_POINTER_ID;
 				return true;
 			case MotionEvent.ACTION_POINTER_DOWN:
+				zoomStarted = false;
 				rotationStarted = false;
 				pointerDragged = false;
 				pointerDraggedMuch = false;
@@ -695,7 +696,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				if (tl.pointerHasDoubleTapAction(touchX, touchY)) {
 					doubleTap(touchX, touchY);
 				} else {
-					doubleTap(truncatedX, truncatedY);
+					if (tl.pointerHasDoubleTapAction(truncatedX, truncatedY)) {
+						doubleTap(truncatedX, truncatedY);
+					}
 				}
 				pointerActionDone = true;
 				return true;
