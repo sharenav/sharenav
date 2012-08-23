@@ -1113,7 +1113,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 				}
 			
 				String letters[] = {  "  => ",
-						      /*Locale.get("guisearch.nextscreen")choose,*/ "  X  ", "  <- ", 
+						      /* the J2MEPolish preprocessor
+							 chokes on incorrect locale call even it's
+							 in comments :-( /*
+						      /*L o c a l e.get("guisearch.choose")choose,*/ "  X  ", "  <- ", 
 						      hasWordSearch() ?
 						      Locale.get("guisearch.label1wordSearch")/* 1*- */ :
 						      Locale.get("guisearch.label1")/*_1*- */,
