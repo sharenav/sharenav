@@ -752,6 +752,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			x = 0 - x;
 			y = 0 - y;
 		}
+		if (x == 0.0) {
+			x = (float) 0.000001;
+		}
 		float r = MoreMath.atan(y/x) * MoreMath.FAC_RADTODEC;
 		if (x < 0) {
 			r = r + 180;
