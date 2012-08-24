@@ -25,9 +25,10 @@ ssh $user,gpsmid@shell.sf.net create
 
 cd dist
 
-ln -f -s `ls -t *full-connected*jar|head -1` GpsMid-latest.jar
 
 cd ..
+
+ln -f -s `ls -t *full-connected*jar|head -1` GpsMid-latest.jar
 
 for i in full-connected full midsize minimal blackberry
 do
