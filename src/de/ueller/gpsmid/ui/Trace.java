@@ -519,7 +519,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private float pinchZoomScale = 0;
 	private float pinchZoomRotation = 0;
 	private float pinchZoomOrigAngle = 0;
-	private float pinchZoomOrigCourse = 0;
 	private volatile boolean rotationStarted = false;
 	private volatile boolean zoomStarted = false;
 	private CanvasBridge canvas;
@@ -692,7 +691,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				pinchZoomDistance = dist(event);
 				pinchZoomRotation = course + angle(event);
 				pinchZoomOrigAngle = angle(event);
-				pinchZoomOrigCourse = course;
 				pinchZoomScale = scale;
 				mtPointerId = event.getPointerId(1);
 				if (tl.pointerHasDoubleTapAction(touchX, touchY)) {
@@ -731,7 +729,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					}
 					if (!rotationStarted && ((pinchZoomDistance / dist(event)) > 1.08f || (pinchZoomDistance / dist(event)) < 0.92f)) {
 						zoomStarted = true;
-						mtPointerRotated(pinchZoomOrigCourse);
 					}
 					// stop zoom when rotation starts, to avoid bug id 3560292 
 					if (zoomStarted && !rotationStarted) {
