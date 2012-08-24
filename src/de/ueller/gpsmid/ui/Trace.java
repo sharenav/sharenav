@@ -721,8 +721,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				// pinch zoom when at map screen but not in other screens
 				if (imageCollector != null && imageCollector.isRunning() && mCount > 1 && mtPointerId != INVALID_POINTER_ID) {
 					// possible FIXME should we skip this if we're getting compass readings?
-					if (angleDiff((int) pinchZoomOrigAngle, (int) angle(event)) > 30) {
+					if (angleDiff((int) pinchZoomOrigAngle, (int) angle(event)) > 20) {
 						rotationStarted = true;
+						// restore zoom at start of rotation gesture
+						// to avoid bug is 3450292 on some devices
+						mtPointerDragged(pinchZoomScale);
 					}
 					if (!rotationStarted && ((pinchZoomDistance / dist(event)) > 1.08f || (pinchZoomDistance / dist(event)) < 0.92f)) {
 						zoomStarted = true;
