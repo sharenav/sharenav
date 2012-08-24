@@ -519,8 +519,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private float pinchZoomScale = 0;
 	private float pinchZoomRotation = 0;
 	private float pinchZoomOrigAngle = 0;
-	private boolean rotationStarted = false;
-	private boolean zoomStarted = false;
+	private volatile boolean rotationStarted = false;
+	private volatile boolean zoomStarted = false;
 	private CanvasBridge canvas;
 	//#endif
 
