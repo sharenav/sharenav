@@ -4,7 +4,7 @@
 #
 
 numver=0.8
-ver=$numver-map67
+ver=$numver-map72
 map=Berlin
 
 ant clean
