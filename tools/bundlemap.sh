@@ -19,7 +19,7 @@ then
     shift
 fi
 
-ver=0.7.99-map72
+ver=0.8-map72
 andtarget=android-full-connected
 midtarget=full-connected
 
