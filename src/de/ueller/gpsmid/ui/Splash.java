@@ -18,6 +18,16 @@ import de.ueller.gpsmid.data.Legend;
 import de.ueller.midlet.util.ImageTools;
 
 import java.io.IOException;
+//#if polish.android
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import de.enough.polish.android.midlet.MidletBridge;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+//#endif
+import java.util.Date;
 
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Command;
@@ -110,7 +120,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	private final int space;
 	private double scale = 1;
 	private String mapVersion; 
-	private final String appVersion; 
+	private String appVersion; 
 	private boolean initDone = false;
 	
 	private long lastKeyPressTime = 0;
@@ -158,7 +168,23 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		if (Legend.isValid) {
 			mapVersion = "M" + Legend.getMapVersion() + " (" + Legend.getBundleDate() + ")";
 		}
+		//#if polish.android
+		try {
+			ApplicationInfo ai = MidletBridge.instance.getPackageManager().getApplicationInfo(MidletBridge.instance.getPackageName(), 0);
+			ZipFile zf = new ZipFile(ai.sourceDir);
+			ZipEntry ze = zf.getEntry("classes.dex");
+			long time = ze.getTime();
+			String s = SimpleDateFormat.getInstance().format(new java.util.Date(time));
+			appVersion = "V" + Legend.getAppVersion() + "(" + s + ")";
+		} catch (Exception e) {
+			appVersion = "V" + Legend.getAppVersion();
+			System.out.println("Getting modification time: exception: " + e);
+		}
+		//String jarDate = url.openConnection().getLastModified();
+		//appVersion = "V" + Legend.getAppVersion() + "(" + jarDate + ")";
+		//#else
 		appVersion = "V" + Legend.getAppVersion();
+		//#endif
 		addCommand(BACK_CMD);
 		//addCommand(EXIT_CMD);
 		//addCommand(ENGLISH_CMD);
