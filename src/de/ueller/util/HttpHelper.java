@@ -39,10 +39,15 @@ public class HttpHelper implements Runnable{
 	private String username;
 	private String password;
 	private String data;
+	private byte[] binaryData;
 	private boolean methodPut;
 	private boolean methodDelete;
 	
 	public void getURL(String url, UploadListener ul) {
+		getURL(url, ul, false);
+	}
+
+	public void getURL(String url, UploadListener ul, boolean binary) {
 		if ((ul == null) || (url == null)) {
 			logger.error(Locale.get("httphelper.BrokenCodeRetrUrl")/*Broken code retrieving url */ + url);
 			return;
@@ -54,7 +59,7 @@ public class HttpHelper implements Runnable{
 			busy = true;
 			this.url = url;
 			this.ul = ul;
-			download();
+			download(binary);
 		}
 	}
 	
@@ -93,7 +98,7 @@ public class HttpHelper implements Runnable{
 		if (upload) {
 			upload();
 		} else {
-			download();
+			download(false);
 		}
 	}
 	
@@ -196,7 +201,7 @@ public class HttpHelper implements Runnable{
 		
 	}
 	
-	private void download() {
+	private void download(boolean binary) {
 		//#debug debug
 		logger.info("Retrieving " + url);
 		try {
@@ -226,7 +231,11 @@ public class HttpHelper implements Runnable{
 						logger.debug("Read: " + readB  + " bytes");
 						idx += readB;
 					}
-					data = new String(incomingData,Configuration.getUtf8Encoding());
+					if (binary) {
+						binaryData = incomingData;
+					} else {
+						data = new String(incomingData,Configuration.getUtf8Encoding());
+					}
 				} else {
 					ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
 					int ch;
@@ -234,7 +243,11 @@ public class HttpHelper implements Runnable{
 						bytestream.write(ch);
 					}
 					bytestream.flush();
-					data = new String(bytestream.toByteArray(),Configuration.getUtf8Encoding());
+					if (binary) {
+						binaryData = bytestream.toByteArray();
+					} else {
+						data = new String(bytestream.toByteArray(),Configuration.getUtf8Encoding());
+					}
 					bytestream.close();
 				}
 				//#debug info
@@ -255,6 +268,10 @@ public class HttpHelper implements Runnable{
 	
 	public String getData() {
 		return data;
+	}
+
+	public byte[] getBinaryData() {
+		return binaryData;
 	}
 	
 	/**
