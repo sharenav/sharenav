@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # build Osm2GpsMid & GpsMid midlets for signing
 #
@@ -24,41 +24,57 @@ ant -propertyfile android.properties android
 cd Osm2GpsMid
 
 # ant clean
+
 ant
+
+cd ..
 
 for target in full-connected full midsize minimal blackberry
 do
-  java -Xmx1024m -jar dist/Osm2GpsMid-$ver.jar --nogui --properties=mapdef/$map-$target
-#  mv GpsMid-$ver.jar GpsMid-Generic-$target-$ver.jar
-#  mv GpsMid-$ver.jad GpsMid-Generic-$target-$ver.jad
+  java -Xmx1024m -jar dist/Osm2GpsMid-$ver.jar --nogui --properties=Osm2GpsMid/mapdef/$map-$target
 done
 
 for target in full-connected full midsize minimal
 do
-  java -Xmx1024m -jar dist/Osm2GpsMid-$ver.jar --nogui --properties=mapdef/$map-$target
-#  mv GpsMid-$ver.jar GpsMid-Generic-$target-$ver.jar
-#  mv GpsMid-$ver.jad GpsMid-Generic-$target-$ver.jad
+  java -Xmx1024m -jar dist/Osm2GpsMid-$ver.jar --nogui --properties=Osm2GpsMid/mapdef/$map-android-$target
 done
 
-cd ..
 cp -p dist/Osm2GpsMid-$ver.jar .
 
 mkdir "Release $numver"
-cp Osm2GpsMid/*-$ver.ja? README.mkd WHATSNEW.txt Osm2GpsMid-$ver.jar "Release $numver"
+cp GpsMid-Generic-{blackberry,full-connected,full,midsize,minimal}-$ver.{ja?,apk} README.mkd WHATSNEW.txt Osm2GpsMid-$ver.jar "Release $numver"
 
 # debug version build
 ant clean
 ant debug -Ddevice=Generic/blackberry
+
 ant debug j2mepolish
 ant -propertyfile android.properties debug android
 
 cd Osm2GpsMid
-ant clean
 ant
 
-
-
 cd ..
+
 cp -p dist/Osm2GpsMid-$ver.jar "Release $numver/Osm2GpsMid-$ver-debug.jar"
+
+pwd
+
+for target in full-connected full midsize minimal blackberry
+do
+  java -Xmx1024m -jar dist/Osm2GpsMid-$ver.jar --nogui --properties=Osm2GpsMid/mapdef/$map-$target
+done
+
+for target in full-connected full midsize minimal
+do
+  java -Xmx1024m -jar dist/Osm2GpsMid-$ver.jar --nogui --properties=Osm2GpsMid/mapdef/$map-android-$target
+done
+
+for i in Gps*-$ver.{ja?,apk}
+do
+   mv $i `echo $i|sed 's/GpsMid-Generic/GpsMid-Generic-debug/'`
+done
+
+cp GpsMid-Generic-debug-{blackberry,full-connected,full,midsize,minimal}-$ver.{ja?,apk} README.mkd WHATSNEW.txt "Release $numver"
 
 chmod -R g+w "Release $numver"
