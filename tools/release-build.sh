@@ -41,7 +41,7 @@ do
 done
 
 cd ..
-cp -p Osm2GpsMid/dist/Osm2GpsMid-$ver.jar .
+cp -p dist/Osm2GpsMid-$ver.jar .
 
 mkdir "Release $numver"
 cp Osm2GpsMid/*-$ver.ja? README.mkd WHATSNEW.txt Osm2GpsMid-$ver.jar "Release $numver"
@@ -59,6 +59,6 @@ ant
 
 
 cd ..
-cp -p Osm2GpsMid/dist/Osm2GpsMid-$ver.jar "Release $numver/Osm2GpsMid-$ver-debug.jar"
+cp -p dist/Osm2GpsMid-$ver.jar "Release $numver/Osm2GpsMid-$ver-debug.jar"
 
 chmod -R g+w "Release $numver"
