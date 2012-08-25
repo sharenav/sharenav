@@ -1623,6 +1623,35 @@ public class Configuration {
 	public static void closeMapZipFile() {
 		mapZipFile = null;
 	}
+
+	// set some defaults for this device; will be done only at first install
+	// or after configuration has been reset to factory settings
+	public static void setCanvasSpecificDefaults(int width, int height) {
+		if (!getCfgBitState(CFGBIT_CANVAS_SPECIFIC_DEFAULTS_DONE)) {
+			if (width > 219) {
+				// if the map display is wide enough, show the clock in the map screen by default
+				setCfgBitSavedState(CFGBIT_SHOW_CLOCK_IN_MAP, true);
+				// if the map display is wide enough, use big tab buttons by default
+				setCfgBitSavedState(CFGBIT_ICONMENUS_BIG_TAB_BUTTONS, true);
+			}
+			if (Math.min(width, height) > 300) {
+				setCfgBitSavedState(CFGBIT_NAVI_ARROWS_BIG, true);
+				setCfgBitSavedState(CFGBIT_SHOW_TRAVEL_MODE_IN_MAP, true);
+			}
+			if (Math.min(width, height) > 400) {
+				setBaseScale(24);
+				setMinRouteLineWidth(5);
+			}
+			if (Math.min(width, height) >= 800) {
+				setBaseScale(26);
+				setMinRouteLineWidth(6);
+			}
+			if (getHasPointerEvents()) {
+				setCfgBitSavedState(CFGBIT_LARGE_FONT, true);
+			}
+			setCfgBitSavedState(CFGBIT_CANVAS_SPECIFIC_DEFAULTS_DONE, true);
+		}
+	}
 	/**
 	 * Opens a resource, either from the JAR, the file system or a ZIP archive,
 	 * depending on the configuration, see mapFromJar and mapFileUrl.

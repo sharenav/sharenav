@@ -624,30 +624,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						       nonReleasableKeyPressCommand, CMDS);
 		}
 
-		if (!Configuration.getCfgBitState(Configuration.CFGBIT_CANVAS_SPECIFIC_DEFAULTS_DONE)) {
-			if (getWidth() > 219) {
-				// if the map display is wide enough, show the clock in the map screen by default
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP, true);
-				// if the map display is wide enough, use big tab buttons by default
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS, true);
-			}
-			if (Math.min(getWidth(), getHeight()) > 300) {
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_NAVI_ARROWS_BIG, true);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_TRAVEL_MODE_IN_MAP, true);
-			}
-			if (Math.min(getWidth(), getHeight()) > 400) {
-				Configuration.setBaseScale(24);
-				Configuration.setMinRouteLineWidth(5);
-			}
-			if (Math.min(getWidth(), getHeight()) >= 800) {
-				Configuration.setBaseScale(26);
-				Configuration.setMinRouteLineWidth(6);
-			}
-			if (hasPointerEvents()) {
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_LARGE_FONT, true);
-			}
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_CANVAS_SPECIFIC_DEFAULTS_DONE, true);
-		}
+		// FIXME getWidth() && getHeight() might be incorrect at startup on
+		// some platforms
+		Configuration.setCanvasSpecificDefaults(getWidth(), getHeight());
 		
 		try {
 			if (Legend.isValid) {
