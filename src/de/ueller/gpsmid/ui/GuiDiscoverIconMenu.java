@@ -42,7 +42,7 @@ public class GuiDiscoverIconMenu extends IconMenuWithPagesGui {
 		// Advanced
 		mp = createAndAddMenuPage(Locale.get("guidiscovericonmenu.Advanced")/* Advanced */, 3, 3);
 			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Gui")/*Gui*/, "is_gui", GuiDiscover.MENU_ITEM_GUI_OPT);
-			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.MapSource")/*Map Source*/, "is_map", GuiDiscover.MENU_ITEM_MAP_SRC);
+			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Maps")/*Maps*/, "is_map", GuiDiscover.MENU_ITEM_MAP_SRC);
 			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Debug")/*Debug*/, "is_debug", GuiDiscover.MENU_ITEM_DEBUG_OPT);
 
 			//#if polish.api.osm-editing
