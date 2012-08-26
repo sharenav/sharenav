@@ -104,6 +104,7 @@ import de.ueller.gpsmid.routing.RouteSyntax;
 import de.ueller.gpsmid.routing.Routing;
 import de.ueller.gpsmid.tile.Tile;
 import de.ueller.gpsmid.tile.SingleTile;
+import de.ueller.gpsmid.ui.DisplayWindow;
 import de.ueller.midlet.iconmenu.IconActionPerformer;
 import de.ueller.midlet.iconmenu.LayoutElement;
 import de.ueller.midlet.ui.CompletionListener;
@@ -240,15 +241,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private volatile int compassDeviated = 0;
 
 	// min?, max? for whole screen, mapMin?/mapMax? for map area
-	private volatile int minX = 0;
-	private volatile int minY = 0;
-	private volatile int maxX = 0;
-	private volatile int maxY = 0;
-	private volatile int mapMinX = 0;
-	private volatile int mapMinY = 0;
-	private volatile int mapMaxX = 0;
-	private volatile int mapMaxY = 0;
-	private volatile int mapRenderDiff = 0;
+	public DisplayWindow rootWindow = null;
+	public DisplayWindow mapWindow = null;
 
 	public volatile byte solution = LocationMsgReceiver.STATUS_OFF;
 	public String solutionStr = Locale.get("solution.Off");
@@ -536,6 +530,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		//#debug
 		logger.info("init Trace");
 		
+		rootWindow = new DisplayWindow(0, 0, getWidth(), getHeight(), true, false);
+		mapWindow = new DisplayWindow(0, 0, getWidth(), getHeight(), true, false);
+
 		this.parent = GpsMid.getInstance();
 		
 		Configuration.setHasPointerEvents(hasPointerEvents());	
@@ -1896,7 +1893,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			if (c == CMDS[CMS_CMD]) {
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_SPLITSCREEN)
 				    && hasPointerEvents()) {
-					cmsl = new CMSLayout(mapMinX, 0 + getHeight() / 2, maxX, getHeight());
+					cmsl = new CMSLayout(mapWindow.getMinX(), 0 + rootWindow.getHeight() / 2, rootWindow.getMaxX(), rootWindow.getMaxY());
 					guiTrip = new GuiTrip();
 					guiTrip.init();
 					guiTacho = new GuiTacho();
@@ -2231,11 +2228,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		//tl = new TraceLayout(mapMinX, mapMinY, mapMaxX, mapMaxY);
 
 		// ImageCollector must not be started with 0x0 image size
-		if (mapMaxX - mapMinX <= 0 || mapMaxY - mapMinY <= 0) {
+		if (mapWindow.getWidth() <= 0 || mapWindow.getHeight() <= 0) {
 			refreshWindowLayout(this.getWidth(), this.getHeight());
 		}
-		int x = (mapMaxX - mapMinX > 0) ? (mapMaxX - mapMinX) : this.getWidth();
-		int y = (mapMaxY - mapMinY > 0) ? (mapMaxY - mapMinY) : this.getHeight();
+		int x = (mapWindow.getWidth() > 0) ? mapWindow.getWidth() : this.getWidth();
+		int y = (mapWindow.getHeight() > 0) ? mapWindow.getHeight() : this.getHeight();
 		System.out.println("Starting image colector " + x + " | " + y);
 
 		imageCollector = new ImageCollector(tiles, x, y, this, images);
@@ -2468,26 +2465,33 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	//#endif
 
 	private int getMapWidth() {
-		return mapMaxX - mapMinX;
+		return mapWindow.getWidth();
 	}
 
 	private int getMapHeight() {
-		return mapMaxY - mapMinY;
+		return mapWindow.getHeight();
 	}
 
 	private void refreshWindowLayout(int w, int h) {
-		maxX = w;
-		maxY = h;
-		mapMaxX = w;
-		mapRenderDiff = 0;
+		rootWindow.setMinX(0);
+		rootWindow.setMinY(0);
+		rootWindow.setMaxX(w);
+		rootWindow.setMaxY(h);
+		mapWindow.setMinX(0);
+		mapWindow.setMinY(0);
+		mapWindow.setMaxX(w);
+		mapWindow.setYPosition(0);
 		if (isShowingSplitScreen()) {
-			if (mapMaxY != h / 2) {
-				mapMaxY = h / 2;
+			if (mapWindow.getMaxY() != h / 2) {
+				mapWindow.setMaxY(h / 2);
 				restartImageCollector();
+				// FIXME this sets position to other windows,
+				// not map window
+				// mapWindow.setYPosition(h / 2);
 			}
 		} else {
-			if (mapMaxY != h) {
-				mapMaxY = h;
+			if (mapWindow.getMaxY() != h) {
+				mapWindow.setMaxY(h);
 				restartImageCollector();
 			}
 		}
@@ -2496,7 +2500,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	// used when splitscreen mode changes
 	private void refreshWindowLayout() {
-		refreshWindowLayout(maxX - minX, maxY - minY);
+		refreshWindowLayout(rootWindow.getMaxX(), rootWindow.getMaxY());
 	}
 
 
@@ -2505,9 +2509,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (keyboardLocked) {
 			return false;
 		}
-		boolean notForTrace = (x > mapMaxX);
+		boolean notForTrace = (x > mapWindow.getMaxX());
 		if (isShowingSplitScreen()) {
-			if (y > mapMaxY + mapRenderDiff) {
+			if (y > mapWindow.getMaxY() + mapWindow.getYPosition()) {
 				notForTrace = true;
 			}
 		}
@@ -2545,8 +2549,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			if (guiTacho != null) {
 				guiTacho.setValues(this, g);
-				guiTacho.paintTacho(g, this.getWidth() / 2,
-						    this.getHeight() / 2, this.getWidth(), this.getHeight() / 4 * 3, getCurrentPosition());
+				guiTacho.paintTacho(g, rootWindow.getWidth() / 2,
+						    rootWindow.getHeight() / 2,
+						    rootWindow.getWidth(),
+						    rootWindow.getHeight() / 4 * 3, getCurrentPosition());
 			}
 		}
 	}
@@ -2732,6 +2738,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					// Display the number of not yet loaded tiles.
 					sbTemp.append("T ");
 					sbTemp.append( tileReader.getRequestQueueSize());
+					sbTemp.append("/" + scale);
 				}
 				if (imageCollector != null && imageCollector.iDrawState != 0 ) {
 					// Display a + if the image collector prepares the image.
@@ -3039,7 +3046,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			if (i == 0) {
 				alertWidth += extraWidth;
 				int alertHeight = y;
-				int alertTop = ((mapMaxY - mapMinY) - alertHeight) /2;
+				int alertTop = (mapWindow.getHeight() - alertHeight) /2;
 				//alertHeight += fontHeight/2;
 				int alertLeft = (getWidth() - alertWidth) / 2;
 				// alert background color
@@ -3402,7 +3409,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 						Node n = new Node();
 						float scale = pc.getP().getScale();
-						Projection p = new Proj2D(center,scale,mapMaxX - mapMinX, mapMaxY - mapMinY);
+						Projection p = new Proj2D(center,scale, mapWindow.getWidth(), mapWindow.getHeight());
 						p.inverse(posX, posY, n);
 						n.radlat += MoreMath.RADIANT_PER_METER * diaM;
 						IntPoint ip = p.forward(n);
@@ -4649,15 +4656,15 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public void recreateTraceLayout() {
 		// don't re-half screen size in split-screen mode
 		// refreshWindowLayout((mapMaxX - mapMinX), (mapMaxY - mapMinY));
-		tl = new TraceLayout(mapMinX, mapMinY, mapMaxX, mapMaxY);
+		tl = new TraceLayout(mapWindow);
 	}
 
 	public boolean mapLayoutIsPortrait() {
-		return ((mapMaxX - mapMinX) < (mapMaxY - mapMinY) * 3 / 2 );
+		return mapWindow.isPortrait();
 	}		
 
 	public boolean deviceLayoutIsPortrait() {
-		return ((maxX - minX) < (maxY - minY) * 3 / 2 );
+		return rootWindow.isPortrait();
 	}		
 
 	public void resetSize() {
@@ -4853,7 +4860,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		    && hasPointerEvents()) {
 			showingTraceIconMenu = true;
 			refreshWindowLayout();
-			traceIconMenu.sizeChanged(getWidth(), getHeight());
+			traceIconMenu.sizeChanged(rootWindow.getMaxX(), rootWindow.getMaxY());
 		} else {
 			traceIconMenu.show();
 		}

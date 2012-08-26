@@ -25,6 +25,7 @@ import de.ueller.midlet.iconmenu.LayoutElement;
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.ui.GpsMid;
+import de.ueller.gpsmid.ui.DisplayWindow;
 
 public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		GpsMidDisplayable {
@@ -67,7 +68,7 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 		int w = this.getWidth();
 		int h = this.getHeight();
 
-		tl = new TraceLayout(0, 0, w, h);
+		tl = new TraceLayout(Trace.getInstance().mapWindow);
 		createHelpElements();
 
 		repaint();
@@ -79,7 +80,9 @@ public class TouchHelper extends KeyCommandCanvas implements CommandListener,
 	}
 
 	public void sizeChanged(int w, int h) {
-		tl = new TraceLayout(0, 0, w, h);
+		Trace.getInstance().mapWindow.setMaxX(w);		
+		Trace.getInstance().mapWindow.setMaxY(h);
+		tl = new TraceLayout(Trace.getInstance().mapWindow);
 		createHelpElements();
 		repaint();
 	}

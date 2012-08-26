@@ -9,6 +9,7 @@ import de.ueller.gps.Node;
 import de.ueller.gpsmid.data.Configuration;
 import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.PaintContext;
+import de.ueller.gpsmid.ui.DisplayWindow;
 import de.ueller.midlet.iconmenu.LayoutElement;
 import de.ueller.midlet.iconmenu.LayoutManager;
 import de.ueller.midlet.util.ImageCache;
@@ -86,8 +87,9 @@ public class TraceLayout extends LayoutManager {
 	
 	RouteIcon routeIcon[] = new RouteIcon[2];
 	
-	public TraceLayout(int minX, int minY, int maxX, int maxY) {
-		super(minX, minY, maxX, maxY, Legend.COLORS[Legend.COLOR_MAP_TOUCHED_BUTTON_BACKGROUND]);
+	public TraceLayout(DisplayWindow tlWindow) {
+		super(tlWindow.getMinX(), tlWindow.getMinY(), tlWindow.getMaxX(),
+		      tlWindow.getMaxY(), Legend.COLORS[Legend.COLOR_MAP_TOUCHED_BUTTON_BACKGROUND]);
 		
 		routeIcon[0] = new RouteIcon();
 		routeIcon[1] = new RouteIcon();
