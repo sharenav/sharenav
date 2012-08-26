@@ -575,6 +575,8 @@ public class Configuration {
 	private static AssetManager assets = null;
 	//#endif
 	
+	public static float zoomFactor = 1.5f;
+
 	public static void read() {
 		logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
 		RecordStore	database;
@@ -1849,11 +1851,11 @@ public class Configuration {
 			realBaseScale = 15000f;
 			for (int scale = 23; baseScale != scale;) {
 				if ( baseScale > 23) {
-					realBaseScale /= 1.5f;
-					scale++;					
+					realBaseScale /= zoomFactor;
+					scale++;
 				} else {
-					realBaseScale *= 1.5f;
-					scale--;										
+					realBaseScale *= zoomFactor;
+					scale--;
 				}
 			}
 		}
