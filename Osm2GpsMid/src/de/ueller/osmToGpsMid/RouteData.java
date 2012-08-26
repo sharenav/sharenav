@@ -425,8 +425,14 @@ public class RouteData {
 		int times[] = new int[TravelModes.travelModeCount];
 		for (int i = 0; i < TravelModes.travelModeCount; i++) {
 			if (w.isAccessForRouting(i)) {
+				/*
+				 * Removing route connections because of barriers is disabled for now.
+				 * It requires a solution first for too many POIs becoming unreachable
+				 * because of barriers before the destination way
+				 */
+				if (false) {
 				// check for barriers in non-area ways
-				if (!w.isArea()) {
+//				if (!w.isArea()) {
 					int a = 0;
 					boolean fromNodeFound = false;
 					boolean toNodeFound = false;
