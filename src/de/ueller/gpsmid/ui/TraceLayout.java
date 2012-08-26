@@ -565,23 +565,21 @@ public class TraceLayout extends LayoutManager {
 		g.drawLine(left, top + 3, right, top + 3); // -> double line width
 		g.drawLine(left, top, left, top + 5);
 		g.drawLine(left + scalePx, top, right, top + 5);
+		String scaleText = null;
 		if (!Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
 			if (scale > 1609.344) {
-				g.drawString(Integer.toString((int)(scale / 1609.344f + 0.5)) + "mi",
-						left + scalePx / 2, top + 4, Graphics.HCENTER | Graphics.TOP);
+				scaleText = Integer.toString((int)(scale / 1609.344f + 0.5)) + "mi";
 			} else {
-				g.drawString(Integer.toString((int)(scale / 0.9144 + 0.5)) + "yd",
-						left + scalePx / 2, top + 4, Graphics.HCENTER | Graphics.TOP);
+				scaleText = Integer.toString((int)(scale / 0.9144 + 0.5)) + "yd";
 			}
 		} else {
 			if (scale > 1000) {
-				g.drawString(Integer.toString((int)(scale / 1000.0f)) + "km",
-						left + scalePx / 2, top + 4, Graphics.HCENTER | Graphics.TOP);
+				scaleText = Integer.toString((int)(scale / 1000.0f)) + "km";
 			} else {
-				g.drawString(Integer.toString((int)scale) + "m",
-						left + scalePx / 2, top + 4, Graphics.HCENTER | Graphics.TOP);
+				scaleText = Integer.toString((int)scale) + "m";
 			}
 		}
+		g.drawString(scaleText, left + scalePx / 2, top + 4, Graphics.HCENTER | Graphics.TOP);
 	}
 	
 	public void calcScaleBarWidth(PaintContext pc) {
