@@ -1861,7 +1861,7 @@ public class Configuration {
 		}
 		// Base scale in eagle view is zoomed once in
 		if (projTypeDefault == ProjFactory.EAGLE) {
-			realBaseScale /= 1.5f;			
+			realBaseScale /= zoomFactor;
 		}
 	}
 	
