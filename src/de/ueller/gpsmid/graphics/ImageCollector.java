@@ -33,10 +33,14 @@ import de.ueller.util.Logger;
 import de.ueller.util.MoreMath;
 import java.util.Enumeration;
 
+import de.ueller.util.HelperRoutines;
+import de.ueller.util.HttpHelper;
+import de.ueller.midlet.ui.UploadListener;
+
 /* This class collects all visible objects to an offline image for later painting.
  * It is run in a low priority to avoid interrupting the GUI.
  */
-public class ImageCollector implements Runnable {
+public class ImageCollector implements Runnable,UploadListener {
 	private final static Logger logger = Logger.getInstance(ImageCollector.class, 
 			Logger.TRACE);
 	
@@ -76,6 +80,14 @@ public class ImageCollector implements Runnable {
 	public static volatile int minTile = 0;
 	boolean collectorReady=false;
 	
+	private static boolean retrieving;
+	private static boolean retrieved;
+	private static byte[] rasterImg = null;
+	private static String oldTileString = null;
+
+	private static int xdiff = 0;
+	private static int ydiff = 0;
+
 	public int iDrawState = 0;
 	
 	public ImageCollector(Tile[] t, int x, int y, Trace tr, Images i) {
@@ -263,6 +275,10 @@ public class ImageCollector implements Runnable {
 				 */
 				boolean simplifyMap = Configuration.getCfgBitState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY);
 				boolean skippableLayer = false;
+
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_TMS_BACKGROUND)) {
+					drawRasterMap(createPC);
+				}
 				for (byte layer = 0; layer < layersToRender.length; layer++) {
 					if (simplifyMap) {
 						skippableLayer = 
@@ -437,6 +453,89 @@ public class ImageCollector implements Runnable {
 		}
 	}
 	
+	public int getRasterZoom(float floatScale) {
+		final int base = (int) Configuration.getRasterScale();
+		int scale = (int) floatScale;
+		final int maxZoom = 19;
+		int zoom = maxZoom;
+				
+		while (zoom >= 0) {
+			if (scale <= base * (2 << (maxZoom - zoom))) {
+				break;
+			}
+			zoom--;
+		}
+		if (zoom < 0) {
+			zoom = 0;
+		}
+		System.out.println("For scale " + scale + " returning zoom " + zoom);
+		return zoom;
+	}
+
+	public void drawRasterMap(PaintContext pc) {
+		int zoom = getRasterZoom(pc.scale);
+
+		// FIXME snap scale to correct zoom if necessary
+		// (e.g. user has pinch zoomed)
+
+		String tileString = getTileNumber(pc.center.radlat,
+						  pc.center.radlon, zoom);
+		System.out.println("Possibly loading: " + tileString);
+
+		if (rasterImg == null || oldTileString == null
+		    || !oldTileString.equals(tileString)) {
+			System.out.println("Loading: " + tileString);
+			//String baseTMSUrl = "http://tiles.kartat.kapsi.fi/taustakartta/";
+			// String url = baseTMSUrl + tileString + ".jpg";
+			// String url = baseTMSUrl + zoom + "/" + x + "/" + y + ".jpg";
+			// replace "%z/%x/%y" with tileString
+
+			// FIXME should be able to replace %z, %x, %y separately
+			String url = Configuration.getTMSUrl();
+			url = HelperRoutines.replaceAll(url, "%z/%x/%y", tileString);
+					
+			retrieved = false;
+			HttpHelper http = new HttpHelper();
+			System.out.println("Getting tile: " + url);
+			http.getURL(url, this, true);
+			try {
+				if (!retrieved) {
+					wait();
+				}
+			} catch (InterruptedException ie) {
+				retrieving = false;
+			}
+			if (retrieved) {
+				rasterImg = http.getBinaryData();
+			}
+		}
+		oldTileString = tileString;
+
+		if (rasterImg != null) {
+			byte[] imageBytes = rasterImg;
+			System.out.println("Image length: " + imageBytes.length);
+			Image image = Image.createImage(imageBytes, 0, imageBytes.length);
+			//Image image = Image.createImage(imageBytes);
+			pc.g.drawImage(image, 
+					     xSize / 2 - xdiff,
+					     ySize / 2 - ydiff,
+					     Graphics.LEFT | Graphics.TOP);
+		}
+	}
+	// based on algorithm and example
+	// from http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Java
+	// FIXME writes uncleanly also to xdiff & ydiff for tile positioning
+
+	public static String getTileNumber(final float lat, final float lon, final int zoom) {
+		double x = (lon * MoreMath.FAC_RADTODEC + 180) / 360 * (1<<zoom);
+		int xtile = (int)Math.floor(x);
+		xdiff = (int) ((x - Math.floor(x)) * 250);
+		double y = (1 - MoreMath.log((float)(Math.tan(lat) + 1 / Math.cos(lat))) / Math.PI) / 2 * (1<<zoom);
+		int ytile = (int)Math.floor(y);
+		ydiff = (int) ((y - Math.floor(y)) * 250);
+		return("" + zoom + "/" + xtile + "/" + ytile);
+	}
+
 	public void suspend() {
 		suspended = true;
 	}
@@ -777,5 +876,34 @@ public class ImageCollector implements Runnable {
 	public synchronized ScreenContext getScreenContext() {
 		return (ScreenContext) pc[0];
 	}
-	
+
+	public synchronized void completedUpload(boolean success, String message) {
+		retrieved = true;
+		notifyAll();
+	}
+
+	public void setProgress(String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void startProgress(String title) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void updateProgress(String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void updateProgressValue(int increment) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void uploadAborted() {
+		// TODO Auto-generated method stub
+		
+	}
 }

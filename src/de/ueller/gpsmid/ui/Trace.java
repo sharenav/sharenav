@@ -537,6 +537,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		
 		Configuration.setHasPointerEvents(hasPointerEvents());	
 		
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_TMS_BACKGROUND)) {
+			scale = Configuration.getRasterScale();
+		}
+
 		CMDS[EXIT_CMD] = new Command(Locale.get("generic.Exit")/*Exit*/, Command.EXIT, 2);
 		CMDS[REFRESH_CMD] = new Command(Locale.get("trace.Refresh")/*Refresh*/, Command.ITEM, 4);
 		CMDS[SEARCH_CMD] = new Command(Locale.get("generic.Search")/*Search*/, Command.OK, 1);

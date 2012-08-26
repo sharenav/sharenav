@@ -580,10 +580,6 @@ public class Configuration {
 	private static AssetManager assets = null;
 	//#endif
 	
-	public static float zoomFactor = 1.5f;
-	// use this when showing TMS map as background
-	// public static float zoomFactor = 2.0f;
-
 	public static void read() {
 		logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
 		RecordStore	database;
@@ -1863,23 +1859,34 @@ public class Configuration {
 			realBaseScale = 15000f;
 			for (int scale = 23; baseScale != scale;) {
 				if ( baseScale > 23) {
-					realBaseScale /= zoomFactor;
+					realBaseScale /= getZoomFactor();
 					scale++;
 				} else {
-					realBaseScale *= zoomFactor;
+					realBaseScale *= getZoomFactor();
 					scale--;
 				}
 			}
 		}
 		// Base scale in eagle view is zoomed once in
 		if (projTypeDefault == ProjFactory.EAGLE) {
-			realBaseScale /= zoomFactor;
+			realBaseScale /= getZoomFactor();
 		}
 	}
 	
 	
+	// TMS maps use a factor of two between scale levels, GpsMid
+	// uses 1.5
+	// FIXME make necessary changes if GpsMid zoom levels change
+
 	public static float getZoomFactor() {
-		return zoomFactor;
+		return getCfgBitState(Configuration.CFGBIT_TMS_BACKGROUND) ? 2.0f : 1.5f;
+	}
+
+	// FIXME should be calculated from basescale etc.
+	public static float getRasterScale() {
+		// FIXME probably not exactly correct
+		// this is for zoom level 19; have we maps going further than that?
+		return 496f;
 	}
 
 	public static int getBackLightLevel() {
