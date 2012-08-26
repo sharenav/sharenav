@@ -43,7 +43,7 @@ public class DisplayWindow {
 	private boolean activeForTouch = false;
 	private boolean activeForKeys = false;
 
-	public DisplayWindow(int minX, int maxX, int minY, int maxY, boolean touch, boolean keys) {
+	public DisplayWindow(int minX, int minY, int maxX, int maxY, boolean touch, boolean keys) {
 		this.minX = minX;
 		this.maxX = maxX;
 		this.minY = minY;
@@ -87,5 +87,12 @@ public class DisplayWindow {
 
 	public void setYPosition(int val) {
 		yPosition = val;
+	}
+
+	public int getYPosition() {
+		return yPosition;
+	}
+	public boolean isPortrait() {
+		return ( maxX - minX < (maxY - minY) * 3 / 2 );
 	}
 }
