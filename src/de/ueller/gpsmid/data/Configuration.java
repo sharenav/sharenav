@@ -1866,6 +1866,10 @@ public class Configuration {
 	}
 	
 	
+	public static float getZoomFactor() {
+		return zoomFactor;
+	}
+
 	public static int getBackLightLevel() {
 		return backLightLevel;
 	}
