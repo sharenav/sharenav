@@ -2738,7 +2738,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					// Display the number of not yet loaded tiles.
 					sbTemp.append("T ");
 					sbTemp.append( tileReader.getRequestQueueSize());
-					sbTemp.append("/" + scale);
+					// sbTemp.append("/" + scale);
 				}
 				if (imageCollector != null && imageCollector.iDrawState != 0 ) {
 					// Display a + if the image collector prepares the image.
