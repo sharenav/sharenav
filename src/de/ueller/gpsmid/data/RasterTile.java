@@ -25,7 +25,8 @@ import de.ueller.util.MoreMath;
 import de.ueller.midlet.ui.UploadListener;
 
 public class RasterTile implements UploadListener {
-	// public static final byte RASTER_TILE_FLAG_NAME = 1;
+	public static final int TILE_SIZE = 250;
+
 	private int zoom = 0;
 	private int x = 0;
 	private int y = 0;
@@ -36,6 +37,10 @@ public class RasterTile implements UploadListener {
 	private static float oldCenterLat = 0f;
 	private static float oldCenterLon = 0;
 	private static float oldZoom = 0f;
+
+	private static final int cacheSize = 500;
+	private static int cacheCount = 0;
+	private static RasterTile[] rasterCache = null;
 
 	private boolean retrieving = false;
 	private boolean retrieved = false;
@@ -112,6 +117,29 @@ public class RasterTile implements UploadListener {
 		return zoom;
 	}
 
+	public static void addCachedTile(RasterTile tile) {
+		if (rasterCache == null) {
+			rasterCache = new RasterTile[cacheSize];
+		}
+		if (cacheCount >= cacheSize) {
+			cacheCount = 0;
+			return;
+		}
+		rasterCache[cacheCount++] = tile;
+	}
+
+	public static RasterTile getCachedTile(float radlat,
+					       float radlon, int zoom) {
+		for (int i = 0; i < cacheCount; i++) {
+			RasterTile tile = rasterCache[i];
+			if (tile.getTileString().equals(new RasterTile(radlat,
+								       radlon, zoom).getTileString())) {
+				return tile;
+			}
+		}
+		return null;
+	}
+
 	public static void drawRasterMap(PaintContext pc, int xSize, int ySize) {
 		int zoom = getRasterZoom(pc.scale);
 
@@ -121,20 +149,26 @@ public class RasterTile implements UploadListener {
 		pc.scale = Configuration.getRasterScale()
 			* (2 << (maxZoom - zoom));
 		Trace.getInstance().scale = pc.scale;
-		RasterTile centerTile = new RasterTile(pc.center.radlat,
+
+		
+		RasterTile centerTile = getCachedTile(pc.center.radlat, pc.center.radlon, zoom);
+
+		if (centerTile == null) {
+			centerTile = new RasterTile(pc.center.radlat,
 						       pc.center.radlon, zoom);
+		} else {
+			System.out.println("Cache hit: " + centerTile.getTileString());
+		}
 		String tileString = centerTile.getTileString();
 		System.out.println("Possibly loading: " + tileString);
 
-		if (oldCenterLat != pc.center.radlat
-		    || oldCenterLon != pc.center.radlon
-		    || oldZoom != zoom
-		    || centerTile.data == null) {
+		if (centerTile.data == null) {
 			System.out.println("Loading: " + tileString);
 			centerTile.getData();
 		}
 		if (centerTile.data != null) {
 			centerTile.draw(pc, xSize, ySize);
+			addCachedTile(centerTile);
 		}
 		oldCenterLat = pc.center.radlat;
 		oldCenterLon = pc.center.radlon;
