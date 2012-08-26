@@ -1,3 +1,7 @@
+    - Removing route connections because of barriers is disabled for now.
+      It requires a solution first for too many POIs becoming unreachable
+      because of barriers before the destination way 
+
 GpsMid 0.8
     *** Map Performance ***
     - Zooming far out, panning around and zooming somewhere else in is now much faster.
