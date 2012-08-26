@@ -475,9 +475,12 @@ public class ImageCollector implements Runnable,UploadListener {
 	public void drawRasterMap(PaintContext pc) {
 		int zoom = getRasterZoom(pc.scale);
 
-		// FIXME snap scale to correct zoom if necessary
+		// snap to scale to correct zoom if necessary
 		// (e.g. user has pinch zoomed)
-
+		final int maxZoom = 19;
+		pc.scale = Configuration.getRasterScale()
+			* (2 << (maxZoom - zoom));
+		Trace.getInstance().scale = pc.scale;
 		String tileString = getTileNumber(pc.center.radlat,
 						  pc.center.radlon, zoom);
 		System.out.println("Possibly loading: " + tileString);
