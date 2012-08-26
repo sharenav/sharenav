@@ -63,6 +63,10 @@ public class RasterTile implements UploadListener {
 
 
 	public RasterTile(final float lat, final float lon, final int zoom) {
+		updateNumbers(lat, lon, zoom);
+	}
+
+	public void updateNumbers(final float lat, final float lon, final int zoom) {
 		this.zoom = zoom;
 		double x = (lon * MoreMath.FAC_RADTODEC + 180) / 360 * (1<<zoom);
 		this.x = (int)Math.floor(x);
@@ -134,6 +138,7 @@ public class RasterTile implements UploadListener {
 			RasterTile tile = rasterCache[i];
 			if (tile.getTileString().equals(new RasterTile(radlat,
 								       radlon, zoom).getTileString())) {
+				tile.updateNumbers(radlat, radlon,zoom);
 				return tile;
 			}
 		}
