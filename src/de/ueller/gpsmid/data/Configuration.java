@@ -63,7 +63,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 32;
+	public final static int VERSION = 33;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -443,6 +443,7 @@ public class Configuration {
 	private static final int RECORD_ID_TIME_DIFF = 57;
 	private static final int RECORD_ID_CFGBITS_128_TO_191 = 58;
 	private static final int RECORD_ID_ALTITUDE_CORRECTION = 59;
+	private static final int RECORD_ID_TMS_URL = 60;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -526,6 +527,8 @@ public class Configuration {
 	private static String osm_pwd;
 	private static String osm_url;
 
+	private static String tms_url;
+
 	private static String opencellid_apikey;
 
 	private static long phoneAllTimeMaxMemory = 0;
@@ -576,6 +579,8 @@ public class Configuration {
 	//#endif
 	
 	public static float zoomFactor = 1.5f;
+	// use this when showing TMS map as background
+	// public static float zoomFactor = 2.0f;
 
 	public static void read() {
 		logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
@@ -668,6 +673,11 @@ public class Configuration {
 			timeDiff = readInt(database, RECORD_ID_TIME_DIFF);
 			altitudeCorrection = readInt(database, RECORD_ID_ALTITUDE_CORRECTION);
 			
+			tms_url = readString(database, RECORD_ID_TMS_URL);
+			if (tms_url == null) {
+				tms_url = "";
+			}
+
 			/* close the record store before accessing it nested for writing
 			 * might otherwise cause problems on some devices
 			 * see [ gpsmid-Bugs-2983148 ] Recordstore error on startup, settings are not persistent 
@@ -1996,9 +2006,18 @@ public class Configuration {
 		return osm_url;
 	}
 	
+	public static String getTMSUrl() {
+		return tms_url;
+	}
+	
 	public static void setOsmUrl(String url) {
 		osm_url = url;
 		write(url, RECORD_ID_OSM_URL);
+	}
+
+	public static void setTMSUrl(String url) {
+		tms_url = url;
+		write(url, RECORD_ID_TMS_URL);
 	}
 
 	public static String getOpencellidApikey() {
@@ -2551,6 +2570,7 @@ public class Configuration {
 		dos.writeInt(getDestLineWidth());
 		dos.writeInt(getTimeDiff());
 		dos.writeInt(getAltitudeCorrection());
+		dos.writeUTF(sanitizeString(tms_url));
 		/*
 		 * Don't store destpos in export - perhaps later add a function for "move the app" which would store also destpos
 		dos.writeUTF(Float.toString(destPos.radlat));
@@ -2646,6 +2666,9 @@ public class Configuration {
 		}
 		if (version >= 29) {
 			altitudeCorrection = dis.readInt();
+		}
+		if (version >= 33) {
+			setTMSUrl(desanitizeString(dis.readUTF()));
 		}
 		applyDefaultValues(version);
 	}
