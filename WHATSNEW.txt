@@ -1,9 +1,9 @@
-    - some TMS (Tile Map Server, a raster map format) support; one TMS map tile
-      is shown near map center if TMS url is configured and TMS background
-      map option is on. Currently only copes with TMS URLs which contain %z/%x/%y
-      The limited functionality is partly intentional - as there's no caching
-      yet, don't load TMS servers with many requests. Add more tiles only after
-      there's at least some caching (e.g. in-memory for screen area).
+    - some TMS (Tile Map Server, a raster map format) support;
+      if a valid TMS url is configured and TMS background
+      map option is on, TMS map (actually apparently not exactly TMS
+      as tile numbering by OSM, Google etc. goes a bit differently).
+      Currently only copes with TMS URLs which contain %z/%x/%y
+      There's some simple in-memory caching, but no caching to sdcard yet.
     - Removing route connections because of barriers is disabled for now.
       It requires a solution first for too many POIs becoming unreachable
       because of barriers before the destination way 
