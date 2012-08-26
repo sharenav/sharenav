@@ -379,6 +379,8 @@ public class Configuration {
 	public final static short CFGBIT_SEARCH_SHOW_NATIVE_KEYBOARD = 150;
 	/** bit 151: Flag whether iconMenus should be used for settings */
 	public final static short CFGBIT_ICONMENUS_SETUP = 151;
+	/** bit 152: Use TMS map as background */
+	public final static short CFGBIT_TMS_BACKGROUND = 152;
 	
 	/**
 	 * These are the database record IDs for each configuration option

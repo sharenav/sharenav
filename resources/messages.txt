@@ -1378,3 +1378,5 @@ trace.mapcreditFiLandSurvey12URL=http://www.maanmittauslaitos.fi/en/NLS_open_dat
 trace.showmapcredit=Show map credit/license webpage
 guidiscovericonmenu.Maps=Maps
 guidiscover.TMSURL=TMS (raster map) URL (typically something like http://server.na.me/somethin/%z/%x/%y.something; honor the rules of the TMS provider):
+guidiscover.TMSOptions=TMS options
+guidiscover.TMSBackground=Use TMS map as background

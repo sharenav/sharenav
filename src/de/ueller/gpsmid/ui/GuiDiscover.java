@@ -288,7 +288,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup rawLogCG;
 	private ChoiceGroup mapSrc;
 	private ChoiceGroup mapSrcOptions;
+	private TextField  tfTMSUrl;
 	private ChoiceGroup perfTuneOptions;
+	private ChoiceGroup tileMapOptions;
 	private ChoiceGroup rotationGroup;
 	private ChoiceGroup nightModeGroup;
 	private ChoiceGroup uiLangGroup;
@@ -518,11 +520,13 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		mapSrcOptions = new ChoiceGroup(Locale.get("guidiscover.Options")/*Options*/, ChoiceGroup.MULTIPLE, mapOptions, null);
 		
 		String [] performanceOptions;
+		String [] TMSOptions;
 		int i = 3;
 		//#if polish.android
 		i++;
 		//#endif
 		performanceOptions = new String[i];
+		TMSOptions = new String[1];
 		
 		i = 0;
 		//#if polish.android
@@ -533,12 +537,21 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		performanceOptions[i++] = Locale.get("guidiscover.simplify")/*Simplify map when busy*/;
 		perfTuneOptions = new ChoiceGroup(Locale.get("guidiscover.PerfTuneOptions")/*Performance tuning options:*/, ChoiceGroup.MULTIPLE, performanceOptions, null);
 	
+		i = 0;
+		TMSOptions[i++] = Locale.get("guidiscover.TMSBackground")/*Use TMS map as background*/;
+		tileMapOptions = new ChoiceGroup(Locale.get("guidiscover.TMSOptions")/*TMS options:*/, ChoiceGroup.MULTIPLE, TMSOptions, null);
+
 		//#style formItem
 		menuSelectMapSource.append(mapSrc);
 		//#style formItem
 		menuSelectMapSource.append(mapSrcOptions);
 		//#style formItem
 		menuSelectMapSource.append(perfTuneOptions);
+		//#style formItem
+		menuSelectMapSource.append(tileMapOptions);
+		tfTMSUrl = new TextField(Locale.get("guidiscover.TMSURL")/*TMS (raster map) URL:*/, Configuration.getTMSUrl(), 512, TextField.URL);
+
+		menuSelectMapSource.append(tfTMSUrl);
 		menuSelectMapSource.setCommandListener(this);
 	}
 
@@ -1338,6 +1351,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				perfTuneOptions.setSelectedIndex(j++, Configuration.getCfgBitSavedState(Configuration.CFGBIT_RESOLVE_NAMES_LAST));
 				perfTuneOptions.setSelectedIndex(j++, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY));
 
+				tileMapOptions.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_TMS_BACKGROUND));
+
 				GpsMid.getInstance().show(menuSelectMapSource);
 				state = STATE_MAP;
 				break;
@@ -1455,6 +1470,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_BUFFEREDINPUTSTREAM, perfTuneOptions.isSelected(i++));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_RESOLVE_NAMES_LAST, perfTuneOptions.isSelected(i++));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY, perfTuneOptions.isSelected(i++));
+
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_TMS_BACKGROUND, tileMapOptions.isSelected(0));
+
+		Configuration.setTMSUrl(tfTMSUrl.getString());
 
 		rereadMap();
 		//logger.fatal(Locale.get("guidiscover.NeedRestart")/*Need to restart GpsMid, otherwise map is in an inconsistant state*/ + " " + Configuration.getMapUrl());
