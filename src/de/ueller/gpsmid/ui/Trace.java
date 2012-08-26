@@ -311,6 +311,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	
 	public float scale = Configuration.getRealBaseScale();
 	
+	public float zoomFactor = 1.5f;
+
 	int showAddons = 0;
 	
 	/** x position display was touched last time (on pointerPressed() ) */
@@ -1715,12 +1717,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return;
 			}
 			if (c == CMDS[ZOOM_IN_CMD]) {
-				scale = scale / 1.5f;
+				scale = scale / zoomFactor;
 				autoZoomed = false;
 				return;
 			}
 			if (c == CMDS[ZOOM_OUT_CMD]) {
-				scale = scale * 1.5f;
+				scale = scale * zoomFactor;
 				autoZoomed = false;
 				return;
 			}
@@ -3770,10 +3772,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				&& pos.speed != 0 // if speed is 0 do not autozoom
 		) {
 			// the minimumScale at 20km/h and below is equivalent to having zoomed in manually once from the startup zoom level
-			final float minimumScale = Configuration.getRealBaseScale() / 1.5f;
+			final float minimumScale = Configuration.getRealBaseScale() / zoomFactor;
 			final int minimumSpeed = 20;
 			// the maximumScale at 160km/h and above is equivalent to having zoomed out manually once from the startup zoom level
-			final float maximumScale = Configuration.getRealBaseScale() * 1.5f;
+			final float maximumScale = Configuration.getRealBaseScale() * zoomFactor;
 			final int maximumSpeed = 160;
 			int speedForScale = speed;
 			float newScale = minimumScale + (maximumScale - minimumScale) * (speedForScale - minimumSpeed) / (maximumSpeed - minimumSpeed);
@@ -3789,7 +3791,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				float newScale2 = newScale;
 				newScale2 = newScale / (1f + (200f - RouteInstructions.getDstRouteToDestination())/ 200f);
 				// fixed increased zoom for the last 100 m
-				newScale = Math.max(newScale2, newScale / 1.5f);
+				newScale = Math.max(newScale2, newScale / zoomFactor);
 			}
 			
 			scale = newScale;
