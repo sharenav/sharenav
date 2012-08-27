@@ -36,7 +36,7 @@ public class RasterTile implements UploadListener {
 	private byte data[] = null;
 	private Image image = null;
 
-	private static final int cacheSize = 200;
+	private static final int cacheSize = 100;
 	private static int cacheCount = 0;
 	private static RasterTile[] rasterCache = null;
 	private static int numThreads = 0;
@@ -196,7 +196,7 @@ public class RasterTile implements UploadListener {
 							tile.retrieving = true;
 							while (numThreads >= MAXTHREADS) {
 								try {
-									Thread.sleep(200);
+									Thread.sleep(20);
 								} catch (InterruptedException ie) {
 								}
 							}
