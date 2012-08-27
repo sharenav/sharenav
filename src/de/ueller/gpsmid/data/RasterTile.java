@@ -226,8 +226,12 @@ public class RasterTile implements UploadListener {
 
 		// FIXME should be able to replace %z, %x, %y separately
 		String url = Configuration.getTMSUrl();
-		url = HelperRoutines.replaceAll(url, "%z/%x/%y",
-						getTileString());
+		url = HelperRoutines.replaceAll(url, "%z", "" + this.zoom);
+		url = HelperRoutines.replaceAll(url, "%x", "" + this.x);
+		url = HelperRoutines.replaceAll(url, "%y", "" + this.y);
+		//url = HelperRoutines.replaceAll(url, "%z/%x/%y",
+		//				getTileString());
+
 		retrieved = false;
 		HttpHelper http = new HttpHelper();
 		System.out.println("Getting tile: " + url);
