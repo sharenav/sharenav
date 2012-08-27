@@ -1885,7 +1885,7 @@ public class Configuration {
 	// FIXME should be calculated from basescale etc.
 	public static float getRasterScale() {
 		// FIXME probably not exactly correct
-		return 490f; // seems to work right for east / west direction,
+		return 488f; // seems to work right for east / west direction,
 		// but is warped in north/south direction, shows esp. when looked at
 		// the top of a raster map north of the Arctic Circle
 	}
