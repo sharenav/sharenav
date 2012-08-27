@@ -35,7 +35,6 @@ import de.ueller.util.MoreMath;
 import java.util.Enumeration;
 
 import de.ueller.util.HelperRoutines;
-import de.ueller.util.HttpHelper;
 import de.ueller.midlet.ui.UploadListener;
 
 /* This class collects all visible objects to an offline image for later painting.

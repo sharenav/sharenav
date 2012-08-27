@@ -20,7 +20,9 @@ import de.ueller.gpsmid.data.PaintContext;
 import de.ueller.gpsmid.ui.Trace;
 
 import de.ueller.util.HelperRoutines;
+//#if polish.api.online
 import de.ueller.util.HttpHelper;
+//#endif
 import de.ueller.util.MoreMath;
 import de.ueller.midlet.ui.UploadListener;
 
@@ -233,6 +235,7 @@ public class RasterTile implements UploadListener {
 		//				getTileString());
 
 		retrieved = false;
+		//#if polish.api.online
 		HttpHelper http = new HttpHelper();
 		System.out.println("Getting tile: " + url);
 		http.getURL(url, this, true);
@@ -247,6 +250,7 @@ public class RasterTile implements UploadListener {
 			data = http.getBinaryData();
 			System.out.println("Loaded tile: " + url);
 		}
+		//#endif
 	}
 
 	public synchronized void completedUpload(boolean success, String message) {
