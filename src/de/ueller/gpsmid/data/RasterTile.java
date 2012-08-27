@@ -25,7 +25,7 @@ import de.ueller.util.MoreMath;
 import de.ueller.midlet.ui.UploadListener;
 
 public class RasterTile implements UploadListener {
-	public static final int TILE_SIZE = 250;
+	public static final int TILE_SIZE = 256;
 	public static final int MAXTHREADS = 2;
 
 	private int zoom = 0;
@@ -114,6 +114,8 @@ public class RasterTile implements UploadListener {
 			       xSize / 2 - xDiff,
 			       ySize / 2 - yDiff,
 			       Graphics.LEFT | Graphics.TOP);
+		//System.out.println("Drawing: xDiff = " + xDiff + " yDiff = " + yDiff);
+		//System.out.println("Drawing: xDiff%256 = " + xDiff % 256 + " yDiff%256 = " + yDiff % 256);
 	}
 
 	public static int getRasterZoom(float floatScale) {
@@ -216,9 +218,10 @@ public class RasterTile implements UploadListener {
 	}
 
 	public void getData() {
-		//String baseTMSUrl = "http://tiles.kartat.kapsi.fi/taustakartta/";
-		// String url = baseTMSUrl + tileString + ".jpg";
-		// String url = baseTMSUrl + zoom + "/" + x + "/" + y + ".jpg";
+		//typically url is something like "http://tiles.some.provid.er/mapname/%z/%x/%y.ext";
+		// where ext is e.g. png or jpg
+
+		//
 		// replace "%z/%x/%y" with tileString
 
 		// FIXME should be able to replace %z, %x, %y separately
