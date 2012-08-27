@@ -34,6 +34,7 @@ public class RasterTile implements UploadListener {
 	private int xDiff = 0;
 	private int yDiff = 0;
 	private byte data[] = null;
+	private Image image = null;
 
 	private static final int cacheSize = 500;
 	private static int cacheCount = 0;
@@ -95,10 +96,13 @@ public class RasterTile implements UploadListener {
 		return("" + zoom + "/" + this.x + "/" + this.y);
 	}
 
-	// FIXME perhaps it would help to cache images
 	public Image getImage() {
+		if (image != null) {
+			return image;
+		}
 		if (data != null) {
 			Image image = Image.createImage(data, 0, data.length);
+			this.image = image;
 			// System.out.println("Image length: " + data.length);
 			return image;
 		}
