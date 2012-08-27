@@ -36,7 +36,7 @@ public class RasterTile implements UploadListener {
 	private byte data[] = null;
 	private Image image = null;
 
-	private static final int cacheSize = 500;
+	private static final int cacheSize = 200;
 	private static int cacheCount = 0;
 	private static RasterTile[] rasterCache = null;
 	private static int numThreads = 0;
