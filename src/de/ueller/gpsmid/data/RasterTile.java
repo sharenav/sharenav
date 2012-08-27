@@ -26,6 +26,7 @@ import de.ueller.midlet.ui.UploadListener;
 
 public class RasterTile implements UploadListener {
 	public static final int TILE_SIZE = 250;
+	public static final int MAXTHREADS = 2;
 
 	private int zoom = 0;
 	private int x = 0;
@@ -37,6 +38,7 @@ public class RasterTile implements UploadListener {
 	private static final int cacheSize = 500;
 	private static int cacheCount = 0;
 	private static RasterTile[] rasterCache = null;
+	private static int numThreads = 0;
 
 	private boolean retrieving = false;
 	private boolean retrieved = false;
@@ -179,19 +181,32 @@ public class RasterTile implements UploadListener {
 
 		for (int x = 0 - gridWidth / 2; x < gridWidth / 2; x++) {
 			for (int y = 0 - gridHeight / 2; y < gridHeight / 2; y++) {
-				RasterTile tile = getCachedTile(pc.center.radlat, pc.center.radlon, zoom, x, y);
+				final RasterTile tile = getCachedTile(pc.center.radlat, pc.center.radlon, zoom, x, y);
 
 				String tileString = tile.getTileString();
 				//System.out.println("Possibly loading: " + tileString);
-				if (tile.data == null) {
+				if (tile.data == null && !tile.retrieving) {
 					System.out.println("Loading: " + tileString);
-					tile.getData();
+					Thread t = new Thread(new Runnable() {
+						public void run() {
+							tile.retrieving = true;
+							while (numThreads >= MAXTHREADS) {
+								try {
+									Thread.sleep(200);
+								} catch (InterruptedException ie) {
+								}
+							}
+							numThreads++;
+							tile.getData();
+							numThreads--;
+							tile.retrieving = false;
+						}
+					});
+					t.start();
 				}
 				if (tile.data != null) {
 					tile.draw(pc, xSize, ySize);
-					addCachedTile(tile);
 				}
-			
 			}
 		}
 	}
@@ -219,10 +234,12 @@ public class RasterTile implements UploadListener {
 		}
 		if (retrieved) {
 			data = http.getBinaryData();
+			System.out.println("Loaded tile: " + url);
 		}
 	}
 
 	public synchronized void completedUpload(boolean success, String message) {
+		Trace.getInstance().newDataReady();
 		retrieved = true;
 		notifyAll();
 	}
