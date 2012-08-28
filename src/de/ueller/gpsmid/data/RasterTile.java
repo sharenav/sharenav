@@ -112,10 +112,13 @@ public class RasterTile implements UploadListener {
 	}
 
 	public void draw(PaintContext pc, int xSize, int ySize) {
-		pc.g.drawImage(getImage(),
-			       xSize / 2 - xDiff,
-			       ySize / 2 - yDiff,
-			       Graphics.LEFT | Graphics.TOP);
+		Image image = getImage();
+		if (image != null) {
+			pc.g.drawImage(image,
+				       xSize / 2 - xDiff,
+				       ySize / 2 - yDiff,
+				       Graphics.LEFT | Graphics.TOP);
+		}
 		//System.out.println("Drawing: xDiff = " + xDiff + " yDiff = " + yDiff);
 		//System.out.println("Drawing: xDiff%256 = " + xDiff % 256 + " yDiff%256 = " + yDiff % 256);
 	}
