@@ -526,7 +526,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		i++;
 		//#endif
 		performanceOptions = new String[i];
-		TMSOptions = new String[1];
+		TMSOptions = new String[3];
 		
 		i = 0;
 		//#if polish.android
@@ -539,6 +539,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	
 		i = 0;
 		TMSOptions[i++] = Locale.get("guidiscover.TMSBackground")/*Use TMS map as background*/;
+		TMSOptions[i++] = Locale.get("guidiscover.BackgroundDisableAreas")/*Disable areas when background map is shown*/;
+		TMSOptions[i++] = Locale.get("guidiscover.BackgroundDisableBuildings")/*Disable buildings when background map is shown*/;
 		tileMapOptions = new ChoiceGroup(Locale.get("guidiscover.TMSOptions")/*TMS options:*/, ChoiceGroup.MULTIPLE, TMSOptions, null);
 
 		//#style formItem
@@ -1352,6 +1354,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				perfTuneOptions.setSelectedIndex(j++, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY));
 
 				tileMapOptions.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_TMS_BACKGROUND));
+				tileMapOptions.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_DISABLE_AREAS_WHEN_BACKGROUND_MAP));
+				tileMapOptions.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_DISABLE_BUILDINGS_WHEN_BACKGROUND_MAP));
 
 				GpsMid.getInstance().show(menuSelectMapSource);
 				state = STATE_MAP;
@@ -1486,6 +1490,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			ProjFactory.setProj(ProjFactory.NORTH_UP);
 		}
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_TMS_BACKGROUND, tileMapOptions.isSelected(0));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_DISABLE_AREAS_WHEN_BACKGROUND_MAP, tileMapOptions.isSelected(1));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_DISABLE_BUILDINGS_WHEN_BACKGROUND_MAP, tileMapOptions.isSelected(2));
 
 		Configuration.setTMSUrl(tfTMSUrl.getString());
 

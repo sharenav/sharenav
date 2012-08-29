@@ -381,6 +381,10 @@ public class Configuration {
 	public final static short CFGBIT_ICONMENUS_SETUP = 151;
 	/** bit 152: Use TMS map as background */
 	public final static short CFGBIT_TMS_BACKGROUND = 152;
+	/** bit 153: Disable areas when background map is in use */
+	public final static short CFGBIT_DISABLE_AREAS_WHEN_BACKGROUND_MAP = 153;
+	/** bit 154: Disable buildings when background map is in use */
+	public final static short CFGBIT_DISABLE_BUILDINGS_WHEN_BACKGROUND_MAP = 154;
 	
 	/**
 	 * These are the database record IDs for each configuration option
