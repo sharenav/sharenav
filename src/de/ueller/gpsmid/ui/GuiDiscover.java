@@ -1475,19 +1475,38 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_RESOLVE_NAMES_LAST, perfTuneOptions.isSelected(i++));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY, perfTuneOptions.isSelected(i++));
 
+		boolean bgMapOptionsChanged = false;
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_DISABLE_AREAS_WHEN_BACKGROUND_MAP) != tileMapOptions.isSelected(1)) {
+			bgMapOptionsChanged = true;
+		}
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_DISABLE_BUILDINGS_WHEN_BACKGROUND_MAP) != tileMapOptions.isSelected(2)) {
+			bgMapOptionsChanged = true;
+		}
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_TMS_BACKGROUND) &&
 		    !tileMapOptions.isSelected(0)) {
 			// raster tile map switched off, restore user-set state of projection
 			// and autozoom
 			Configuration.setCfgBitState(Configuration.CFGBIT_AUTOZOOM, Configuration.getCfgBitSavedState(Configuration.CFGBIT_AUTOZOOM), false);
+			Configuration.setCfgBitState(Configuration.CFGBIT_AREAS, Configuration.getCfgBitSavedState(Configuration.CFGBIT_AREAS), false);
+			Configuration.setCfgBitState(Configuration.CFGBIT_BUILDINGS, Configuration.getCfgBitSavedState(Configuration.CFGBIT_BUILDINGS), false);
 			ProjFactory.setProj(Configuration.getProjDefault());
 		}
-		if (!Configuration.getCfgBitSavedState(Configuration.CFGBIT_TMS_BACKGROUND) &&
-		    tileMapOptions.isSelected(0)) {
-			// raster tile map switched on, set projection to north up
+		if ((bgMapOptionsChanged || !Configuration.getCfgBitSavedState(Configuration.CFGBIT_TMS_BACKGROUND)) &&
+					    tileMapOptions.isSelected(0))) {
+			// raster tile map switched on or settings changed, set projection to north up
 			// and switch autozoom off
 			Configuration.setCfgBitState(Configuration.CFGBIT_AUTOZOOM, false, false);
 			ProjFactory.setProj(ProjFactory.NORTH_UP);
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_DISABLE_AREAS_WHEN_BACKGROUND_MAP)) {
+				Configuration.setCfgBitState(Configuration.CFGBIT_AREAS, false, false);
+			} else {
+				Configuration.setCfgBitState(Configuration.CFGBIT_AREAS, Configuration.getCfgBitSavedState(Configuration.CFGBIT_AREAS), false);
+			}
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_DISABLE_BUILDINGS_WHEN_BACKGROUND_MAP)) {
+				Configuration.setCfgBitState(Configuration.CFGBIT_BUILDINGS, false, false);
+			} else {
+				Configuration.setCfgBitState(Configuration.CFGBIT_BUILDINGS, Configuration.getCfgBitSavedState(Configuration.CFGBIT_BUILDINGS), false);
+			}
 		}
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_TMS_BACKGROUND, tileMapOptions.isSelected(0));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_DISABLE_AREAS_WHEN_BACKGROUND_MAP, tileMapOptions.isSelected(1));

@@ -635,7 +635,13 @@ public class Configuration {
 			ProjFactory.setProj(projTypeDefault);
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_TMS_BACKGROUND)) {
 				ProjFactory.setProj(ProjFactory.NORTH_UP);
-				setCfgBitState(CFGBIT_AUTOZOOM, getCfgBitSavedState(CFGBIT_AUTOZOOM), false);
+				setCfgBitState(CFGBIT_AUTOZOOM, false, false);
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_DISABLE_AREAS_WHEN_BACKGROUND_MAP)) {
+					Configuration.setCfgBitState(Configuration.CFGBIT_AREAS, false, false);
+				}
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_DISABLE_BUILDINGS_WHEN_BACKGROUND_MAP)) {
+					Configuration.setCfgBitState(Configuration.CFGBIT_BUILDINGS, false, false);
+				}
 			}
 			calculateRealBaseScale();
 			smsRecipient = readString(database, RECORD_ID_SMS_RECIPIENT);
