@@ -549,7 +549,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		menuSelectMapSource.append(perfTuneOptions);
 		//#style formItem
 		menuSelectMapSource.append(tileMapOptions);
-		tfTMSUrl = new TextField(Locale.get("guidiscover.TMSURL")/*TMS (raster map) URL:*/, Configuration.getTMSUrl(), 512, TextField.URL);
+		tfTMSUrl = new TextField(Locale.get("guidiscover.TMSURL")/*Raster map URL:*/, Configuration.getTMSUrl(), 512, TextField.URL);
 
 		menuSelectMapSource.append(tfTMSUrl);
 		menuSelectMapSource.setCommandListener(this);
@@ -1471,6 +1471,21 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_RESOLVE_NAMES_LAST, perfTuneOptions.isSelected(i++));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY, perfTuneOptions.isSelected(i++));
 
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_TMS_BACKGROUND) &&
+		    !tileMapOptions.isSelected(0)) {
+			// raster tile map switched off, restore user-set state of projection
+			// and autozoom
+			Configuration.setCfgBitState(Configuration.CFGBIT_AUTOZOOM, Configuration.getCfgBitSavedState(Configuration.CFGBIT_AUTOZOOM), false);
+			ProjFactory.setProj(Configuration.getProjDefault());
+		}
+		if (!Configuration.getCfgBitSavedState(Configuration.CFGBIT_TMS_BACKGROUND) &&
+		    tileMapOptions.isSelected(0)) {
+			// raster tile map switched on, set projection to north up
+			// and switch autozoom off
+			Configuration.setCfgBitState(Configuration.CFGBIT_AUTOZOOM, false, false);
+			ProjFactory.setProj(ProjFactory.NORTH_UP);
+		}
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_TMS_BACKGROUND, tileMapOptions.isSelected(0));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_TMS_BACKGROUND, tileMapOptions.isSelected(0));
 
 		Configuration.setTMSUrl(tfTMSUrl.getString());

@@ -629,6 +629,10 @@ public class Configuration {
 			readPosition(database, destPos, RECORD_ID_DEST_RADLAT, RECORD_ID_DEST_RADLON);
 			projTypeDefault = (byte) readInt(database,  RECORD_ID_MAP_PROJECTION);
 			ProjFactory.setProj(projTypeDefault);
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_TMS_BACKGROUND)) {
+				ProjFactory.setProj(ProjFactory.NORTH_UP);
+				setCfgBitState(CFGBIT_AUTOZOOM, getCfgBitSavedState(CFGBIT_AUTOZOOM), false);
+			}
 			calculateRealBaseScale();
 			smsRecipient = readString(database, RECORD_ID_SMS_RECIPIENT);
 			speedTolerance = readInt(database, RECORD_ID_SPEED_TOLERANCE);
@@ -673,7 +677,7 @@ public class Configuration {
 			
 			tms_url = readString(database, RECORD_ID_TMS_URL);
 			if (tms_url == null) {
-				tms_url = "";
+				tms_url = "http://tiles.kartat.kapsi.fi/taustakartta/%z/%x/%y.png";
 			}
 
 			/* close the record store before accessing it nested for writing
