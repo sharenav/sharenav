@@ -202,8 +202,8 @@ public class RasterTile implements UploadListener {
 		int gridWidth = xSize / TILE_SIZE + 4;
 		int gridHeight = ySize / TILE_SIZE + 4;
 		
-		System.out.println("gridWidth: " + gridWidth);
-		System.out.println("gridHeight: " + gridHeight);
+		// System.out.println("gridWidth: " + gridWidth);
+		// System.out.println("gridHeight: " + gridHeight);
 
 		for (int x = 0 - gridWidth / 2; x < gridWidth / 2; x++) {
 			for (int y = 0 - gridHeight / 2; y < gridHeight / 2; y++) {
@@ -218,7 +218,7 @@ public class RasterTile implements UploadListener {
 
 				// then get from net
 				if (tile.data == null && !tile.retrieving) {
-					System.out.println("Loading: " + tileString);
+					// System.out.println("Loading: " + tileString);
 					Thread t = new Thread(new Runnable() {
 						public void run() {
 							tile.retrieving = true;
@@ -260,7 +260,7 @@ public class RasterTile implements UploadListener {
 		retrieved = false;
 		//#if polish.api.online
 		HttpHelper http = new HttpHelper();
-		System.out.println("Getting tile: " + url);
+		// System.out.println("Getting tile: " + url);
 		http.getURL(url, this, true);
 		try {
 			if (!retrieved) {
@@ -272,7 +272,7 @@ public class RasterTile implements UploadListener {
 		if (retrieved) {
 			data = http.getBinaryData();
 			writeFileCache();
-			System.out.println("Loaded tile: " + url);
+			// System.out.println("Loaded tile: " + url);
 		}
 		//#endif
 	}
@@ -343,7 +343,7 @@ public class RasterTile implements UploadListener {
 			out.close();
 		} catch (Exception e) {
 			//logger.exception("Error writing file cache",e);
-			System.out.println("Error writing file cache: " + e);
+			// System.out.println("Error writing file cache: " + e);
 		}
 		//#endif
 	}
@@ -371,9 +371,9 @@ public class RasterTile implements UploadListener {
 				}
 				in.close();
 				this.data = data;
-				System.out.println("Read file from file cache, length: " + len);
+				// System.out.println("Read file from file cache, length: " + len);
 			} catch (IOException e) {
-				System.out.println("Error reading file cache: " + e);
+				// System.out.println("Error reading file cache: " + e);
 			}
 		}
 		//#endif
