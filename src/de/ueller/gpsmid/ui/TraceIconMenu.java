@@ -247,14 +247,18 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 		iconHelpOnlineWikiAndroid = mp.createAndAddIcon(Locale.get("guidiscovericonmenu.AndroidWiki")/*Android help*/, "i_online", Trace.HELP_ONLINE_WIKI_ANDROID_CMD);
 		//#endif
 		//#if not polish.api.online
-		iconHelpOnlineTouch.makeImageGreyed();
+		if (hasPointerEvents()) {
+			iconHelpOnlineTouch.makeImageGreyed();
+		}
 		iconHelpOnlineWiki.makeImageGreyed();
 		//#if polish.android
 		iconHelpOnlineWikiAndroid.makeImageGreyed();
 		//#endif
 		//#endif
 		if (!Configuration.getCfgBitState(Configuration.CFGBIT_INTERNET_ACCESS)) {
-			iconHelpOnlineTouch.makeImageGreyed();
+			if (hasPointerEvents()) {
+				iconHelpOnlineTouch.makeImageGreyed();
+			}
 			iconHelpOnlineWiki.makeImageGreyed();
 		}
 		mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
