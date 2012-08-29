@@ -102,6 +102,11 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_GEOHACK)) {
 			this.append(Locale.get("guiwebinfo.GeoHack")/*GeoHack*/, null);
 		}
+		//#if polish.api.osm-editing
+		if (Legend.enableEdits) {
+			this.append(Locale.get("guiwebinfo.editOSMWeb")/*Edit area in OSM web editor*/, null);
+		}		
+		//#endif
 //#if polish.api.finland
 		if (Legend.enableUrlTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_TOPOMAP)) {
 			this.append(Locale.get("guiwebinfo.TopoMapFi")/*Topographic Map (Finland)*/, null);
@@ -223,6 +228,18 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 				+ (mPos.longitude * MoreMath.FAC_RADTODEC) + ","
 				+ (mPos.latitude * MoreMath.FAC_RADTODEC)
 				+ "&result_contains=stop" + "&limit=5" + "&format=xml";
+		}
+//#endif
+//#if polish.api.osm-editing
+		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.editOSMWeb"))) {
+			url = "http://www.openstreetmap.org/edit?editor="
+				// FIXME add configurability for other editors
+				+ "potlatch"
+				+ "&lat=" 
+				+ (mPos.latitude * MoreMath.FAC_RADTODEC)
+				+ "&lon="
+				+ (mPos.longitude * MoreMath.FAC_RADTODEC)
+				+ "&zoom=18";
 		}
 //#endif
 		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.GeoHack")/*GeoHack*/)) {

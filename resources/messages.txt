@@ -1382,3 +1382,4 @@ guidiscover.TMSOptions=Raster map options
 guidiscover.TMSBackground=Use raster map as background
 travelmodes.ReittiopasPublic=Public/reittiopas
 travelmodes.ReittiopasCycle=Cycle/reittiopas
+guiwebinfo.editOSMWeb=Edit area in OSM web editor
