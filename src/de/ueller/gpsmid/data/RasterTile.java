@@ -153,7 +153,7 @@ public class RasterTile implements UploadListener {
 		if (zoom < 0) {
 			zoom = 0;
 		}
-		System.out.println("For scale " + scale + " returning zoom " + zoom);
+		// System.out.println("For scale " + scale + " returning zoom " + zoom);
 		return zoom;
 	}
 
@@ -175,13 +175,13 @@ public class RasterTile implements UploadListener {
 			if (tile.getTileString().equals(new RasterTile(radlat,
 								       radlon, zoom, xdiff, ydiff).getTileString())) {
 				foundTile = tile;
-				System.out.println("Cache hit: " + tile.getTileString());
+				//System.out.println("Cache hit: " + tile.getTileString());
 			}
 		}
 		
 		if (foundTile == null) {
 			RasterTile newTile = new RasterTile(radlat, radlon, zoom, xdiff, ydiff);
-			System.out.println("Cache miss: " + newTile.getTileString());
+			//System.out.println("Cache miss: " + newTile.getTileString());
 			addCachedTile(newTile);
 			foundTile = newTile;
 		}
