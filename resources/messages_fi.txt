@@ -924,3 +924,5 @@ trace.mapcreditFiLandSurvey12=Maanmittauslaitoksen Maastotietokanta 06/2012
 trace.mapcreditFiLandSurvey12URL=http://www.maanmittauslaitos.fi/avoindata_lisenssi_versio1_20120501
 trace.showmapcredit=Avaa kartan tieto- tai lisenssisivu
 guidiscovericonmenu.Maps=Kartat
+travelmodes.ReittiopasPublic=Joukkoliikenne/reittiopas
+travelmodes.ReittiopasCycle=Pyörä/reittiopas

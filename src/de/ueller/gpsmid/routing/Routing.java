@@ -19,6 +19,9 @@ import de.ueller.gpsmid.mapdata.Way;
 import de.ueller.gpsmid.tile.RouteBaseTile;
 import de.ueller.gpsmid.tile.Tile;
 import de.ueller.gpsmid.ui.GpsMid;
+//#if polish.api.finland
+import de.ueller.gpsmid.ui.GuiWebInfo;
+//#endif
 import de.ueller.gpsmid.ui.Trace;
 import de.ueller.util.IntTree;
 import de.ueller.util.Logger;
@@ -737,10 +740,47 @@ public class Routing implements Runnable {
 		this.fromMark = fromMark;
 		this.toMark = toMark;
 		
-		logger.info("Calculating route from " + fromMark + " to " + toMark);
-		processorThread = new Thread(this);
-		processorThread.setPriority(Thread.NORM_PRIORITY);
-		processorThread.start();		
+		
+//#if polish.api.finland
+		if (Locale.get("travelmodes.ReittiopasCycle").equals(Configuration.getTravelMode().getName())) {
+			logger.info("Calculating online route from " + fromMark + " to " + toMark);
+
+			String url = GuiWebInfo.getReittiopasUrl() +
+				"&request=cycling"
+				+ "&from=" 
+				+ (fromMark.lon * MoreMath.FAC_RADTODEC) + ","
+				+ (fromMark.lat * MoreMath.FAC_RADTODEC)
+				+ "&to=" 
+				+ (toMark.lon * MoreMath.FAC_RADTODEC) + ","
+				+ (toMark.lat * MoreMath.FAC_RADTODEC)
+				+ "&format=txt";
+			GuiWebInfo.openUrl(url);
+		} else if (Locale.get("travelmodes.ReittiopasPublic").equals(Configuration.getTravelMode().getName())) {
+			logger.info("Calculating online route from " + fromMark + " to " + toMark);
+
+			String url = GuiWebInfo.getReittiopasUrl() +
+				"&request=route"
+				+ "&from=" 
+				+ (fromMark.lon * MoreMath.FAC_RADTODEC) + ","
+				+ (fromMark.lat * MoreMath.FAC_RADTODEC)
+				+ "&to=" 
+				+ (toMark.lon * MoreMath.FAC_RADTODEC) + ","
+				+ (toMark.lat * MoreMath.FAC_RADTODEC)
+				+ "&format=txt";
+			// FIXME instead of showing the route in a browser
+			// as text, instead take it into memory
+			// 
+			GuiWebInfo.openUrl(url);
+		}
+		else {
+//#endif
+			logger.info("Calculating route from " + fromMark + " to " + toMark);
+			processorThread = new Thread(this);
+			processorThread.setPriority(Thread.NORM_PRIORITY);
+			processorThread.start();		
+//#if polish.api.finland
+		}
+//#endif
 	}
 		
 

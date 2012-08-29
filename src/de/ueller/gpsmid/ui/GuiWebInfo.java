@@ -116,6 +116,12 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		this.setSelectCommand(SELECT_CMD);
 	}
 
+//#if polish.api.finland
+	public static String getReittiopasUrl() {
+		return reittiopasUrl;
+	}
+//#endif
+
 	public void show() {
 		GpsMid.getInstance().show(this);
 
@@ -209,14 +215,14 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 				+ "&request=reverse_geocode&coordinate="
 				+ (mPos.longitude * MoreMath.FAC_RADTODEC) + ","
 				+ (mPos.latitude * MoreMath.FAC_RADTODEC)
-				+ "&format=txt";
+				+ "&format=xml";
 		}
 		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.ReittiopasStop"))) {
 			url = reittiopasUrl
 				+ "&request=reverse_geocode&coordinate="
 				+ (mPos.longitude * MoreMath.FAC_RADTODEC) + ","
 				+ (mPos.latitude * MoreMath.FAC_RADTODEC)
-				+ "&result_contains=stop" + "&format=txt";
+				+ "&result_contains=stop" + "&limit=5" + "&format=xml";
 		}
 //#endif
 		if (site.equalsIgnoreCase(Locale.get("guiwebinfo.GeoHack")/*GeoHack*/)) {

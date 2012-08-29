@@ -1380,3 +1380,5 @@ guidiscovericonmenu.Maps=Maps
 guidiscover.TMSURL=Raster map URL (typically something like http://server.na.me/somethin/%z/%x/%y.something; honor the rules of the provider):
 guidiscover.TMSOptions=Raster map options
 guidiscover.TMSBackground=Use raster map as background
+travelmodes.ReittiopasPublic=Public/reittiopas
+travelmodes.ReittiopasCycle=Cycle/reittiopas

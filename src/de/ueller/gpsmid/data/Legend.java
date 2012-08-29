@@ -450,7 +450,11 @@ public class Legend {
 		 * Read Travel Modes
 		 */
 		count = ds.readByte();
+//#if polish.api.finland
+		midletTravelModes = new TravelMode[count + 2];
+//#else
 		midletTravelModes = new TravelMode[count];
+//#endif
 		for (int i = 0; i < count; i++) {
 			midletTravelModes[i] = new TravelMode();
 			midletTravelModes[i].travelModeName = ds.readUTF();
@@ -459,6 +463,25 @@ public class Legend {
 			midletTravelModes[i].maxEstimationSpeed = ds.readShort();
 			midletTravelModes[i].travelModeFlags = ds.readByte();
 		}
+//#if polish.api.finland
+		int travelModeCount = count;
+		midletTravelModes[travelModeCount] = new TravelMode();
+		midletTravelModes[travelModeCount].travelModeName = Locale.get("travelmodes.ReittiopasPublic");
+		midletTravelModes[travelModeCount].maxPrepareMeters = 500;
+		midletTravelModes[travelModeCount].maxInMeters = 899;
+		midletTravelModes[travelModeCount].maxEstimationSpeed = 100;
+		// no applyTurnRestrictions, no mainStreetNet
+		midletTravelModes[travelModeCount].travelModeFlags = 0;
+		travelModeCount++;
+		midletTravelModes[travelModeCount] = new TravelMode();
+		midletTravelModes[travelModeCount].travelModeName = Locale.get("travelmodes.ReittiopasCycle");
+		midletTravelModes[travelModeCount].maxPrepareMeters = 75;
+		midletTravelModes[travelModeCount].maxInMeters = 299;
+		midletTravelModes[travelModeCount].maxEstimationSpeed = 20;
+		// no applyTurnRestrictions, no mainStreetNet
+		// bicycleOppositeExceptions = "true" should be added
+		midletTravelModes[travelModeCount].travelModeFlags = 0;
+//#endif
 		
 		// If we do not have the travel mode stored defined in the record store in the midlet data, use the first one 
 		if (Configuration.getTravelModeNr() > Legend.getTravelModes().length-1) {
