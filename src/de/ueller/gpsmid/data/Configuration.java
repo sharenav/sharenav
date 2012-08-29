@@ -687,7 +687,7 @@ public class Configuration {
 			
 			tms_url = readString(database, RECORD_ID_TMS_URL);
 			if (tms_url == null) {
-				tms_url = "http://tiles.kartat.kapsi.fi/taustakartta/%z/%x/%y.png";
+				tms_url = "";
 			}
 
 			/* close the record store before accessing it nested for writing
