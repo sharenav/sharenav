@@ -7,12 +7,21 @@ package de.ueller.gpsmid.tile;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
+import de.ueller.gpsmid.data.Legend;
 import de.ueller.gpsmid.data.PaintContext;
 import de.ueller.gpsmid.graphics.Projection;
 import de.ueller.util.HelperRoutines;
 import de.ueller.util.IntPoint;
 import de.ueller.util.Logger;
 import de.ueller.util.MoreMath;
+
+//#if polish.android
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Paint.Style;
+//#endif
+import javax.microedition.lcdui.Graphics;
 
 
 public class GpxTile extends Tile {	
@@ -152,12 +161,55 @@ public class GpxTile extends Tile {
 		Projection projection = pc.getP();
 		IntPoint lineP2 = pc.lineP2;
 		Graphics g = pc.g;
+		//#if polish.api.areaoutlines
+		g.getPaint().setStyle(Style.STROKE);
+		float strokeWidth = g.getPaint().getStrokeWidth();
+		// FIXME make width configurable some way
+		g.getPaint().setStrokeWidth(5);
+		Path tPath = new Path();
+		if (noTrkPts > 1) {
+			projection.forward(trkPtLat[0], trkPtLon[0], lineP2);
+			g.drawImage(trkPtImage, lineP2.x, lineP2.y, Graphics.HCENTER | Graphics.VCENTER);
+			tPath.moveTo(lineP2.x + g.getTranslateX(), lineP2.y + g.getTranslateY());
+			for (int i = 1; i < noTrkPts; i++) {
+				//if (projection.isPlotable(trkPtLat[i], trkPtLon[i])) {
+					projection.forward(trkPtLat[i], trkPtLon[i], lineP2);
+					// g.drawImage(trkPtImage, lineP2.x, lineP2.y, Graphics.HCENTER | Graphics.VCENTER);					
+					g.drawImage(trkPtImage, lineP2.x, lineP2.y, Graphics.HCENTER | Graphics.VCENTER);					
+					tPath.lineTo(lineP2.x + g.getTranslateX(), lineP2.y + g.getTranslateY());
+					// FIXME add a new color
+					g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE_BORDER]);
+					g.getCanvas().drawPath(tPath, g.getPaint());
+					//}
+			}
+		} else {
+			for (int i = 0; i < noTrkPts; i++) {
+				if (projection.isPlotable(trkPtLat[i], trkPtLon[i])) {
+					projection.forward(trkPtLat[i], trkPtLon[i], lineP2);
+					g.drawImage(trkPtImage, lineP2.x, lineP2.y, Graphics.HCENTER | Graphics.VCENTER);
+				}
+			}
+		}
+		g.getPaint().setStrokeWidth(strokeWidth);
+		//#else
+		// FIXME make line wider with triangles
+		g.setStrokeStyle(Graphics.SOLID);
+		int oldX = 0;
+		int oldY = 0;
 		for (int i = 0; i < noTrkPts; i++) {
 			if (projection.isPlotable(trkPtLat[i], trkPtLon[i])) {
 				projection.forward(trkPtLat[i], trkPtLon[i], lineP2);
-				g.drawImage(trkPtImage, lineP2.x, lineP2.y, Graphics.HCENTER | Graphics.VCENTER);					
+				g.drawImage(trkPtImage, lineP2.x, lineP2.y, Graphics.HCENTER | Graphics.VCENTER);
+				// FIXME add a new color
+				g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE_BORDER]);
+				if (i != 0) {
+					g.drawLine(oldX, oldY, lineP2.x, lineP2.y);
+				}
+				oldX = lineP2.x;
+				oldY = lineP2.y;
 			}
 		}
+		//#endif
 	}
 	
 	private void extendTile() {
