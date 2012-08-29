@@ -26,9 +26,9 @@ public class Position {
 	public static final byte TYPE_SAVED = 4;
 	public static final byte TYPE_UNKNOWN = 120;
 
-	/** Latitude in radians, Western values are negative */
+	/** Latitude in degrees, Western values are negative */
 	public float latitude;
-	/** Longitude in radians, Southern values are negative */
+	/** Longitude in degrees, Southern values are negative */
 	public float longitude;
 	/** Altitude above mean sea level or WGS84 geoid in meters */
 	public float altitude;
