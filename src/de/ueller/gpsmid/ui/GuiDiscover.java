@@ -1486,7 +1486,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			ProjFactory.setProj(ProjFactory.NORTH_UP);
 		}
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_TMS_BACKGROUND, tileMapOptions.isSelected(0));
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_TMS_BACKGROUND, tileMapOptions.isSelected(0));
 
 		Configuration.setTMSUrl(tfTMSUrl.getString());
 
