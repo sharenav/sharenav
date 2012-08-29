@@ -1557,6 +1557,22 @@ public class RouteInstructions {
 		}		
 	}
 
+	public static void outputRouteAsGpx(Vector route) {
+		if (Trace.getInstance().gpx.isRecordingTrk()) {
+			Trace.getInstance().alert(Locale.get("trace.RecordMode")/*Record Mode*/, Locale.get("trace.YouNeedStopRecording")/*You need to stop recording before managing tracks.*/ , 4000);
+			return;
+		}
+		Trace.getInstance().gpx.newTrk(false);
+
+		ConnectionWithNode c;
+		for (int i=0; i<route.size()-1; i++){
+			c = (ConnectionWithNode) route.elementAt(i);
+			Trace.getInstance().gpx.addTrkPt(new Position(c.to.lat * MoreMath.FAC_RADTODEC, c.to.lon * MoreMath.FAC_RADTODEC, 0, 0, 0, 0, 0L));
+		}		
+		Trace.getInstance().gpx.saveTrk(false);
+	}
+
+
 	public static void abortRouteLineProduction() {
 		if (rlp != null) {
 			rlp.abort();
