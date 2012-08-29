@@ -209,6 +209,9 @@ public class RasterTile implements UploadListener {
 			for (int y = 0 - gridHeight / 2; y < gridHeight / 2; y++) {
 				final RasterTile tile = getCachedTile(pc.center.radlat, pc.center.radlon, zoom, x, y);
 
+				if (tile == null) {
+					continue;
+				}
 				String tileString = tile.getTileString();
 				//System.out.println("Possibly loading: " + tileString);
 				// first try getting from file cache
