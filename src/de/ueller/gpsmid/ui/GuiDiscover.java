@@ -1482,6 +1482,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_DISABLE_BUILDINGS_WHEN_BACKGROUND_MAP) != tileMapOptions.isSelected(2)) {
 			bgMapOptionsChanged = true;
 		}
+
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_DISABLE_AREAS_WHEN_BACKGROUND_MAP, tileMapOptions.isSelected(1));
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_DISABLE_BUILDINGS_WHEN_BACKGROUND_MAP, tileMapOptions.isSelected(2));
+
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_TMS_BACKGROUND) &&
 		    !tileMapOptions.isSelected(0)) {
 			// raster tile map switched off, restore user-set state of projection
@@ -1491,8 +1495,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			Configuration.setCfgBitState(Configuration.CFGBIT_BUILDINGS, Configuration.getCfgBitSavedState(Configuration.CFGBIT_BUILDINGS), false);
 			ProjFactory.setProj(Configuration.getProjDefault());
 		}
-		if ((bgMapOptionsChanged || !Configuration.getCfgBitSavedState(Configuration.CFGBIT_TMS_BACKGROUND)) &&
-					    tileMapOptions.isSelected(0))) {
+		if ((bgMapOptionsChanged || !Configuration.getCfgBitSavedState(Configuration.CFGBIT_TMS_BACKGROUND))
+		    && tileMapOptions.isSelected(0)) {
 			// raster tile map switched on or settings changed, set projection to north up
 			// and switch autozoom off
 			Configuration.setCfgBitState(Configuration.CFGBIT_AUTOZOOM, false, false);
@@ -1509,8 +1513,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			}
 		}
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_TMS_BACKGROUND, tileMapOptions.isSelected(0));
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_DISABLE_AREAS_WHEN_BACKGROUND_MAP, tileMapOptions.isSelected(1));
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_DISABLE_BUILDINGS_WHEN_BACKGROUND_MAP, tileMapOptions.isSelected(2));
 
 		Configuration.setTMSUrl(tfTMSUrl.getString());
 
