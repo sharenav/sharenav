@@ -26,6 +26,21 @@ import de.ueller.util.HttpHelper;
 import de.ueller.util.MoreMath;
 import de.ueller.midlet.ui.UploadListener;
 
+//#if polish.android
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+//#endif
+
 public class RasterTile implements UploadListener {
 	public static final int TILE_SIZE = 256;
 	public static final int MAXTHREADS = 2;
@@ -196,6 +211,12 @@ public class RasterTile implements UploadListener {
 
 				String tileString = tile.getTileString();
 				//System.out.println("Possibly loading: " + tileString);
+				// first try getting from file cache
+				if (tile.data == null) {
+					tile.readFileCache();
+				}
+
+				// then get from net
 				if (tile.data == null && !tile.retrieving) {
 					System.out.println("Loading: " + tileString);
 					Thread t = new Thread(new Runnable() {
@@ -229,7 +250,6 @@ public class RasterTile implements UploadListener {
 		//
 		// replace "%z/%x/%y" with tileString
 
-		// FIXME should be able to replace %z, %x, %y separately
 		String url = Configuration.getTMSUrl();
 		url = HelperRoutines.replaceAll(url, "%z", "" + this.zoom);
 		url = HelperRoutines.replaceAll(url, "%x", "" + this.x);
@@ -251,7 +271,110 @@ public class RasterTile implements UploadListener {
 		}
 		if (retrieved) {
 			data = http.getBinaryData();
+			writeFileCache();
 			System.out.println("Loaded tile: " + url);
+		}
+		//#endif
+	}
+
+	public String getCacheFilePath() {
+		// FIXME allow configurability of path
+
+		String path = "/sdcard/GpsMid/tiles/" + "default"
+			+ "/%z/%x/%y.png";
+		path = HelperRoutines.replaceAll(path, "%z", "" + this.zoom);
+		path = HelperRoutines.replaceAll(path, "%x", "" + this.x);
+		path = HelperRoutines.replaceAll(path, "%y", "" + this.y);
+		return path;
+	}
+
+	public void createDirs() {
+		// FIXME allow configurability of path
+		// FIXME move creation of top-level dirs to the time
+		// of switching net-based raster maps on
+
+		String path = "/sdcard/GpsMid/";
+		checkAndCreate(path);
+		path = "/sdcard/GpsMid/tiles/";
+		checkAndCreate(path);
+		path = "/sdcard/GpsMid/tiles/" + "default";
+		checkAndCreate(path);
+		path = "/sdcard/GpsMid/tiles/" + "default"
+			+ "/%z";
+		path = HelperRoutines.replaceAll(path, "%z", "" + this.zoom);
+		checkAndCreate(path);
+		path = "/sdcard/GpsMid/tiles/" + "default"
+			+ "/%z/%x";
+		path = HelperRoutines.replaceAll(path, "%z", "" + this.zoom);
+		path = HelperRoutines.replaceAll(path, "%x", "" + this.x);
+		checkAndCreate(path);
+	}
+
+	public void checkAndCreate(String path) {
+		//#if polish.android
+		File f = new File(path);
+		if (! f.canWrite()) {
+			f.mkdir();
+		}
+		//#endif
+	}
+
+
+	public void writeFileCache() {
+		if (data == null) {
+			return;
+		}
+		createDirs();
+		// write the tile to a cache file
+
+		String path = getCacheFilePath();
+
+		//#if polish.android
+		File f = new File(path);
+		//if (! f.canWrite()) {
+		//	System.out.println("Can't write file cache file " + path);
+		//	return;
+		//}
+		OutputStream out = null;
+		try {
+
+			out = new FileOutputStream(f);
+			out.write(data, 0, data.length);
+			out.close();
+		} catch (Exception e) {
+			//logger.exception("Error writing file cache",e);
+			System.out.println("Error writing file cache: " + e);
+		}
+		//#endif
+	}
+
+	public void readFileCache() {
+		String path = getCacheFilePath();
+
+		// FIXME if file is too old, ignore
+
+		//#if polish.android
+		File f = new File(path);
+		if (f != null) {
+			int len = (int) f.length();
+			byte[] data = new byte[len];
+			InputStream in = null;
+			try {
+				int tot = 0;
+				in = new BufferedInputStream(new FileInputStream(f));
+				while(tot < data.length){
+					int rem = data.length - tot;
+					int readB = in.read(data, tot, rem);
+					if (readB > 0){
+						tot += readB;
+					}
+				}
+				in.close();
+				this.data = data;
+				System.out.println("Read file from file cache, length: " + len);
+			} catch (IOException e) {
+				System.out.println("Error reading file cache: " + e);
+			}
 		}
 		//#endif
 	}
