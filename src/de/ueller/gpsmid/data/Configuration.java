@@ -951,9 +951,6 @@ public class Configuration {
 			//#if polish.api.online
 			setCfgBitSavedState(CFGBIT_INTERNET_ACCESS, true);
 			//#endif			
-			//#if polish.api.finland
-			setCfgBitSavedState(CFGBIT_PREFER_OUTLINE_AREAS, true);
-			//#endif
 		}
 		if (configVersionStored < 32) {
 			//#if polish.android
