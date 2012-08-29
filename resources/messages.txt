@@ -1383,3 +1383,5 @@ guidiscover.TMSBackground=Use raster map as background
 travelmodes.ReittiopasPublic=Public/reittiopas
 travelmodes.ReittiopasCycle=Cycle/reittiopas
 guiwebinfo.editOSMWeb=Edit area in OSM web editor
+traceiconmenu.SaveRouteGpx=Save route as GPX
+trace.NoRoute=Route hasn't been calculated

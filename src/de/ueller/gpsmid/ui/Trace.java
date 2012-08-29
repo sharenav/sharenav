@@ -209,8 +209,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	protected static final int ROUTING_RECALC_CMD = 73;
 	protected static final int ROUTING_START_WITH_OPTIONAL_MODE_SELECT_CMD = 74;
 	protected static final int OPEN_MAP_CREDIT_URL = 75;
+	protected static final int SAVE_ROUTE_AS_GPX = 76;
 
-	private final Command [] CMDS = new Command[76];
+	private final Command [] CMDS = new Command[77];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -616,6 +617,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		CMDS[CMS_CMD] = new Command(Locale.get("trace.Tacho")/*Tacho*/, Command.ITEM, 100);
 		CMDS[TOGGLE_UNUSEABLEWAYS_DARKER] = new Command(Locale.get("trace.ToggleUnuseableWaysDarker")/*Toggle unuseable ways darker */, Command.ITEM, 100);
 		CMDS[OPEN_MAP_CREDIT_URL] = new Command(Locale.get("trace.showmapcredit")/*Show map credit/license webpage*/, Command.ITEM, 100);
+		CMDS[SAVE_ROUTE_AS_GPX] = new Command(Locale.get("traceiconmenu.SaveRouteGpx")/*Save route as GPX*/, Command.ITEM, 100);
 
 		addAllCommands();
 		
@@ -1705,6 +1707,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return;
 			}
 			
+			if (c == CMDS[SAVE_ROUTE_AS_GPX]) {
+				if (route != null) {
+					RouteInstructions.outputRouteAsGpx(route);
+				} else {
+					alert(Locale.get("guidiscovericonmenu.Routing"), Locale.get("trace.NoRoute")/*Route hasn't been calculated*/, 3000);
+				}
+				return;
+			}
 			if (c == CMDS[ROUTING_START_CMD]) {
 				startRouting();
 				return;

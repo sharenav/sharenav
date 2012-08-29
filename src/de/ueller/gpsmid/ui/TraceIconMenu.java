@@ -190,6 +190,8 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 		mp.createAndAddIcon(Locale.get("traceiconmenu.SetDest")/*Set dest*/, "i_setdest", Trace.SET_DEST_CMD);
 		mp.createAndAddIcon(Locale.get("traceiconmenu.ShowDest")/*Show dest*/, "i_showdest", Trace.SHOW_DEST_CMD);		
 		mp.createAndAddIcon(Locale.get("traceiconmenu.ClearDest")/*Clear dest*/, "i_cleardest", Trace.CLEAR_DEST_CMD);		
+		// FIXME add separate icon for saving route as GPX
+		mp.createAndAddIcon(Locale.get("traceiconmenu.SaveRouteGpx")/*Save route as GPX*/, "i_rectrack0", Trace.SAVE_ROUTE_AS_GPX);
 		mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_FAVORITES_IN_ROUTE_ICON_MENU)) {
 			addFavoritesToRoutingMenu(mp);
