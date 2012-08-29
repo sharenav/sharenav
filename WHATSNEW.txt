@@ -1,3 +1,5 @@
+    - bugfix for trace icon menu crash on non-touch phones with no internet access
+      (full-connected with internet access switched off in GpsMid menu, non-connected versions)
     - possibility to open area for editing OSM data in web browser, default editor is
       currently Potlatch in openstreetmap.org
     - some TMS (Tile Map Server, a raster map format) support;
