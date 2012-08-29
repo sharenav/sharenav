@@ -117,7 +117,7 @@ public class RasterTile implements UploadListener {
 		if (image != null) {
 			return image;
 		}
-		if (data != null) {
+		if (data != null && data.length > 5) {
 			Image image = Image.createImage(data, 0, data.length);
 			this.image = image;
 			// System.out.println("Image length: " + data.length);
@@ -360,6 +360,9 @@ public class RasterTile implements UploadListener {
 		File f = new File(path);
 		if (f != null) {
 			int len = (int) f.length();
+			if (len <= 5) {
+				return;
+			}
 			byte[] data = new byte[len];
 			InputStream in = null;
 			try {
