@@ -53,7 +53,11 @@ public class RasterTile implements UploadListener {
 	private byte data[] = null;
 	private Image image = null;
 
+	//#if polish.android
+	private static final int cacheSize = 20;
+	//#else
 	private static final int cacheSize = 100;
+	//#endif
 	private static int cacheCount = 0;
 	private static RasterTile[] rasterCache = null;
 	private static int numThreads = 0;
