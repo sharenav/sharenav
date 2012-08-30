@@ -39,6 +39,7 @@ import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.NullPointerException;
 //#endif
 
 public class RasterTile implements UploadListener {
@@ -133,10 +134,17 @@ public class RasterTile implements UploadListener {
 	public void draw(PaintContext pc, int xSize, int ySize) {
 		Image image = getImage();
 		if (image != null) {
-			pc.g.drawImage(image,
-				       xSize / 2 - xDiff,
-				       ySize / 2 - yDiff,
-				       Graphics.LEFT | Graphics.TOP);
+			// apparently if image is corrupted, we get a NPU at Graphics.java
+			// on Android (Bitmap bitmap = img.getBitmap(); int width = bitmap.getWidth();)
+			// when bitmap is null; catch and ignore it
+
+			try {
+				pc.g.drawImage(image,
+					       xSize / 2 - xDiff,
+					       ySize / 2 - yDiff,
+					       Graphics.LEFT | Graphics.TOP);
+			} catch (NullPointerException npe) {
+			}
 		}
 		//System.out.println("Drawing: xDiff = " + xDiff + " yDiff = " + yDiff);
 		//System.out.println("Drawing: xDiff%256 = " + xDiff % 256 + " yDiff%256 = " + yDiff % 256);
