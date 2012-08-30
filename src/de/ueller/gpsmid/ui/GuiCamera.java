@@ -567,15 +567,29 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 	public void keyReleased(int keyCode) {
 		logger.info("Released key code " + keyCode + " in Camera GUI");
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			cameraOff(null);
+			parent.show();
+		}
+	}
+	//#endif
+
+	public void cameraOff(Displayable disp) {
+		//#if polish.android
+		if (camera != null) {
+			camera.stopPreview();
+			camera.release();
+			camera = null;
+		}
+		exitPreview();
+		//#endif
+		if (disp == this || disp == null) {
 			//#if polish.api.mmapi
 			if (mPlayer != null) {
 				mPlayer.close();
 			}
 			//#endif
-			parent.show();
 		}
 	}
-	//#endif
 
 	public void commandAction(Command c, Item i) {
 //		 forward item command action to form
@@ -585,20 +599,8 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 	
 	public void commandAction(Command c, Displayable disp) {
 		if (c == CANCEL_CMD || c == OK2_CMD) {
-			//#if polish.android
-			exitPreview();
-			if (camera != null) {
-				camera.stopPreview();
-				camera.release();
-				camera = null;
-			}
-			//#endif
+			cameraOff(disp);
 			if (disp == this) {
-				//#if polish.api.mmapi
-				if (mPlayer != null) {
-					mPlayer.close();
-				}
-				//#endif
 				parent.show();
 			} else {
 				if (parent == null) {
