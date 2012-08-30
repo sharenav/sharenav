@@ -61,7 +61,7 @@ public class PoiTypeMenu extends ViewItem {
 		{
 			public boolean onKey(View v, int keyCode, KeyEvent event)
 			{
-				if (event.getAction() == KeyEvent.ACTION_DOWN)
+				if (event.getAction() == KeyEvent.ACTION_UP)
 				{
 					//check if the right key was pressed
 					if (keyCode == KeyEvent.KEYCODE_BACK)
@@ -70,6 +70,29 @@ public class PoiTypeMenu extends ViewItem {
 						caller.keySelectMenuCancel();
 						return true;
 					}
+				}
+				if (keyCode == KeyEvent.KEYCODE_BACK) {
+					return true;
+				}
+				return false;
+			}
+		});
+		listView.setOnKeyListener(new OnKeyListener()
+		{
+			public boolean onKey(View v, int keyCode, KeyEvent event)
+			{
+				if (event.getAction() == KeyEvent.ACTION_UP)
+				{
+					//check if the right key was pressed
+					if (keyCode == KeyEvent.KEYCODE_BACK)
+					{
+						//Trace.getInstance().commandAction(Trace.BACK_CMD);
+						caller.keySelectMenuCancel();
+						return true;
+					}
+				}
+				if (keyCode == KeyEvent.KEYCODE_BACK) {
+					return true;
 				}
 				return false;
 			}
