@@ -144,6 +144,8 @@ public class RasterTile implements UploadListener {
 					       ySize / 2 - yDiff,
 					       Graphics.LEFT | Graphics.TOP);
 			} catch (NullPointerException npe) {
+				data = null;
+				image = null;
 			}
 		}
 		//System.out.println("Drawing: xDiff = " + xDiff + " yDiff = " + yDiff);
