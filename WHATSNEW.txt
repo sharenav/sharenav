@@ -16,6 +16,7 @@
       because of barriers before the destination way 
     *** Android Support ***
     - back key to exit from camera preview no longer crashes GpsMid
+    - unintentional back key exit prevented also in OSM Poi entry and maybe other places
     - camera rotation should now be correct
 
 GpsMid 0.8
