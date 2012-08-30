@@ -385,11 +385,14 @@ public class RasterTile implements UploadListener {
 
 		// FIXME if file is too old, ignore
 
+		// System.out.println("Checking if file is in file cache");
+
 		//#if polish.android
 		File f = new File(path);
 		if (f != null) {
 			int len = (int) f.length();
 			if (len <= 5) {
+				//System.out.println("File length is too short, not reading tile, length: " + len);
 				return;
 			}
 			byte[] data = new byte[len];
@@ -406,9 +409,9 @@ public class RasterTile implements UploadListener {
 				}
 				in.close();
 				this.data = data;
-				// System.out.println("Read file from file cache, length: " + len);
+				//System.out.println("Read tile from file cache, length: " + len);
 			} catch (IOException e) {
-				// System.out.println("Error reading file cache: " + e);
+				System.out.println("Error reading file cache: " + e);
 			}
 		}
 		//#endif
