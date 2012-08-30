@@ -518,7 +518,7 @@ public class SingleTile extends Tile implements QueueableTile {
 				}
 				//#endif
 				//#endif
-				if (Legend.enableUrlTags && urlIdx[i] != -1 || Legend.enablePhoneTags && phoneIdx[i] != -1 || Legend.isNodeClickable(t)) {
+				if (urlIdx != null && phoneIdx != null && (Legend.enableUrlTags && urlIdx[i] != -1 || Legend.enablePhoneTags && phoneIdx[i] != -1 || Legend.isNodeClickable(t))) {
 					int dia = Configuration.getTouchMarkerDiameter();
 					// FIXME create a specific color (semi-transparent would be good) for this
 					pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE]);
