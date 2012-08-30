@@ -289,6 +289,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup mapSrc;
 	private ChoiceGroup mapSrcOptions;
 	private TextField  tfTMSUrl;
+	private TextField  tfFCPath;
 	private ChoiceGroup perfTuneOptions;
 	private ChoiceGroup tileMapOptions;
 	private ChoiceGroup rotationGroup;
@@ -552,8 +553,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//#style formItem
 		menuSelectMapSource.append(tileMapOptions);
 		tfTMSUrl = new TextField(Locale.get("guidiscover.TMSURL")/*Raster map URL:*/, Configuration.getTMSUrl(), 512, TextField.URL);
+		tfFCPath = new TextField(Locale.get("guidiscover.TMSFCPath")/*Raster map file cache path:*/, Configuration.getTMSFilecachePath(), 512, TextField.URL);
 
 		menuSelectMapSource.append(tfTMSUrl);
+		menuSelectMapSource.append(tfFCPath);
 		menuSelectMapSource.setCommandListener(this);
 	}
 
@@ -1515,6 +1518,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_TMS_BACKGROUND, tileMapOptions.isSelected(0));
 
 		Configuration.setTMSUrl(tfTMSUrl.getString());
+		Configuration.setTMSFilecachePath(tfFCPath.getString());
 
 		rereadMap();
 		//logger.fatal(Locale.get("guidiscover.NeedRestart")/*Need to restart GpsMid, otherwise map is in an inconsistant state*/ + " " + Configuration.getMapUrl());
