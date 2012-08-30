@@ -53,6 +53,7 @@ public class RasterTile implements UploadListener {
 	private int yDiff = 0;
 	private byte data[] = null;
 	private Image image = null;
+	private boolean corrupt = false;
 
 	//#if polish.android
 	private static final int cacheSize = 20;
@@ -134,9 +135,10 @@ public class RasterTile implements UploadListener {
 	public void draw(PaintContext pc, int xSize, int ySize) {
 		Image image = getImage();
 		if (image != null) {
-			// apparently if image is corrupted, we get a NPU at Graphics.java
+			// apparently if image is corrupted, we get a NPE at Graphics.java
 			// on Android (Bitmap bitmap = img.getBitmap(); int width = bitmap.getWidth();)
-			// when bitmap is null; catch and ignore it
+			// when bitmap is null; catch and mark tile as corrupt. A reload is tried,
+			// and if it's still corrupt, it's ignored.
 
 			try {
 				pc.g.drawImage(image,
@@ -144,8 +146,12 @@ public class RasterTile implements UploadListener {
 					       ySize / 2 - yDiff,
 					       Graphics.LEFT | Graphics.TOP);
 			} catch (NullPointerException npe) {
-				data = null;
-				image = null;
+				System.out.println("NPE drawing raster tile " + getTileString() + ", corrupt: " + corrupt);
+				if (!corrupt) {
+					data = null;
+					image = null;
+				}
+				corrupt = true;
 			}
 		}
 		//System.out.println("Drawing: xDiff = " + xDiff + " yDiff = " + yDiff);
@@ -177,6 +183,13 @@ public class RasterTile implements UploadListener {
 		}
 		if (cacheCount >= cacheSize) {
 			cacheCount = 0;
+		}
+		// don't overwrite a tile which is being retrieved
+		while (rasterCache[cacheCount] != null && rasterCache[cacheCount].retrieving) {
+			cacheCount++;
+			if (cacheCount >= cacheSize) {
+				cacheCount = 0;
+			}
 		}
 		rasterCache[cacheCount++] = tile;
 	}
@@ -241,7 +254,7 @@ public class RasterTile implements UploadListener {
 							tile.retrieving = true;
 							while (numThreads >= MAXTHREADS) {
 								try {
-									Thread.sleep(20);
+									Thread.sleep(100);
 								} catch (InterruptedException ie) {
 								}
 							}
@@ -251,7 +264,9 @@ public class RasterTile implements UploadListener {
 							tile.retrieving = false;
 						}
 					});
-					t.start();
+					if (numThreads < (cacheSize - MAXTHREADS)) {
+						t.start();
+					}
 				}
 				if (tile.data != null) {
 					tile.draw(pc, xSize, ySize);
@@ -289,7 +304,7 @@ public class RasterTile implements UploadListener {
 		if (retrieved) {
 			data = http.getBinaryData();
 			writeFileCache();
-			// System.out.println("Loaded tile: " + url);
+			System.out.println("Loaded tile: " + url + " length: " + data.length);
 		}
 		//#endif
 	}
