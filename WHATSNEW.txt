@@ -16,6 +16,7 @@
       because of barriers before the destination way 
     *** Android Support ***
     - back key to exit from camera preview no longer crashes GpsMid
+    - camera rotation should now be correct
 
 GpsMid 0.8
     *** Map Performance ***

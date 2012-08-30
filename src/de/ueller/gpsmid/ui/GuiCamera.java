@@ -62,6 +62,7 @@ import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import de.enough.polish.android.midlet.MidletBridge;
+import java.lang.reflect.Method;
 //#endif
 
 /**
@@ -145,6 +146,22 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 	}
 
 	//#if polish.android
+	protected void setDisplayOrientation(Camera camera, int angle){
+		Method downPolymorphic;
+		try
+		{
+			downPolymorphic = camera.getClass().getMethod("setDisplayOrientation", new Class[] { int.class });
+			if (downPolymorphic != null) {
+				if (angle == 270) {
+					angle = 360 - angle;
+				}
+				downPolymorphic.invoke(camera, new Object[] { angle });
+			}
+		}
+		catch (Exception e1)
+		{
+		}
+	}
 	SurfaceHolder.Callback surfaceCallback=new SurfaceHolder.Callback() {
 		public void surfaceCreated(SurfaceHolder holder) {
 		}
@@ -181,6 +198,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 			//
 		}
 		surfaceView.requestFocus();
+		setDisplayOrientation(camera, (360 + Trace.getInstance().getAndroidRotationAngle() - 90) % 360);
 		camera.startPreview();
 	}
 	//#endif
@@ -354,6 +372,13 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 			uiView = null;
 		}
 
+	}
+
+	public void sizeChanged(int w, int h) {
+		Trace.getInstance().sizeChanged(w, h);
+		if (camera != null) {
+			setDisplayOrientation(camera, (360 + Trace.getInstance().getAndroidRotationAngle() - 90) % 360);
+		}
 	}
 
 	public void onPictureTaken(byte[] data, Camera camera) {
