@@ -1389,3 +1389,4 @@ guigpx.Route=Use as route
 guigpx.Route2=Use this track as a route
 guidiscover.BackgroundDisableAreas=Disable areas when background map is shown
 guidiscover.BackgroundDisableBuildings=Disable buildings when background map is shown
+guidiscover.TMSFCPath=Raster map file cache base path:
