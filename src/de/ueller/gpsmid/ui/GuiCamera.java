@@ -59,6 +59,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import de.enough.polish.android.midlet.MidletBridge;
 //#endif
@@ -152,6 +153,22 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 					   int format, int width,
 					   int height) {
 			startPreview();
+			surfaceView.setFocusable(true);
+			surfaceView.setFocusableInTouchMode(true);
+			surfaceView.requestFocus();
+			surfaceView.setOnKeyListener(new OnKeyListener()
+			{
+				public boolean onKey(View v, int keyCode, KeyEvent event) {
+					if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+						keyReleased(keyCode);
+						return true;
+					}
+					if (keyCode == KeyEvent.KEYCODE_BACK) {
+						return true;
+					}
+					return false;
+				}
+			});
 		}
     
 		public void surfaceDestroyed(SurfaceHolder holder) {
@@ -590,6 +607,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 			//#endif
 		}
 	}
+
 
 	public void commandAction(Command c, Item i) {
 //		 forward item command action to form
