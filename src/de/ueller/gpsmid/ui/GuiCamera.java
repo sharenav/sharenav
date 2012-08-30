@@ -358,7 +358,6 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 
 	public void onPictureTaken(byte[] data, Camera camera) {
 		photo = data;
-		exitPreview();
 		addCommand(OK2_CMD);
 		//GpsMid.getInstance().show(this);
 		try {
@@ -385,6 +384,8 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		} catch (NullPointerException npe) {
 			logger.exception(Locale.get("guicamera.FailedToTakePicture")/*Failed to take a picture*/, npe);
 		}
+		cameraOff(null);
+		parent.show();
 	}
 	//#endif
 	private void takePicture135() throws SecurityException {
