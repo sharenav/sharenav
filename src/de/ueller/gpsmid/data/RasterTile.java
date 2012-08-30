@@ -56,7 +56,7 @@ public class RasterTile implements UploadListener {
 	private boolean corrupt = false;
 
 	//#if polish.android
-	private static final int cacheSize = 20;
+	private static final int cacheSize = 40;
 	//#else
 	private static final int cacheSize = 100;
 	//#endif
@@ -292,7 +292,7 @@ public class RasterTile implements UploadListener {
 		retrieved = false;
 		//#if polish.api.online
 		HttpHelper http = new HttpHelper();
-		// System.out.println("Getting tile: " + url);
+		System.out.println("Getting tile: " + url);
 		http.getURL(url, this, true);
 		try {
 			if (!retrieved) {
