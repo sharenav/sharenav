@@ -63,7 +63,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 33;
+	public final static int VERSION = 34;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -450,6 +450,7 @@ public class Configuration {
 	private static final int RECORD_ID_CFGBITS_128_TO_191 = 58;
 	private static final int RECORD_ID_ALTITUDE_CORRECTION = 59;
 	private static final int RECORD_ID_TMS_URL = 60;
+	private static final int RECORD_ID_TMS_FILECACHE_PATH = 61;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -534,6 +535,7 @@ public class Configuration {
 	private static String osm_url;
 
 	private static String tms_url;
+	private static String tms_filecache_path;
 
 	private static String opencellid_apikey;
 
@@ -688,6 +690,16 @@ public class Configuration {
 			tms_url = readString(database, RECORD_ID_TMS_URL);
 			if (tms_url == null) {
 				tms_url = "";
+			}
+
+			tms_filecache_path = readString(database, RECORD_ID_TMS_FILECACHE_PATH);
+			if (tms_filecache_path == null) {
+				//#if polish.android
+				tms_filecache_path = "/sdcard/GpsMid/tiles/";
+				//#else
+				// tms_filecache_path = "E:\\GpsMid\\tiles\\"; which format?
+				tms_filecache_path = "E:/GpsMid/tiles/";
+				//#endif
 			}
 
 			/* close the record store before accessing it nested for writing
@@ -2031,6 +2043,10 @@ public class Configuration {
 		return tms_url;
 	}
 	
+	public static String getTMSFilecachePath() {
+		return tms_filecache_path;
+	}
+	
 	public static void setOsmUrl(String url) {
 		osm_url = url;
 		write(url, RECORD_ID_OSM_URL);
@@ -2039,6 +2055,11 @@ public class Configuration {
 	public static void setTMSUrl(String url) {
 		tms_url = url;
 		write(url, RECORD_ID_TMS_URL);
+	}
+
+	public static void setTMSFilecachePath(String path) {
+		tms_filecache_path = path;
+		write(path, RECORD_ID_TMS_FILECACHE_PATH);
 	}
 
 	public static String getOpencellidApikey() {
@@ -2592,6 +2613,7 @@ public class Configuration {
 		dos.writeInt(getTimeDiff());
 		dos.writeInt(getAltitudeCorrection());
 		dos.writeUTF(sanitizeString(tms_url));
+		dos.writeUTF(sanitizeString(tms_filecache_path));
 		/*
 		 * Don't store destpos in export - perhaps later add a function for "move the app" which would store also destpos
 		dos.writeUTF(Float.toString(destPos.radlat));
@@ -2690,6 +2712,9 @@ public class Configuration {
 		}
 		if (version >= 33) {
 			setTMSUrl(desanitizeString(dis.readUTF()));
+		}
+		if (version >= 34) {
+			setTMSFilecachePath(desanitizeString(dis.readUTF()));
 		}
 		applyDefaultValues(version);
 	}
