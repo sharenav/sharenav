@@ -4651,20 +4651,23 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return false;
 			}
 		});
+		androidView.setFocusable(true);
+		androidView.setFocusableInTouchMode(true);
+		androidView.requestFocus();
 		androidView.setOnTouchListener(this);
 	}
 	//#endif
 
 	public void show() {
-		//#if polish.android
-		activateAndroidListeners();
-		//#endif
 		//Display.getDisplay(parent).setCurrent(this);
 		Legend.freeDrawnWayAndAreaSearchImages();
 		GpsMid.getInstance().show(this);
 		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN));
 		updateLastUserActionTime();
 		repaint();
+		//#if polish.android
+		activateAndroidListeners();
+		//#endif
 	}
 	
 	public void recreateTraceLayout() {
