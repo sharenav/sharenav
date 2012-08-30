@@ -1,16 +1,16 @@
-    ** Map Display **
+    *** Map Display ***
     - some TMS (Tile Map Server, a raster map format) support;
       if a valid TMS url is configured and TMS background
       map option is on, TMS map (actually apparently not exactly TMS
       as tile numbering by OSM, Google etc. goes a bit differently).
       There's some simple in-memory caching, but no caching to sdcard yet.
-   ** OSM Editing **
+    *** OSM Editing ***
     - possibility to open area for editing OSM data in web browser, default editor is
       currently Potlatch in openstreetmap.org
-   ** Various bug fixes **
+    *** Various bug fixes ***
     - bugfix for trace icon menu crash on non-touch phones with no internet access
       (full-connected with internet access switched off in GpsMid menu, non-connected versions)
-   ** Removal of barrier support **
+    *** Removal of barrier support ***
     - Removing route connections because of barriers is disabled for now.
       It requires a solution first for too many POIs becoming unreachable
       because of barriers before the destination way 
