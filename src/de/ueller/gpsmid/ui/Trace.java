@@ -33,6 +33,8 @@ import javax.microedition.lcdui.TextField;
 //#if polish.android
 import de.enough.polish.android.lcdui.AndroidDisplay;
 import android.content.Context;
+import android.graphics.Region;
+import android.graphics.Region.Op;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.util.FloatMath;
@@ -2582,6 +2584,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			int yc = 1;
 			int la = 18;
 			getPC();
+			//#if polish.api.paintdirect
+			g.getCanvas().clipRect(0, 0, this.getWidth(), this.getHeight(), Region.Op.REPLACE);
+			//#endif
 			// cleans the screen
 			g.setColor(Legend.COLORS[Legend.COLOR_MAP_BACKGROUND]);
 			g.fillRect(0, 0, this.getWidth(), this.getHeight());
@@ -2593,7 +2598,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				 *  as we need to base the routing instructions on the information
 				 *  determined during the way drawing (e.g. the current routePathConnection)
 				 */
+				//#if polish.api.paintdirect
+				Node drawnCenter = imageCollector.paintDirect(pc);
+				//#else
 				Node drawnCenter = imageCollector.paint(pc);
+				//#endif
 				if (route != null && ri != null && pc.lineP2 != null && pc.getP() != null/*avoids exception at route calc*/) {
 					pc.getP().forward(drawnCenter.radlat, drawnCenter.radlon, pc.lineP2);
 					/*

@@ -127,7 +127,9 @@ public class ImageCollector implements Runnable {
 		//#else
 		processorThread.setPriority(Thread.MIN_PRIORITY);
 		//#endif
+		//#if not polish.api.paintdirect
 		processorThread.start();
+		//#endif
 	}
 
 	public void run() {
@@ -445,6 +447,240 @@ public class ImageCollector implements Runnable {
 		}
 	}
 
+	//#if polish.api.paintdirect
+	public Node paintDirect(PaintContext createPC) {
+		tr.resetClickableMarkers();
+
+		iDrawState = 2;
+
+		long startTime = System.currentTimeMillis();
+
+//				Projection p = ProjFactory.getInstance(createPC.center, 
+//						nextSc.course, nextSc.scale, xSize, ySize);
+//				p.inverse(xSize, 0, createPC.screenRU);
+//				p.inverse(0, ySize, createPC.screenLD);
+		// pcCollect.trace = nextSc.trace;
+		// pcCollect.dataReader = nextSc.dataReader;
+		// cleans the screen
+		//jkp createPC.g = img[nextCreate].getGraphics();
+		//jkp createPC.g.setColor(Legend.COLORS[Legend.COLOR_MAP_BACKGROUND]);
+		// createPC.g.fillRect(0, 0, xSize, ySize);
+				
+//				createPC.g.setColor(0x00FF0000);
+//				createPC.g.drawRect(0, 0, xSize - 1, ySize - 1);
+//				createPC.g.drawRect(20, 20, xSize - 41, ySize - 41);
+		createPC.squareDstWithPenToWay = Float.MAX_VALUE;
+		createPC.squareDstWithPenToActualRoutableWay = Float.MAX_VALUE;
+		createPC.squareDstWithPenToRoutePath = Float.MAX_VALUE;
+		createPC.squareDstToRoutePath = Float.MAX_VALUE;
+		createPC.dest = nextSc.dest;
+		createPC.waysPainted = 0;
+		//Projection p = ProjFactory.getInstance(createPC.center, nextSc.course, nextSc.scale, xSize,
+		//				       (createPC.trace.isShowingSplitScreen()) ? (int) (ySize / 2) : ySize);
+//		System.out.println("p  =" + p);
+		Projection p = ProjFactory.getInstance(createPC.center,
+				createPC.course, createPC.scale, xSize,
+							(createPC.trace.isShowingSplitScreen()) ? (int) (ySize / 2) : ySize);
+		Projection p1 = p;
+		createPC.setP(p);
+				
+		// System.out.println("create " + pcCollect);
+				
+		Way.setupDirectionalPenalty(createPC, tr.speed, tr.gpsRecenter && !tr.gpsRecenterInvalid);
+
+
+		float boost = Configuration.getMaxDetailBoostMultiplier();
+				
+		/*
+		 * layers containing highlighted path segments
+		 */
+		createPC.hlLayers = 0;
+				
+		/*
+		 * highlighted path is on top if gps recentered, but if not it might still come to top
+		 * when we determine during painting that the cursor is closer than 25 meters at the route line.
+		 */
+		createPC.highlightedPathOnTop = tr.gpsRecenter;
+				
+		/**
+		 * At the moment we don't really have proper layer support
+		 * in the data yet, so only split it into Area, Way and Node
+		 * layers
+		 */
+		byte layersToRender[] = { Tile.LAYER_AREA, 1 | Tile.LAYER_AREA , 2 | Tile.LAYER_AREA,
+					  3 | Tile.LAYER_AREA, 4 | Tile.LAYER_AREA,  0, 1, 2, 3, 4,
+					  Tile.LAYER_NODE, 
+					  0 | Tile.LAYER_HIGHLIGHT, 1 | Tile.LAYER_HIGHLIGHT,
+					  2 | Tile.LAYER_HIGHLIGHT, 3 | Tile.LAYER_HIGHLIGHT
+		};
+				
+		/**
+		 * Draw each layer separately to enforce paint ordering:
+		 *
+		 * Go through the entire tile tree multiple times
+		 * to get the drawing order correct.
+		 * 
+		 * The first 5 layers correspond to drawing areas with the osm
+		 * layer tag of  (< -1, -1, 0, 1, >1),
+		 * then next 5 layers are drawing streets with
+		 * osm layer tag (< -1, -1, 0, 1, >1).
+		 * 
+		 * Then we draw the highlighted streets
+		 * and finally we draw the POI layer.
+		 * 
+		 * So e. g. layer 7 corresponds to all streets that
+		 * have no osm layer tag or layer = 0.
+		 */
+		boolean simplifyMap = Configuration.getCfgBitState(Configuration.CFGBIT_SIMPLIFY_MAP_WHEN_BUSY);
+		boolean skippableLayer = false;
+		for (byte layer = 0; layer < layersToRender.length; layer++) {
+			if (simplifyMap) {
+				skippableLayer = 
+					((layer < 5 && layer > 1)
+					 //#if polish.api.finland
+					 // don't skip node layer where speed camera is if camera alert is o
+					 || (layer == 14 && !Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDCAMERA_ALERT))
+					 //#else
+					 || (layer == 14)
+					 //#endif
+					 //#if polish.android
+					 || (Trace.getInstance().mapBrowsing && ((layer < 5) || layer == 14))
+					 //#else
+					 || (Trace.getInstance().mapBrowsing && ((layer < 5 && layer > 1) || layer == 14))
+					 //#endif
+						);
+				// skip update if a new one is queued
+ 				if (needRedraw && skippableLayer) {
+					//continue;
+				}
+			}
+
+			// render only highlight layers which actually have highlighted path segments
+			if (
+				(layersToRender[layer] & Tile.LAYER_HIGHLIGHT) > 0
+				&& layersToRender[layer] != Tile.LAYER_NODE
+				) {
+				/**
+				 * as we do two passes for each way layer when gps recentered - one for the ways and one for the route line on top,
+				 * we can use in the second pass the determined route path connection / idx
+				 * to highlight the route line in the correct / prior route line color.
+				 * when not gps recentered, this info will be by one image obsolete however
+				 */ 
+				if (layersToRender[layer] == Tile.LAYER_HIGHLIGHT /*(0 | Tile.LAYER_HIGHLIGHT) pointless bitwise operation*/) {
+					/*
+					 *  only take ImageCollector loops into account for dstToRoutePath if ways were painted
+					 *  otherwise this would trigger wrong route recalculations
+					 */
+					if (createPC.waysPainted != 0) {
+						//RouteInstructions.dstToRoutePath = createPC.getDstFromSquareDst(createPC.squareDstToRoutePath);
+						RouteInstructions.dstToRoutePath = createPC.getDstFromRouteSegment();
+						if (RouteInstructions.dstToRoutePath != RouteInstructions.DISTANCE_UNKNOWN) {
+							RouteInstructions.routePathConnection = createPC.routePathConnection;
+							RouteInstructions.pathIdxInRoutePathConnection = createPC.pathIdxInRoutePathConnection;
+							RouteInstructions.actualRoutePathWay = createPC.actualRoutePathWay;
+							// when we determine during painting that the cursor is closer than 25 meters at the route line, bring it to the top
+							if (RouteInstructions.dstToRoutePath < 25) {
+								createPC.highlightedPathOnTop = true;
+							}
+						}
+						//System.out.println("waysPainted: " + createPC.waysPainted);
+					} else {
+						// FIXME: Sometimes there are ImageCollector loop with no way pained even when ways would be there and tile data is fully loaded
+						// Update 2011-06-11: Might be fixed with the patch from gojkos at [ gpsmid-Bugs-3310178 ] Delayed map draw on LG cookie phone
+						// Update 2012-03-17 (patch from walter9): The image collector has been started twice. This seems to be fixed now in Trace.java.startImageCollector()
+						System.out.println("No ways painted in this ImageCollector loop");
+					}
+				}
+				byte relLayer = (byte)(((int)layersToRender[layer]) & 0x0000000F);
+				if ( (createPC.hlLayers & (1 << relLayer)) == 0) {
+					continue;
+				}
+			}
+			minTile = Legend.scaleToTile((int)(createPC.scale / (boost * overviewTileScaleBoost) ));
+					
+			if (t[0] != null) {
+				if (needRedraw && skippableLayer) {
+					continue;
+				}
+				t[0].paint(createPC, layersToRender[layer]);
+				if (needRedraw && skippableLayer) {
+					continue;
+				}
+			}
+			if ((minTile >= 1) && (t[1] != null)) {
+				if (needRedraw && skippableLayer) {
+					continue;
+				}
+				t[1].paint(createPC, layersToRender[layer]);
+				if (needRedraw && skippableLayer) {
+					continue;
+				}
+				//Thread.yield();
+			}
+			if ((minTile >= 2) && (t[2] != null)) {
+				if (needRedraw && skippableLayer) {
+					continue;
+				}
+				t[2].paint(createPC, layersToRender[layer]);
+				if (needRedraw && skippableLayer) {
+					continue;
+				}
+				//Thread.yield();
+			}
+			if ((minTile >= 3) && (t[3] != null)) {
+				if (needRedraw && skippableLayer) {
+					continue;
+				}
+				t[3].paint(createPC, layersToRender[layer]);
+				if (needRedraw && skippableLayer) {
+					continue;
+				}
+				//Thread.yield();
+			}
+
+			/**
+			 * Drawing waypoints
+			 */
+			if (t[DictReader.GPXZOOMLEVEL] != null) {
+				t[DictReader.GPXZOOMLEVEL].paint(createPC, layersToRender[layer]);
+			}
+			if (suspended) {
+				// Don't continue rendering if suspended
+				createPC.state = PaintContext.STATE_READY;
+				break;
+			}
+		}
+		/**
+		 * Drawing debuginfo for routing
+		 */
+		if (!suspended && t[DictReader.ROUTEZOOMLEVEL] != null 
+		    && (Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS) 
+			|| Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS))) {
+			t[DictReader.ROUTEZOOMLEVEL].paint(createPC, (byte) 0);
+		}
+				
+		iDrawState = 0;
+
+		icDuration = System.currentTimeMillis() - startTime;
+		//#mdebug
+		logger.info("Painting map took " + icDuration + " ms");
+		//#enddebug
+		System.out.println("Painting map took " + icDuration + " ms " + xSize + "/" + ySize);
+
+		createPC.state = PaintContext.STATE_READY;
+		//lastCreatedSc=createPC.cloneToScreenContext();
+		if (!shutdown) {
+			//newCollected();
+		}
+		createImageCount++;				
+		//needRedraw = false;
+		//tr.cleanup();
+		// System.out.println("create ready");
+		//System.gc();
+		return createPC.center.copy();
+	}
+	//#endif
+
 	public void suspend() {
 		suspended = true;
 	}
@@ -478,7 +714,9 @@ public class ImageCollector implements Runnable {
 		//#else
 		processorThread.setPriority(Thread.MIN_PRIORITY);
 		//#endif
+		//#if not polish.api.paintdirect
 		processorThread.start();
+		//#endif
 	}
 
 	/** copy the last created image to the real screen
