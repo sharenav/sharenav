@@ -1,19 +1,23 @@
     *** Map Display ***
-    - some TMS (Tile Map Server, a raster map format) support;
-      if a valid TMS url is configured and TMS background
-      map option is on, TMS map (actually apparently not exactly TMS
-      as tile numbering by OSM, Google etc. goes a bit differently).
-      There's some simple in-memory caching, but no caching to sdcard yet.
+    - some support for on-the web raster map form; if a valid raster map url
+      is configured and raster background map option is on, the raster map
+      is shown as background to the normal vector map. Options for switching
+      areas & buildings off if background raster map is shown.
+      The map format is known also as TMS; although in strict terms it's not
+      TMS, as tile numbering in the de facto standard tile servers is different
+      than what's specified in TMS.
+      There's some simple in-memory caching for J2ME and file caching to sdcard
+      on Android (no file cache for J2ME yet).
     *** OSM Editing ***
     - possibility to open area for editing OSM data in web browser, default editor is
       currently Potlatch in openstreetmap.org
     *** Various bug fixes ***
     - bugfix for trace icon menu crash on non-touch phones with no internet access
       (full-connected with internet access switched off in GpsMid menu, non-connected versions)
-    *** Removal of barrier support ***
-    - Removing route connections because of barriers is disabled for now.
-      It requires a solution first for too many POIs becoming unreachable
-      because of barriers before the destination way 
+    *** Barrier support off by default***
+    - Removing route connections because of barriers is disabled by default for now,
+      as in some regions too many POIs becoming unreachable because of barriers before the
+      destination way. Barrier support can be switchen on with the .properties option useBarriers.
     *** Android Support ***
     - back key to exit from camera preview no longer crashes GpsMid
     - unintentional back key exit prevented also in OSM Poi entry and maybe other places
