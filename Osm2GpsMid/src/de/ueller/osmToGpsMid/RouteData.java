@@ -40,6 +40,8 @@ import de.ueller.osmToGpsMid.tools.FileTools;
 public class RouteData {
 	private OsmParser parser;
 	private String path;
+	private Configuration config;
+
 	public Map<Long, RouteNode> nodes = new HashMap<Long, RouteNode>();
 
 	public RouteData(OsmParser parser, String path) {
@@ -52,6 +54,7 @@ public class RouteData {
 		if (config.sourceIsApk) {
 			this.path = this.path + "/assets";
 		}
+		this.config = config;
 		// reset connectedLineCount for each Node to 0
 		for (Node n:parser.getNodes()) {
 			n.resetConnectedLineCount();
@@ -430,7 +433,7 @@ public class RouteData {
 				 * It requires a solution first for too many POIs becoming unreachable
 				 * because of barriers before the destination way
 				 */
-				if (false) {
+				if (config.useBarriers) {
 				// check for barriers in non-area ways
 //				if (!w.isArea()) {
 					int a = 0;

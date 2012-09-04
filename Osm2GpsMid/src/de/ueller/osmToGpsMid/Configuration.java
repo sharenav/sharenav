@@ -432,6 +432,9 @@ public class Configuration {
 		public boolean triangleAreaFormat = true; 
 		public boolean writeTriangleAreaFormat = true; 
 
+		/** Do we honor barriers */
+		public boolean useBarriers = true;
+
 		/** Path name of the style-file */
 		public String styleFile;
 
@@ -772,6 +775,7 @@ public class Configuration {
 			signApk = getString("signApk").equalsIgnoreCase("true");
 			jarsignerPath = getString("jarsignerPath");
 			triangleAreaFormat = getString("triangleAreaFormat").equalsIgnoreCase("true");
+			useBarriers = getString("useBarriers").equalsIgnoreCase("true");
 			writeTriangleAreaFormat = getString("triangleAreaFormat").equalsIgnoreCase("true");
 			outlineAreaFormat = getString("outlineAreaFormat").equalsIgnoreCase("true");
 			if (outlineAreaFormat && !triangleAreaFormat) {
@@ -1617,6 +1621,7 @@ public class Configuration {
 			confString += "  Map precision in meters: " + mapPrecisionInMeters + "\n";
 			confString += "  triangleAreaFormat: " + triangleAreaFormat + "\n";
 			confString += "  outlineAreaFormat: " + outlineAreaFormat + "\n";
+			confString += "  useBarriers: " + useBarriers + "\n";
 			confString += "  Adding menu entries for languages: " + getUseLang() + " (" + getUseLangName() + ")" + "\n";
 			confString += "  Don't compress files ending with: " + getDontCompress() + "\n";
 			if (allLang) {

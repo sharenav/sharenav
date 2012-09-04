@@ -1145,6 +1145,10 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("useRouting = " + config.useRouting + "\r\n");
 			fw.write("\r\n");
 			
+			fw.write("# Honor barriers when building routing information.\r\n");
+			fw.write("useBarriers = " + config.useBarriers + "\r\n");
+			fw.write("\r\n");
+
 			fw.write("# Build word indexes.\r\n");
 			fw.write("useWordSearch = " + config.getUseWordSearch() + "\r\n");
 			fw.write("\r\n");			

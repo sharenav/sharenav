@@ -90,6 +90,7 @@
         <entry key="useSeaTiles" value="false"/>
         <entry key="outlineAreaFormat" value="false"/>
         <entry key="triangleAreaFormat" value="true"/>
+        <entry key="useBarriers" value="false"/>
         <entry key="signApk" value="false"/>
         <entry key="jarsignerPath" value="jarsigner"/>
         <entry key="signApkPassword" value=""/>

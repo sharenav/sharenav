@@ -18,6 +18,8 @@
     - back key to exit from camera preview no longer crashes GpsMid
     - unintentional back key exit prevented also in OSM Poi entry and maybe other places
     - camera rotation should now be correct
+    *** Osm2GpsMid / Osm2GpsMid GUI ***
+    - add .properties option for honoring barriers, useBarriers
 
 GpsMid 0.8
     *** Map Performance ***
