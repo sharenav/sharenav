@@ -433,9 +433,8 @@ public class RouteData {
 				 * It requires a solution first for too many POIs becoming unreachable
 				 * because of barriers before the destination way
 				 */
-				if (config.useBarriers) {
 				// check for barriers in non-area ways
-//				if (!w.isArea()) {
+				if (config.useBarriers && !w.isArea()) {
 					int a = 0;
 					boolean fromNodeFound = false;
 					boolean toNodeFound = false;
