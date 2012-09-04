@@ -4,7 +4,7 @@
 #
 
 user=SOURCEFORGE_USERNAME_HERE
-ver=0.8.00-map72
+ver=0.8.0-map72
 . ./android.properties
 
 ant clean
