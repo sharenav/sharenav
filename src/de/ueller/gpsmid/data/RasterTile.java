@@ -304,15 +304,17 @@ public class RasterTile implements UploadListener {
 		if (retrieved) {
 			data = http.getBinaryData();
 			writeFileCache();
-			System.out.println("Loaded tile: " + url + " length: " + data.length);
+			// System.out.println("Loaded tile: " + url + " length: " + data.length);
 		}
 		//#endif
 	}
 
 	public String getCacheFilePath() {
-		// FIXME allow configurability of path
-
-		String path = "/sdcard/GpsMid/tiles/" + "default"
+		String path = Configuration.getTMSFilecachePath()
+			// FIXME instead of "default", use subdirectory
+			// name taken from the URL so the cache will work
+			// even if user switches map providers
+			+ "default"
 			+ "/%z/%x/%y.png";
 		path = HelperRoutines.replaceAll(path, "%z", "" + this.zoom);
 		path = HelperRoutines.replaceAll(path, "%x", "" + this.x);
@@ -325,21 +327,15 @@ public class RasterTile implements UploadListener {
 		// FIXME move creation of top-level dirs to the time
 		// of switching net-based raster maps on
 
-		String path = "/sdcard/GpsMid/";
-		checkAndCreate(path);
-		path = "/sdcard/GpsMid/tiles/";
-		checkAndCreate(path);
-		path = "/sdcard/GpsMid/tiles/" + "default";
-		checkAndCreate(path);
-		path = "/sdcard/GpsMid/tiles/" + "default"
-			+ "/%z";
-		path = HelperRoutines.replaceAll(path, "%z", "" + this.zoom);
-		checkAndCreate(path);
-		path = "/sdcard/GpsMid/tiles/" + "default"
-			+ "/%z/%x";
-		path = HelperRoutines.replaceAll(path, "%z", "" + this.zoom);
-		path = HelperRoutines.replaceAll(path, "%x", "" + this.x);
-		checkAndCreate(path);
+		String path = getCacheFilePath();
+
+		int ind = 0;
+		String subPath = path;
+		while ((ind = subPath.lastIndexOf('/')) > 0) {
+			subPath = subPath.substring(0, ind);
+			checkAndCreate(subPath);
+			// System.out.println("subPath: " + subPath);
+		}
 	}
 
 	public void checkAndCreate(String path) {
@@ -356,7 +352,9 @@ public class RasterTile implements UploadListener {
 		if (data == null) {
 			return;
 		}
+		//#if polish.android
 		createDirs();
+		//#endif
 		// write the tile to a cache file
 
 		String path = getCacheFilePath();
