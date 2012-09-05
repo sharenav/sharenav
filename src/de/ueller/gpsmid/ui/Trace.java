@@ -1137,13 +1137,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		//#endif
 		addCommand(CMDS[SETUP_CMD]);
 		addCommand(CMDS[ABOUT_CMD]);
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
-			if (!Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {
-				//#ifndef polish.android
-				super.addCommand(CMDS[ICON_MENU]);
-				//#endif
-			}
-		}
+		// if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
+		// if (!Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {
+		// //#ifndef polish.android
+		// super.addCommand(CMDS[ICON_MENU]);
+		// //#endif
+		// }
+		// }
 		setCommandListener(this);
 	}
 	
