@@ -3,7 +3,7 @@
 # build Osm2GpsMid & GpsMid midlets for signing
 #
 
-numver=0.8
+numver=0.8.1
 ver=$numver-map72
 map=Berlin
 
@@ -42,6 +42,8 @@ done
 cp -p dist/Osm2GpsMid-$ver.jar .
 
 mkdir "Release $numver"
+mkdir "Release $numver/debug"
+
 cp GpsMid-Generic-{blackberry,full-connected,full,midsize,minimal}-$ver.{ja?,apk} README.mkd WHATSNEW.txt Osm2GpsMid-$ver.jar "Release $numver"
 
 # debug version build
@@ -70,11 +72,12 @@ do
   java -Xmx1024m -jar dist/Osm2GpsMid-$ver.jar --nogui --properties=Osm2GpsMid/mapdef/$map-android-$target
 done
 
+mkdir debug
 for i in Gps*-$ver.{ja?,apk}
 do
-   mv $i `echo $i|sed 's/GpsMid-Generic/GpsMid-Generic-debug/'`
+   mv $i debug
 done
 
-cp GpsMid-Generic-debug-{blackberry,full-connected,full,midsize,minimal}-$ver.{ja?,apk} README.mkd WHATSNEW.txt "Release $numver"
+cp debug/GpsMid-Generic-{blackberry,full-connected,full,midsize,minimal}-$ver.{ja?,apk} "Release $numver/debug"
 
 chmod -R g+w "Release $numver"
