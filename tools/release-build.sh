@@ -3,7 +3,7 @@
 # build Osm2GpsMid & GpsMid midlets for signing
 #
 
-numver=0.8.1
+numver=0.8.2
 ver=$numver-map72
 map=Berlin
 

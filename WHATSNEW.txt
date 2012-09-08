@@ -1,3 +1,4 @@
+GpsMid 0.8.2
     *** Map Display ***
     - some support for on-the web raster map form; if a valid raster map url
       is configured and raster background map option is on, the raster map
@@ -11,9 +12,6 @@
     *** OSM Editing ***
     - possibility to open area for editing OSM data in web browser, default editor is
       currently Potlatch in openstreetmap.org
-    *** Various bug fixes ***
-    - bugfix for trace icon menu crash on non-touch phones with no internet access
-      (full-connected with internet access switched off in GpsMid menu, non-connected versions)
     *** Barrier support off by default***
     - Removing route connections because of barriers is disabled by default for now,
       as in some regions too many POIs becoming unreachable because of barriers before the
@@ -22,8 +20,15 @@
     - back key to exit from camera preview no longer crashes GpsMid
     - unintentional back key exit prevented also in OSM Poi entry and maybe other places
     - camera rotation should now be correct
+
+GpsMid 0.8.1
+    *** Bug fixes ***
+    - bugfix for trace icon menu crash on non-touch phones with no internet access
+      (full-connected with internet access switched off in GpsMid menu, non-connected versions)
+    - possibe bugfix for startup trace crash issue on Nokia E72 when not in full-screen mode
+      and Gps activated and 
     *** Osm2GpsMid / Osm2GpsMid GUI ***
-    - add .properties option for honoring barriers, useBarriers
+    - add .properties option for honoring barriers, useBarriers; make option off by default
 
 GpsMid 0.8
     *** Map Performance ***
