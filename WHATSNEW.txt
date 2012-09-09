@@ -1,3 +1,7 @@
+ShareNav 0.8.3
+    *** Start of ShareNav code base ***
+    - Start development of ShareNav, based on the source code from GpsMid release 0.8.2
+
 GpsMid 0.8.2
     *** Map Display ***
     - some support for on-the web raster map form; if a valid raster map url
