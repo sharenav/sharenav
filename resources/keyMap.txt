@@ -1,6 +1,6 @@
 ; Mapping of keys to commands
 ; First number is the key code, see javax.microedition.lcdui.Canvas
-; Second number is GpsMid's internal command number, see de.ueller.midlet.gps.Trace
+; Second number is ShareNav's internal command number, see net.sharenav.midlet.gps.Trace
 
 [game]
 ; Arrow key and gaming-related events

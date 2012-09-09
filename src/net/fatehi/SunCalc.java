@@ -28,7 +28,7 @@ package net.fatehi;
 //
 
 // Needed for atan2
-import de.ueller.util.MoreMath;
+import net.sharenav.util.MoreMath;
 
 import de.enough.polish.util.Locale;
 
@@ -48,7 +48,7 @@ import de.enough.polish.util.Locale;
  * Based on
  * <a href="http://www.merrymeet.com/minow/sunclock/SunClock.html">SunClock</a>
  * by Martin Minow.
- * Minor changes (2.8 -> 2.9) for use in GpsMid by mbaeurle at users.sourceforge.net.
+ * Minor changes (2.8 -> 2.9) for use in ShareNav by mbaeurle at users.sourceforge.net.
  * @author <a href="mailto:sualeh@rocketmail.com?subject=SunCalc">Sualeh Fatehi</a>
  * @version 2.9
  */

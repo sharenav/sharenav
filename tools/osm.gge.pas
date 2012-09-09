@@ -13,18 +13,18 @@ end;
 
 function ExportDescription: string;
 begin
-  result := 'OSM data for GpsMid';
+  result := 'OSM data for ShareNav';
 end;
 
 function ExportHint: string;
 begin
-  result := 'OSM format for GpsMid (Osm2GpsMid). To be combined with regular OSM data with osmosis.';
+  result := 'OSM format for ShareNav (Osm2ShareNav). To be combined with regular OSM data with osmosis.';
 end;
 
 function ExportHeader: string;
 begin
   Result := '<?xml version="1.0" encoding="utf-8"?>' + CRLF;
-  Result := Result + '<osm version="0.5" generator="GeoGet OSM export for Osm2GpsMid">' + CRLF;
+  Result := Result + '<osm version="0.5" generator="GeoGet OSM export for Osm2ShareNav">' + CRLF;
   counter := 1;
 end;
 

@@ -1,8 +1,8 @@
-Installing GpsMid
+Installing ShareNav
 -----------------
-You need to choose the right variant of GpsMid for your phone.
-If you are unsure, try <GpsMid-Generic-full-0.8-map72> or read the Wiki page
-[http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=DevicesList](http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=DevicesList) 
+You need to choose the right variant of ShareNav for your phone.
+If you are unsure, try <ShareNav-Generic-full-0.8.3-map72> or read the Wiki page
+FIXME
 where users have collected their experiences with different phone models.
 
 Download the right JAR and JAD file for your variant and copy it to your
@@ -14,20 +14,30 @@ entry from its context menu.
 
 Map data
 --------
-<Osm2GpsMid-0.8-map72.jar> is needed to create the binary map data for GpsMid.
+<Osm2ShareNav-0.8.3-map72.jar> is needed to create the binary map data for ShareNav.
 Java 1.5 or later must be installed on your PC to run it.
 The process is explained here:
 [http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Getting_started](http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Getting_started)
 
-<Osm2GpsMid-0.8-map72-debug.jar> creates debug versions of GpsMid. Normally,
+<Osm2ShareNav-0.8.3-map72-debug.jar> creates debug versions of ShareNav. Normally,
 you won't need to use it.
 
-Alternatively, you can download pre-built map data from
-[http://gpsmid.sourceforge.net/prebuild/](http://gpsmid.sourceforge.net/prebuild/).
+
+Information from the GpsMid project
+-----------------------------------
+
+As ShareNav development started from code developed in the GpsMid project (version 0.8.2),
+if the projects haven't evolved too far from each other, it may be of help to look
+at the the Wiki pages of GpsMid:
+
+* [http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=DevicesList](http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=DevicesList)
+* [http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Getting_started](http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Getting_started)
+* [http://gpsmid.sourceforge.net/prebuild/](http://gpsmid.sourceforge.net/prebuild/ - prebuilt map data).
 
 The ZIP files you find there contain the map data. 
-Copy the one you want to your phone and configure GpsMid to read from this file 
-in Setup -> Map source.
+Copy the one you want to your phone and configure ShareNav to read from this file 
+in Setup -> Maps.
 
 On many devices, it's preferable to unpack the contents of the ZIP archive first
-because reading from the ZIP increases the memory consumption of GpsMid.
+because reading from the ZIP increases the memory consumption of ShareNav.
+

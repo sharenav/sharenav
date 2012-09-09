@@ -1,6 +1,6 @@
 import java.util.Random;
 
-import de.ueller.util.MoreMath;
+import net.sharenav.util.MoreMath;
 import junit.framework.TestCase;
 
 

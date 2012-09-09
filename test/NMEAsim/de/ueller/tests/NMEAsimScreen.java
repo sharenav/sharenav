@@ -1,9 +1,9 @@
 /*
- * GpsMid - Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
+ * ShareNav - Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
  * See Copying
  */
 
-package de.ueller.tests;
+package net.sharenav.tests;
 
 import java.util.Vector;
 

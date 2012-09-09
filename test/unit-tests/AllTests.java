@@ -6,7 +6,7 @@ import junit.framework.TestSuite;
 public class AllTests {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Test for GpsMid");
+		TestSuite suite = new TestSuite("Test for ShareNav");
 		//$JUnit-BEGIN$
 		suite.addTestSuite(MoreMathTests.class);
 		suite.addTestSuite(IntTreeTests.class);

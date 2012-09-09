@@ -1,0 +1,15 @@
+# from src
+net.sharenav.osmToShareNav
+net.sharenav.osmToShareNav.area
+net.sharenav.osmToShareNav.model
+net.sharenav.osmToShareNav.model.name
+net.sharenav.osmToShareNav.model.url
+net.sharenav.osmToShareNav.route
+net.sharenav.osmToShareNav.tools
+
+# from src-externals
+org.openstreetmap.gui.jmapviewer
+org.openstreetmap.gui.jmapviewer.interfaces
+
+# from test
+net.sharenav.osmToShareNav

@@ -26,7 +26,7 @@ then
     #ver=`echo $midtarget | sed 's/\.ap_//g' | tail -10c`
     #echo "ver: $ver"
     midapk=`echo $midtarget|sed 's/\.ap_/.apk/'`
-    andtarget=`echo $midtarget|sed 's/GpsMid-Generic-//g'`
+    andtarget=`echo $midtarget|sed 's/ShareNav-Generic-//g'`
     andtarget=`echo $andtarget|sed "s/-$ver.ap_//g"`
     echo $andtarget
 

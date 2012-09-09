@@ -1,7 +1,7 @@
 import java.util.Arrays;
 import java.util.Random;
 
-import de.ueller.util.IntTree;
+import net.sharenav.util.IntTree;
 import junit.framework.TestCase;
 
 public class IntTreeTests extends TestCase {

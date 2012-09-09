@@ -1,4 +1,4 @@
-generic.About=O GpsMid
+generic.About=O ShareNav
 generic.Back=Wróć
 generic.Cancel=Anuluj
 generic.Delete=Usuń
@@ -77,7 +77,7 @@ guidiscover.MapZipFileOrDirectory=Katalog lub plik zip z mapą
 guidiscover.metricunits=jednostki metryczne
 guidiscover.MinimumMeters=Minimalna odległość między punktami śladu (0=wył)
 guidiscover.MinimumSeconds=Minimalny czas między punktami śladu (0=wył)
-guidiscover.NeedRestart=GpsMid musi zostać ponownie uruchomiony. Mapa jest w stanie nieustalonym.
+guidiscover.NeedRestart=ShareNav musi zostać ponownie uruchomiony. Mapa jest w stanie nieustalonym.
 guidiscover.NightMode=Tryb nocny
 guidiscover.onlymeters=tylko metry
 guidiscover.onlywhileGPS=tylko kiedy GPS działa

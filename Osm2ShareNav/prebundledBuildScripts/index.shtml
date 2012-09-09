@@ -1,0 +1,1166 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link rel="stylesheet" type="text/css" href="http://sharenav.sourceforge.net/style.css" />
+<meta name="keywords" content="gps, navigation, opensource, j2me, mobile, map" />
+<title>ShareNav - Free offline maps for various cities and countries </title>
+</head>
+
+<body>
+
+<table border="0" width="100%">
+	<tr>
+		<td><img src="http://sharenav.sourceforge.net/images/sharenav.png" alt="splash"/></td>
+		<td width="100%" align="center"><h1>Pre-bundled maps for ShareNav</h1></td>
+		<td align="right" valign="top">
+		<a href="http://sourceforge.net"><img src=				"http://sflogo.sourceforge.net/sflogo.php?group_id=192084&amp;type=3" width="125" height="37" border="0" alt="SourceForge.net Logo" /></a>
+		</td>
+    </tr>
+
+</table>
+    <p>This page offers ready to use bundles of <a href="http://sharenav.sourceforge.net">ShareNav</a> including map
+    data of a set of regions and countries. We try and offer a good selection of
+    regions to make using ShareNav as easy as possible, so please do <a
+    href="http://sourceforge.net/projects/sharenav/forums/forum/677687">drop
+    us a line</A> if you would like to see other regions here,
+    although unfortunately, as we have limited resources, we can't
+    promise to include it. However, it should be <B>easy enough to build
+    your own midlets with exactly the region you want</B> with the help of
+    <a href="http://sharenav.sourceforge.net/osmtosharenav.html">Osm2ShareNav</a>.</p>
+    <p> These midlets are updated about once a month to contain the
+    latest data from <a
+    href="http://www.openstreetmap.org">OpenStreetMap</a>. </p>
+    <p>To install ShareNav on your phone, simply copy the .jar (and
+    potentially the .jad file depending on your phone) to your device
+    using for example either bluetooth or a usb connection after which
+    you can select the file for installation. </p>
+    <p> If you are experiencing annoying permission questions or problems, you could try using the
+    <a href="http://sourceforge.net/project/showfiles.php?group_id=192084">signed midlets</a>
+    in combination with the zip files offered here as external maps.</p>
+    <p>
+    Some of the country extracts can be quite large 50 - 150Mb. Not all phones will be able to handle such large midlets.
+    If you are seeing (performance) troubles, please try one of the smaller midlets.
+    </p>
+    <p> Should you have any comments, <B>suggestions or problems</B> with
+    these midlets, please let us know <a
+    href="http://sharenav.sourceforge.net">on the project site</a>. </p>
+
+
+
+ <!--#config timefmt="%A %B %d, %Y" -->
+<h2>City extracts</h2>
+ <table border=1>
+	<tr>
+	  <td>Area</td><td>Files</td><td>Last mod.</td><td>Size</td>
+	  <tr>
+	  <td>Amsterdam</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavAmst-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavAmst-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavAmst-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavAmst-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavAmst-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Amsterdam/Rotterdam</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavAmstRott-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavAmstRott-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavAmstRott-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavAmstRott-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavAmstRott-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Berlin</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavB-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavB-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavB-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavB-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavB-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Boulder</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavBoulder-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBoulder-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBoulder-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavBoulder-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavBoulder-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Denver</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavDen-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavDen-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavDen-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavDen-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavDen-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Greater London</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavLon-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavLon-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavLon-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavLon-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavLon-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Hamburg</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavHH-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavHH-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavHH-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavHH-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavHH-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Helsinki</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavHel-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavHel-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavHel-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavHel-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavHel-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Karlsruhe</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavKa-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavKa-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavKa-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavKa-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavKa-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Koeln/Bonn</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavKB-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavKB-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavKB-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavKB-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavKB-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Krakow/Katowice</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavKrakow-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavKrakow-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavKrakow-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavKrakow-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavKrakow-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Leipzig</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavLeip-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavLeip-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavLeip-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavLeip-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavLeip-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Lodz</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavLodz-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavLodz-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavLodz-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavLodz-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavLodz-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Los Angeles</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavLA-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavLA-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavLA-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavLA-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavLA-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Madrid</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavMad-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMad-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMad-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavMad-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavMad-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Milano/Bergamo</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavMilano-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMilano-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMilano-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavMilano-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavMilano-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Moscow</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavMos-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMos-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMos-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavMos-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavMos-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Muenchen</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavMun-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMun-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMun-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavMun-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavMun-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>New Orleans</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavNO-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavNO-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavNO-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavNO-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavNO-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>New York City</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavNYC-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavNYC-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavNYC-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavNYC-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavNYC-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Nuernberg</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavN-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavN-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavN-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavN-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavN-0.7.7-map69.jar" --></td>
+	</tr>	
+	<tr>
+	  <td>Paris</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavP-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavP-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavP-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavP-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavP-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Praha</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavPr-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavPr-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavPr-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavPr-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavPr-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Rome</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavRome-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavRome-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavRome-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavRome-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavRome-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Stuttgart</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavSt-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSt-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSt-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavSt-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavSt-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>St. Petersburg</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavStPeter-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavStPeter-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavStPeter-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavStPeter-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavStPeter-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Torino</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavTorino-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavTorino-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavTorino-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavTorino-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavTorino-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Warsaw</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavWarsaw-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavWarsaw-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavWarsaw-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavWarsaw-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavWarsaw-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Wien</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavW-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavW-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavW-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavW-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavW-0.7.7-map69.jar" --></td>
+	</tr>
+    </table>
+
+<h2>State / Regional extracts</h2>
+
+ <table border=1>
+	<tr>
+	  <td>Area</td><td>Files</td><td>Last mod.</td><td>Size</td>
+	  </tr>
+	  <tr>
+	  <td>Australia, Northern Territory - South Australia</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavCA-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavCA-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavCA-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavCA-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavCA-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Australia, New South Wales</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavNSW-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavNSW-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavNSW-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavNSW-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavNSW-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Australia, Victoria</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavVic-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavVic-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavVic-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavVic-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavVic-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Australia, Western Australia</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavWA-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavWA-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavWA-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavWA-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavWA-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Australia, Queensland</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavQu-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavQu-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavQu-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavQu-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavQu-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Canada, British Columbia</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavBC-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBC-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBC-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavBC-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavBC-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Canada, Ontario</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavON-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavON-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavON-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavON-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavON-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>German states (Bundesl&auml;nder)</td>
+	  <td>Try the <a href="http://www.thju.de/doku.php?id=sharenav">user generated Midlets</a></td>
+	  <td>&nbsp;</td>
+	  <td>&nbsp;</td>
+	</tr>
+	<td>Germany, Bayern</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavBay-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBay-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBay-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavBay-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavBay-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>Germany, Rhein-Main (Giessen - Heidelberg)</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavRM-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavRM-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavRM-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavRM-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavRM-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Germany, Ruhrgebiet</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavRuhr-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavRuhr-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavRuhr-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavRuhr-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavRuhr-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Germany, Schleswig-Holstein</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavSW-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSW-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSW-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavSW-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavSW-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>India, South</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavSIn-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSIn-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSIn-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavSIn-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavSIn-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Italy, North</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavNIt-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavNIt-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavNIt-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavNIt-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavNIt-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Italy, Central</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavCIt-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavCIt-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavCIt-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavCIt-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavCIt-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Italy, South</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavSIt-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSIt-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSIt-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavSIt-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavSIt-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Norway, South</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavSNor-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSNor-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSNor-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavSNor-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavSNor-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>UK, Midlands and Northern England</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavNEng-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavNEng-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavNEng-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavNEng-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavNEng-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Russia, european part</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavRue-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavRue-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavRue-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavRue-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavRue-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>UK, South West England</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavSWE-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSWE-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSWE-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavSWE-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavSWE-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>UK, South Scotland</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavScot-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavScot-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavScot-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavScot-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavScot-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	  <td>USA, Bay Area</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavBayArea-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBayArea-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBayArea-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavBayArea-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavBayArea-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>USA, Colorado</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavCol-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavCol-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavCol-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavCol-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavCol-0.7.7-map69.jar" --></td>
+	</tr>
+</table>
+
+
+
+<h2>Country extracts</h2>
+ <table border=1>
+	<tr>
+	  <td>Area</td><td>Files</td><td>Last mod.</td><td>Size</td>
+	  </tr>
+	<tr>
+	<td>Afghanistan</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavAf-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavAf-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavAf-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavAf-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavAf-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Albania</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavAl-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavAl-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavAl-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavAl-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavAl-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Argentina</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavAr-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavAr-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavAr-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavAr-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavAr-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Armenia</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavAm-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavAm-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavAm-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavAm-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavAm-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Australia</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavAu-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavAu-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavAu-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavAu-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavAu-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Austria</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavAt-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavAt-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavAt-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavAt-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavAt-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Bahrain</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavBh-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBh-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBh-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavBh-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavBh-0.7.7-map69.jar" --></td>
+	</tr>
+	<td>Bangladesh</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavBd-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBd-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBd-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavBd-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavBd-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Belarus</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavBy-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBy-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBy-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavBy-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavBy-0.7.7-map69.jar" --></td>
+	</tr>
+  	<tr>
+	<td>Belgium</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavBe-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBe-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBe-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavBe-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavBe-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Bosnia-Herzegovina</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavBa-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBa-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBa-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavBa-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavBa-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Brazil</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavBr-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBr-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBr-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavBr-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavBr-0.7.7-map69.jar" --></td>
+	</tr>
+	<td>Bulgaria</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavBg-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBg-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavBg-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavBg-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavBg-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Canary Islands</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavCanary-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavCanary-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavCanary-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavCanary-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavCanary-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>China</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavCn-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavCn-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavCn-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavCn-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavCn-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Colombia</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavCo-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavCo-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavCo-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavCo-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavCo-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<tr>
+	<td>Congo</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavCd-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavCd-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavCd-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavCd-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavCd-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Croatia</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavHr-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavHr-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavHr-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavHr-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavHr-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Cyprus</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavCy-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavCy-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavCy-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavCy-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavCy-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Czech Republic</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavCz-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavCz-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavCz-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavCz-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavCz-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Denmark</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavDk-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavDk-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavDk-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavDk-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavDk-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Egypt</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavEg-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavEg-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavEg-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavEg-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavEg-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Estonia</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavEe-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavEe-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavEe-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavEe-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavEe-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Ethiopia</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavEt-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavEt-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavEt-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavEt-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavEt-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Finland</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavFi-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavFi-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavFi-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavFi-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavFi-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<tr>
+	  <td>Georgia</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavGe-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavGe-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavGe-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavGe-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavGe-0.7.7-map69.jar" --></td>
+	</tr>
+	<td>Greece</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavGr-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavGr-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavGr-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavGr-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavGr-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Haiti and Dominican Republic</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavHt-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavHt-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavHt-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavHt-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavHt-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Hungary</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavHu-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavHu-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavHu-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavHu-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavHu-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Iceland</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavIs-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavIs-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavIs-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavIs-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavIs-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>India</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavIn-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavIn-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavIn-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavIn-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavIn-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Indonesia</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavId-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavId-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavId-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavId-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavId-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Iran</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavIr-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavIr-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavIr-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavIr-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavIr-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Iraq</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavIq-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavIq-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavIq-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavIq-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavIq-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Ireland</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavIe-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavIe-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavIe-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavIe-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavIe-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Israel and Palestine</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavIl-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavIl-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavIl-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavIl-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavIl-0.7.7-map69.jar" --></td>
+	</tr>
+	<td>Jamaica</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavJm-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavJm-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavJm-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavJm-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavJm-0.7.7-map69.jar" --></td>
+	</tr>
+<!-- Japan midlet doesn't seem to exist at 2010-11-27
+	<tr>
+	<td>Japan</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavJp-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavJp-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavJp-0.7.7-map69.zip">zip</a></td>
+	</tr> -->
+	<tr>
+	  <td>Jordan</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavJo-0.7.7-map69.jad">jad</a> -
+	  <a href="/cgi-bin/countdown.cgi?ShareNavJo-0.7.7-map69.jar">jar</a> -
+	  <a href="/cgi-bin/countdown.cgi?ShareNavJo-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavJo-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavJo-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Kazachstan</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavKz-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavKz-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavKz-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavKz-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavKz-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Kenya</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavKe-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavKe-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavKe-0.7.7-map69.zip">jzip</a></td>
+	  <td><!--#flastmod file="ShareNavKe-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavKe-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Kosovo</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavKos-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavKos-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavKos-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavKos-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavKos-0.7.7-map69.jar" --></td>
+	</tr>
+	<td>Kuwait</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavKw-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavKw-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavKw-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavKw-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavKw-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Latvia</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavLv-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavLv-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavLv-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavLv-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavLv-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Lebanon</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavLb-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavLb-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavLb-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavLb-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavLb-0.7.7-map69.jar" --></td>
+	</tr>
+	<td>Libya</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavLy-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavLy-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavLy-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavLy-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavLy-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Lithuania</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavLt-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavLt-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavLt-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavLt-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavLt-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Luxembourg</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavLu-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavLu-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavLu-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavLu-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavLu-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Macedonia</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavMk-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMk-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMk-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavMk-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavMk-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Malaysia/Singapore/Brunei</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavMySgBn-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMySgBn-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMySgBn-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavMySgBn-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavMySgBn-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Malta</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavMt-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMt-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMt-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavMt-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavMt-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Mexico</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavMx-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMx-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMx-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavMx-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavMx-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Moldova</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavMd-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMd-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMd-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavMd-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavMd-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Morocco</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavMa-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMa-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMa-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavMa-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavMa-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Myanmar</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavMm-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMm-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavMm-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavMm-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavMm-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Namibia</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavNa-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavNa-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavNa-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavNa-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavNa-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Netherlands</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavNl-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavNl-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavNl-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavNl-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavNl-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>New Zealand</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavNz-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavNz-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavNz-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavNz-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavNz-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Nigeria</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavNe-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavNe-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavNe-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavNe-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavNe-0.7.7-map69.jar" --></td>
+	</tr>
+	<td>Pakistan</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavPk-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavPk-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavPk-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavPk-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavPk-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Philippines</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavPh-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavPh-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavPh-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavPh-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavPh-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Poland</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavPl-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavPl-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavPl-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavPl-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavPl-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Portugal</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavPt-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavPt-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavPt-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavPt-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavPt-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Puerto Rico</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavPr-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavPr-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavPr-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavPr-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavPr-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Romania</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavRo-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavRo-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavRo-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavRo-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavRo-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Saudi Arabia</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavSa-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSa-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSa-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavSa-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavSa-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Seychelles</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavSc-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSc-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSc-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavSc-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavSc-0.7.7-map69.jar" --></td>
+	</tr>
+	<td>Slovakia</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavSk-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSk-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSk-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavSk-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavSk-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Slovenia</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavSi-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSi-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSi-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavSi-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavSi-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>South Africa and Lesotho</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavZa-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavZa-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavZa-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavZa-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavZa-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>South Korea</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavKr-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavKr-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavKr-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavKr-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavKr-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Spain</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavEs-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavEs-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavEs-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavEs-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavEs-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Sri Lanka</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavLk-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavLk-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavLk-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavLk-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavLk-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Syria</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavSy-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSy-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSy-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavSy-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavSy-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Sweden</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavSe-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSe-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavSe-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavSe-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavSe-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Switzerland</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavCh-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavCh-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavCh-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavCh-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavCh-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Thailand</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavTh-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavTh-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavTh-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavTh-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavTh-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Trinidad and Tobago</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavTt-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavTt-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavTt-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavTt-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavTt-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Tunisia</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavTn-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavTn-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavTn-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavTn-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavTn-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Turkey</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavTr-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavTr-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavTr-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavTr-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavTr-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Ukraine</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavUa-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavUa-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavUa-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavUa-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavUa-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>United Arab Emirates</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavUAE-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavUAE-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavUAE-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavUAE-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavUAE-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Venezuela</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavVe-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavVe-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavVe-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavVe-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavVe-0.7.7-map69.jar" --></td>
+	</tr>
+	<tr>
+	<td>Zimbabwe</td>
+	  <td><a href="/cgi-bin/countdown.cgi?ShareNavZw-0.7.7-map69.jad">jad</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavZw-0.7.7-map69.jar">jar</a> - 
+	  <a href="/cgi-bin/countdown.cgi?ShareNavZw-0.7.7-map69.zip">zip</a></td>
+	  <td><!--#flastmod file="ShareNavZw-0.7.7-map69.jar" --></td>
+	  <td><!--#fsize file="ShareNavZw-0.7.7-map69.jar" --></td>
+	</tr>
+
+
+    </table>
+
+    <!-- PrimaWebtoolsCounter TrackingCode Start //-->
+    <!-- Ein Service von http://www.PrimaWebtools.de //-->
+    <script language="JavaScript" type="text/javascript" src="http://apmon.dev.openstreetmap.org/pphlogger.js"></script>
+    <noscript><a href="http://www.primawebtools.de" target="_blank"><img src="http://count.primawebtools.de/pphlogger.php?encid=28188&amp;st=nosc" alt="Webcounter"></a></noscript>
+    <center><a href="http://www.primawebtools.de" target="_blank"><img src="http://www.primawebtools.de/counter.gif" border="0" alt="Webcounter"></a></center>
+    <!-- PrimaWebtoolsCounter TrackingCode Ende //-->
+   
+    <hr>
+    <div id="date"> Last updated: 2012-04-09	--- 	<a href="http://sharenav.sourceforge.net/index.html">ShareNav</a> is licensed under <a href="http://www.gnu.org/licenses/gpl-2.0.html">GPLv2</a> --- <a href="http://www.openstreetmap.org">OpenStreetMap</a> is <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a></div>
+<p>&nbsp;</p>
+  </body>
+</html>

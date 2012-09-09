@@ -1,7 +1,7 @@
 import java.util.Random;
 import java.util.Vector;
 
-import de.ueller.util.StringTokenizer;
+import net.sharenav.util.StringTokenizer;
 
 import junit.framework.TestCase;
 

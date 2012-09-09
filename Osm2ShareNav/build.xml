@@ -1,0 +1,391 @@
+<project name="Osm2ShareNav"
+         default="deploy"
+         basedir=".">
+
+
+<!-- this should be adapted to your local requirements -->
+	<property name="planet" value="/Massenspeicher/myStreetMap-0.5.osm"/>
+	<property name="france" value="/Massenspeicher/france.osm.bz2"/>
+	<property name="germany" value="/Massenspeicher/germany.osm.bz2"/>
+	<property name="london" value="/Massenspeicher/uk.osm.bz2"/>
+	<property name="bavaria" value="/Massenspeicher/bayern.osm.bz2"/>
+	<property name="testplanet" value="/Massenspeicher/myStreetMap_harald.osm"/>
+	<property name="testplanet-lon" value="/Massenspeicher/myStreetMap-london-city.osm"/>
+
+
+	<property name="src.dir" value="${basedir}/src"/>
+	<property name="src.jmv" value="${basedir}/src_externals"/>
+	<property name="properties.dir" value="${basedir}/mapdef"/>
+	<property name="resources.dir" value="${basedir}/resources"/>
+	<property name="app" value="ShareNav-Generic-full-connected"/>
+
+	<property name="lib.dir" value="${basedir}/lib"/>
+
+   	<property name="dist.dir" value="${basedir}/../dist"/>
+	<property name="version" value="0.8.22"/>
+	<property name="mapversion" value="72"/>
+	<property name="buildlib" value="buildlib/explode.jar"/>
+
+   <available property="clover.available" classname="org.apache.tools.ant.taskdefs.CloverCompilerAdapter"/>
+
+	<path id="main.classpath">
+		<pathelement location="${classes.dir}" />
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	
+	<path id="test.classpath">
+		<pathelement location="${basedir}/bin-tests" />
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="fbrowser.classpath">
+		<pathelement location="${basedir}/bin-fbrowser" />
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+   <target name="clover-yes" depends="prepare" if="clover.available">
+      <property name="compiler" value="org.apache.tools.ant.taskdefs.CloverCompilerAdapter"/>
+   </target>
+
+   <target name="clover-no" depends="prepare" unless="clover.available">
+      <property name="compiler" value="modern"/>
+   </target>
+
+   <target name="prepare">
+   	  <mkdir dir="bin"/>
+	  <mkdir dir="bin-fbrowser"/>
+	  <mkdir dir="bin-tests"/>
+      <mkdir dir="${dist.dir}"/>
+   	  <mkdir dir="exploded"/>
+      <mkdir dir="resources"/>
+	<tstamp>
+		<format property="TODAY_DE" pattern="yyyy-MM-dd HH:mm z" locale="de,DE"/>
+	</tstamp>
+<!--   	<echo message="Lang: ${local_lang}"/> -->
+   	<copy todir="resources">
+   		<fileset dir="../dist">
+   			<include name="*.jar"/>
+   			<include name="*.apk"/>
+<!--   			<include name="*_${local_lang}.jar" if="local_lang" />
+   			<include name="*.jar" unless="local_lang" />
+-->
+   		</fileset>
+   	</copy>
+
+   	<propertyfile file="${resources.dir}/version.properties">
+   		<entry key="app" value="${app}"/>
+   		<entry key="addToManifest" value=""/>
+   		<entry key="version" value="${version}"/>
+        <entry key="useRouting" value="true"/>
+        <entry key="useUrlTags" value="false"/>
+        <entry key="usePhoneTags" value="false"/>
+        <entry key="useHouseNumbers" value="false"/>
+        <entry key="useWordSearch" value="false"/>
+        <entry key="useSeaTiles" value="false"/>
+        <entry key="outlineAreaFormat" value="false"/>
+        <entry key="triangleAreaFormat" value="true"/>
+        <entry key="useBarriers" value="false"/>
+        <entry key="signApk" value="false"/>
+        <entry key="jarsignerPath" value="jarsigner"/>
+        <entry key="signApkPassword" value=""/>
+        <entry key="drawSeaOutlines" value="false"/>
+        <entry key="dontCompress" value="wav,amr,png,mp3"/>
+   		<entry key="cellSource" value=""/>
+   		<entry key="midlet.name" value="ShareNav"/>
+   		<entry key="map.name" value=""/>
+		<entry key="routing.maxTileSize" value="6000"/>
+   		<entry key="keepTemporaryFiles" value="false"/>
+		<entry key="maxDictDepth" value="12"/>
+		<entry key="maxTileSize" value="20000"/>
+		<entry key="maxTileWays0" value="1000"/>
+		<entry key="maxTileWays1" value="1000"/>
+		<entry key="maxTileWays2" value="1000"/>
+		<entry key="maxTileWays3" value="1000"/>
+   		<entry key="style-file" value="style-file.xml"/>
+   		<entry key="enableEditing" value="false"/>
+   		<entry key="useCellID" value="false"/>
+   		<entry key="generateSea" value="false"/>
+   		<entry key="cellIDnoLAC" value="false"/>
+		<entry key="mapPrecisionInMeters" value="1"/>
+   		<entry key="useIcons" value="true"/>
+   		<entry key="useSounds" value="amr"/>
+   		<entry key="mapSource" value=""/>
+   		<entry key="useSoundFilesWithSyntax" value="sound"/>
+   		<entry key="lang" value="*"/>
+   		<entry key="langName" value="All"/>
+		<entry key="useLang" value="*"/>
+		<entry key="useLangName" value="All"/>
+   	</propertyfile>
+   </target>
+
+   <target name="clean">
+    <delete dir="${build.dir}"/>
+   	<delete dir="bin"/>
+   	<delete dir="bin-fbrowser"/>
+   	<delete dir="bin-tests" />
+    <delete dir="deploy"/>
+   	<delete dir="exploded"/>
+   	<delete dir="${dist.dir}"/>
+   	<delete file="${resources.dir}/version.properties" failonerror="false"/>
+   	<delete failonerror="false">
+   		<fileset dir="${basedir}">
+   			<include name="temp*"/>
+   			<include name="ShareNav*.jad"/>
+			<include name="ShareNav*.jar"/>
+			<include name="ShareNav*.apk"/>
+   			<include name="ShareNav*.zip"/>
+   					</fileset>
+   		<fileset dir="${resources.dir}">
+   			<include name="*.jar" />
+   			<include name="*.apk" />
+   		</fileset>	
+   	</delete>	
+   </target>
+
+   <target name="compile" depends="clover-yes, clover-no">
+    <javac srcdir="${src.dir}:${src.jmv}"
+            destdir="bin"
+            debug="on"
+            optimize="on"
+            deprecation="on"
+			source="1.5"
+			target="1.5"
+            compiler="${compiler}" encoding="UTF8">
+     	<classpath>
+     		<path refid="main.classpath" />
+     	</classpath>
+     </javac>
+	</target>
+	
+   	<target name="deploy" depends="explode,compile">
+      <jar jarfile="${dist.dir}/${ant.project.name}-${version}-map${mapversion}.jar">
+<!--      <jar jarfile="${dist.dir}/${ant.project.name}-${version}_${local_lang2}.jar"> -->
+		<manifest>
+    		<attribute name="Built-By" value="${user.name}"/>
+			<attribute name="Main-Class" value="net.sharenav.osmToShareNav.BundleShareNav"/>
+			<section name="${ant.project.name}">
+				<attribute name="Implementation-Title" value="ShareNav Navigation"/>
+				<attribute name="Implementation-Version" value="${version} ${TODAY_DE}"/>
+		   		<attribute name="Implementation-Vendor" value="Harald Mueller"/>
+			</section>
+		</manifest>
+	<fileset dir="${basedir}">
+		<include name="Translations*"/>
+	</fileset>
+        <fileset dir="bin">
+     		<include name="**/*.class" />
+		</fileset>
+        <fileset dir="exploded">
+     		<include name="**/*.class" />
+		</fileset>
+        <fileset dir="${resources.dir}">
+   			<exclude name="Osm2ShareNav*.jar"/>
+            <include name="*.jar" />
+     		<include name="*.apk" />
+        	<include name="*.xml" />
+            <include name="*.inc" />
+   	 		<include name="style-file.dtd" />
+     		<include name="version.properties" />
+     		<include name="**/syntax.cfg" />
+        	<include name="**/*.png" />
+        	<include name="**/*.amr" />
+        	<include name="**/*.wav" />
+           	<include name="**/*.mp3" />
+		</fileset>
+     	 <fileset dir="${properties.dir}">
+     		<include name="**/*.properties" />
+     	 	<include name="**/charMap.txt" />
+     	 </fileset>
+      </jar>
+   </target>
+	
+	<target name="deploy_int">
+		<delete file="${resources.dir}/version.properties" failonerror="false"/>
+		<delete failonerror="false">
+		    <fileset dir="${resources.dir}">
+		        <include name="*.jar" />
+		    </fileset>  
+		</delete>
+		<antcall target="deploy">
+			<param name="local_lang2" value="multi"/>
+		</antcall>
+        <delete file="${resources.dir}/version.properties" failonerror="false"/>
+        <delete failonerror="false">
+            <fileset dir="${resources.dir}">
+                <include name="*.jar" />
+            </fileset>  
+        </delete>
+
+		<antcall target="deploy">
+			<param name="local_lang2" value="en"/>
+			<param name="local_lang" value="en"/>
+			<param name="local_lang_name" value="English"/>
+		</antcall>
+	</target>
+
+   <target name="explode" depends="prepare">
+      <taskdef  classname="org.jboss.portal.common.ant.Explode"
+               name="explode"
+               classpath="${buildlib}"/>
+    <explode
+          file="lib/bzip2.jar"
+          todir="${basedir}"
+          name="exploded"/>
+    <explode
+          file="lib/kd.jar"
+          todir="${basedir}"
+          name="exploded"/>
+<explode
+          file="lib/protobuf-java-2.3.0.jar"
+          todir="${basedir}"
+          name="exploded"/>
+<explode
+          file="lib/osmbin.jar"
+          todir="${basedir}"
+          name="exploded"/>
+</target>
+	
+	<target name="compile-test" depends="prepare">
+		<javac srcdir="${basedir}/test;${src.dir}" destdir="bin-tests" debug="on">
+			<classpath>
+				<path refid="test.classpath" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="unit-test" depends="compile-test">
+		<junit>
+			<classpath refid="test.classpath" />
+			<formatter type="plain" usefile="false" />
+			<test name="net.sharenav.osmToShareNav.AllTests" />
+		</junit>
+	</target>
+
+	<target name="compile-fbrowser">
+		<javac srcdir="${basedir}/FBrowser;${src.jmv};${src.dir}" destdir="bin-fbrowser" debug="on">
+			<classpath>
+				<path refid="fbrowser.classpath" />
+			</classpath>
+		</javac>
+	</target>
+	
+	<target name="app-germany" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1280m">
+			<arg value="${planet}"/>
+		  <arg value="germany"/>
+		</java>
+	</target>	
+	<target name="app-south-germany" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${planet}"/>
+		  <arg value="south-germany"/>
+		</java>
+	</target>	
+	<target name="app-north-germany" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${planet}"/>
+		  <arg value="north-germany"/>
+		</java>
+	</target>	
+	<target name="nuernberg" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${planet}"/>
+			<arg value="nuernberg"/>
+		</java>
+	</target>	
+	<target name="london" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${london}"/>
+		  <arg value="london"/>
+		</java>
+	</target>	
+	<target name="hamburg" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${germany}"/>
+		  <arg value="hamburg"/>
+		</java>
+	</target>	
+
+	<target name="london-easynet" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${planet}"/>
+		  <arg value="london-easynet"/>
+		</java>
+	</target>	
+	<target name="bavaria" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${bavaria}"/>
+		  <arg value="bavaria"/>
+		</java>
+	</target>	
+	<target name="munic" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${germany}"/>
+		  <arg value="Munich"/>
+		</java>
+	</target>	
+	<target name="france" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${france}"/>
+		  <arg value="france"/>
+		</java>
+	</target>	
+	<target name="paris" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${france}"/>
+		  <arg value="paris"/>
+		</java>
+	</target>	
+	<target name="hh-nue" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${germany}"/>
+		  <arg value="hh-nue"/>
+		</java>
+	</target>	
+	<target name="web-demo" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${germany}"/>
+		  <arg value="Munic-demo"/>
+		</java>
+	</target>	
+	
+	<target name="all-maps" depends="app-germany,
+	app-south-germany,
+	app-north-germany,
+	nuernberg,
+	london,
+	hamburg,
+	bavaria"/>
+
+	
+	<target name="all" depends="deploy"/>
+	
+	<target name="test" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${germany}"/>
+		  <arg value="germany"/>
+		</java>
+	</target>	
+
+	<target name="test-lon" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${testplanet-lon}"/>
+		  <arg value="london"/>
+		</java>
+	</target>	
+	<target name="test-nue" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="512m">
+			<arg value="${bavaria}"/>
+		  <arg value="nuernberg"/>
+		</java>
+	</target>	
+
+
+</project>
+

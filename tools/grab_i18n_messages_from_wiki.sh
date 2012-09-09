@@ -1,9 +1,15 @@
 #!/bin/sh
   
-# grab GpsMid i18n (language) messages from the wiki, write to messages_lang.txt
+# grab ShareNav i18n (language) messages from the wiki, write to messages_lang.txt
 # requirements: lynx,awk,bourne-compatible shell 
 # usage: $0 [ lang1 lang2 lang3 ... ]
   
+# FIXME update location
+
+echo "Don't know how to grab messages at the moment"
+
+exit 2
+
 # default languages to fetch
 lang="cs en de es fi fr it pl ru sk" 
 
@@ -16,7 +22,7 @@ path=resources
   
 for l in $lang
 do
-   lynx -source http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=I18n/messages_$l |
+   lynx -source http://sourceforge.net/apps/mediawiki/sharenav/index.php?title=I18n/messages_$l |
    awk 'BEGIN { pr = 0 } 
      /<\/pre>/ { pr = 0 } 
      /=section=/ { pr = 0 } 

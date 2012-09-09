@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# update the GpsMid "bare binaries" J2ME snapshots
+# update the ShareNav "bare binaries" J2ME snapshots
 # FIXME: bundle a small map with the app
 #
 
@@ -18,24 +18,26 @@ ant -Ddevice=Generic/blackberry
 
 ant j2mepolish
 
-#scp -p dist/*.jar $user,gpsmid@web.sf.net:htdocs/prebuild
+#scp -p dist/*.jar $user,sharenav@web.sf.net:htdocs/prebuild
 
 
-ssh $user,gpsmid@shell.sf.net create
+# FIXME update location
+#ssh $user,sharenav@shell.sf.net create
 
 cd dist
 
 
 cd ..
 
-ln -f -s `ls -t *full-connected*jar|head -1` GpsMid-latest.jar
+ln -f -s `ls -t *full-connected*jar|head -1` ShareNav-latest.jar
 
 for i in full-connected full midsize minimal blackberry
 do
     ./tools/bundlemap.sh minimap $i
 done
 
-tar cf - GpsMid-Generic*.jar GpsMid-latest.jar | ssh $user,gpsmid@shell.sf.net 'cd /home/project-web/gpsmid/htdocs/prebuild ; tar xpf -'
+# FIXME update location
+# tar cf - ShareNav-Generic*.jar ShareNav-latest.jar | ssh $user,sharenav@shell.sf.net 'cd /home/project-web/sharenav/htdocs/prebuild ; tar xpf -'
 
 # debug build
 
@@ -67,6 +69,7 @@ do
 done
 
 
-ln -f -s `ls -t *full-connected*jar|head -1` GpsMid-latest-debug.jar
+ln -f -s `ls -t *full-connected*jar|head -1` ShareNav-latest-debug.jar
 
-tar cf - GpsMid-Generic-debug-*.jar GpsMid-latest-debug.jar | ssh $user,gpsmid@shell.sf.net 'cd /home/project-web/gpsmid/htdocs/prebuild ; tar xpf -'
+# FIXME update location
+# tar cf - ShareNav-Generic-debug-*.jar ShareNav-latest-debug.jar | ssh $user,sharenav@shell.sf.net 'cd /home/project-web/sharenav/htdocs/prebuild ; tar xpf -'

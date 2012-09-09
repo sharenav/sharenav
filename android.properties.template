@@ -1,9 +1,9 @@
 # Copy this file (android.properties.default) to android.propertise and edit paths to be correct
-# Then use ant -propertyfile android.properties to build GpsMid for android
+# Then use ant -propertyfile android.properties to build ShareNav for android
 
 # To bundle a map within the .apk, use something like
-#   tools/bundlemap.sh -a assets dist/GpsMid*.ap_ (requires bash and some common unix-like-OS tools)
-# (assets dir must have a map created by Osm2GpsMid and e.g. tools/unbundlemap.sh)
+#   tools/bundlemap.sh -a assets dist/ShareNav*.ap_ (requires bash and some common unix-like-OS tools)
+# (assets dir must have a map created by Osm2ShareNav and e.g. tools/unbundlemap.sh)
 
 #The android.home property should point to the directory
 #containing the Android SDK.
@@ -15,4 +15,4 @@
 #2.1.4, set path to it here. Moslty obsolete now when 2.2.1 supports android
 #polish.home=/set/path/to/J2ME-Polish-2.2.1-or-nightly/in/android.properties
 
-#gpsmid.test_device=Generic/android2.1-hiresonline
+#sharenav.test_device=Generic/android2.1-hiresonline

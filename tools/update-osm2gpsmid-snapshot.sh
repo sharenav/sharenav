@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# update the Osm2GpsMid snapshots
+# update the Osm2ShareNav snapshots
 #
 
 user=SOURCEFORGE_USERNAME_HERE
@@ -9,7 +9,7 @@ ver=0.8.0-map72
 
 ant clean
 
-( cd Osm2GpsMid ; ant clean )
+( cd Osm2ShareNav ; ant clean )
 #
 # workaround for the first i18n-messages failure
 #
@@ -20,29 +20,32 @@ ant -Ddevice=Generic/blackberry
 
 ant
 ant -propertyfile android.properties android
-cd Osm2GpsMid
+cd Osm2ShareNav
 ant
 cd ..
-cp -p dist/Osm2GpsMid-$ver.jar .
+cp -p dist/Osm2ShareNav-$ver.jar .
 
 # debug version build
 ant clean
-( cd Osm2GpsMid ; ant clean )
+( cd Osm2ShareNav ; ant clean )
 ant debug -Ddevice=Generic/blackberry
 ant debug j2mepolish
 ant -propertyfile android.properties debug android
 
-cd Osm2GpsMid
+cd Osm2ShareNav
 ant
 cd ..
-cp -p dist/Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar
+cp -p dist/Osm2ShareNav-$ver.jar Osm2ShareNav-$ver-debug.jar
 
-ln -f -s Osm2GpsMid-$ver-debug.jar Osm2GpsMid-debug-latest.jar
-ln -f -s Osm2GpsMid-$ver.jar Osm2GpsMid-latest.jar
+ln -f -s Osm2ShareNav-$ver-debug.jar Osm2ShareNav-debug-latest.jar
+ln -f -s Osm2ShareNav-$ver.jar Osm2ShareNav-latest.jar
 
 # 
 
-ssh $user,gpsmid@shell.sf.net create
+# FIXME update location
 
-tar cf - Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar Osm2GpsMid-latest.jar Osm2GpsMid-debug-latest.jar | ssh $user,gpsmid@shell.sf.net 'cd /home/project-web/gpsmid/htdocs/prebuild ; tar xpf -'
-#scp -p Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar $user,gpsmid@web.sf.net:htdocs/prebuild
+# ssh $user,sharenav@shell.sf.net create
+
+
+# tar cf - Osm2ShareNav-$ver.jar Osm2ShareNav-$ver-debug.jar Osm2ShareNav-latest.jar Osm2ShareNav-debug-latest.jar | ssh $user,sharenav@shell.sf.net 'cd /home/project-web/sharenav/htdocs/prebuild ; tar xpf -'
+#scp -p Osm2ShareNav-$ver.jar Osm2ShareNav-$ver-debug.jar $user,sharenav@web.sf.net:htdocs/prebuild

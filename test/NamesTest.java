@@ -2,7 +2,7 @@
 
 import java.io.IOException;
 
-import de.ueller.midlet.gps.tile.Names;
+import net.sharenav.midlet.gps.tile.Names;
 
 import junit.framework.TestCase;
 
@@ -40,14 +40,14 @@ public class NamesTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link de.ueller.midlet.gps.tile.Names#getName(java.lang.Short)}.
+	 * Test method for {@link net.sharenav.midlet.gps.tile.Names#getName(java.lang.Short)}.
 	 */
 	public void testGetName() {
 		fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link de.ueller.midlet.gps.tile.Names#search(java.lang.String)}.
+	 * Test method for {@link net.sharenav.midlet.gps.tile.Names#search(java.lang.String)}.
 	 */
 	public void testSearch() {
 		try {

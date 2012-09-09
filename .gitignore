@@ -1,10 +1,10 @@
 /bin
 /build
 /dist
-/Osm2GpsMid/bin
-/Osm2GpsMid/dist
-/Osm2GpsMid/exploded
-/Osm2GpsMid/resources/GpsMid*
+/Osm2ShareNav/bin
+/Osm2ShareNav/dist
+/Osm2ShareNav/exploded
+/Osm2ShareNav/resources/ShareNav*
 /.externalToolBuilders
 /.polishSettings
 /.project

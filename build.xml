@@ -18,7 +18,7 @@
 <!-- Have fun!                                                -->
 
 <project 
-	name="GpsMid" 
+	name="ShareNav" 
 	default="j2mepolish">
 	
 <property file="android.properties" />
@@ -35,8 +35,8 @@
 	<!-- build targets, each target can be called via "ant [name]", 
 	 e.g. "ant clean", "ant test j2mepolish" or just "ant" for calling the default target -->
 	
-	<target name="set_test_device" unless="gpsmid.test_device">
-		<property name="gpsmid.test_device" value="Generic/full"/>
+	<target name="set_test_device" unless="sharenav.test_device">
+		<property name="sharenav.test_device" value="Generic/full"/>
 	</target>
 	
 	<target name="test" 
@@ -51,7 +51,7 @@
 	<target name="testmicroemu" 
 		description="Call this target first to skip the obfuscation step, e.g. ant test j2mepolish"
 		>
-		<property name="gpsmid.microemu_device" value="Generic/microemulator"/>
+		<property name="sharenav.microemu_device" value="Generic/microemulator"/>
 		<property name="test" value="true" />
 		<property name="testmicroemu" value="true" />
 		<property name="logging" value="true" />
@@ -98,18 +98,18 @@
 	    <!-- general settings, these settings basically form the JAD-attributes. -->
 	    <!-- Have a look at the <jad>-section for setting specialised attributes.
 	         You can also define localized attributes in the resources/messages.txt files -->
-            <!-- lowercase icon name required for Android, before Android support was icon="GpsMid.png" -->
+            <!-- lowercase icon name required for Android, before Android support was icon="ShareNav.png" -->
 	    <!-- FIXME: javax.microedition.io.Connector.http should really be only active for the editing target -->
 		<info
-			name="GpsMid"
-			version="0.8.2"
+			name="ShareNav"
+			version="0.8.22"
 			description="Shows moving map made from OpenStreetMap data"
-			vendorName="Harald Mueller"
-			infoUrl="http://gpsmid.sourceforge.net"
-			icon="gpsmid.png"
-			jarName="GpsMid-${polish.vendor}-${polish.name}-${polish.version}-map${mapversion}.jar"
+			vendorName="Jyrki Kuoppala"
+			infoUrl="http://www.sharenav.net"
+			icon="sharenav.png"
+			jarName="ShareNav-${polish.vendor}-${polish.name}-${polish.version}-map${mapversion}.jar"
 			jarUrl="${deploy-url}${polish.jarName}"
-			copyright="Copyright 2007 - 2011 Harald Mueller and others"
+			copyright="Copyright 2007 - 2012 Harald Mueller, Jyrki Kuoppala and others"
 			deleteConfirm="Do you really want to kill me?"
 			optionalPermissions="javax.microedition.io.Connector.file.read,javax.microedition.io.Connector.http,javax.microedition.io.Connector.file.write,javax.microedition.io.Connector.bluetooth.client,javax.microedition.location.Location,javax.microedition.media.control.RecordControl,javax.microedition.media.control.VideoControl.getSnapshot,javax.microedition.io.Connector.sms,javax.wireless.messaging.sms.receive,javax.wireless.messaging.sms.send,javax.microedition.io.Connector.comm,javax.microedition.io.Connector.cbs,javax.wireless.messaging.cbs.receive,javax.microedition.io.Connector.socket,javax.microedition.io.PushRegistry"
 		/>
@@ -119,10 +119,10 @@
 		<!-- Generic/midp1 phone, but when the test-property is set to false, -->
 		<!-- the second deviceRequirements will be used instead. -->
 		<deviceRequirements if="test and !testmicroemu">
-			<requirement name="Identifier" value="${gpsmid.test_device}" />
+			<requirement name="Identifier" value="${sharenav.test_device}" />
 		</deviceRequirements>
 		<deviceRequirements if="testmicroemu">
-			<requirement name="Identifier" value="${gpsmid.microemu_device}" />
+			<requirement name="Identifier" value="${sharenav.microemu_device}" />
 		</deviceRequirements>
 		<deviceRequirements if="!test and device:defined">
 			<requirement name="Identifier" value="${device}" />
@@ -162,7 +162,7 @@
 		   <!-- postcompiler name="floater">
 			<parameter name="verbose" value="false" />
 	      </postcompiler -->
-			<midlet class="de.ueller.gpsmid.ui.GpsMid" name="GpsMid"/>
+			<midlet class="net.sharenav.sharenav.ui.ShareNav" name="ShareNav"/>
 			<sources>
 				<!-- always include the base folder: -->
 				<source dir="src"/>
@@ -180,7 +180,7 @@
 				You can change the title of the sample application with the "title"-var.
 				-->
 				<variable name="update-url" value="http://www.enough.de/update" />
-				<variable name="title" value="GpsMid" />
+				<variable name="title" value="ShareNav" />
 			</variables>
 			<!-- Here you can set the dir attribute to "resources2" for an alternative design. -->
 			<resources dir="resources" defaultexcludes="yes" excludes="readme.txt">
@@ -225,29 +225,29 @@
 				You can set additional parameters here, e.g.:
 				<parameter name="optimize" value="false" />
 				-->
-				<keep class="de.ueller.gpsmid.ui.GpsMid" />				
-				<keep class="de.ueller.gpsmid.importexport.ExportSession" />
-				<keep class="de.ueller.gps.location.JSR179Input" />
-				<keep class="de.ueller.gpsmid.importexport.FileExportSession" />
-				<keep class="de.ueller.gpsmid.importexport.CommExportSession" />
-				<keep class="de.ueller.gpsmid.importexport.ObexExportSession" />
-				<keep class="de.ueller.gpsmid.importexport.BtObexServer" />
-				<keep class="de.ueller.gpsmid.importexport.CommGpxImportSession" />
-				<keep class="de.ueller.gpsmid.importexport.FileGpxImportSession" />
-				<keep class="de.ueller.gpsmid.importexport.Jsr172GpxParser" />
-				<keep class="de.ueller.gpsmid.importexport.QDGpxParser" />
-				<keep class="de.ueller.gpsmid.importexport.GpxParser" />
-				<keep class="de.ueller.gpsmid.ui.GuiCameraInterface" />
-				<keep class="de.ueller.gpsmid.ui.GuiCamera" />
+				<keep class="net.sharenav.sharenav.ui.ShareNav" />				
+				<keep class="net.sharenav.sharenav.importexport.ExportSession" />
+				<keep class="net.sharenav.gps.location.JSR179Input" />
+				<keep class="net.sharenav.sharenav.importexport.FileExportSession" />
+				<keep class="net.sharenav.sharenav.importexport.CommExportSession" />
+				<keep class="net.sharenav.sharenav.importexport.ObexExportSession" />
+				<keep class="net.sharenav.sharenav.importexport.BtObexServer" />
+				<keep class="net.sharenav.sharenav.importexport.CommGpxImportSession" />
+				<keep class="net.sharenav.sharenav.importexport.FileGpxImportSession" />
+				<keep class="net.sharenav.sharenav.importexport.Jsr172GpxParser" />
+				<keep class="net.sharenav.sharenav.importexport.QDGpxParser" />
+				<keep class="net.sharenav.sharenav.importexport.GpxParser" />
+				<keep class="net.sharenav.sharenav.ui.GuiCameraInterface" />
+				<keep class="net.sharenav.sharenav.ui.GuiCamera" />
 				<keep class="org.xml.sax.Attributes" />
 			</obfuscator>
 			
 			<!-- debug settings: only include debug setting when the test-property is true -->
 			<debug if="logging" showLogOnError="true" verbose="true" level="debug">
 				<filter pattern="de.enough.*" level="error" />
-				<!--filter pattern="de.ueller.gps.sirf.*" level="debug" / -->
-				<!--filter pattern="de.ueller.gpsmid.ui.Trace" level="debug" / -->
-				<!--<filter pattern="de.ueller.gpsmid.names.SearchNames" level="debug" />-->
+				<!--filter pattern="net.sharenav.gps.sirf.*" level="debug" / -->
+				<!--filter pattern="net.sharenav.sharenav.ui.Trace" level="debug" / -->
+				<!--<filter pattern="net.sharenav.sharenav.names.SearchNames" level="debug" />-->
 			</debug>
 			
 			<!-- user defined JAD attributes can also be used: -->
@@ -291,13 +291,13 @@
 		>
 	<j2mepolish>
 		<info
-			name="GpsMid"
-			version="0.8.2"
+			name="ShareNav"
+			version="0.8.22"
 			description="Shows moving map made from OpenStreetMap data"
 			vendorName="Harald Mueller"
-			infoUrl="http://gpsmid.sourceforge.net"
-			icon="gpsmid.png"
-			jarName="GpsMid-${polish.vendor}-${polish.name}-${polish.version}-map${mapversion}.jar"
+			infoUrl="http://sharenav.sourceforge.net"
+			icon="sharenav.png"
+			jarName="ShareNav-${polish.vendor}-${polish.name}-${polish.version}-map${mapversion}.jar"
 			jarUrl="${deploy-url}${polish.jarName}"
 			copyright="Copyright 2007 - 2011 Harald Mueller and others"
 			deleteConfirm="Do you really want to kill me?"
@@ -312,7 +312,7 @@
 			<requirement name="Identifier" value="Generic/android-online" />
 		</deviceRequirements>
 		<deviceRequirements if="testmicroemu">
-			<requirement name="Identifier" value="${gpsmid.microemu_device}" />
+			<requirement name="Identifier" value="${sharenav.microemu_device}" />
 		</deviceRequirements>
 		<deviceRequirements if="!test and device:defined">
 			<requirement name="Identifier" value="${device}" />
@@ -324,7 +324,7 @@
 	versions now contain the support for better performance map rendering
 	if used together with a map created with property "outlineAreaFormat = true"
 	For J2MEPolish before 2.3.1 or before daily 2012-08-22 a small modification
-	is required, see README.txt or the GpsMid Android wiki page.
+	is required, see README.txt or the ShareNav Android wiki page.
 	In the shortest form, it consists of add the lines below
         to Graphics.java inside enough-j2mepolish-build.jar,
 	e.g. after the method: fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3)
@@ -368,7 +368,7 @@
 			fullscreen="no"
 			workDir="${dir.work}"
 		>     
-			<midlet class="de.ueller.gpsmid.ui.GpsMid" name="GpsMid"/>
+			<midlet class="net.sharenav.sharenav.ui.ShareNav" name="ShareNav"/>
 			<sources>
 				<!-- always include the base folder: -->
 				<source dir="src"/>
@@ -386,7 +386,7 @@
 				You can change the title of the sample application with the "title"-var.
 				-->
 				<variable name="update-url" value="http://www.enough.de/update" />
-				<variable name="title" value="GpsMid" />
+				<variable name="title" value="ShareNav" />
 				<variable name="polish.useNativeAlerts" value="true" if="polish.android || polish.blackberry" />
 				<!-- FIXME should remove the last two for offline version -->
 				<variable name="polish.build.android.permissions" value="RECORD_AUDIO,ACCESS_FINE_LOCATION,ACCESS_MOCK_LOCATION,ACCESS_COARSE_LOCATION,WAKE_LOCK,CAMERA,INTERNET,SEND_SMS" />
@@ -434,32 +434,32 @@
 				You can set additional parameters here, e.g.:
 				<parameter name="optimize" value="false" />
 				-->
-				<keep class="de.ueller.gpsmid.ui.GpsMid" />				
-				<keep class="de.ueller.gpsmid.importexport.ExportSession" />
-				<keep class="de.ueller.gps.location.JSR179Input" />
-				<keep class="de.ueller.gpsmid.importexport.FileExportSession" />
-				<keep class="de.ueller.gpsmid.importexport.CommExportSession" />
-				<keep class="de.ueller.gpsmid.importexport.ObexExportSession" />
-				<keep class="de.ueller.gpsmid.importexport.BtObexServer" />
-				<keep class="de.ueller.gpsmid.importexport.CommGpxImportSession" />
-				<keep class="de.ueller.gpsmid.importexport.FileGpxImportSession" />
-				<keep class="de.ueller.gpsmid.importexport.Jsr172GpxParser" />
-				<keep class="de.ueller.gpsmid.importexport.QDGpxParser" />
-				<keep class="de.ueller.gpsmid.importexport.GpxParser" />
-				<keep class="de.ueller.gpsmid.ui.GuiCameraInterface" />
-				<keep class="de.ueller.gpsmid.ui.GuiCamera" />
+				<keep class="net.sharenav.sharenav.ui.ShareNav" />				
+				<keep class="net.sharenav.sharenav.importexport.ExportSession" />
+				<keep class="net.sharenav.gps.location.JSR179Input" />
+				<keep class="net.sharenav.sharenav.importexport.FileExportSession" />
+				<keep class="net.sharenav.sharenav.importexport.CommExportSession" />
+				<keep class="net.sharenav.sharenav.importexport.ObexExportSession" />
+				<keep class="net.sharenav.sharenav.importexport.BtObexServer" />
+				<keep class="net.sharenav.sharenav.importexport.CommGpxImportSession" />
+				<keep class="net.sharenav.sharenav.importexport.FileGpxImportSession" />
+				<keep class="net.sharenav.sharenav.importexport.Jsr172GpxParser" />
+				<keep class="net.sharenav.sharenav.importexport.QDGpxParser" />
+				<keep class="net.sharenav.sharenav.importexport.GpxParser" />
+				<keep class="net.sharenav.sharenav.ui.GuiCameraInterface" />
+				<keep class="net.sharenav.sharenav.ui.GuiCamera" />
 				<keep class="org.xml.sax.Attributes" />
 			</obfuscator>
 			
-			<!-- sign key="gpsmid" keystore="gpsmidkey.jks"	password="${password}" unless="test" /> -->
-			<sign key="gpsmid" keystore="gpsmidkey.jks"     password="${password}" />
+			<!-- sign key="sharenav" keystore="sharenavkey.jks"	password="${password}" unless="test" /> -->
+			<sign key="sharenav" keystore="sharenavkey.jks"     password="${password}" />
 			
 			<!-- debug settings: only include debug setting when the test-property is true -->
 			<debug if="logging" showLogOnError="true" verbose="true" level="debug">
 				<filter pattern="de.enough.*" level="error" />
-				<!--filter pattern="de.ueller.gps.sirf.*" level="debug" / -->
-				<!--filter pattern="de.ueller.gpsmid.ui.Trace" level="debug" / -->
-				<!--<filter pattern="de.ueller.gpsmid.names.SearchNames" level="debug" />-->
+				<!--filter pattern="net.sharenav.gps.sirf.*" level="debug" / -->
+				<!--filter pattern="net.sharenav.sharenav.ui.Trace" level="debug" / -->
+				<!--<filter pattern="net.sharenav.sharenav.names.SearchNames" level="debug" />-->
 			</debug>
 			
 			<!-- user defined JAD attributes can also be used: -->
@@ -519,8 +519,8 @@
 					version="0.0.01"
 					description=""
 					vendorName="Harald Mueller"
-					infoUrl="http://gpsmid.sourceforge.net"
-					icon="gpsmid.png"
+					infoUrl="http://sharenav.sourceforge.net"
+					icon="sharenav.png"
 					jarName="NMEAsim-${polish.version}.jar" 
 					jarUrl="${deploy-url}${polish.jarName}"					
 					deleteConfirm="Do you really want to kill me?" 
@@ -538,7 +538,7 @@
 					usePolishGui="false"
 					workDir="${dir.work}"
 				>     
-					<midlet class="de.ueller.tests.NMEAsimMidlet" name="NMEAsim"/>
+					<midlet class="net.sharenav.tests.NMEAsimMidlet" name="NMEAsim"/>
 					<sources>					
 						<source dir="test/NMEAsim"/>					
 					</sources>
@@ -551,7 +551,7 @@
 					
 					<!-- obfuscator settings: do not obfuscate then the test-property is true -->
 					<obfuscator name="ProGuard" useDefaultPackage="true" unless="test || polish.blackberry" >					
-						<keep class="de.ueller.tests.NMEAsimMidlet" />
+						<keep class="net.sharenav.tests.NMEAsimMidlet" />
 					</obfuscator>
 					
 					<!-- debug settings: only include debug setting when the test-property is true -->
@@ -583,7 +583,7 @@
 
 	<target name="compile-test" depends="prepare">
 		<javac srcdir="${basedir}/test/unit-tests;${basedir}/src/de/ueller/util;${basedir}/src/de/ueller/gps/nmea;
-			${basedir}/src/de/ueller/gps/data;${basedir}/src/de/ueller/gpsmid/data" destdir="bin-tests" debug="on" 
+			${basedir}/src/de/ueller/gps/data;${basedir}/src/de/ueller/sharenav/data" destdir="bin-tests" debug="on" 
 			includes="StringTokenizer.java, MoreMath.java, IntTree.java,
 			MoreMathTests.java,
 			IntTreeTests.java, StringTokenizerTests.java, AllTests.java">

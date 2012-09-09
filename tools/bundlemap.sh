@@ -2,7 +2,7 @@
 
 # usage: bundlemap.sh mapdir [ sourcejarname ] targetjarname
 
-# written to be run in main GpsMid directory
+# written to be run in main ShareNav directory
 
 # needed for signing android .apk; for Android, mapdir must be named "assets"
 # todo: deduce from environment
@@ -43,24 +43,24 @@ then
     andtarget="$2"
   fi
 
-  apk=`ls -t dist/GpsMid-Generic-$andtarget-0*.apk 2>/dev/null|head -1`
+  apk=`ls -t dist/ShareNav-Generic-$andtarget-0*.apk 2>/dev/null|head -1`
   if [ "$apk" ]
   then
-     ver=`echo $apk|sed "s/dist\/GpsMid-Generic-$andtarget-//" | sed "s/\.apk//"`
+     ver=`echo $apk|sed "s/dist\/ShareNav-Generic-$andtarget-//" | sed "s/\.apk//"`
   fi
-  mid=dist/GpsMid-Generic-$andtarget-$ver.apk
+  mid=dist/ShareNav-Generic-$andtarget-$ver.apk
 else
   if [ "$2" ]
   then
     midtarget="$2"
   fi
 
-  jar=`ls -t dist/GpsMid-Generic-$midtarget-0*.jar 2>/dev/null|head -1`
+  jar=`ls -t dist/ShareNav-Generic-$midtarget-0*.jar 2>/dev/null|head -1`
   if [ "$jar" ]
   then
-     ver=`echo $jar|sed "s/dist\/GpsMid-Generic-$midtarget-//" | sed "s/\.jar//"`
+     ver=`echo $jar|sed "s/dist\/ShareNav-Generic-$midtarget-//" | sed "s/\.jar//"`
   fi
-  mid=dist/GpsMid-Generic-$midtarget-$ver.jar
+  mid=dist/ShareNav-Generic-$midtarget-$ver.jar
 fi
 
 midtarget=`echo $mid | sed 's/^dist\///'`
@@ -116,6 +116,6 @@ then
 
   # tools/bundlemap-sign-android.sh "`basename $midtarget`"
 
-  $jarsigner -verbose -digestalg SHA1 -sigalg MD5withRSA $passparam $midtarget gpsmid
+  $jarsigner -verbose -digestalg SHA1 -sigalg MD5withRSA $passparam $midtarget sharenav
 
 fi

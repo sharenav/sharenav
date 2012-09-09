@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# update the Osm2GpsMid snapshots
+# update the Osm2ShareNav snapshots
 #
 
 user=PUT_YOUR_SOURCEFORGE_USERNAME_HERE
@@ -16,30 +16,33 @@ ant -Ddevice=Generic/blackberry
 # normal build 
 
 ant
-cd Osm2GpsMid
+cd Osm2ShareNav
 ant clean
 ant
 cd ..
-cp -p Osm2GpsMid/dist/Osm2GpsMid-$ver.jar .
+cp -p Osm2ShareNav/dist/Osm2ShareNav-$ver.jar .
 
 # debug version build
 ant clean
 ant debug -Ddevice=Generic/blackberry
 ant debug j2mepolish
 
-cd Osm2GpsMid
+cd Osm2ShareNav
 ant clean
 ant
 cd ..
-cp -p Osm2GpsMid/dist/Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar
+cp -p Osm2ShareNav/dist/Osm2ShareNav-$ver.jar Osm2ShareNav-$ver-debug.jar
 
 # 
 
 
 mkdir "Release $numver"
-cp dist/*-$ver.jar README.mkd WHATSNEW.txt Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar "Release $numver"
+cp dist/*-$ver.jar README.mkd WHATSNEW.txt Osm2ShareNav-$ver.jar Osm2ShareNav-$ver-debug.jar "Release $numver"
 
-#scp Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar $user,gpsmid@web.sf.net:htdocs/prebuild
+#scp Osm2ShareNav-$ver.jar Osm2ShareNav-$ver-debug.jar $user,sharenav@web.sf.net:htdocs/prebuild
 
 chmod -R g+w "Release $numver"
-scp -p -r "Release $numver" $user,gpsmid@web.sf.net:/home/frs/project/g/gp/gpsmid/gpsmid/
+
+# FIXME update upload location
+
+# scp -p -r "Release $numver" $user,sharenav@web.sf.net:/home/frs/project/g/gp/sharenav/sharenav/

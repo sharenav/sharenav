@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# update the Osm2GpsMid snapshots
+# update the Osm2ShareNav snapshots
 #
 
 user=YOUR_SOURCEFORGE_USERNAME_HERE
@@ -24,11 +24,11 @@ ant
 # normal android build
 ant  -propertyfile android.properties android
 
-cd Osm2GpsMid
+cd Osm2ShareNav
 #ant clean
 ant
 cd ..
-cp -p dist/Osm2GpsMid-$ver.jar .
+cp -p dist/Osm2ShareNav-$ver.jar .
 
 # debug version build
 ant clean
@@ -38,14 +38,16 @@ ant debug j2mepolish
 # debug android build
 ant  -propertyfile android.properties debug android
 
-cd Osm2GpsMid
+cd Osm2ShareNav
 #ant clean
 ant
 cd ..
-cp -p dist/Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar
+cp -p dist/Osm2ShareNav-$ver.jar Osm2ShareNav-$ver-debug.jar
 
 # 
 
 
-scp Osm2GpsMid-$ver.jar $user,gpsmid@web.sf.net:htdocs/prebuild/Osm2GpsMid-$ver-$rcver.jar
-scp Osm2GpsMid-$ver-debug.jar $user,gpsmid@web.sf.net:htdocs/prebuild/Osm2GpsMid-$ver-$rcver-debug.jar
+# FIXME update location
+
+# scp Osm2ShareNav-$ver.jar $user,sharenav@web.sf.net:htdocs/prebuild/Osm2ShareNav-$ver-$rcver.jar
+# scp Osm2ShareNav-$ver-debug.jar $user,sharenav@web.sf.net:htdocs/prebuild/Osm2ShareNav-$ver-$rcver-debug.jar

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# grab GpsMid strings to i18nize from .java sources, write to stdout in format suitable for messages.txt
+# grab ShareNav strings to i18nize from .java sources, write to stdout in format suitable for messages.txt
 # requirements: grep,awk,bourne-compatible shell,sort,uniq
 # /dev/null is an empty file used to make grep output filenames even if there's only one file
 #

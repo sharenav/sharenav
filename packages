@@ -1,29 +1,29 @@
 # from src
-de.ueller.gps
-de.ueller.gps.data
-de.ueller.gps.location
-de.ueller.gps.nmea
-de.ueller.gps.sirf
-de.ueller.gps.tools
-de.ueller.midlet.gps
-de.ueller.midlet.gps.data
-de.ueller.gpsmid.importexport
-de.ueller.midlet.gps.options
-de.ueller.midlet.gps.routing
-de.ueller.midlet.gps.tile
-de.ueller.midlet.graphics
+net.sharenav.gps
+net.sharenav.gps.data
+net.sharenav.gps.location
+net.sharenav.gps.nmea
+net.sharenav.gps.sirf
+net.sharenav.gps.tools
+net.sharenav.midlet.gps
+net.sharenav.midlet.gps.data
+net.sharenav.sharenav.importexport
+net.sharenav.midlet.gps.options
+net.sharenav.midlet.gps.routing
+net.sharenav.midlet.gps.tile
+net.sharenav.midlet.graphics
 net.fatehi
 net.sourceforge.jmicropolygon
 
-# from GpsMidGraph
-de.ueller.util.qdxmlparser
-de.ueller.gpsMid
-de.ueller.gpsMid.mapData
-de.ueller.midlet.gps
-de.ueller.midlet.gps.data
-de.ueller.midlet.gps.names
-de.ueller.midlet.gps.routing
-de.ueller.midlet.gps.tile
+# from ShareNavGraph
+net.sharenav.util.qdxmlparser
+net.sharenav.gpsMid
+net.sharenav.gpsMid.mapData
+net.sharenav.midlet.gps
+net.sharenav.midlet.gps.data
+net.sharenav.midlet.gps.names
+net.sharenav.midlet.gps.routing
+net.sharenav.midlet.gps.tile
 
 # from src-lib/min-siemapi
 com.siemens.mp.games

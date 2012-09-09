@@ -17,11 +17,11 @@ at large.
 	<device supportsPolishGui="true">
 		<identifier>Generic/android-full-connected</identifier>
 		<parent>Generic/android</parent>
-		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing and outline areas
+		<description>This device combines the full capabilities of ShareNav including OpenStreetMap editing and outline areas
 		</description>
 		<features>isVirtual</features>
 		<groups>android</groups>
-		<capability name="GpsMid.editing" value="true"/>
+		<capability name="ShareNav.editing" value="true"/>
 		<!-- add "bigstyles" to be able to handle more than 255 style file elements -->
 		<capability name="JavaPackage" value="osm-editing, online, bigsearch, areaoutlines"/>
 	    <capability name="build.android.permissions" value="RECORD_AUDIO,ACCESS_FINE_LOCATION,ACCESS_MOCK_LOCATION,ACCESS_COARSE_LOCATION,SEND_SMS,WAKE_LOCK,STATUS_BAR,INTERNET,CAMERA" />
@@ -29,11 +29,11 @@ at large.
 	<device supportsPolishGui="true">
 		<identifier>Generic/android-full</identifier>
 		<parent>Generic/android</parent>
-		<description>This device combines the full capabilities of GpsMid except OpenStreetMap editing and internet-connected functionality.
+		<description>This device combines the full capabilities of ShareNav except OpenStreetMap editing and internet-connected functionality.
 		</description>
 		<features>isVirtual</features>
 		<groups>android</groups>
-		<capability name="GpsMid.editing" value="true"/>
+		<capability name="ShareNav.editing" value="true"/>
 		<!-- add "bigstyles" to be able to handle more than 255 style file elements -->
 		<capability name="JavaPackage" value="bigsearch, areaoutlines"/>
 	    <capability name="build.android.permissions" value="RECORD_AUDIO,ACCESS_FINE_LOCATION,ACCESS_MOCK_LOCATION,ACCESS_COARSE_LOCATION,WAKE_LOCK,STATUS_BAR,CAMERA" />
@@ -41,11 +41,11 @@ at large.
 	<device supportsPolishGui="true">
 		<identifier>Generic/android-midsize</identifier>
 		<parent>Generic/android</parent>
-		<description>This device combines the full capabilities of GpsMid except OpenStreetMap editing and internet-connected functionality.
+		<description>This device combines the full capabilities of ShareNav except OpenStreetMap editing and internet-connected functionality.
 		</description>
 		<features>isVirtual</features>
 		<groups>android</groups>
-		<capability name="GpsMid.editing" value="true"/>
+		<capability name="ShareNav.editing" value="true"/>
 		<!-- add "bigstyles" to be able to handle more than 255 style file elements -->
 		<capability name="JavaPackage" value="bigsearch, areaoutlines"/>
 	    <capability name="build.android.permissions" value="RECORD_AUDIO,ACCESS_FINE_LOCATION,ACCESS_MOCK_LOCATION,ACCESS_COARSE_LOCATION,WAKE_LOCK,STATUS_BAR,CAMERA" />
@@ -53,11 +53,11 @@ at large.
 	<device supportsPolishGui="true">
 		<identifier>Generic/android-minimal</identifier>
 		<parent>Generic/android</parent>
-		<description>This device combines the minimal (actually below minimal, not even GPS) capabilities of GpsMid
+		<description>This device combines the minimal (actually below minimal, not even GPS) capabilities of ShareNav
 		</description>
 		<features>isVirtual</features>
 		<groups>android</groups>
-		<capability name="GpsMid.editing" value="true"/>
+		<capability name="ShareNav.editing" value="true"/>
 		<!-- add "bigstyles" to be able to handle more than 255 style file elements -->
 		<capability name="JavaPackage" value="areaoutlines"/>
 	    <capability name="build.android.permissions" value="ACCESS_MOCK_LOCATION,ACCESS_COARSE_LOCATION,WAKE_LOCK,STATUS_BAR" />
@@ -65,11 +65,11 @@ at large.
 	<device supportsPolishGui="true">
 		<identifier>Generic/android-online</identifier>
 		<parent>Generic/android</parent>
-		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing.
+		<description>This device combines the full capabilities of ShareNav including OpenStreetMap editing.
 		</description>
 		<features>isVirtual</features>
 		<groups>android</groups>
-		<capability name="GpsMid.editing" value="true"/>
+		<capability name="ShareNav.editing" value="true"/>
 		<!-- add "bigstyles" to be able to handle more than 255 style file elements -->
 		<capability name="JavaPackage" value="osm-editing, online, bigsearch"/>
 	    <capability name="build.android.permissions" value="RECORD_AUDIO,ACCESS_FINE_LOCATION,ACCESS_MOCK_LOCATION,ACCESS_COARSE_LOCATION,SEND_SMS,WAKE_LOCK,STATUS_BAR,INTERNET,CAMERA" />
@@ -77,81 +77,81 @@ at large.
 	<device supportsPolishGui="true">
 		<identifier>Generic/android-offline</identifier>
 		<parent>Generic/android</parent>
-		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing.
+		<description>This device combines the full capabilities of ShareNav including OpenStreetMap editing.
 		</description>
 		<features>isVirtual</features>
 		<groups>android</groups>
-		<capability name="GpsMid.editing" value="true"/>
+		<capability name="ShareNav.editing" value="true"/>
 		<!-- add "bigstyles" to be able to handle more than 255 style file elements -->
 		<capability name="JavaPackage" value="bigsearch"/>
 	    <capability name="build.android.permissions" value="RECORD_AUDIO,ACCESS_FINE_LOCATION,ACCESS_MOCK_LOCATION,ACCESS_COARSE_LOCATION,WAKE_LOCK,STATUS_BAR,CAMERA" />
 	</device>
 	<device supportsPolishGui="true">
 		<identifier>Generic/microemulator</identifier>
-		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing for microemulator testing.
+		<description>This device combines the full capabilities of ShareNav including OpenStreetMap editing for microemulator testing.
 		</description>
 		<features>isVirtual</features>
 		<capability name="Emulator.Class" value="GenericEmulator"/>
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
-		<capability name="GpsMid.editing" value="true"/>
+		<capability name="ShareNav.editing" value="true"/>
 		<capability name="JavaConfiguration" value="CLDC/1.1"/>
 		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, min-samsapi, osm-editing, online, bigsearch"/>
 	</device>
 	<device supportsPolishGui="true">
 		<identifier>Generic/microemulator-smallstyles</identifier>
-		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing for microemulator testing.
+		<description>This device combines the full capabilities of ShareNav including OpenStreetMap editing for microemulator testing.
 		</description>
 		<features>isVirtual</features>
 		<capability name="Emulator.Class" value="GenericEmulator"/>
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
-		<capability name="GpsMid.editing" value="true"/>
+		<capability name="ShareNav.editing" value="true"/>
 		<capability name="JavaConfiguration" value="CLDC/1.1"/>
 		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, min-samsapi, osm-editing, online, bigsearch"/>
 	</device>
 	<device supportsPolishGui="true">
 		<identifier>Generic/full-connected</identifier>
-		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing and other connected functionality (like track upload to OSM, opening hyperlinks).
+		<description>This device combines the full capabilities of ShareNav including OpenStreetMap editing and other connected functionality (like track upload to OSM, opening hyperlinks).
 		</description>
 		<features>isVirtual</features>
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
-		<capability name="GpsMid.editing" value="true"/>
+		<capability name="ShareNav.editing" value="true"/>
 		<capability name="JavaConfiguration" value="CLDC/1.1"/>
 		<!-- add "bigstyles" to be able to handle more than 255 style file elements -->
 		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, min-samsapi, osm-editing, online, bigsearch"/>
 	</device>
 	<device supportsPolishGui="true">
 		<identifier>Generic/newfeatures</identifier>
-		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing.
+		<description>This device combines the full capabilities of ShareNav including OpenStreetMap editing.
 		</description>
 		<features>isVirtual</features>
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
-		<capability name="GpsMid.editing" value="true"/>
+		<capability name="ShareNav.editing" value="true"/>
 		<capability name="JavaConfiguration" value="CLDC/1.1"/>
 		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, min-samsapi, osm-editing, online, bigsearch"/>
 	</device>
 	<device supportsPolishGui="true">
 		<identifier>Generic/debug</identifier>
-		<description>This device combines the full capabilities of GpsMid and enables debugging.
+		<description>This device combines the full capabilities of ShareNav and enables debugging.
 		</description>
 		<features>isVirtual</features>
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
-		<capability name="GpsMid.editing" value="true"/>
+		<capability name="ShareNav.editing" value="true"/>
 		<capability name="JavaConfiguration" value="CLDC/1.1"/>
 		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, min-samsapi, osm-editing, online, debug-enabled, noobfuscation"/>
 	</device>
 	<device supportsPolishGui="true">
 		<identifier>Generic/blackberry</identifier>
-		<description>This device combines the full capabilities of GpsMid but disables obfuscation.
+		<description>This device combines the full capabilities of ShareNav but disables obfuscation.
 		</description>
 		<features>isVirtual</features>
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
-		<capability name="GpsMid.editing" value="true"/>
+		<capability name="ShareNav.editing" value="true"/>
 		<capability name="JavaConfiguration" value="CLDC/1.1"/>
 		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, osm-editing, online, noobfuscation"/>
 	</device>
 	<device supportsPolishGui="true">
 		<identifier>Generic/full</identifier>
-		<description>This device combines the full capabilities of GpsMid.
+		<description>This device combines the full capabilities of ShareNav.
 		</description>
 		<features>isVirtual</features>
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
@@ -160,7 +160,7 @@ at large.
 	</device>
 	<device supportsPolishGui="true">
 		<identifier>Generic/full-nolocation</identifier>
-		<description>This device combines the full capabilities of GpsMid, except for JSR-179 (location-api)
+		<description>This device combines the full capabilities of ShareNav, except for JSR-179 (location-api)
 		</description>
 		<features>isVirtual</features>
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
@@ -169,7 +169,7 @@ at large.
 	</device>
 	<device supportsPolishGui="true">
 		<identifier>Generic/minimal</identifier>
-		<description>This device is the minimal requirements for GpsMid
+		<description>This device is the minimal requirements for ShareNav
 		</description>
 		<features>isVirtual</features>
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
@@ -178,7 +178,7 @@ at large.
 	</device>
 	<device supportsPolishGui="true">
 		<identifier>Generic/midsize</identifier>
-		<description>This device is the minimal requirements for GpsMid + locationapi + bluetooth + file access. It's got a smaller in-memory footprint than /full.
+		<description>This device is the minimal requirements for ShareNav + locationapi + bluetooth + file access. It's got a smaller in-memory footprint than /full.
 		</description>
 		<features>isVirtual</features>
 		<capability name="JavaPlatform" value="MIDP/2.0"/>

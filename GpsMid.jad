@@ -1,11 +1,11 @@
 Manifest-Version: 1.0
 MIDlet-Jar-Size: 131068
-MIDlet-1: GpsMid,,de.ueller.midlet.gps.GpsMid
-MIDlet-Jar-URL: GpsMid.jar
+MIDlet-1: ShareNav,,net.sharenav.midlet.gps.ShareNav
+MIDlet-Jar-URL: ShareNav.jar
 MicroEdition-Configuration: CLDC-1.0
 Created-By: 1.5.0_10 (Sun Microsystems Inc.)
 MIDlet-Version: 0.2.36
 MIDlet-Vendor: Harald Mueller
 MIDlet-Data-Size: 50000
-MIDlet-Name: GpsMid
+MIDlet-Name: ShareNav
 MicroEdition-Profile: MIDP-2.0
