@@ -15,6 +15,16 @@ at large.
 -->
 <devices>
 	<device supportsPolishGui="true">
+		<identifier>Generic/java-full-connected</identifier>
+		<parent>Generic/Java</parent>
+		<description>This device combines the full capabilities of ShareNav including OpenStreetMap editing
+		</description>
+		<features>isVirtual</features>
+		<capability name="ShareNav.editing" value="true"/>
+		<!-- add "bigstyles" to be able to handle more than 255 style file elements -->
+		<capability name="JavaPackage" value="osm-editing, online, bigsearch, noobfuscation"/>
+	</device>
+	<device supportsPolishGui="true">
 		<identifier>Generic/android-full-connected</identifier>
 		<parent>Generic/android</parent>
 		<description>This device combines the full capabilities of ShareNav including OpenStreetMap editing and outline areas
