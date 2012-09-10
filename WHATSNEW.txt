@@ -1,3 +1,8 @@
+    *** New WHATSNEW file containing development info ***
+    - added WHATSNEW-dev.txt, which is primarily meant for developers
+      to document significant code restructuring, but may be sometimes
+      useful to users for detailed info, thus mentioning it also here
+
 ShareNav 0.8.3
     *** Start of ShareNav code base ***
     - Start development of ShareNav, based on the source code from GpsMid release 0.8.2

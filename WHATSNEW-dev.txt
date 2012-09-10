@@ -1,0 +1,12 @@
+ShareNav 0.8.3
+    *** Start of ShareNav code base ***
+    - Start development of ShareNav, based on the source code from GpsMid release 0.8.2.
+      As the commit is quite large, a description of what the commit contains:
+      * Renamed directory structure: de/ueller to net/sharenav
+      * Renamed directory structure and in-app strings & file naming: gpsmid to sharenav
+      * Renamed user messages, program code, in-app strings & file names
+        and directory structure: GpsMid to ShareNav
+      * Removed GpsMid splash image & icon
+      * Removed separate tools Wegpunktretter.java and Trackretter.java
+      * to be continued
+
