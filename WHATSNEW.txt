@@ -5,7 +5,8 @@
 
 ShareNav 0.8.3
     *** Start of ShareNav code base ***
-    - Start development of ShareNav, based on the source code from GpsMid release 0.8.2
+    - Start development of ShareNav, based on the source code from GpsMid release 0.8.2.
+      Some details on this big commit in WHATSNEW-dev.txt.
 
 GpsMid 0.8.2
     *** Map Display ***
