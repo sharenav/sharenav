@@ -1,3 +1,10 @@
+    *** New target Generic/Java ***
+    - added new build target Generic/Java, whic builds a ShareNav jar
+      which can be run directly on a desktop/laptop with Java SE.
+      The target builds ShareNav with microemulator bundled, so user
+      doesn't need to separately install microemulator to use ShareNav.
+      The target is not enabled by default, can be built with
+      ant debug -Ddevice=Generic/java j2mepolish
     *** New WHATSNEW file containing development info ***
     - added WHATSNEW-dev.txt, which is primarily meant for developers
       to document significant code restructuring, but may be sometimes
