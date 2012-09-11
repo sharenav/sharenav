@@ -9,11 +9,14 @@
     - added WHATSNEW-dev.txt, which is primarily meant for developers
       to document significant code restructuring, but may be sometimes
       useful to users for detailed info, thus mentioning it also here
+    *** Appeareance, naming, credits etc. ***
+    - added pointers to GpsMid
 
 ShareNav 0.8.3
     *** Start of ShareNav code base ***
     - Start development of ShareNav, based on the source code from GpsMid release 0.8.2.
       Some details on this big commit in WHATSNEW-dev.txt.
+      For more information on GpsMid, see http://gpsmid.sourceforge.net/
 
 GpsMid 0.8.2
     *** Map Display ***
