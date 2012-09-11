@@ -32,7 +32,7 @@ awk ' BEGIN { while ((getline < "resources/messages.txt") > 0 ) {
      printf "" > outfile
      print "msgid \"\"" >> outfile
      print "msgstr \"\"" >> outfile
-     print "\"Project-Id-Version: ShareNav 0.8.2\\n\""  >> outfile
+     print "\"Project-Id-Version: ShareNav 0.8.31\\n\""  >> outfile
      print "\"MIME-Version: 1.0\\n\""  >> outfile
      print "\"Content-Type: text/plain; charset=utf-8\\n\""  >> outfile
      print "\"Content-Transfer-Encoding: 8bit\\n\""  >> outfile

@@ -3,7 +3,7 @@
 # build Osm2ShareNav & ShareNav midlets for signing
 #
 
-numver=0.8.2
+numver=0.8.31
 ver=$numver-map72
 map=Berlin
 
