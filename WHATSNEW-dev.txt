@@ -1,3 +1,7 @@
+    - new target Generic/Java
+      Technically, the target builds ShareNav with microemulator bundled, so user
+      doesn't need to separately install microemulator to use ShareNav.
+
 ShareNav 0.8.3
     *** Start of ShareNav code base ***
     - Start development of ShareNav, based on the source code from GpsMid release 0.8.2.
@@ -9,4 +13,3 @@ ShareNav 0.8.3
       * Removed GpsMid splash image & icon
       * Removed separate tools Wegpunktretter.java and Trackretter.java
       * to be continued
-
