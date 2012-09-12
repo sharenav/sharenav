@@ -9,6 +9,8 @@
     - added WHATSNEW-dev.txt, which is primarily meant for developers
       to document significant code restructuring, but may be sometimes
       useful to users for detailed info, thus mentioning it also here
+    *** OSM license change ***
+    - use the ODbL license bit in new maps
     *** Appeareance, naming, credits etc. ***
     - added pointers to GpsMid
 

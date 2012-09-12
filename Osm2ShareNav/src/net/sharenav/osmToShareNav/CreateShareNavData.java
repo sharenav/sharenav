@@ -276,8 +276,8 @@ public class CreateShareNavData implements FilenameFilter {
 
 		// FIXME add .properties & GUI user interface for telling map data source
 
-		Configuration.mapFlags |= LEGEND_MAPFLAG_SOURCE_OSM_CC_BY_SA;
-		// Configuration.mapFlags |= LEGEND_MAPFLAG_SOURCE_OSM_ODBL;
+		// Configuration.mapFlags |= LEGEND_MAPFLAG_SOURCE_OSM_CC_BY_SA;
+		Configuration.mapFlags |= LEGEND_MAPFLAG_SOURCE_OSM_ODBL;
 		// Configuration.mapFlags |= LEGEND_MAPFLAG_SOURCE_FI_LANDSURVEY;
 		// Configuration.mapFlags |= LEGEND_MAPFLAG_SOURCE_FI_DIGIROAD;
 
