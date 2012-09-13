@@ -37,6 +37,7 @@ public class GuiGpx extends List implements CommandListener,
 	private final Command LOAD_CMD = new Command(Locale.get("guigpx.Import")/*Import*/, Command.ITEM, 3);
 	private final Command DISP_CMD = new Command(Locale.get("guigpx.Display")/*Display*/, Locale.get("guigpx.DispSelectedTracks")/*Display selected tracks*/, Command.ITEM, 3);
 	private final Command UNDISP_CMD = new Command(Locale.get("guigpx.Undisplay")/*Undisplay*/, Locale.get("guigpx.UndispLoadedTracks")/*Undisplay loaded tracks*/, Command.ITEM, 3);
+	private final Command ROUTE_CMD = new Command(Locale.get("guigpx.Route")/*Use as route*/, Locale.get("guigpx.Route2")/*Use this track as a route */, Command.ITEM, 3);
 	private final Command RENAME_CMD = new Command(Locale.get("guigpx.Rename")/*Rename*/, Locale.get("guigpx.RenameFirstSelected")/*Rename first selected*/, Command.ITEM, 3);	
 	private final Command REPLAY_START_CMD = new Command(Locale.get("guigpx.Replay")/*Replay*/, Command.ITEM, 3);	
 	private final Command REPLAY_STOP_CMD = new Command(Locale.get("guigpx.StopReplay")/*Stop Replay*/, Command.ITEM, 3);	
@@ -91,6 +92,7 @@ public class GuiGpx extends List implements CommandListener,
 		addCommand(LOAD_CMD);
 		addCommand(DISP_CMD);
 		addCommand(UNDISP_CMD);
+		addCommand(ROUTE_CMD);
 		addCommand(RENAME_CMD);		
 		// to avoid trouble with user deleting currently recording track, disable deletions if recording is on
 		if (!parent.gpx.isRecordingTrk()) {
@@ -194,6 +196,18 @@ public class GuiGpx extends List implements CommandListener,
 		if (c == UNDISP_CMD) {
 			parent.gpx.undispLoadedTracks();
 			parent.show();
+			return;
+		}
+		if (c == ROUTE_CMD) {
+			idx = getFirstSelectedIndex();
+			if (idx >= 0) {
+				updateProcessVector();
+				if (processTracks.size() > 0) {
+					parent.gpx.replayTrk(processTracks);
+					parent.show();
+				}
+				// trks[idx].displayName
+			}
 			return;
 		}
 		if (c == RENAME_CMD) {
