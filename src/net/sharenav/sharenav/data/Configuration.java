@@ -386,6 +386,8 @@ public class Configuration {
 	public final static short CFGBIT_DISABLE_AREAS_WHEN_BACKGROUND_MAP = 153;
 	/** bit 154: Disable buildings when background map is in use */
 	public final static short CFGBIT_DISABLE_BUILDINGS_WHEN_BACKGROUND_MAP = 154;
+	/** bit 155: Keep on road when guiding the route (center the map on road) */
+	public final static short CFGBIT_KEEP_ON_ROAD_IN_ROUTE_GUIDANCE = 155;
 	
 	/**
 	 * These are the database record IDs for each configuration option

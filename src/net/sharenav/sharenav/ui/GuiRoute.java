@@ -188,8 +188,8 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 			tfMinRouteLineWidth = new TextField(Locale.get("guiroute.MinimumWidth")/*Minimum width of route line*/, Integer.toString(Configuration.getMinRouteLineWidth()), 1, TextField.DECIMAL);
 			append(tfMinRouteLineWidth);
 			
-			String [] routingOpts = new String[7];
-			boolean[] selRouting = new boolean[7];
+			String [] routingOpts = new String[8];
+			boolean[] selRouting = new boolean[8];
 			routingOpts[0] = Locale.get("guiroute.AutoRecalculation")/*Auto recalculation*/; selRouting[0]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_AUTO_RECALC);
 			routingOpts[1] = Locale.get("guiroute.RouteBrowsing")/*Route browsing with up/down keys*/; selRouting[1]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_BROWSING);
 			routingOpts[2] = Locale.get("guiroute.HideQuietArrows")/*Hide quiet arrows*/; selRouting[2]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_HIDE_QUIET_ARROWS);
@@ -197,6 +197,7 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 			routingOpts[4] = Locale.get("guiroute.stopAtDest")/*Stop routing when at destination*/; selRouting[4]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_STOP_ROUTING_AT_DESTINATION);
 			routingOpts[5] = Locale.get("guiroute.maparrows")/*Show in-map arrows*/; selRouting[5]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_NAVI_ARROWS_IN_MAP);
 			routingOpts[6] = Locale.get("guiroute.bigarrows")/*Show big navigation arrows*/; selRouting[6]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_NAVI_ARROWS_BIG);
+			routingOpts[7] = Locale.get("guiroute.keeponroad")/*Center map to road*/; selRouting[7]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_KEEP_ON_ROAD_IN_ROUTE_GUIDANCE);
 
 			routingOptsGroup = new ChoiceGroup(Locale.get("guiroute.Other")/*Other*/, Choice.MULTIPLE, routingOpts ,null);
 			routingOptsGroup.setSelectedFlags(selRouting);
@@ -279,7 +280,7 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 						(int) (Float.parseFloat(w)) 
 				); 
 				
-				boolean[] selRouting = new boolean[7];
+				boolean[] selRouting = new boolean[8];
 				routingOptsGroup.getSelectedFlags(selRouting);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_AUTO_RECALC, selRouting[0]);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_BROWSING, selRouting[1]);
@@ -288,6 +289,7 @@ public class GuiRoute extends Form implements CommandListener, ItemCommandListen
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_STOP_ROUTING_AT_DESTINATION, selRouting[4]);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_NAVI_ARROWS_IN_MAP, selRouting[5]);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_NAVI_ARROWS_BIG, selRouting[6]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_KEEP_ON_ROAD_IN_ROUTE_GUIDANCE, selRouting[7]);
 
 				String s=tfTrafficSignalCalcDelay.getString(); 
 				Configuration.setTrafficSignalCalcDelay( 

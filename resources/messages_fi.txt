@@ -937,3 +937,4 @@ guigpx.Route2=Käytä jälkeä reittinä
 guidiscover.BackgroundDisableAreas=Älä näytä alueita kun taustakarttaa näytetään
 guidiscover.BackgroundDisableBuildings=Älä näytä rakennuksia kun taustakarttaa näytetään
 guidiscover.TMSFCPath=Rasterikartan välimuistipolku:
+guiroute.keeponroad=Keskitä kartta tiehen

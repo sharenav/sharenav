@@ -1392,3 +1392,4 @@ guidiscover.BackgroundDisableBuildings=Disable buildings when background map is 
 guidiscover.TMSFCPath=Raster map file cache base path:
 splash.CodeForGpsMid=Based on code developed for GpsMid,
 splash.GpsMidUrl=http://gpsmid.sourceforge.net
+guiroute.keeponroad=Center map to road
