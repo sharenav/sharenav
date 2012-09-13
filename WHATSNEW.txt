@@ -4,8 +4,10 @@
     - added WHATSNEW-dev.txt, which is primarily meant for developers
       to document significant code restructuring, but may be sometimes
       useful to users for detailed info, thus mentioning it also here
-    *** OSM license change ***
-    - use the ODbL license bit in new maps
+    *** OSM license change, showing map source info (Osm2ShareNav) ***
+    - Added .properties configuration options for telling what the
+      map source is.
+      Use the ODbL source by default in new maps.
     *** Appeareance, naming, credits etc. ***
     - added pointers to GpsMid
     *** Targets ***
@@ -13,6 +15,7 @@
       which can be run directly on a desktop/laptop with Java SE.
     *** Bug fixes ***
     - revert attempt to fix Nokia E72 trace crash, didn't fix the bug
+    - fix capitalization of ODbL
 
 ShareNav 0.8.3 (internal version, not published)
     *** Start of ShareNav code base ***
