@@ -435,6 +435,12 @@ public class Configuration {
 		/** Do we honor barriers */
 		public boolean useBarriers = true;
 
+		/** Map source info */
+		public boolean sourceOSMODbL = true;
+		public boolean sourceOSMCC = false;
+		public boolean sourceFILandSurvey = false;
+		public boolean sourceFIDigiroad = false;
+
 		/** Path name of the style-file */
 		public String styleFile;
 
@@ -776,6 +782,10 @@ public class Configuration {
 			jarsignerPath = getString("jarsignerPath");
 			triangleAreaFormat = getString("triangleAreaFormat").equalsIgnoreCase("true");
 			useBarriers = getString("useBarriers").equalsIgnoreCase("true");
+			sourceOSMODbL = getString("sourceOSMODbL").equalsIgnoreCase("true");
+			sourceOSMCC  = getString("sourceOSMCC").equalsIgnoreCase("true");
+			sourceFILandSurvey = getString("sourceFILandSurvey").equalsIgnoreCase("true");
+			sourceFIDigiroad = getString("sourceFIDigiroad").equalsIgnoreCase("true");
 			writeTriangleAreaFormat = getString("triangleAreaFormat").equalsIgnoreCase("true");
 			outlineAreaFormat = getString("outlineAreaFormat").equalsIgnoreCase("true");
 			if (outlineAreaFormat && !triangleAreaFormat) {
@@ -1622,6 +1632,10 @@ public class Configuration {
 			confString += "  triangleAreaFormat: " + triangleAreaFormat + "\n";
 			confString += "  outlineAreaFormat: " + outlineAreaFormat + "\n";
 			confString += "  useBarriers: " + useBarriers + "\n";
+			confString += "  source is OSM ODbL: " + sourceOSMODbL + "\n";
+			confString += "  source is OSM CC BY SA: " + sourceOSMCC + "\n";
+			confString += "  source is FI Landsurvey: " + sourceFILandSurvey + "\n";
+			confString += "  source is FI Digiroad: " + sourceFIDigiroad + "\n";
 			confString += "  Adding menu entries for languages: " + getUseLang() + " (" + getUseLangName() + ")" + "\n";
 			confString += "  Don't compress files ending with: " + getDontCompress() + "\n";
 			if (allLang) {

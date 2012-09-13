@@ -91,6 +91,10 @@
         <entry key="outlineAreaFormat" value="false"/>
         <entry key="triangleAreaFormat" value="true"/>
         <entry key="useBarriers" value="false"/>
+        <entry key="sourceOSMODbL" value="true"/>
+        <entry key="sourceOSMCC" value="false"/>
+        <entry key="sourceFILandSurvey" value="false"/>
+        <entry key="sourceFIDigiroad" value="false"/>
         <entry key="signApk" value="false"/>
         <entry key="jarsignerPath" value="jarsigner"/>
         <entry key="signApkPassword" value=""/>

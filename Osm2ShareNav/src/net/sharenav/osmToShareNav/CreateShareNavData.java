@@ -274,12 +274,20 @@ public class CreateShareNavData implements FilenameFilter {
 		Configuration.mapFlags = 0L;
 
 
-		// FIXME add .properties & GUI user interface for telling map data source
+		// FIXME add GUI for telling map data source(s)
 
-		// Configuration.mapFlags |= LEGEND_MAPFLAG_SOURCE_OSM_CC_BY_SA;
-		Configuration.mapFlags |= LEGEND_MAPFLAG_SOURCE_OSM_ODBL;
-		// Configuration.mapFlags |= LEGEND_MAPFLAG_SOURCE_FI_LANDSURVEY;
-		// Configuration.mapFlags |= LEGEND_MAPFLAG_SOURCE_FI_DIGIROAD;
+		if (Configuration.getConfiguration().sourceOSMODbL) {
+			Configuration.mapFlags |= LEGEND_MAPFLAG_SOURCE_OSM_ODBL;
+		}
+		if (Configuration.getConfiguration().sourceOSMCC) {
+			Configuration.mapFlags |= LEGEND_MAPFLAG_SOURCE_OSM_CC_BY_SA;
+		}
+		if (Configuration.getConfiguration().sourceFILandSurvey) {
+			Configuration.mapFlags |= LEGEND_MAPFLAG_SOURCE_FI_LANDSURVEY;
+		}
+		if (Configuration.getConfiguration().sourceFIDigiroad) {
+			Configuration.mapFlags |= LEGEND_MAPFLAG_SOURCE_FI_DIGIROAD;
+		}
 
 		if (Configuration.getConfiguration().writeTriangleAreaFormat) {
 			Configuration.mapFlags |= LEGEND_MAPFLAG_TRIANGLE_AREA_BLOCK;
