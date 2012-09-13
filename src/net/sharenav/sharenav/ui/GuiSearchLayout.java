@@ -1,5 +1,6 @@
 /*
  * ShareNav - Copyright (c) 2009 sk750 at users dot sourceforge dot net
+ * 	      Copyright (c) 2010-2012 Jyrki Kuoppala jkpj at users dot sourceforge dot net 
  * See COPYING
  */
 
@@ -34,15 +35,10 @@ public class GuiSearchLayout extends LayoutManager {
 	public static final int KEY_STAR = 12;
 	public static final int KEY_0 = 13;
 	public static final int KEY_POUND = 14;
-	//#if polish.android
 	public static final int TEXT = 15;
-	//#endif
 
-	//#if polish.android
-	public static final int ELE_COUNT = 16;
-	//#else
-	public static final int ELE_COUNT = 15;
-	//#endif
+	public static final int ELE_COUNT_BASE = 15;
+	public static int ELE_COUNT = 15;
 
 	public static final byte SE_KEY = 1;
 	public static final byte SE_TEXT = 2;
@@ -55,11 +51,19 @@ public class GuiSearchLayout extends LayoutManager {
 	private volatile static int buttonw = 0;
 	private volatile static int buttonh = 0;
 
-	public LayoutElement ele[] = new LayoutElement[ELE_COUNT];
+	public LayoutElement ele[];
 	
 	public GuiSearchLayout(int minX, int minY, int maxX, int maxY) {
 		super(minX, minY, maxX, maxY, Legend.COLORS[Legend.COLOR_SEARCH_TOUCHED_BUTTON_BACKGROUND]);
 		
+		//#if polish.android
+		ELE_COUNT = ELE_COUNT_BASE + 1;
+		//#else
+		if (ShareNav.isRunningInMicroEmulator()) {
+			ELE_COUNT = ELE_COUNT_BASE + 1;
+		}
+		//#endif
+		ele = new LayoutElement[ELE_COUNT];
 		xdiff = (maxX - minX) / 3;
 		ydiff = (maxY - minY) / 8;
 		//System.out.println ("xdiff: " + xdiff + " ydiff: " + ydiff);
@@ -285,20 +289,26 @@ public class GuiSearchLayout extends LayoutManager {
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 
 		//#if polish.android
-		e = ele[TEXT];
-		addElement(e,
-			LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_TOP |
-			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
-			LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
-			LayoutElement.FLAG_FONT_LARGE
-		);
-		Font font = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_LARGE);
-		//e.setAdditionalOffsX(xdiff);
-		//e.setAdditionalOffsY(ydiff - font.getHeight());
-		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
-		e.setSpecialElementID(SE_TEXT);
-		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
+		if (true) {
+		//#else
+		if (ShareNav.isRunningInMicroEmulator()) {
 		//#endif
+			e = ele[TEXT];
+			addElement(e,
+				   LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_TOP |
+				   LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+				   LayoutElement.FLAG_TRANSPARENT_BACKGROUND_BOX |
+				   LayoutElement.FLAG_FONT_LARGE
+				);
+			Font font = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_LARGE);
+			//e.setAdditionalOffsX(xdiff);
+			//e.setAdditionalOffsY(ydiff - font.getHeight());
+			e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
+			e.setSpecialElementID(SE_TEXT);
+			e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
+		} else {
+			
+		}
 	}
 	
 	/*

@@ -1,6 +1,7 @@
 /*
  * ShareNav - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
  * 			Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net 
+ * 			Copyright (c) 2010-2012 Jyrki Kuoppala jkpj at users dot sourceforge dot net 
  * See COPYING
  */
 
@@ -891,7 +892,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		//#if polish.android
 		int extraOffset = gsl.ele[GuiSearchLayout.TEXT].getFontHeight();
 		//#else
-		int extraOffset = 0;
+		int extraOffset = ShareNav.isRunningInMicroEmulator() ? gsl.ele[GuiSearchLayout.TEXT].getFontHeight() : 0;
 		//#endif
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_LARGE_FONT)) {
 			Font fontLarge = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_LARGE);  
@@ -1157,6 +1158,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 				}
 				//#if polish.android
 				if (sb != null) {
+					gsl.ele[GuiSearchLayout.TEXT].setText(sb.toString());
+				}
+				//#else
+				if (sb != null && ShareNav.isRunningInMicroEmulator()) {
 					gsl.ele[GuiSearchLayout.TEXT].setText(sb.toString());
 				}
 				//#endif
