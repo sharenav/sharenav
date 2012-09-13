@@ -1,5 +1,6 @@
 /*
  * ShareNav - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
+ * 	      Copyright (c) 2010-2012 Jyrki Kuoppala jkpj at users dot sourceforge dot net
  * See COPYING
  */
 
@@ -1659,7 +1660,7 @@ public class Configuration {
 
 	// set some defaults for this device; will be done only at first install
 	// or after configuration has been reset to factory settings
-	public static void setCanvasSpecificDefaults(int width, int height) {
+	public static void setCanvasSpecificDefaults(int width, int height, boolean microemulator) {
 		if (!getCfgBitState(CFGBIT_CANVAS_SPECIFIC_DEFAULTS_DONE)) {
 			if (width > 219) {
 				// if the map display is wide enough, show the clock in the map screen by default
@@ -1681,6 +1682,9 @@ public class Configuration {
 			}
 			if (getHasPointerEvents()) {
 				setCfgBitSavedState(CFGBIT_LARGE_FONT, true);
+			}
+			if (microemulator) {
+				setCfgBitSavedState(CFGBIT_FULLSCREEN, true);
 			}
 			setCfgBitSavedState(CFGBIT_CANVAS_SPECIFIC_DEFAULTS_DONE, true);
 		}

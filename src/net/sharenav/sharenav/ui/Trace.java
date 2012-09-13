@@ -1,5 +1,6 @@
 /*
  * ShareNav - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
+ * 	      Copyright (c) 2010-2012 Jyrki Kuoppala jkpj at users dot sourceforge dot net
  * See file COPYING.
  */
 
@@ -631,7 +632,7 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 
 		// FIXME getWidth() && getHeight() might be incorrect at startup on
 		// some platforms
-		Configuration.setCanvasSpecificDefaults(getWidth(), getHeight());
+		Configuration.setCanvasSpecificDefaults(getWidth(), getHeight(), ShareNav.isRunningInMicroEmulator());
 		
 		try {
 			if (Legend.isValid) {
