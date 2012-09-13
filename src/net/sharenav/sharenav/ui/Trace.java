@@ -285,6 +285,7 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 	 * - e. g. "new Node(49.328010f, 11.352556f)"
 	 */
 	public Node center = new Node(49.328010f, 11.352556f);
+	public Node gpsNode = new Node(49.328010f, 11.352556f);
 	public Node routePointCenter = new Node(49.328010f, 11.352556f);
 
 	private Node prevPositionNode = null;
@@ -1089,6 +1090,9 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 				}
 				//#debug debug
 				logger.debug("autoRouteRecalculate");
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_KEEP_ON_ROAD_IN_ROUTE_GUIDANCE)) {
+					center = gpsNode.copy();
+				}
 				// recalculate route
 				commandAction(ROUTING_START_CMD);
 			}
@@ -3689,6 +3693,7 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 		}
 		if (gpsRecenter) {
 			center.setLatLonDeg(pos.latitude, pos.longitude);
+			gpsNode.setLatLonDeg(pos.latitude, pos.longitude);
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_KEEP_ON_ROAD_IN_ROUTE_GUIDANCE) && RouteLineProducer.isRouteLineProduced()) {
 				center = routePointCenter.copy();
 			}
