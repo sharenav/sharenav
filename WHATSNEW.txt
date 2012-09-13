@@ -11,6 +11,8 @@
     - use the ODbL license bit in new maps
     *** Appeareance, naming, credits etc. ***
     - added pointers to GpsMid
+    *** Bug fixes ***
+    - revert attempt to fix Nokia E72 trace crash, didn't fix the bug
 
 ShareNav 0.8.3 (internal version, not published)
     *** Start of ShareNav code base ***
