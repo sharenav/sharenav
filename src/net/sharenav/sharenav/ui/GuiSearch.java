@@ -266,6 +266,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 		this.minX = 0;
 		this.minY = 0;
 
+		// show bigger search screen
+		if (ShareNav.isRunningInMicroEmulator()) {
+			super.setFullScreenMode(true);
+		}
+
 		if (parent.isShowingSplitSearch()) {
 			this.maxX = parent.getWidth();
 			this.maxY = parent.getHeight();
