@@ -2935,7 +2935,6 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 			credits = credits + Locale.get("trace.mapcreditOsmODbL");
 			added = true;
 		}
-		//#if polish.api.finland
 		if (Legend.getMapFlag(Legend.LEGEND_MAPFLAG_SOURCE_FI_LANDSURVEY)) {
 			if (added) {
 				credits = credits + ",";
@@ -2950,7 +2949,6 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 			credits = credits + Locale.get("trace.mapcreditFiDigiroad");
 			added = true;
 		}
-		//#endif
 		return credits;
 	}
 

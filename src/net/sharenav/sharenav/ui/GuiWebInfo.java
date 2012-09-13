@@ -330,14 +330,12 @@ public class GuiWebInfo extends List implements ShareNavDisplayable,
 			if (Legend.getMapFlag(Legend.LEGEND_MAPFLAG_SOURCE_OSM_ODBL)) {
 				url = Locale.get("trace.mapcreditOsmODbLURL");
 			}
-			//#if polish.api.finland
 			if (Legend.getMapFlag(Legend.LEGEND_MAPFLAG_SOURCE_FI_LANDSURVEY)) {
 				url = Locale.get("trace.mapcreditFiLandSurvey12URL");
 			}
 			if (Legend.getMapFlag(Legend.LEGEND_MAPFLAG_SOURCE_FI_DIGIROAD)) {
 				url = Locale.get("trace.mapcreditFiDigiroadURL");
 			}
-			//#endif
 		}
 		return url;
 	}
