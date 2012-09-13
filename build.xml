@@ -103,7 +103,7 @@
 		<info
 			name="ShareNav"
 			version="0.8.31"
-			description="Shows moving map made from OpenStreetMap data"
+			description="Vector navigation & map viewing software"
 			vendorName="Jyrki Kuoppala"
 			infoUrl="http://sharenav.sourceforge.net"
 			icon="sharenav.png"
@@ -294,7 +294,7 @@
 		<info
 			name="ShareNav"
 			version="0.8.31"
-			description="Shows moving map made from OpenStreetMap data"
+			description="Vector navigation & map viewing software"
 			vendorName="Jyrki Kuoppala"
 			infoUrl="http://sharenav.sourceforge.net"
 			icon="sharenav.png"
