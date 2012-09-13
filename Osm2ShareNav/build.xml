@@ -86,7 +86,7 @@
         <entry key="useUrlTags" value="false"/>
         <entry key="usePhoneTags" value="false"/>
         <entry key="useHouseNumbers" value="false"/>
-        <entry key="useWordSearch" value="false"/>
+        <entry key="useWordSearch" value="true"/>
         <entry key="useSeaTiles" value="false"/>
         <entry key="outlineAreaFormat" value="false"/>
         <entry key="triangleAreaFormat" value="true"/>

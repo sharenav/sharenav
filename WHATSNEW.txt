@@ -1,3 +1,5 @@
+    *** Default values ***
+    - Osm2ShareNav: word index on by default
     *** New target Generic/Java ***
     - added new build target Generic/Java, whic builds a ShareNav jar
       which can be run directly on a desktop/laptop with Java SE.
@@ -10,7 +12,7 @@
     *** Appeareance, naming, credits etc. ***
     - added pointers to GpsMid
 
-ShareNav 0.8.3
+ShareNav 0.8.3 (internal version, not published)
     *** Start of ShareNav code base ***
     - Start development of ShareNav, based on the source code from GpsMid release 0.8.2.
       Some details on this big commit in WHATSNEW-dev.txt.
