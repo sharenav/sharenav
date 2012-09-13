@@ -322,7 +322,7 @@ public class RouteLineProducer implements Runnable {
 	}
 
 	public static boolean isRouteLineProduced() {
-		return (route != null && maxRouteElementDone == route.size());
+		return (trace != null && trace.route != null && route != null && maxRouteElementDone == route.size());
 	}
 	
 	
