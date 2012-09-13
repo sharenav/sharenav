@@ -285,6 +285,7 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 	 * - e. g. "new Node(49.328010f, 11.352556f)"
 	 */
 	public Node center = new Node(49.328010f, 11.352556f);
+	public Node routePointCenter = new Node(49.328010f, 11.352556f);
 
 	private Node prevPositionNode = null;
 	
@@ -3394,16 +3395,16 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 			int centerX = centerP.x - imageCollector.xScreenOverscan;
 			int centerY = centerP.y - imageCollector.yScreenOverscan;
 			int posX, posY;
-			if (!gpsRecenter) {
+			//if (!gpsRecenter) {
 				IntPoint p1 = new IntPoint(0, 0);
 				pc.getP().forward((pos.latitude * MoreMath.FAC_DECTORAD),
 								  (pos.longitude * MoreMath.FAC_DECTORAD), p1);
 				posX = p1.getX()-imageCollector.xScreenOverscan;
 				posY = p1.getY()-imageCollector.yScreenOverscan;
-			} else {
-				posX = centerX;
-				posY = centerY;
-			}
+				//} else {
+				//posX = centerX;
+				//posY = centerY;
+				//}
 			g.setColor(Legend.COLORS[Legend.COLOR_MAP_POSINDICATOR]);
 			float radc = course * MoreMath.FAC_DECTORAD;
 			
@@ -3560,6 +3561,7 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 		gpsRecenter = false;
 		
 		center.setLatLonRad(lat, lon);
+
 		this.scale = scale;
 		updatePosition();
 	}
@@ -3687,6 +3689,9 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 		}
 		if (gpsRecenter) {
 			center.setLatLonDeg(pos.latitude, pos.longitude);
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_KEEP_ON_ROAD_IN_ROUTE_GUIDANCE) && RouteLineProducer.isRouteLineProduced()) {
+				center = routePointCenter.copy();
+			}
 			speed = (int) (pos.speed * 3.6f);
 			fspeed = pos.speed * 3.6f;
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
@@ -5067,6 +5072,17 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 		}
 	}
 	//#endif
+
+	public void setRoutePointCenter(IntPoint p, PaintContext pc) {
+		// System.out.println("setRoutePointCenter() called");
+		if (p != null && Configuration.getCfgBitState(Configuration.CFGBIT_KEEP_ON_ROAD_IN_ROUTE_GUIDANCE) && RouteLineProducer.isRouteLineProduced()) {
+			Node routePointNode = new Node();
+			if (pc != null) {
+				pc.getP().inverse(p.x, p.y, routePointNode);
+				routePointCenter = routePointNode.copy();
+			}
+		}
+	}
 
     public void addClickableMarker(int x, int y, int urlIdx, int phoneIdx, int nodeID) {
 		ClickableCoords coords = new ClickableCoords();

@@ -1,3 +1,5 @@
+    *** Navigation ***
+    - add keep on road option, centers map to road when giving navigation guidance
     *** Default values ***
     - Osm2ShareNav: word index on by default
     *** New WHATSNEW file containing development info ***

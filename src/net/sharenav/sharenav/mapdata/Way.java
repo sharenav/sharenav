@@ -2148,6 +2148,7 @@ public class Way extends Entity {
 		if (wClosest != 0) {
 			// if we got a closest seg, draw closest point to the center in it
 			RouteInstructions.drawRouteDot(pc.g, closestP, wClosest);
+			pc.trace.setRoutePointCenter(closestP, pc);
 		}
 		if (nameAsForArea()) {
 			paintAreaName(pc,t);

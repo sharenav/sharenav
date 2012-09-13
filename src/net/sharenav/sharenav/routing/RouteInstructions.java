@@ -362,6 +362,9 @@ public class RouteInstructions {
 								centerP.y-=yo;
 
 								IntPoint closestP = MoreMath.closestPointOnLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y, centerP.x, centerP.y);
+								if (closestP != null) {
+									pc.trace.setRoutePointCenter(closestP, pc);
+								}
 								waySegment.drawWideLineSimple(Legend.COLORS[Legend.COLOR_ROUTE_PRIOR_ROUTELINE], lineP1, closestP, 2, pc);
 								waySegment.drawWideLineSimple(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE], closestP, lineP2, 2, pc);
 						    	drawRouteDot(pc.g, closestP, Configuration.getMinRouteLineWidth());
