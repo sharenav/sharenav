@@ -294,7 +294,7 @@
 		<info
 			name="ShareNav"
 			version="0.8.31"
-			description="Vector navigation & map viewing software"
+			description="Vector navigation and map viewing software"
 			vendorName="Jyrki Kuoppala"
 			infoUrl="http://sharenav.sourceforge.net"
 			icon="sharenav.png"
