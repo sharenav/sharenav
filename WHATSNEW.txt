@@ -1,8 +1,5 @@
     *** Default values ***
     - Osm2ShareNav: word index on by default
-    *** New target Generic/Java ***
-    - added new build target Generic/Java, whic builds a ShareNav jar
-      which can be run directly on a desktop/laptop with Java SE.
     *** New WHATSNEW file containing development info ***
     - added WHATSNEW-dev.txt, which is primarily meant for developers
       to document significant code restructuring, but may be sometimes
@@ -11,6 +8,9 @@
     - use the ODbL license bit in new maps
     *** Appeareance, naming, credits etc. ***
     - added pointers to GpsMid
+    *** Targets ***
+    - added new build target Generic/Java, whic builds a ShareNav jar
+      which can be run directly on a desktop/laptop with Java SE.
     *** Bug fixes ***
     - revert attempt to fix Nokia E72 trace crash, didn't fix the bug
 
