@@ -388,6 +388,8 @@ public class Configuration {
 	public final static short CFGBIT_DISABLE_BUILDINGS_WHEN_BACKGROUND_MAP = 154;
 	/** bit 155: Keep on road when guiding the route (center the map on road) */
 	public final static short CFGBIT_KEEP_ON_ROAD_IN_ROUTE_GUIDANCE = 155;
+	/** bit 156: Flag whether night style autoswitch should be applied */
+	public final static short CFGBIT_NIGHT_MODE_AUTO = 156;
 	
 	/**
 	 * These are the database record IDs for each configuration option

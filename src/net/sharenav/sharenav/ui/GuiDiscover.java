@@ -632,9 +632,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		// FIXME add dialogue for wikipedia & street name language switch,
 		// maybe make a submenu or a separate language menu
 //#endif
-		String [] nightMode = new String[2];
+		String [] nightMode = new String[3];
 		nightMode[0] = Locale.get("guidiscover.DayMode")/*Day Mode*/;
 		nightMode[1] = Locale.get("guidiscover.NightMode")/*Night Mode*/;
+		nightMode[2] = Locale.get("guidiscover.AutoDayNight")/*Autoswitch*/;
 		//#style formItem
 		nightModeGroup = new ChoiceGroup(Locale.get("guidiscover.Colors")/*Colors*/, Choice.EXCLUSIVE, nightMode, null);
 		//#style formItem
@@ -1261,7 +1262,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					naviLangGroup.setSelectedIndex( langNum, true);
 				}
 //#endif
-				nightModeGroup.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE) ? 1 : 0, true);
+				nightModeGroup.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE_AUTO) ? 2 : 
+								 ( Configuration.getCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE) ? 1 : 0), true);
 				rotationGroup.setSelectedIndex(Configuration.getProjDefault(), true);
 				renderOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE) ? 1 : 0, true);
 				directionDevOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_AUTOCALIBRATE));
@@ -1664,9 +1666,17 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		}
 //#endif
 		boolean nightMode = (nightModeGroup.getSelectedIndex() == 1);
+		boolean nightModeAuto = (nightModeGroup.getSelectedIndex() == 2);
 		
 		if (nightMode != Configuration.getCfgBitState(Configuration.CFGBIT_NIGHT_MODE) ) {
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE, nightMode);
+			Legend.reReadLegend();
+			Trace trace = Trace.getInstance();
+			trace.recreateTraceLayout();
+		}
+
+		if (nightModeAuto != Configuration.getCfgBitState(Configuration.CFGBIT_NIGHT_MODE_AUTO) ) {
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE_AUTO, nightModeAuto);
 			Legend.reReadLegend();
 			Trace trace = Trace.getInstance();
 			trace.recreateTraceLayout();
