@@ -1091,10 +1091,11 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 				//#debug debug
 				logger.debug("autoRouteRecalculate");
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_KEEP_ON_ROAD_IN_ROUTE_GUIDANCE)) {
-					center = gpsNode.copy();
+					startRouting(gpsNode);
+				} else {
+					startRouting(center);
 				}
 				// recalculate route
-				commandAction(ROUTING_START_CMD);
 			}
 		}
 	}
@@ -1724,7 +1725,7 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 				return;
 			}
 			if (c == CMDS[ROUTING_START_CMD]) {
-				startRouting();
+				startRouting(center);
 				return;
 			}
 			if (c == CMDS[ROUTING_STOP_CMD]) {
@@ -1733,7 +1734,7 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 			}
 			if (c == CMDS[ROUTING_RECALC_CMD]) {
 				stopRouting(false);
-				startRouting();
+				startRouting(center);
 				return;
 			}
 			if (c == CMDS[ZOOM_IN_CMD]) {
@@ -2129,7 +2130,7 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 
 	}
 	
-	private void startRouting() {
+	private void startRouting(Node center) {
 		try {
 			if (isZoomedOutTooFarForRouteCalculation()) {
 				return;
@@ -3204,6 +3205,7 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 			pc.course = course;
 			pc.scale = scale;
 			pc.center = center.copy();
+			pc.gpsNode = gpsNode.copy();
 //			pc.setP( projection);
 //			projection.inverse(pc.xSize, 0, pc.screenRU);
 //			projection.inverse(0, pc.ySize, pc.screenLD);

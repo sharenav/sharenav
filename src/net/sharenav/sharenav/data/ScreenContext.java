@@ -1,6 +1,7 @@
 /*
  * ShareNav - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
  * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
+ * 	      Copyright (c) 2010-2012 Jyrki Kuoppala jkpj at users dot sourceforge dot net
  * See COPYING
  */
 
@@ -21,6 +22,9 @@ public class ScreenContext {
 	 * Not in every case the center of the image
 	 */
 	public Node center = new Node();
+	/** When in keep on road mode, use this for GPS position
+	 */
+	public Node gpsNode = new Node();
 	public float scale = 15000f;
 	byte viewId = 1;
 	private volatile Projection p;
@@ -45,6 +49,7 @@ public class ScreenContext {
 		sc.xSize = xSize;
 		sc.ySize = ySize;
 		sc.center = center.copy();
+		sc.gpsNode = gpsNode.copy();
 		sc.trace = trace;	
 		/**
 		 * PIXEL_PER_METER

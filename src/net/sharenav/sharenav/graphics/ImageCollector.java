@@ -1,6 +1,7 @@
 /*
  * ShareNav - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
  * 			Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net 
+ * 	      Copyright (c) 2010-2012 Jyrki Kuoppala jkpj at users dot sourceforge dot net
  * See Copying
  */
 
@@ -677,7 +678,11 @@ public class ImageCollector implements Runnable {
 		//tr.cleanup();
 		// System.out.println("create ready");
 		//System.gc();
-		return createPC.center.copy();
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_KEEP_ON_ROAD_IN_ROUTE_GUIDANCE)) {
+			return createPC.gpsNode.copy();
+		} else {
+			return createPC.center.copy();
+		}
 	}
 	//#endif
 
