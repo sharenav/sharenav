@@ -1492,7 +1492,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_DISABLE_AREAS_WHEN_BACKGROUND_MAP, tileMapOptions.isSelected(1));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_DISABLE_BUILDINGS_WHEN_BACKGROUND_MAP, tileMapOptions.isSelected(2));
-		Configuration.setCfgBitSavedState(Configuration.CFGBIT_TMS_SPLITSCREEN, tileMapOptions.isSelected(3));
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_TMS_SPLITSCREEN) != tileMapOptions.isSelected(3)) {
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_TMS_SPLITSCREEN, tileMapOptions.isSelected(3));
+			Trace.getInstance().setRasterSplitMode();
+		}
 
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_TMS_BACKGROUND) &&
 		    !tileMapOptions.isSelected(0)) {

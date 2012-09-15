@@ -652,15 +652,22 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 		// setTitle("initTrace ready");
 		
 		locationUpdateListeners = new Vector();
-		
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_TMS_SPLITSCREEN)) {
-			showingSplitRaster = true;
-			refreshWindowLayout();
-		}
+
+		setRasterSplitMode();
 
 		traceInstance = this;
 	}
 	
+	public void setRasterSplitMode() {
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_TMS_SPLITSCREEN)) {
+			showingSplitRaster = true;
+			refreshWindowLayout();
+		} else {
+			showingSplitRaster = false;
+			refreshWindowLayout();
+		}
+	}
+
 	//#if polish.android
 	@Override
 	public boolean onTouch(View view, MotionEvent event) {
