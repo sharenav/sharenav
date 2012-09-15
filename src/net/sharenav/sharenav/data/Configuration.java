@@ -390,6 +390,8 @@ public class Configuration {
 	public final static short CFGBIT_KEEP_ON_ROAD_IN_ROUTE_GUIDANCE = 155;
 	/** bit 156: Flag whether night style autoswitch should be applied */
 	public final static short CFGBIT_NIGHT_MODE_AUTO = 156;
+	/** bit 157: Flag to show raster map in split-screen mode */
+	public final static short CFGBIT_TMS_SPLITSCREEN = 157;
 	
 	/**
 	 * These are the database record IDs for each configuration option

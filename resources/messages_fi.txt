@@ -941,3 +941,4 @@ guidiscover.BackgroundDisableBuildings=Älä näytä rakennuksia kun taustakartt
 guidiscover.TMSFCPath=Rasterikartan välimuistipolku:
 guiroute.keeponroad=Keskitä kartta tiehen
 guidiscover.AutoDayNight=Automaattivaihto
+guidiscover.TMSSplitScreen=Näytä jaetussa ruudussa
