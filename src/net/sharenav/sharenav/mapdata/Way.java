@@ -1316,9 +1316,9 @@ public class Way extends Entity {
 		//#else
 	    	WayDescription wayDesc = Legend.getWayDescription((short) (type & 0xff));
 		//#endif
-		if (pc.scale > wayDesc.maxTextScale * Configuration.getDetailBoostMultiplier() ) {			
+		if (pc.scale > wayDesc.maxTextScale * Configuration.getDetailBoostMultiplier() ) {
 			return;
-		}	
+		}
 
 		if ( !Configuration.getCfgBitState(Configuration.CFGBIT_WAYTEXTS)) {
 			return;
