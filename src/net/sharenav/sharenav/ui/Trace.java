@@ -2824,18 +2824,51 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 				e.setText(Configuration.getTravelMode().getName());
 			}
 
+			String timeString = "";
+			// we need the time to autoswitch day/night mode
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_NIGHT_MODE_AUTO)
+			    || (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP))) {
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_GPS_TIME)) {
+					if (pos.gpsTimeMillis != 0) {
+						timeString = DateTimeTools.getClock(pos.gpsTimeMillis + Configuration.getTimeDiff()*1000*60, true);
+					} else if (Configuration.getCfgBitState(Configuration.CFGBIT_GPS_TIME_FALLBACK)) {
+						timeString = DateTimeTools.getClock(System.currentTimeMillis() + Configuration.getTimeDiff()*1000*60, true);
+					} else {
+						// we don't know the time, assume it's day
+						timeString="11:59";
+					}
+				} else {
+					timeString = DateTimeTools.getClock(System.currentTimeMillis() + Configuration.getTimeDiff()*1000*60, true);
+				}
+			}
+
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_NIGHT_MODE_AUTO)) {
+				if (guiTrip == null) {
+					guiTrip = new GuiTrip(this);
+				}
+				int clockInt = Integer.parseInt(timeString.substring(0, timeString.indexOf(":"))) * 60
+					+ Integer.parseInt(timeString.substring(timeString.indexOf(":") + 1));
+				boolean isSunUp = guiTrip.isSunUp(this, clockInt);
+				// System.out.println("Time in clockInt: " + clockInt + " isSunUp: " + isSunUp);
+				if (!isSunUp != Configuration.getCfgBitState(Configuration.CFGBIT_NIGHT_MODE)) {
+					Configuration.setCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE, !isSunUp);
+					Legend.reReadLegend();
+					recreateTraceLayout();
+				}
+			}
+
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP)) {
 				e = tl.ele[TraceLayout.CURRENT_TIME]; // e is used *twice* below (also as vRelative)
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_GPS_TIME)) {
 					if (pos.gpsTimeMillis != 0) {
-						e.setText(DateTimeTools.getClock(pos.gpsTimeMillis + Configuration.getTimeDiff()*1000*60, true));
+						e.setText(timeString);
 					} else if (Configuration.getCfgBitState(Configuration.CFGBIT_GPS_TIME_FALLBACK)) {
-						e.setText(DateTimeTools.getClock(System.currentTimeMillis() + Configuration.getTimeDiff()*1000*60, true));
+						e.setText(timeString);
 					} else {
 						e.setText(" ");
 					}
 				} else {
-					e.setText(DateTimeTools.getClock(System.currentTimeMillis() + Configuration.getTimeDiff()*1000*60, true));
+					e.setText(timeString);
 				}
 
  				/*
