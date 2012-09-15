@@ -348,7 +348,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		menuFileSel.addCommand(BACK_CMD);
 		menuFileSel.setCommandListener(this);
 
-		if (!Trace.getInstance().isShowingSplitScreen()) {
+		if (!Trace.getInstance().isShowingSplitIconMenu()) {
 			show();
 		}
 	}
@@ -2088,7 +2088,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 
 	/** Interface for received actions from the IconMenu GUI */
 	public void performIconAction(int actionId, String choiceName) {
-		if (Trace.getInstance().isShowingSplitScreen()) {
+		if (Trace.getInstance().isShowingSplitIconMenu()) {
 			// To make setup forms work, exit from split-screen mode
 			// so we return to non-split-screen setup icon menu
 			if (actionId != IconActionPerformer.BACK_ACTIONID) {
