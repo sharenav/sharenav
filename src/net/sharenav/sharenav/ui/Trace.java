@@ -547,7 +547,8 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 		
 		Configuration.setHasPointerEvents(hasPointerEvents());	
 		
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_TMS_BACKGROUND)) {
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_TMS_BACKGROUND)
+		    || Configuration.getCfgBitState(Configuration.CFGBIT_TMS_SPLITSCREEN)) {
 			scale = Configuration.getRasterScale();
 		}
 

@@ -1912,7 +1912,8 @@ public class Configuration {
 	// FIXME make necessary changes if ShareNav zoom levels change
 
 	public static float getZoomFactor() {
-		return getCfgBitState(Configuration.CFGBIT_TMS_BACKGROUND) ? 2.0f : 1.5f;
+		return getCfgBitState(Configuration.CFGBIT_TMS_BACKGROUND)
+			|| getCfgBitState(Configuration.CFGBIT_TMS_SPLITSCREEN) ? 2.0f : 1.5f;
 	}
 
 	// FIXME should be calculated from basescale etc.
