@@ -272,7 +272,7 @@ public class ImageCollector implements Runnable {
 				boolean skippableLayer = false;
 
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_TMS_BACKGROUND)) {
-					RasterTile.drawRasterMap(createPC, xSize, ySize);
+					RasterTile.drawRasterMap(createPC, createPC.trace.rootWindow);
 				}
 				for (byte layer = 0; layer < layersToRender.length; layer++) {
 					if (simplifyMap) {

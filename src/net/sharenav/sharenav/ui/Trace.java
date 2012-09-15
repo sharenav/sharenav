@@ -81,6 +81,7 @@ import net.sharenav.sharenav.data.Legend;
 import net.sharenav.sharenav.data.PaintContext;
 import net.sharenav.sharenav.data.Position;
 import net.sharenav.sharenav.data.PositionMark;
+import net.sharenav.sharenav.data.RasterTile;
 import net.sharenav.sharenav.data.RoutePositionMark;
 import net.sharenav.sharenav.data.SECellLocLogger;
 import net.sharenav.sharenav.data.ScreenContext;
@@ -247,6 +248,7 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 	// min?, max? for whole screen, mapMin?/mapMax? for map area
 	public DisplayWindow rootWindow = null;
 	public DisplayWindow mapWindow = null;
+	public DisplayWindow rasterWindow = null;
 
 	public volatile byte solution = LocationMsgReceiver.STATUS_OFF;
 	public String solutionStr = Locale.get("solution.Off");
@@ -314,6 +316,7 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 	private long collected = 0;
 
 	public PaintContext pc;
+	public PaintContext rasterPc;
 	
 	public float scale = Configuration.getRealBaseScale();
 
@@ -500,6 +503,7 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 
 	private boolean showingTraceIconMenu = false;
 	private boolean showingSplitSearch = false;
+	private boolean showingSplitRaster = false;
 	private boolean showingSplitSetup = false;
 	private boolean showingSplitCMS = false;
 
@@ -649,6 +653,11 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 		
 		locationUpdateListeners = new Vector();
 		
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_TMS_SPLITSCREEN)) {
+			showingSplitRaster = true;
+			refreshWindowLayout();
+		}
+
 		traceInstance = this;
 	}
 	
@@ -1437,6 +1446,7 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 					showingTraceIconMenu = false;
 					showingSplitCMS = false;
 					showingSplitSearch = true;
+					showingSplitRaster = false;
 					guiSearch = new GuiSearch(this, GuiSearch.ACTION_DEFAULT);
 					guiSearch.sizeChanged(getWidth(), getHeight());
 					refreshWindowLayout();
@@ -1945,7 +1955,7 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 				if (!hasPointerEvents() && Configuration.getCfgBitState(Configuration.CFGBIT_CLICKABLE_MAPOBJECTS) && getClickableMarker(touchX, touchY) != null) {
 					contextMenu();
 				} else {
-					if (isShowingSplitScreen()) {
+					if (isShowingSplitIconMenu()) {
 						stopShowingSplitScreen();
 					} else {
 						showIconMenu();
@@ -2235,6 +2245,7 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 		logger.info("Starting ImageCollector");
 		Images images = new Images();
 		pc = new PaintContext(this, images);
+		rasterPc = new PaintContext(this, images);
 		/* move responsibility for overscan to ImageCollector
 		int w = (this.getMapWidth() * 125) / 100;
 		int h = (this.getMapHeight() * 125) / 100;
@@ -2257,6 +2268,10 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 		int x = (mapWindow.getWidth() > 0) ? mapWindow.getWidth() : this.getWidth();
 		int y = (mapWindow.getHeight() > 0) ? mapWindow.getHeight() : this.getHeight();
 		System.out.println("Starting image colector " + x + " | " + y);
+
+			if (rasterWindow == null) {
+				rasterWindow = new DisplayWindow(0, rootWindow.getHeight()/2, rootWindow.getWidth(), rootWindow.getHeight(), true, false);
+			}
 
 		imageCollector = new ImageCollector(tiles, x, y, this, images);
 //		projection = ProjFactory.getInstance(center,course, scale, getMapWidth(), getMapHeight());
@@ -2512,6 +2527,9 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 				// not map window
 				// mapWindow.setYPosition(h / 2);
 			}
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_TMS_SPLITSCREEN)) {
+				rasterWindow = new DisplayWindow(0, rootWindow.getHeight()/2, rootWindow.getWidth(), rootWindow.getHeight(), true, false);
+			}
 		} else {
 			if (mapWindow.getMaxY() != h) {
 				mapWindow.setMaxY(h);
@@ -2591,12 +2609,19 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 			int yc = 1;
 			int la = 18;
 			getPC();
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_TMS_SPLITSCREEN)) {
+				getRasterPC();
+				rasterPc.g = g;
+			}
 			//#if polish.api.paintdirect
 			g.getCanvas().clipRect(0, 0, this.getWidth(), this.getHeight(), Region.Op.REPLACE);
 			//#endif
 			// cleans the screen
 			g.setColor(Legend.COLORS[Legend.COLOR_MAP_BACKGROUND]);
 			g.fillRect(0, 0, this.getWidth(), this.getHeight());
+			if (isShowingSplitRaster()) {
+				RasterTile.drawRasterMap(rasterPc, rasterWindow);
+			}
 			pc.g = g;
 			if (imageCollector != null) {
 				/*
@@ -2950,7 +2975,6 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 		}
 		if (isShowingSplitSearch() && guiSearch != null) {
 			guiSearch.paint(g);
-
 		}
 		if (isShowingSplitSetup() && guiDiscoverIconMenu != null) {
 			guiDiscoverIconMenu.paint(g);
@@ -2995,7 +3019,7 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 	}
 
 	public boolean isShowingSplitScreen() {
-		return showingTraceIconMenu || showingSplitSearch || showingSplitSetup || showingSplitCMS;
+		return showingTraceIconMenu || showingSplitSearch || showingSplitSetup || showingSplitCMS || showingSplitRaster;
 	}
 
 	public static void clearTraceInstance() {
@@ -3031,6 +3055,10 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 
 	public boolean isShowingSplitSearch() {
 		return showingSplitSearch;
+	}
+
+	public boolean isShowingSplitRaster() {
+		return showingSplitRaster;
 	}
 
 	public void showGuiWaypointSave(PositionMark posMark) {
@@ -3245,6 +3273,17 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 //			projection.inverse(pc.xSize, 0, pc.screenRU);
 //			projection.inverse(0, pc.ySize, pc.screenLD);
 			pc.dest = dest;
+	}
+
+	private void getRasterPC() {
+			rasterPc.course = course;
+			rasterPc.scale = scale;
+			rasterPc.center = center.copy();
+			rasterPc.gpsNode = gpsNode.copy();
+//			pc.setP( projection);
+//			projection.inverse(pc.xSize, 0, pc.screenRU);
+//			projection.inverse(0, pc.ySize, pc.screenLD);
+			rasterPc.dest = dest;
 	}
 
 	public void cleanup() {
@@ -4958,7 +4997,9 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 	/** interface for received actions from the IconMenu GUI */
 	public void performIconAction(int actionId, String choiceName) {
 		System.out.println("choiceName: " + choiceName);
-		if (!isShowingSplitScreen()) {
+		//if (!isShowingSplitScreen()) {
+		if (!(isShowingSplitIconMenu() || isShowingSplitSearch()
+		      || isShowingSplitCMS())) {
 			show();
 		}
 		updateLastUserActionTime();

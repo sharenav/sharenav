@@ -1,5 +1,8 @@
     *** Map Display ***
     - added automatic day/night mode switch
+    - added possibility to have a split-screen display with rotated vector map
+      in one window and north up raster map in another window, visible at the
+      same time
     *** Navigation ***
     - add keep on road option, centers map to road when giving navigation guidance
     *** Default values ***

@@ -25,6 +25,7 @@ import net.sharenav.util.HttpHelper;
 //#endif
 import net.sharenav.util.MoreMath;
 import net.sharenav.midlet.ui.UploadListener;
+import net.sharenav.sharenav.ui.DisplayWindow;
 
 //#if polish.android
 import java.io.BufferedInputStream;
@@ -132,7 +133,7 @@ public class RasterTile implements UploadListener {
 		return null;
 	}
 
-	public void draw(PaintContext pc, int xSize, int ySize) {
+	public void draw(PaintContext pc, DisplayWindow window, int xSize, int ySize) {
 		Image image = getImage();
 		if (image != null) {
 			// apparently if image is corrupted, we get a NPE at Graphics.java
@@ -142,7 +143,9 @@ public class RasterTile implements UploadListener {
 
 			try {
 				pc.g.drawImage(image,
+					       window.getMinX() +
 					       xSize / 2 - xDiff,
+					       window.getMinY() +
 					       ySize / 2 - yDiff,
 					       Graphics.LEFT | Graphics.TOP);
 			} catch (NullPointerException npe) {
@@ -216,7 +219,9 @@ public class RasterTile implements UploadListener {
 		return foundTile;
 	}
 
-	public static void drawRasterMap(PaintContext pc, int xSize, int ySize) {
+	public static void drawRasterMap(PaintContext pc, DisplayWindow window) {
+		int xSize = window.getWidth();
+		int ySize = window.getHeight();
 		int zoom = getRasterZoom(pc.scale);
 
 		// snap to scale to correct zoom if necessary
@@ -269,7 +274,7 @@ public class RasterTile implements UploadListener {
 					}
 				}
 				if (tile.data != null) {
-					tile.draw(pc, xSize, ySize);
+					tile.draw(pc, window, xSize, ySize);
 				}
 			}
 		}
