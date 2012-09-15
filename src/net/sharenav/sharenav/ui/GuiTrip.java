@@ -249,6 +249,18 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 		}
 	}
 
+	public boolean isSunUp(Trace trace, int timeNow) {
+		calcSun(trace);
+		double timeDouble = timeNow / 60f;
+		if (timeDouble < mSunRiseset[SunCalc.RISE]) {
+			return false;
+		}
+		if (timeDouble > mSunRiseset[SunCalc.SET]) {
+			return false;
+		}
+		return true;
+	}
+
 	public void commandAction(Command c, Displayable d) {
 		if (c == BACK_CMD) {
 			synchronized (mParent.locationUpdateListeners) {
