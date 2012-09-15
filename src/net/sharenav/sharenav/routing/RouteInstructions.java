@@ -155,7 +155,7 @@ public class RouteInstructions {
 	}
 	
 
-	public void showRoute(PaintContext pc, Node center,int xo,int yo) {
+	public void showRoute(PaintContext pc, Node center, Node gpsNode, int xo,int yo) {
 		/*	PASSINGDISTANCE is the distance when a routing arrow
 			is considered to match to the current position.
 			We currently can't adjust this value according to the speed
@@ -273,7 +273,12 @@ public class RouteInstructions {
 				    	ConnectionWithNode cRealNow = (ConnectionWithNode) route.elementAt(iRealNow);
 				    	// add the distance to the next route node or when this is the final route node add the distance up to the closest point on the destination way
 				    	boolean finalRouteSeg = iRealNow == route.size() - 1;
-				    	double distRealNow=ProjMath.getDistance(center.radlat, center.radlon, finalRouteSeg ? closestPointOnDestWay.radlat : cRealNow.to.lat, finalRouteSeg ? closestPointOnDestWay.radlon : cRealNow.to.lon);
+					double distRealNow = 0;
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_KEEP_ON_ROAD_IN_ROUTE_GUIDANCE)) {
+						distRealNow=ProjMath.getDistance(gpsNode.radlat, gpsNode.radlon, finalRouteSeg ? closestPointOnDestWay.radlat : cRealNow.to.lat, finalRouteSeg ? closestPointOnDestWay.radlon : cRealNow.to.lon);
+					} else {
+						distRealNow=ProjMath.getDistance(center.radlat, center.radlon, finalRouteSeg ? closestPointOnDestWay.radlat : cRealNow.to.lat, finalRouteSeg ? closestPointOnDestWay.radlon : cRealNow.to.lon);
+					}
 				    	remainingDistance += distRealNow;
 
 				    	ConnectionWithNode cToRealNow = (ConnectionWithNode) route.elementAt(routePathConnection);
@@ -281,7 +286,11 @@ public class RouteInstructions {
 
 				    	// distance to next instruction or when the next instruction is the destination to the closest point on the destination way
 				    	finalRouteSeg = iNow == route.size() - 1;
-				    	distNow = ProjMath.getDistance(center.radlat, center.radlon, finalRouteSeg ? closestPointOnDestWay.radlat : cNow.to.lat, finalRouteSeg ? closestPointOnDestWay.radlon : cNow.to.lon);
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_KEEP_ON_ROAD_IN_ROUTE_GUIDANCE)) {
+						distNow = ProjMath.getDistance(gpsNode.radlat, gpsNode.radlon, finalRouteSeg ? closestPointOnDestWay.radlat : cNow.to.lat, finalRouteSeg ? closestPointOnDestWay.radlon : cNow.to.lon);
+					} else {
+						distNow = ProjMath.getDistance(center.radlat, center.radlon, finalRouteSeg ? closestPointOnDestWay.radlat : cNow.to.lat, finalRouteSeg ? closestPointOnDestWay.radlon : cNow.to.lon);
+					}
 						if (Configuration.getCfgBitState(Configuration.CFGBIT_NAVI_ARROWS_BIG)) {
 							outputRouteIcons(pc, iNow, distNow);
 						}

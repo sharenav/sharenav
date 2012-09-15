@@ -2631,7 +2631,9 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 						 *  so we give the route instructions right after drawing the image with the map
 						 *  and use the center of the last drawn image for the route instructions
 						 */
-						ri.showRoute(pc, drawnCenter,imageCollector.xScreenOverscan,imageCollector.yScreenOverscan);
+						// FIXME > 1000 km distance shown in route
+						// instructions when there's no GPS location
+						ri.showRoute(pc, drawnCenter, gpsNode, imageCollector.xScreenOverscan,imageCollector.yScreenOverscan);
 					}
 				}
 			} else {
