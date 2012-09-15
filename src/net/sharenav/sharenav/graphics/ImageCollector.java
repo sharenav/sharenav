@@ -92,7 +92,11 @@ public class ImageCollector implements Runnable {
 		if (p1.isOrthogonal()) {
 			// with overscan
 			xScreenOverscan = x*12/100;
-			yScreenOverscan = y*12/100;
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_TMS_SPLITSCREEN)) {
+				yScreenOverscan = 0;
+			} else {
+				yScreenOverscan = y*12/100;
+			}
 			if (tr.isShowingSplitIconMenu()) {
 				yScreenOverscan = 0;
 			}
