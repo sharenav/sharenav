@@ -163,7 +163,10 @@ public abstract class KeyCommandCanvas extends Canvas implements
 		//#if polish.android
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			// #debug debug
-			if (Trace.getInstance().isShowingSplitScreen()) {
+			if (Trace.getInstance().isShowingSplitIconMenu()
+			    || Trace.getInstance().isShowingSplitSearch()
+			    || Trace.getInstance().isShowingSplitSetup()
+			    || Trace.getInstance().isShowingSplitCMS()) {
 				Trace.getInstance().performIconAction(IconActionPerformer.BACK_ACTIONID, "Back");
 			} else {			
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_EXIT_APPLICATION_WITH_BACK_BUTTON) || previousBackPress) {
