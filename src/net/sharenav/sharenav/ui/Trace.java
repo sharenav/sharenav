@@ -478,12 +478,15 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 	WaySegment waySegment = new WaySegment();
 	
 	public Vector route = null;
+	public int gpxToFollow = -1;
+	public int gpxAsRoute = -1;
 	private RouteInstructions ri = null;
 	
 	private boolean running = false;
 	private static final int CENTERPOS = Graphics.HCENTER | Graphics.VCENTER;
 
 	public Gpx gpx;
+	public GuiGpx guiGpx = null;
 	public AudioRecorder audioRec;
 	
 	private static volatile Trace traceInstance = null;
@@ -1409,7 +1412,7 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 					return;
 				}
 
-			    GuiGpx guiGpx = new GuiGpx(this);
+			    guiGpx = new GuiGpx(this);
 			    guiGpx.show();
 			    return;
 			}

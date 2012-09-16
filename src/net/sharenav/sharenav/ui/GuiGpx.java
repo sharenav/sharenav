@@ -1,6 +1,7 @@
 /*
  * ShareNav - Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
  *          Copyright (c) 2008 mbaeurle at users dot sourceforge dot net
+ * 	    Copyright (c) 2012 Jyrki Kuoppala jkpj at users dot sourceforge dot net
  * See COPYING
  */
 
@@ -203,24 +204,14 @@ public class GuiGpx extends List implements CommandListener,
 		if (c == ROUTE_CMD) {
 			idx = getFirstSelectedIndex();
 			if (idx >= 0) {
-				updateProcessVector();
-				if (processTracks.size() > 0) {
-					parent.gpx.replayTrk(processTracks);
-					parent.show();
-				}
-				// trks[idx].displayName
+				parent.gpxAsRoute = idx;
 			}
 			return;
 		}
 		if (c == FOLLOW_CMD) {
 			idx = getFirstSelectedIndex();
 			if (idx >= 0) {
-				updateProcessVector();
-				if (processTracks.size() > 0) {
-					parent.gpx.replayTrk(processTracks);
-					parent.show();
-				}
-				// trks[idx].displayName
+				parent.gpxToFollow = idx;
 			}
 			return;
 		}
