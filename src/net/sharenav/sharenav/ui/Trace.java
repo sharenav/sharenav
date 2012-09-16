@@ -2227,6 +2227,9 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 	}
 
 	private void stopRouting(boolean showAlert) {
+				gpxToFollow = -1;
+				gpxAsRoute = -1;
+
 				NoiseMaker.stopPlayer();
 				if (routeCalc) {
 					if (routeEngine != null) {
