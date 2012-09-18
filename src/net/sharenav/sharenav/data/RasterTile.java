@@ -64,6 +64,7 @@ public class RasterTile implements UploadListener {
 	private static int cacheCount = 0;
 	private static RasterTile[] rasterCache = null;
 	private static int numThreads = 0;
+	private static int retrievingThreads = 0;
 
 	private boolean retrieving = false;
 	private boolean retrieved = false;
@@ -256,19 +257,24 @@ public class RasterTile implements UploadListener {
 					// System.out.println("Loading: " + tileString);
 					Thread t = new Thread(new Runnable() {
 						public void run() {
+							numThreads++;
 							tile.retrieving = true;
-							while (numThreads >= MAXTHREADS) {
+							while (retrievingThreads > MAXTHREADS) {
+								System.out.println("NumThreads: " + numThreads);
 								try {
 									Thread.sleep(100);
 								} catch (InterruptedException ie) {
 								}
 							}
-							numThreads++;
+							retrievingThreads++;
 							tile.getData();
 							numThreads--;
+							retrievingThreads--;
 							tile.retrieving = false;
 						}
 					});
+					System.out.println("NumThreads at start: " + numThreads);
+					System.out.println("RetrievingThreads at start: " + retrievingThreads);
 					if (numThreads < (cacheSize - MAXTHREADS)) {
 						t.start();
 					}
