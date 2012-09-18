@@ -557,7 +557,11 @@ public class RouteInstructions {
 							}
 						}
 					}
-					routeRecalculationRequired = isOffRoute(route, center);
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_KEEP_ON_ROAD_IN_ROUTE_GUIDANCE) && Trace.getInstance().isGpsConnected()) {
+						routeRecalculationRequired = isOffRoute(route, gpsNode);
+					} else {
+						routeRecalculationRequired = isOffRoute(route, center);
+					}
 					if (trace.atDest || (aNow == RI_DEST_REACHED && intDistNow < PASSINGDISTANCE)) {
 						routeInstructionColor = Legend.COLORS[Legend.COLOR_RI_AT_DEST];
 					} else if ( routeRecalculationRequired && trace.gpsRecenter) {
