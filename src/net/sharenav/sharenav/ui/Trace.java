@@ -663,7 +663,8 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 	}
 	
 	public void setRasterSplitMode() {
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_TMS_SPLITSCREEN)) {
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_TMS_SPLITSCREEN)
+		    && !Configuration.getCfgBitState(Configuration.CFGBIT_TMS_BACKGROUND)) {
 			showingSplitRaster = true;
 			refreshWindowLayout();
 		} else {
@@ -2623,7 +2624,8 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 			int yc = 1;
 			int la = 18;
 			getPC();
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_TMS_SPLITSCREEN)) {
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_TMS_SPLITSCREEN)
+			    && !Configuration.getCfgBitState(Configuration.CFGBIT_TMS_BACKGROUND)) {
 				getRasterPC();
 				rasterPc.g = g;
 			}
