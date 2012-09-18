@@ -271,7 +271,7 @@ public class RasterTile implements UploadListener {
 							numThreads++;
 							tile.retrieving = true;
 							while (retrievingThreads > MAXTHREADS) {
-								System.out.println("NumThreads: " + numThreads);
+								// System.out.println("NumThreads: " + numThreads);
 								try {
 									Thread.sleep(100);
 								} catch (InterruptedException ie) {
@@ -284,8 +284,8 @@ public class RasterTile implements UploadListener {
 							tile.retrieving = false;
 						}
 					});
-					System.out.println("NumThreads at start: " + numThreads);
-					System.out.println("RetrievingThreads at start: " + retrievingThreads);
+					// System.out.println("NumThreads at start: " + numThreads);
+					// System.out.println("RetrievingThreads at start: " + retrievingThreads);
 					if (numThreads < (cacheSize/2 - MAXTHREADS)) {
 						t.start();
 					}
