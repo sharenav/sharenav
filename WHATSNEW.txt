@@ -23,6 +23,7 @@
     *** Bug fixes ***
     - revert attempt to fix Nokia E72 trace crash, didn't fix the bug
     - fix capitalization of ODbL
+    - raster tile fixes
 
 ShareNav 0.8.3 (internal version, not published)
     *** Start of ShareNav code base ***
