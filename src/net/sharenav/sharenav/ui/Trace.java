@@ -1110,7 +1110,7 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 				}
 				//#debug debug
 				logger.debug("autoRouteRecalculate");
-				if (Configuration.getCfgBitState(Configuration.CFGBIT_KEEP_ON_ROAD_IN_ROUTE_GUIDANCE)) {
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_KEEP_ON_ROAD_IN_ROUTE_GUIDANCE) && isGpsConnected()) {
 					startRouting(gpsNode);
 				} else {
 					startRouting(center);

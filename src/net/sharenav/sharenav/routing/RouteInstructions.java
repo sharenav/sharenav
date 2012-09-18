@@ -274,7 +274,7 @@ public class RouteInstructions {
 				    	// add the distance to the next route node or when this is the final route node add the distance up to the closest point on the destination way
 				    	boolean finalRouteSeg = iRealNow == route.size() - 1;
 					double distRealNow = 0;
-					if (Configuration.getCfgBitState(Configuration.CFGBIT_KEEP_ON_ROAD_IN_ROUTE_GUIDANCE)) {
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_KEEP_ON_ROAD_IN_ROUTE_GUIDANCE) && Trace.getInstance().isGpsConnected()) {
 						distRealNow=ProjMath.getDistance(gpsNode.radlat, gpsNode.radlon, finalRouteSeg ? closestPointOnDestWay.radlat : cRealNow.to.lat, finalRouteSeg ? closestPointOnDestWay.radlon : cRealNow.to.lon);
 					} else {
 						distRealNow=ProjMath.getDistance(center.radlat, center.radlon, finalRouteSeg ? closestPointOnDestWay.radlat : cRealNow.to.lat, finalRouteSeg ? closestPointOnDestWay.radlon : cRealNow.to.lon);
@@ -286,7 +286,7 @@ public class RouteInstructions {
 
 				    	// distance to next instruction or when the next instruction is the destination to the closest point on the destination way
 				    	finalRouteSeg = iNow == route.size() - 1;
-					if (Configuration.getCfgBitState(Configuration.CFGBIT_KEEP_ON_ROAD_IN_ROUTE_GUIDANCE)) {
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_KEEP_ON_ROAD_IN_ROUTE_GUIDANCE) && Trace.getInstance().isGpsConnected()) {
 						distNow = ProjMath.getDistance(gpsNode.radlat, gpsNode.radlon, finalRouteSeg ? closestPointOnDestWay.radlat : cNow.to.lat, finalRouteSeg ? closestPointOnDestWay.radlon : cNow.to.lon);
 					} else {
 						distNow = ProjMath.getDistance(center.radlat, center.radlon, finalRouteSeg ? closestPointOnDestWay.radlat : cNow.to.lat, finalRouteSeg ? closestPointOnDestWay.radlon : cNow.to.lon);
