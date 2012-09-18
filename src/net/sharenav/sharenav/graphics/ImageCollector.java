@@ -90,12 +90,16 @@ public class ImageCollector implements Runnable {
 		Node n = new Node(2f, 0f);
 		Projection p1 = ProjFactory.getInstance(n, 0, 1500, xSize, ySize);
 		if (p1.isOrthogonal()) {
-			// with overscan
-			xScreenOverscan = x*12/100;
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_TMS_SPLITSCREEN)) {
+			// without overscan
+			// FIXME add overscan support for windows
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_TMS_SPLITSCREEN)
+			    || Configuration.getCfgBitState(Configuration.CFGBIT_TMS_BACKGROUND)) {
 				yScreenOverscan = 0;
+				xScreenOverscan = 0;
 			} else {
+				// with overscan
 				yScreenOverscan = y*12/100;
+				xScreenOverscan = x*12/100;
 			}
 			if (tr.isShowingSplitIconMenu()) {
 				yScreenOverscan = 0;
