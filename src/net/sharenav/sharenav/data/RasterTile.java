@@ -181,7 +181,7 @@ public class RasterTile implements UploadListener {
 		return zoom;
 	}
 
-	public static void addCachedTile(RasterTile tile) {
+	public static int addCachedTile(RasterTile tile) {
 		if (rasterCache == null) {
 			rasterCache = new RasterTile[cacheSize];
 		}
@@ -190,12 +190,19 @@ public class RasterTile implements UploadListener {
 		}
 		// don't overwrite a tile which is being retrieved
 		while (rasterCache[cacheCount] != null && rasterCache[cacheCount].retrieving) {
+			if (rasterCache[cacheCount].getTileString().equals(tile.getTileString())) {
+				// if this tile is being retrieved in another slot,
+				// return without storing this, so one tile won't occupy multiple
+				// slots
+				return -1;
+			}
 			cacheCount++;
 			if (cacheCount >= cacheSize) {
 				cacheCount = 0;
 			}
 		}
 		rasterCache[cacheCount++] = tile;
+		return 0;
 	}
 
 	public static RasterTile getCachedTile(float radlat,
@@ -211,9 +218,13 @@ public class RasterTile implements UploadListener {
 		}
 		
 		if (foundTile == null) {
+			// allocate a cache slot
 			RasterTile newTile = new RasterTile(radlat, radlon, zoom, xdiff, ydiff);
 			//System.out.println("Cache miss: " + newTile.getTileString());
-			addCachedTile(newTile);
+			int cacheAddResult = addCachedTile(newTile);
+			if (cacheAddResult < 0) {
+				return null;
+			}
 			foundTile = newTile;
 		}
 		foundTile.updateNumbers(radlat, radlon, zoom, xdiff, ydiff);
@@ -275,7 +286,7 @@ public class RasterTile implements UploadListener {
 					});
 					System.out.println("NumThreads at start: " + numThreads);
 					System.out.println("RetrievingThreads at start: " + retrievingThreads);
-					if (numThreads < (cacheSize - MAXTHREADS)) {
+					if (numThreads < (cacheSize/2 - MAXTHREADS)) {
 						t.start();
 					}
 				}
