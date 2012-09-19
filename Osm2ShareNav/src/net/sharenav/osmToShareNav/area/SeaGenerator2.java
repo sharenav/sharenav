@@ -61,6 +61,8 @@ public class SeaGenerator2 {
 
 	private boolean foundCoast = false;
 	
+	private static boolean debugSea = false;
+
 	Bounds seaBounds;
 	Bounds mapBounds;
 
@@ -94,7 +96,9 @@ public class SeaGenerator2 {
 			natural = w.getAttribute("natural");
 			if (natural != null) {
 				if ("coastline".equals(natural)) {
-					//System.out.println("Create land from coastline  " + w.toUrl());
+					if (debugSea) {
+						//System.out.println("Create land from coastline  " + w.toUrl());
+					}
 					// for closed ways, save memory and do not create new ways
 					if (w.isClosed()) {
 						landWays.add(w);
@@ -159,8 +163,12 @@ public class SeaGenerator2 {
 					mapBounds.maxLat -= seaTileMargin;
 					mapBounds.maxLon -= seaTileMargin;
 
-					System.out.println("seaBounds: " + seaBounds);
-					System.out.println("mapBounds: " + mapBounds);
+					if (debugSea) {
+						System.out.println("seaBounds: " + seaBounds);
+					}
+					if (debugSea) {
+						System.out.println("mapBounds: " + mapBounds);
+					}
 
 					landWays.clear();
 					foundCoast = false;
@@ -188,10 +196,12 @@ public class SeaGenerator2 {
                                                                                        landWays.add(wReady);
                                                                                        foundCoast = true;
 
-                                                                                       System.out.println("Node out of bound, splitting way");
-                                                                                       System.out.println("w: " + w +
+										       if (debugSea) {
+											       System.out.println("Node out of bound, splitting way");
+											       System.out.println("w: " + w +
                                                                                                           " wReady: " + wReady +
                                                                                                           " boundedWay: " + boundedWay);
+										       }
                                                                                }
 									       boundedWay = new Way(w.id);
 									}
@@ -220,8 +230,10 @@ public class SeaGenerator2 {
 			seaBounds.maxLat += seaMargin;
 			seaBounds.maxLon += seaMargin;
 
-			System.out.println("seaBounds: " + seaBounds);
-			System.out.println("mapBounds: " + mapBounds);
+			if (debugSea) {
+				System.out.println("seaBounds: " + seaBounds);
+				System.out.println("mapBounds: " + mapBounds);
+			}
 
 			generateSeaMultiPolygon(parser, sw, se, nw, ne, landWays, mapBounds);
 		}
@@ -314,7 +326,9 @@ public class SeaGenerator2 {
 			Way w = it.next();
 
 			if (w.isClosed()) {
-				System.out.println("after concatenation: adding island " + w);
+				if (debugSea) {
+					System.out.println("after concatenation: adding island " + w);
+				}
 				parser.addWay(w);
 				it.remove();
 				mInner = new Member("way", w.id, "inner");
@@ -348,7 +362,9 @@ public class SeaGenerator2 {
 						"  See %s and %s\n",
 						pStart.toString(), pEnd.toString(),
 						pStart.toUrl(), pEnd.toUrl());
-				System.out.println(msg);
+				if (debugSea) {
+					System.out.println(msg);
+				}
 				/*
 				 * This problem occurs usually when the shoreline is cut by osmosis (e.g. country-extracts from geofabrik)
 				 * There are two possibilities to solve this problem:
@@ -366,12 +382,16 @@ public class SeaGenerator2 {
 					length += MyMath.dist(p0, p1);
 					p0 = p1;
 				}
-				System.out.println("dist from coastline start to end: " + MyMath.dist(pStart, pEnd));
+				if (debugSea) {
+					System.out.println("dist from coastline start to end: " + MyMath.dist(pStart, pEnd));
+				}
 				boolean nearlyClosed = (MyMath.dist(pStart, pEnd) < 0.1 * length);
 
 				// FIXME enable again when coastlines are cut exactly at tile borders so this doesn't cause trouble
 				if (false && nearlyClosed) {
-					System.out.println("handling nearlyClosed coastline: " + w);
+					if (debugSea) {
+						System.out.println("handling nearlyClosed coastline: " + w);
+					}
 					// close the way
 					points.add(pStart);
 					if (generateSeaUsingMP) {
@@ -388,7 +408,9 @@ public class SeaGenerator2 {
 					}
 				}
 				else if (allowSeaSectors && false) {  // this part appears to cause trouble, removed
-					System.out.println("handling allowSeaSectors coastline: " + w);
+					if (debugSea) {
+						System.out.println("handling allowSeaSectors coastline: " + w);
+					}
 					seaId = FakeIdGenerator.makeFakeId();
 					seaSector = new Way(seaId);
 
@@ -397,7 +419,9 @@ public class SeaGenerator2 {
 					int startedge = startEdgeHit.edge;
 					int endedge = endEdgeHit.edge;
 
-					System.out.println("startedge: " + startedge + " endedge: " + endedge);
+					if (debugSea) {
+						System.out.println("startedge: " + startedge + " endedge: " + endedge);
+					}
 
 					if (false || false) {
 						Node p;
@@ -409,11 +433,15 @@ public class SeaGenerator2 {
 						for (int i=endedge; i > startedge; i--) {
 							int edge = i % 4;
 							float val = 0.0f;
-							System.out.println("edge: " + edge + " val: " + val);
+							if (debugSea) {
+								System.out.println("edge: " + edge + " val: " + val);
+							}
 							EdgeHit corner = new EdgeHit(edge, val);
 							p = corner.getPoint(mapBounds);
 							//log.debug("way: ", corner, p);
-							System.out.println("way: corner: " + corner + " p: " + p);
+							if (debugSea) {
+								System.out.println("way: corner: " + corner + " p: " + p);
+							}
 
 							if (onlyOutlines || interimNodes || configuration.getDrawSeaOutlines()) {
 								seaSector.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
@@ -434,7 +462,9 @@ public class SeaGenerator2 {
 				}
 				else if (extendSeaSectors) {
 					// create additional points at next border to prevent triangles from point 2
-					System.out.println("Extend sea sector, way id: " + w.id);
+					if (debugSea) {
+						System.out.println("Extend sea sector, way id: " + w.id);
+					}
 					if (null == hStart) {
 						// attach start of way to edge, with interim nodes
 						// when necessary
@@ -446,7 +476,9 @@ public class SeaGenerator2 {
 						Way helperWay = new Way(FakeIdGenerator.makeFakeId());
 						List<Node> oldpoints = w.getNodes();
 						helperWay.addNode(p);
-						System.out.println("building the helper way");
+						if (debugSea) {
+							System.out.println("building the helper way");
+						}
 						if (onlyOutlines || interimNodes || configuration.getDrawSeaOutlines()) {
 							helperWay.addNodeIfNotEqualToLastNodeWithInterimNodes(oldpoints.get(0));
 						} else {
@@ -456,7 +488,9 @@ public class SeaGenerator2 {
 						for (int i = helperPoints.size()-1 ; i >= 0; i--) {
 							w.getNodes().add(0, helperPoints.get(i));
 						}
-						System.out.println("startedge: " + hStart.edge);
+						if (debugSea) {
+							System.out.println("startedge: " + hStart.edge);
+						}
 					}
 					if (null == hEnd) {
 						hEnd = getNextEdgeHit(mapBounds, pEnd);
@@ -467,7 +501,9 @@ public class SeaGenerator2 {
 						} else {
 							w.addNodeIfNotEqualToLastNode(p);
 						}
-						System.out.println("endedge: " + hEnd.edge);
+						if (debugSea) {
+							System.out.println("endedge: " + hEnd.edge);
+						}
 					}
 					//log.debug("hits (second try): ", hStart, hEnd);
 					mInner = new Member("way", w.id, "inner");
@@ -499,13 +535,17 @@ public class SeaGenerator2 {
 			EdgeHit hFirst = hit;
 			do {
 				Way segment = hitMap.get(hit);
-				System.out.println("current hit: " + hit);
+				if (debugSea) {
+					System.out.println("current hit: " + hit);
+				}
 				EdgeHit hNext;
 				if (segment != null) {
 					// could do better with adding segments to
 					// relation
 					// add the segment and get the "ending hit"
-					System.out.println("adding sgement: " + segment);
+					if (debugSea) {
+						System.out.println("adding sgement: " + segment);
+					}
 					for(Node p : segment.getNodes()) {
 						if (onlyOutlines || interimNodes || configuration.getDrawSeaOutlines()) {
 							w.addNodeIfNotEqualToLastNodeWithInterimNodes(p);
@@ -528,7 +568,9 @@ public class SeaGenerator2 {
 					Node p;
 					if (hit.compareTo(hNext) < 0) {
 						//log.info("joining: ", hit, hNext);
-						System.out.println("joining compareTo < 0, hit: " +  hit + " hNext: " + hNext);
+						if (debugSea) {
+							System.out.println("joining compareTo < 0, hit: " +  hit + " hNext: " + hNext);
+						}
 						for (int i=hit.edge; i<hNext.edge; i++) {
 							EdgeHit corner = new EdgeHit(i, 1.0);
 							p = corner.getPoint(mapBounds);
@@ -541,7 +583,9 @@ public class SeaGenerator2 {
 						}
 					}
 					else if (hit.compareTo(hNext) > 0) {
-						System.out.println("joining compareTo > 0: " + hit + " hNext: " + hNext);
+						if (debugSea) {
+							System.out.println("joining compareTo > 0: " + hit + " hNext: " + hNext);
+						}
 						int hNextEdge = hNext.edge;
 						if (hit.edge >= hNext.edge) {
 							hNextEdge += 4;
@@ -615,10 +659,14 @@ public class SeaGenerator2 {
 			}
 		} else {
 			// FIXME sometimes it's sea, deduce from contents and/or neighbouring tiles
-			System.out.println("SeaGenerator: didn't find any coastline ways, assuming this seatile is land");
+			if (debugSea) {
+				System.out.println("SeaGenerator: didn't find any coastline ways, assuming this seatile is land");
+			}
 		}
 	
-		System.out.println(seaRelation.toString());
+		if (debugSea) {
+			System.out.println(seaRelation.toString());
+		}
 	}
 	/**
 	 * Specifies where an edge of the bounding box is hit.
@@ -738,8 +786,10 @@ public class SeaGenerator2 {
 		float minLong = a.getMinLon();
 		float maxLong = a.getMaxLon();
 
-		System.out.println(String.format("getNextEdgeHit: (%f %f) (%f %f %f %f)", 
-				lat, lon, minLat, minLong, maxLat, maxLong));
+		if (debugSea) {
+			System.out.println(String.format("getNextEdgeHit: (%f %f) (%f %f %f %f)", 
+							 lat, lon, minLat, minLong, maxLat, maxLong));
+		}
 		// shortest distance to border (init with distance to southern border) 
 		float min = lat - minLat;
 		// number of edge as used in getEdgeHit. 
@@ -856,8 +906,10 @@ public class SeaGenerator2 {
 					// FIXME this causes trouble with the non-border-ending cut coastlines, disable for now
 					if (false && nearest != null && smallestGap < maxCoastlineGap) {
 						Node w2s = nearest.getNodes().get(0);
-						System.out.println("SeaGenerator: Bridging " + (int)smallestGap + "m gap in coastline from " + 
-								w1e.toUrl() + " to " + w2s.toUrl());
+						if (debugSea) {
+							System.out.println("SeaGenerator: Bridging " + (int)smallestGap + "m gap in coastline from " + 
+									   w1e.toUrl() + " to " + w2s.toUrl());
+						}
 						Way wm;
 						if (FakeIdGenerator.isFakeId(w1.getId())) {
 							wm = w1;
