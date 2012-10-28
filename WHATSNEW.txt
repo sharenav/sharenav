@@ -20,6 +20,8 @@
     *** Targets ***
     - added new build target Generic/Java, whic builds a ShareNav jar
       which can be run directly on a desktop/laptop with Java SE.
+    *** Web Info ***
+    - Finland API: notify that certain functions available only in Helsinki region
     *** Osm2ShareNav ***
     - silence sea generator debug output
     *** Bug fixes ***
