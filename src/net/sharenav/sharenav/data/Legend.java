@@ -463,7 +463,7 @@ public class Legend {
 			midletTravelModes[i].maxEstimationSpeed = ds.readShort();
 			midletTravelModes[i].travelModeFlags = ds.readByte();
 		}
-//#if polish.api.finland
+//#if polish.api.finlandreittiopasrouting
 		int travelModeCount = count;
 		midletTravelModes[travelModeCount] = new TravelMode();
 		midletTravelModes[travelModeCount].travelModeName = Locale.get("travelmodes.ReittiopasPublic");
