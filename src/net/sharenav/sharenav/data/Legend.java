@@ -450,7 +450,7 @@ public class Legend {
 		 * Read Travel Modes
 		 */
 		count = ds.readByte();
-//#if polish.api.finland
+//#if polish.api.finlandreittiopasrouting
 		midletTravelModes = new TravelMode[count + 2];
 //#else
 		midletTravelModes = new TravelMode[count];
