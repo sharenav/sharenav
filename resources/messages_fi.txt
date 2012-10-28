@@ -16,7 +16,6 @@ splash.artwork=Grafiikka:
 splash.contributors=ja monet muut.
 splash.contributorsnet=kts. http://www.sharenav.net/credits
 splash.codefrom=Sisältää ohjelmakoodia:
-splash.artwork=Grafiikka (alkuruutu):
 splash.skip=Näpäytä '*' ellet halua nähdä
 splash.skiptouch=Näpäytä yläreunaa ellet halua nähdä
 splash.screen=alkuruutua käynnistyksessä.
