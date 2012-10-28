@@ -61,6 +61,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		Locale.get("splash.Discl4")/* Only use if legally allowed*/,
 		Locale.get("splash.Discl5")/* to use the features under*/,
 		Locale.get("splash.Discl6")/* the laws applicable for you.*/,
+		Locale.get("splash.webaddr")/* http://www.sharenav.net */,
 		Locale.get("splash.CodeForGpsMid")/*Based on code developed for GpsMid,*/,
 		Locale.get("splash.GpsMidUrl")/*http://gpsmid.sourceforge.net*/,
 		Locale.get("splash.Copyright")/*Copyright:*/,

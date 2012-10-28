@@ -1397,3 +1397,4 @@ splash.GpsMidUrl=http://gpsmid.sourceforge.net
 guiroute.keeponroad=Center map to road
 guidiscover.AutoDayNight=Autoswitch
 guidiscover.TMSSplitScreen=Show raster map in split-screen mode
+splash.webaddr=http://www.sharenav.net
