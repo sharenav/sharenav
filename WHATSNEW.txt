@@ -1,3 +1,4 @@
+ShareNav 0.8.4
     *** Map Display ***
     - added automatic day/night mode switch
     - added possibility to have a split-screen display with rotated vector map
@@ -23,6 +24,7 @@
     *** Web Info ***
     - Finland API: notify that certain functions available only in Helsinki region
     - Finland API: don't enable semi-functional reittiopas routing
+    - Finland API: enable Finland API by default for most common targets
     *** Osm2ShareNav ***
     - silence sea generator debug output
     *** Bug fixes ***

@@ -1,3 +1,4 @@
+ShareNav 0.8.4
     - new target Generic/Java
       Technically, the target builds ShareNav with microemulator bundled, so user
       doesn't need to separately install microemulator to use ShareNav.
