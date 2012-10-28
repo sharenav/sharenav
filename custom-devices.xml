@@ -22,7 +22,7 @@ at large.
 		<features>isVirtual</features>
 		<capability name="ShareNav.editing" value="true"/>
 		<!-- add "bigstyles" to be able to handle more than 255 style file elements -->
-		<capability name="JavaPackage" value="osm-editing, online, bigsearch, noobfuscation"/>
+		<capability name="JavaPackage" value="osm-editing, online, bigsearch, noobfuscation, finland"/>
 	</device>
 	<device supportsPolishGui="true">
 		<identifier>Generic/android-full-connected</identifier>
@@ -33,7 +33,7 @@ at large.
 		<groups>android</groups>
 		<capability name="ShareNav.editing" value="true"/>
 		<!-- add "bigstyles" to be able to handle more than 255 style file elements -->
-		<capability name="JavaPackage" value="osm-editing, online, bigsearch, areaoutlines"/>
+		<capability name="JavaPackage" value="osm-editing, online, bigsearch, areaoutlines, finland"/>
 	    <capability name="build.android.permissions" value="RECORD_AUDIO,ACCESS_FINE_LOCATION,ACCESS_MOCK_LOCATION,ACCESS_COARSE_LOCATION,SEND_SMS,WAKE_LOCK,STATUS_BAR,INTERNET,CAMERA" />
 	</device>
 	<device supportsPolishGui="true">
@@ -105,7 +105,7 @@ at large.
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
 		<capability name="ShareNav.editing" value="true"/>
 		<capability name="JavaConfiguration" value="CLDC/1.1"/>
-		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, min-samsapi, osm-editing, online, bigsearch"/>
+		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, min-samsapi, osm-editing, online, bigsearch, finland"/>
 	</device>
 	<device supportsPolishGui="true">
 		<identifier>Generic/microemulator-smallstyles</identifier>
@@ -127,7 +127,7 @@ at large.
 		<capability name="ShareNav.editing" value="true"/>
 		<capability name="JavaConfiguration" value="CLDC/1.1"/>
 		<!-- add "bigstyles" to be able to handle more than 255 style file elements -->
-		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, min-samsapi, osm-editing, online, bigsearch"/>
+		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, min-samsapi, osm-editing, online, bigsearch, finland"/>
 	</device>
 	<device supportsPolishGui="true">
 		<identifier>Generic/newfeatures</identifier>
