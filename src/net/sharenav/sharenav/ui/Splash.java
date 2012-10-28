@@ -73,6 +73,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		Locale.get("splash.artwork")/* Artwork: */,
 		" Tobias Mueller",
 		Locale.get("splash.contributors")/*and many other contributors.*/,
+		Locale.get("splash.contributorsnet")/*see http://www.sharenav.net/credits */,
 		Locale.get("splash.codefrom")/*Includes code by:*/, 
 		" Sualeh Fatehi ",
 		" Nikolay Klimchuk",

@@ -14,6 +14,7 @@ splash.HideSplash=Ei näytetä käynnistymisikkunaa
 splash.thanks=Kiitokset lähdekoodin osista:
 splash.artwork=Grafiikka:
 splash.contributors=ja monet muut.
+splash.contributorsnet=kts. http://www.sharenav.net/credits
 splash.codefrom=Sisältää ohjelmakoodia:
 splash.artwork=Grafiikka (alkuruutu):
 splash.skip=Näpäytä '*' ellet halua nähdä
