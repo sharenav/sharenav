@@ -107,7 +107,7 @@ public class SeaGenerator2 {
 						Way wLand = new Way(landId, w);
 						landWays.add(wLand);
 					}
-					// find minimum/maximum lat and lon for the midlet
+					// find minimum/maximum lat and lon for the bundle
 					seaBounds.extend(w.getBounds());
 				}
 			}

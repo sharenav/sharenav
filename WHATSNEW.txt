@@ -1,3 +1,6 @@
+    *** Osm2ShareNav ***
+    - improve terminology to work better on Android - use "bundle" instead of "midlet"
+
 ShareNav 0.8.4
     *** Map Display ***
     - added automatic day/night mode switch

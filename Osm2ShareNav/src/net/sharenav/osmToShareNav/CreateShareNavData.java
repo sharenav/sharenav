@@ -349,7 +349,7 @@ public class CreateShareNavData implements FilenameFilter {
 			}
 
  			/**
-			 * Note if urls and phones are in the midlet
+			 * Flags if urls and phones are in the midlet
 			 */
 			dsi.writeBoolean(config.useUrlTags);
 			dsi.writeBoolean(config.usePhoneTags);
@@ -601,7 +601,7 @@ public class CreateShareNavData implements FilenameFilter {
 
 
 			if (Configuration.attrToBoolean(configuration.useIcons) < 0) {
-				System.out.println("Icons disabled - removing icon files from midlet.");
+				System.out.println("Icons disabled - removing icon files from bundle.");
 				removeUnusedIconSizes(path, true);
 			} else {				
 				// show summary for copied icon files
@@ -621,7 +621,7 @@ public class CreateShareNavData implements FilenameFilter {
 			}
 						
 			/**
-			 * Copy sounds for all sound formats to midlet 
+			 * Copy sounds for all sound formats to bundle 
 			 */
 			String soundFormat[] = configuration.getUseSounds().split("[;,]", 10);
 			// write sound format infos 
@@ -717,7 +717,7 @@ public class CreateShareNavData implements FilenameFilter {
 			foi.close();
 			
 			if (Configuration.attrToBoolean(configuration.useRouting) < 0) {
-				System.out.println("Routing disabled - removing routing sound files from midlet:");
+				System.out.println("Routing disabled - removing routing sound files from package:");
 				for (int i = 0; i < Configuration.SOUNDNAMES.length; i++) {
 					if (";CONNECT;DISCONNECT;DEST_REACHED;SPEED_LIMIT;".indexOf(";" + Configuration.SOUNDNAMES[i] + ";") == -1) {
 						removeSoundFile(Configuration.SOUNDNAMES[i]);
@@ -956,7 +956,7 @@ public class CreateShareNavData implements FilenameFilter {
 		sbCopiedMedias.append( (sbCopiedMedias.length() == 0) ? mediaPath : ", " + mediaPath);					
 
 		try {
-//			System.out.println("Copying " + mediaPath + " as " + outputMediaName + " into the midlet");
+//			System.out.println("Copying " + mediaPath + " as " + outputMediaName + " into the bundle");
 			FileChannel fromChannel = new FileInputStream(realMediaPath).getChannel();
 			// Copy Media file
 			try {

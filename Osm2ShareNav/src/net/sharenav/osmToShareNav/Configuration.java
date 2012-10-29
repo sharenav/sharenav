@@ -48,7 +48,7 @@ import net.sharenav.osmToShareNav.route.Route;
 
 /**
  * This class reads and holds all the configuration information needed to generate
- * the target Midlet. These are mainly:
+ * the target map or bundle. These are mainly:
  * <ul>
  * <li>Where to get the OSM XML data</li>
  * <li>The bundle .properties file and the settings it contains</li>
@@ -301,7 +301,7 @@ public class Configuration {
 		private ResourceBundle vb;
 
 		/** Path of the temporary directory (which is relative to the current directory
-		 * where the data is assembled before it is written to the target Midlet JAR.
+		 * where the data is assembled before it is written to the target map or bundle
 		 */
 		private String tempDir = null;
 
@@ -323,13 +323,13 @@ public class Configuration {
 		/** Path name of the bundle .properties file */
 		private String propFile;
 
-		/** Name to be used for the generated Midlet (as it will be shown on the phone). */
+		/** Name to be used for the generated bundle (as it will be shown on the device). */
 		private String midletName;
 
-		/** Name to be used for the generated Map (as it will be shown on the phone). */
+		/** Name to be used for the generated Map (as it will be shown on the device). */
 		private String mapName;
 
-		/** Flag if zip (with no midlet) is to be built instead of a jar (as it will be shown on the phone). */
+		/** Flag if zip (with no program) is to be built instead of a bundle (as it will be shown on the device). */
 		public boolean mapzip;
 
 		/** Name of the base Midlet (e.g. ShareNav-Generic-full-connected) to be used. */
@@ -376,7 +376,7 @@ public class Configuration {
 		/** Defines what languages are included in ShareNav */
 		public String useLangName = "English";
 		
-		/** Flag whether the generated Midlet will have editing support. */
+		/** Flag whether the generated Bundle will have editing support. */
 		public boolean enableEditingSupport = false;
 
 		/** Maximum tile size in bytes */
@@ -916,7 +916,7 @@ public class Configuration {
 			return Float.parseFloat(getString(key));
 		}
 		
-		/** Allows to set the Midlet name.
+		/** Allows to set the Midlet (Bundle) name.
 		 * @param name Name to be set
 		 */
 		public void setMidletName(String name) {
@@ -930,7 +930,7 @@ public class Configuration {
 			mapName = name;
 		}
 		
-		/** Returns the name of the Midlet (as it will be shown on the phone).
+		/** Returns the name of the Midlet/Bundle (as it will be shown on the device).
 		 * @return Name
 		 */
 		public String getMidletName() {
@@ -1004,7 +1004,7 @@ public class Configuration {
 			}
 		}
 		
-		/** Returns the name for the Midlet files (JAR and JAD) without extension.
+		/** Returns the name for the Midlet/Bundle files (JAR, JAD, APK) without extension.
 		 * @return File name
 		 */
 		public String getMidletFileName() {
@@ -1604,7 +1604,7 @@ public class Configuration {
 		public String toString() {
 			String confString = "Osm2ShareNav configuration:\n";
 			if (getMapName().equals("")) {
-				confString += "  Midlet name: " + getMidletName() + "\n";
+				confString += "  Midlet/Bundle name: " + getMidletName() + "\n";
 			} else {
 				confString += "  Map name: " + getMapName() + "\n";
 				confString += "  Map file name: " + getMapFileName() + "\n";

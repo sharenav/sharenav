@@ -841,7 +841,7 @@ public class RouteData {
 //	}
 
 	/** Remember traffic signals nodes in own array so they can be removed by CleanupData
-	 * (traffic signals nodes must not be marked as used because otherwise they are written to the midlet) 
+	 * (traffic signals nodes must not be marked as used because otherwise they are written to the bundle/map) 
 	 */
 	public void rememberDelayingNodes() {
 		Node[] delayingNodes = new Node[parser.trafficSignalCount];

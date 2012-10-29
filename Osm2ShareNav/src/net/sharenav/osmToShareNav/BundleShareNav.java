@@ -136,7 +136,7 @@ public class BundleShareNav implements Runnable {
 		}
 		if (gcw != null) {
 			if (createSuccessfully) {
-				JOptionPane.showMessageDialog(gcw, "A ShareNav midlet was successfully created and can now be copied to your phone.");
+				JOptionPane.showMessageDialog(gcw, "A ShareNav bundle was successfully created and can now be copied to device or run.");
 			} else {
 				JOptionPane.showMessageDialog(gcw, "A fatal error occured during processing. Please have a look at the output logs.");
 			}
