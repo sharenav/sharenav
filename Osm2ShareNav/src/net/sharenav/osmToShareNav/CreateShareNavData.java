@@ -346,6 +346,8 @@ public class CreateShareNavData implements FilenameFilter {
 			// remove class files (midlet code) if building just the map
 			if (!configuration.getMapName().equals("")) {
 				removeFilesWithExt(path, "class", null);
+				removeFilesWithExt(path, "dex", null);
+				removeFilesWithExt(path, "xml", null);
 			}
 
  			/**
