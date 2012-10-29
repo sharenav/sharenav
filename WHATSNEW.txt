@@ -1,3 +1,5 @@
+    *** Targets ***
+    - only build java-full-connected by default
     *** Osm2ShareNav ***
     - improve terminology to work better on Android - use "bundle" instead of "midlet"
     - Android: remove .dex & .xml when building a map zip

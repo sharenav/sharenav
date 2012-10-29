@@ -129,13 +129,14 @@
 		</deviceRequirements>
 		<deviceRequirements unless="test">
 			<or>
+				<requirement name="Identifier" value="Generic/java-full-connected" />
+				<!--
 				<requirement name="Identifier" value="Generic/full-connected" />
 				<requirement name="Identifier" value="Generic/full" />
 				<requirement name="Identifier" value="Generic/midsize" />
 				<requirement name="Identifier" value="Generic/minimal" />
 				<requirement name="Identifier" value="Generic/blackberry" />
-				<requirement name="Identifier" value="Generic/java-full-connected" />
-				<!--
+
 				<requirement name="Identifier" value="Generic/newfeatures" />
 				<requirement name="Identifier" value="Motorola/Motorazr_V3i" />
 				<requirement name="Identifier" value="Sony-Ericsson/K750" />
