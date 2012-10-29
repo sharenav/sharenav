@@ -324,7 +324,7 @@ public class Configuration {
 		private String propFile;
 
 		/** Name to be used for the generated bundle (as it will be shown on the device). */
-		private String midletName;
+		private String bundleName;
 
 		/** Name to be used for the generated Map (as it will be shown on the device). */
 		private String mapName;
@@ -332,7 +332,7 @@ public class Configuration {
 		/** Flag if zip (with no program) is to be built instead of a bundle (as it will be shown on the device). */
 		public boolean mapzip;
 
-		/** Name of the base Midlet (e.g. ShareNav-Generic-full-connected) to be used. */
+		/** Name of the base bundle (e.g. ShareNav-Generic-full-connected) to be used. */
 		private String appParam;
 
 		/** Flags if there are more way or poi styles than 126 or 255. */
@@ -346,8 +346,8 @@ public class Configuration {
 		// version 65 compatible maps can be produced when <= 126 style file elements
 		public boolean map66search = true;
 
-		/** Full name of the jar file of the base midlet */
-		private String appJarFileName = null;
+		/** Full name of the jar file of the base bundle */
+		private String appBundleFileName = null;
 
 		/** Defines string to add to Manifest / .jad file*/
 		public String addToManifest = "";
@@ -552,7 +552,7 @@ public class Configuration {
 						System.err.println("  \"--cellID=\" specifies the file from which to load cellIDs for cell based positioning");
 						System.err.println("       The data comes from OpenCellId.org and the file can be found at http://dump.opencellid.org/cellsIdData/");
 						System.err.println("  \"--map.name=\" specifies the output map zip basename");
-						System.err.println("  \"--mapzip\" builds a map zip named by properties midlet.name");
+						System.err.println("  \"--mapzip\" builds a map zip named by properties bundle.name");
 						System.err.println("  \"--properties=\" points to a .properties file specifying additional parameters");
 						System.err.println("  \"--nogui\" don't start the GUI (to be used with --properties= if map name is specified in properties)");
 						System.err.println("  planet.osm.bz2: points to a (compressed) .osm file, overrides possible .properties mapSource");
@@ -916,11 +916,11 @@ public class Configuration {
 			return Float.parseFloat(getString(key));
 		}
 		
-		/** Allows to set the Midlet (Bundle) name.
+		/** Allows to set the bundle name.
 		 * @param name Name to be set
 		 */
-		public void setMidletName(String name) {
-			midletName = name;
+		public void setBundleName(String name) {
+			bundleName = name;
 		}
 		
 		/** Allows to set the Map name.
@@ -930,16 +930,24 @@ public class Configuration {
 			mapName = name;
 		}
 		
-		/** Returns the name of the Midlet/Bundle (as it will be shown on the device).
+		/** Returns the name of the bundle (as it will be shown on the device).
 		 * @return Name
 		 */
-		public String getMidletName() {
-			if (midletName != null) {
-				return midletName;
+		public String getBundleName() {
+			if (bundleName != null) {
+				return bundleName;
 			}
-			return getString("midlet.name");
+			return getBundleOrMidletString();
 		}
 		
+		public String getBundleOrMidletString() {
+			String bn = getString("bundle.name");
+			if (bn == null && getString("midlet.name") != null) {
+				return getString("midlet.name");
+			}
+			return bn;
+		}
+
 		/** Returns cell source file
 		 * @return Name
 		 */
@@ -998,17 +1006,17 @@ public class Configuration {
 				return mapName;
 			}
 			if (mapzip && mapName == null) {
-				return getString("midlet.name");
+				return getBundleOrMidletString();
 			} else {
 				return getString("map.name");
 			}
 		}
 		
-		/** Returns the name for the Midlet/Bundle files (JAR, JAD, APK) without extension.
+		/** Returns the name for the bundle files (JAR, JAD, APK) without extension.
 		 * @return File name
 		 */
-		public String getMidletFileName() {
-			return getMidletName() + "-" + getVersion() + "-map" + MAP_FORMAT_VERSION;
+		public String getBundleFileName() {
+			return getBundleName() + "-" + getVersion() + "-map" + MAP_FORMAT_VERSION;
 		}
 		
 		/** Returns the name for the Map files with version and extension.
@@ -1018,8 +1026,8 @@ public class Configuration {
 			return getMapName() + "-" + getVersion() + "-map" + MAP_FORMAT_VERSION + ".zip";
 		}
 		
-		/** Allows to set the name of the base Midlet (e.g. ShareNav-Generic-full-connected).
-		 * @param app Name of the base Midlet
+		/** Allows to set the name of the base bundle (e.g. ShareNav-Generic-full-connected).
+		 * @param app Name of the base bundle
 		 */
 		public void setCodeBase (String app) {
 			if (app.equalsIgnoreCase("ShareNav-Generic-editing")) {
@@ -1070,15 +1078,15 @@ public class Configuration {
 		
 		
 		/**
-		 * Returns a stream to read from the JAR file containing the base Midlet -
+		 * Returns a stream to read from the JAR file containing the base bundle -
 		 * see appParam. Adds the version number and will also add the language
 		 * abbreviation if necessary.
-		 * On the side, it changes appJarFileName to be the name of this JAR file
+		 * On the side, it changes appBundleFileName to be the name of this JAR file
 		 * which is a very great idea to do in a method which is named like a simple
 		 * getter.
 		 * @return Stream to read from the JAR
 		 */
-		public InputStream getJarFile() {
+		public InputStream getBaseBundleFile() {
 			String baseName = appParam;
 			if ("false".equals(baseName)) {
 				return null;
@@ -1092,25 +1100,25 @@ public class Configuration {
 				System.out.println("Using lang=" + getUseLang() + " (" + getUseLangName() + ")");
 				is = getClass().getResourceAsStream(baseName);
 			}
-			appJarFileName = baseName;
+			appBundleFileName = baseName;
 			return is;
 		}
 
-		/** Returns the name of the base Midlet (e.g. ShareNav-Generic-full-connected).
-		 * @return Name of the base Midlet
+		/** Returns the name of the base bundle (e.g. ShareNav-Generic-full-connected).
+		 * @return Name of the base bundle
 		 */
 		public String getAppParam() {
 			return appParam;
 		}
 
-		/** Returns the JAR file name of base Midlet.
+		/** Returns the JAR file name of base bundle
 		 * @return JAR file name
 		 */
-		public String getJarFileName() {
-			if (appJarFileName == null) {
-				getJarFile();
+		public String getBaseBundleFileName() {
+			if (appBundleFileName == null) {
+				getBaseBundleFile();
 			}
-			return appJarFileName;
+			return appBundleFileName;
 		}
 
 		public String getTempDir() {
@@ -1604,7 +1612,7 @@ public class Configuration {
 		public String toString() {
 			String confString = "Osm2ShareNav configuration:\n";
 			if (getMapName().equals("")) {
-				confString += "  Midlet/Bundle name: " + getMidletName() + "\n";
+				confString += "  Bundle name: " + getBundleName() + "\n";
 			} else {
 				confString += "  Map name: " + getMapName() + "\n";
 				confString += "  Map file name: " + getMapFileName() + "\n";

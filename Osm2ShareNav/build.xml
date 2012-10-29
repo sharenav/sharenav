@@ -101,7 +101,7 @@
         <entry key="drawSeaOutlines" value="false"/>
         <entry key="dontCompress" value="wav,amr,png,mp3"/>
    		<entry key="cellSource" value=""/>
-   		<entry key="midlet.name" value="ShareNav"/>
+   		<entry key="bundle.name" value="ShareNav"/>
    		<entry key="map.name" value=""/>
 		<entry key="routing.maxTileSize" value="6000"/>
    		<entry key="keepTemporaryFiles" value="false"/>

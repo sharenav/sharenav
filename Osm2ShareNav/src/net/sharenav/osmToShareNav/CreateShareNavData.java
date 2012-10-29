@@ -343,7 +343,7 @@ public class CreateShareNavData implements FilenameFilter {
 				removeFilesWithExt(path, "loc", langs.split("[;,]", 200));
 			}
 
-			// remove class files (midlet code) if building just the map
+			// remove class files (midlet/android code) if building just the map
 			if (!configuration.getMapName().equals("")) {
 				removeFilesWithExt(path, "class", null);
 				removeFilesWithExt(path, "dex", null);
@@ -351,7 +351,7 @@ public class CreateShareNavData implements FilenameFilter {
 			}
 
  			/**
-			 * Flags if urls and phones are in the midlet
+			 * Flags if urls and phones are in the map
 			 */
 			dsi.writeBoolean(config.useUrlTags);
 			dsi.writeBoolean(config.usePhoneTags);

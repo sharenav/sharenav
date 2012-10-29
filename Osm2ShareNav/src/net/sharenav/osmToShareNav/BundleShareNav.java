@@ -145,14 +145,14 @@ public class BundleShareNav implements Runnable {
 	}
 
 	private static void expand(Configuration c, String tmpDir) throws ZipException, IOException {
-		System.out.println("Preparing " + c.getJarFileName());
-		InputStream appStream = c.getJarFile();
+		System.out.println("Preparing " + c.getBaseBundleFileName());
+		InputStream appStream = c.getBaseBundleFile();
 		if (appStream == null) {
-			System.out.println("ERROR: Couldn't find the jar file for " + c.getJarFileName());
+			System.out.println("ERROR: Couldn't find the jar file for " + c.getBaseBundleFileName());
 			System.out.println("Check the app parameter in the properties file for misspellings");
 			System.exit(1);
 		}
-		File file = new File(c.getTempBaseDir() + "/" + c.getJarFileName());
+		File file = new File(c.getTempBaseDir() + "/" + c.getBaseBundleFileName());
 		writeFile(appStream, file.getAbsolutePath());
 		
 		ZipFile zf = new ZipFile(file.getCanonicalFile());
@@ -210,10 +210,10 @@ public class BundleShareNav implements Runnable {
 
 					Matcher m1 = p1.matcher(line);
 					if (m1.matches()) {
-						fw.write("MIDlet-" + m1.group(1) + ": " + c.getMidletName()
+						fw.write("MIDlet-" + m1.group(1) + ": " + c.getBundleName()
 							 + "," + m1.group(3) + "," + m1.group(4) + "\n");
 					} else if (line.startsWith("MIDlet-Name: ")) {
-						fw.write("MIDlet-Name: " + c.getMidletName() + "\n");
+						fw.write("MIDlet-Name: " + c.getBundleName() + "\n");
 					} else {
 						fw.write(line + "\n");
 					}
@@ -242,7 +242,7 @@ public class BundleShareNav implements Runnable {
 		String tmpDir = c.getTempDir();
 		File manifest = new File(tmpDir + "/META-INF/MANIFEST.MF");
 		BufferedReader fr = new BufferedReader(new FileReader(manifest));
-		File jad = new File(c.getMidletFileName() + ".jad");
+		File jad = new File(c.getBundleFileName() + ".jad");
 		FileWriter fw = new FileWriter(jad);
 
 		/**
@@ -273,7 +273,7 @@ public class BundleShareNav implements Runnable {
 		 * Add some additional fields to the jad file, that aren't present in the manifest file.
 		 */
 		fw.write("MIDlet-Jar-Size: " + jarLength + "\n");
-		fw.write("MIDlet-Jar-URL: " + c.getMidletFileName() + ".jar\n");
+		fw.write("MIDlet-Jar-URL: " + c.getBundleFileName() + ".jar\n");
 		fw.close();
 		fr.close();
 	}
@@ -281,7 +281,7 @@ public class BundleShareNav implements Runnable {
 	private static void pack(Configuration c) throws ZipException, IOException {
 		File n = null;
 		if (config.getMapName().equals("")) {
-			n = new File(c.getMidletFileName() + (config.sourceIsApk ? ".apk": ".jar"));
+			n = new File(c.getBundleFileName() + (config.sourceIsApk ? ".apk": ".jar"));
 			rewriteManifestFile(c, true);
 		} else {
 			n = new File(c.getMapFileName());

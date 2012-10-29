@@ -1,7 +1,8 @@
     *** Targets ***
     - only build java-full-connected by default
     *** Osm2ShareNav ***
-    - improve terminology to work better on Android - use "bundle" instead of "midlet"
+    - improve terminology to work better on Android - use "bundle" instead of "midlet", also
+      changes .properties syntax (though there's backwards compatility with midlet.name)
     - Android: remove .dex & .xml when building a map zip
 
 ShareNav 0.8.4
