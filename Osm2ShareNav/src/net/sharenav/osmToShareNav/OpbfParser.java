@@ -278,9 +278,11 @@ public class OpbfParser extends OsmParser {
 
 			if (ele > 1000000) {
 				ele = 0;
-				System.out.println("Nodes " + nodeTot + "/" + nodeIns
-						+ ", Ways " + wayTot + "/" + wayIns + ", Relations "
-						+ relTot + "/" + relPart + "/" + relIns);
+				if (configuration.verbose >= 0) {
+					System.out.println("Nodes " + nodeTot + "/" + nodeIns
+							   + ", Ways " + wayTot + "/" + wayIns + ", Relations "
+							   + relTot + "/" + relPart + "/" + relIns);
+				}
 			}
 		}
 
@@ -315,7 +317,6 @@ public class OpbfParser extends OsmParser {
 
 	public OpbfParser(InputStream i, Configuration c) {
 		super(i, c);
-
 	}
 
 	@Override
@@ -328,13 +329,16 @@ public class OpbfParser extends OsmParser {
 		try {
 			startTime = System.currentTimeMillis();
 			BlockInputStream bis = new BlockInputStream(i, new OsmPbfHandler());
-			System.out.println("Start of Document");
-			System.out
-					.println("Nodes read/used, Ways read/used, Relations read/partial/used");
+			if (configuration.verbose >= 0) {
+				System.out.println("Start of Document");
+				System.out.println("Nodes read/used, Ways read/used, Relations read/partial/used");
+			}
 			bis.process();
-			System.out.println("Nodes " + nodeTot + "/" + nodeIns + ", Ways "
-					+ wayTot + "/" + wayIns + ", Relations " + relTot + "/"
-					+ relPart + "/" + relIns);
+			if (configuration.verbose >= 0) {
+				System.out.println("Nodes " + nodeTot + "/" + nodeIns + ", Ways "
+						   + wayTot + "/" + wayIns + ", Relations " + relTot + "/"
+						   + relPart + "/" + relIns);
+			}
 			printMemoryUsage(2);
 			System.out.println("Parsing took "
 					+ (System.currentTimeMillis() - startTime) / 1000 + "s");

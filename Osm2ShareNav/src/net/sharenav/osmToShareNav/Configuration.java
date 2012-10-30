@@ -1204,7 +1204,9 @@ public class Configuration {
 
 				fr = new TeeInputStream(apiStream, new FileOutputStream(new File("Online.osm")));
 			} else {
-				System.out.println("Opening planet file: " + planet);
+				if (verbose >= 0) {
+					System.out.println("Opening planet file: " + planet);
+				}
 				
 				if (planet.startsWith("http://")) {
 					System.out.println("Opening map file from network, may take a while");
@@ -1395,7 +1397,9 @@ public class Configuration {
 			}
 
 			if (i > 0) {
-				System.out.println("Found " + i + " bound(s)");
+				if (verbose >= 0){
+					System.out.println("Found " + i + " bound(s)");
+				}
 				for (int l = 0; l < i; l++) {
 					Bounds bound = new Bounds();
 					bound.extend(getFloat("region." + (l + 1) + ".lat.min"),

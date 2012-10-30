@@ -564,19 +564,23 @@ public class BundleShareNav implements Runnable {
 			if (Configuration.attrToBoolean(config.useRouting) >= 0) {
 				for (int i = 0; i < TravelModes.travelModeCount; i++) {
 					tm = TravelModes.travelModes[i];
-					System.out.println("Route and toll rules in " + config.getStyleFileName()
-							+ " for " + tm.getName() + ":");
-					if ( (tm.travelModeFlags & TravelMode.AGAINST_ALL_ONEWAYS) > 0) {
-						System.out.println(" Going against all accessible oneways is allowed");
-					}
-					if ( (tm.travelModeFlags & TravelMode.BICYLE_OPPOSITE_EXCEPTIONS) > 0) {
-						System.out.println(" Opposite direction exceptions for bicycles get applied");
+					if (config.verbose >= 0) {
+						System.out.println("Route and toll rules in " + config.getStyleFileName()
+								   + " for " + tm.getName() + ":");
+						if ( (tm.travelModeFlags & TravelMode.AGAINST_ALL_ONEWAYS) > 0) {
+							System.out.println(" Going against all accessible oneways is allowed");
+						}
+						if ( (tm.travelModeFlags & TravelMode.BICYLE_OPPOSITE_EXCEPTIONS) > 0) {
+							System.out.println(" Opposite direction exceptions for bicycles get applied");
+						}
 					}
 		        	int routeAccessRestrictionCount = 0;
 		            if (TravelModes.getTravelMode(i).getRouteAccessRestrictions().size() > 0) {
 		            	for (RouteAccessRestriction r: tm.getRouteAccessRestrictions()) {
 		            		routeAccessRestrictionCount++;
-		            		System.out.println(" " + r.toString());
+					if (config.verbose >= 0) {
+						System.out.println(" " + r.toString());
+					}
 		            	}
 		            }
 		            if (routeAccessRestrictionCount == 0) {
@@ -587,7 +591,9 @@ public class BundleShareNav implements Runnable {
 		            if (TravelModes.getTravelMode(i).getTollRules().size() > 0) {
 		            	for (TollRule r: tm.getTollRules()) {
 		            		tollRuleCount++;
-		            		System.out.println(" " + r.toString());
+					if (config.verbose >= 0) {
+						System.out.println(" " + r.toString());
+					}
 		            	}
 		            }
 		            if (tollRuleCount == 0) {
@@ -601,13 +607,17 @@ public class BundleShareNav implements Runnable {
             if (LegendParser.getDamages().size() == 0) {
         		System.out.println("No damage markers in "	+ config.getStyleFileName());
             } else {
-            	System.out.println("Rules specified in " + config.getStyleFileName() + " for marking damages:");
-				for (Damage damage: LegendParser.getDamages()) {
-	        		System.out.println(" Ways/Areas with key " + damage.key + "=" + damage.values); 
-				}
+		    if (config.verbose >= 0) {
+			    System.out.println("Rules specified in " + config.getStyleFileName() + " for marking damages:");
+			    for (Damage damage: LegendParser.getDamages()) {
+				    System.out.println(" Ways/Areas with key " + damage.key + "=" + damage.values); 
+			    }
+		    }
             }
 			String tmpDir = config.getTempDir();
-			System.out.println("Unpacking application to " + tmpDir);
+			if (config.verbose >= 0) {
+				System.out.println("Unpacking application to " + tmpDir);
+			}
 			expand(config, tmpDir);
 			File target = new File(tmpDir);
 			createPath(target);

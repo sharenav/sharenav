@@ -69,7 +69,7 @@ public abstract class OsmParser {
 	private Node[] delayingNodes;
 	public int trafficSignalCount = 0;
 	private Vector<Bounds> bounds = null;
-	private Configuration configuration;
+	public Configuration configuration;
 	
 	protected int wayIns;
 
@@ -92,7 +92,9 @@ public abstract class OsmParser {
 	public OsmParser(InputStream i, Configuration c) {
 		this.configuration = c;
 		this.bounds = c.getBounds();
-		System.out.println(parserType() + " parser with bounds started...");
+		if (c.verbose >= 0) {
+			System.out.println(parserType() + " parser with bounds started...");
+		}
 		init(i);
 	}
 

@@ -103,17 +103,23 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 					return null;
 				}
 			}
-			System.out.println("Trying to resolve XML entity " + systemId); 
+			if (config.verbose >= 0) {
+				System.out.println("Trying to resolve XML entity " + systemId); 
+			}
 			try {
 				InputStream is = new URL(systemId).openStream();
 				if (is != null) {
-					System.out.println("Resolved entity externally");
+					if (config.verbose >= 0) {
+						System.out.println("Resolved entity externally");
+					}
 					return new InputSource(is);
 				}
 			} catch (FileNotFoundException fnfe) {
 				InputStream is = this.getClass().getResourceAsStream(systemId.substring(systemId.lastIndexOf('/')));
 				if (is != null) {
-					System.out.println("No such file, resolved entity internally instead");
+					if (config.verbose >= 0) {
+						System.out.println("No such file, resolved entity internally instead");
+					}
 					return new InputSource(is);
 				}
 			}
@@ -123,9 +129,11 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 	}
 
 	public LegendParser(InputStream i) {
-		System.out.println("Style file parser started...");
 		if (config == null) {
 			config = Configuration.getConfiguration();
+		}
+		if (config.verbose >= 0) {
+			System.out.println("Style file parser started...");
 		}
 		init(i);
 	}
@@ -175,8 +183,10 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 				System.out.println("ERROR: your style file is not valid. Please correct the file and try Osm2ShareNav again");
 				System.exit(1);
 			}
-			System.out.println("Style-file: You have " + (poiIdx - 1)
-					+ " POI types defined and " + (wayIdx - 1) + " way types");
+			if (config.verbose >= 0) {
+				System.out.println("Style-file: You have " + (poiIdx - 1)
+						   + " POI types defined and " + (wayIdx - 1) + " way types");
+			}
 			if (poiIdx > 126) {
 				// polish.api.bigstyles
 				config.mediumStyles = true;
@@ -919,7 +929,9 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 						scale = (config.getRealScale(scale) + config
 								.getRealScale(scale + 1) / 2);
 						tileScaleLevel[level] = scale;
-						System.out.println("tileScaleLevel " + level + ": " + scale);
+						if (config.verbose >= 0) {
+							System.out.println("tileScaleLevel " + level + ": " + scale);
+						}
 					} catch (NumberFormatException nfe) {
 						System.out
 								.println("scale in tileScaleLevel must be integer, but was "
