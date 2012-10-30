@@ -145,7 +145,9 @@ public class BundleShareNav implements Runnable {
 	}
 
 	private static void expand(Configuration c, String tmpDir) throws ZipException, IOException {
-		System.out.println("Preparing " + c.getBaseBundleFileName());
+		if (c.verbose >= 0) {
+			System.out.println("Preparing " + c.getBaseBundleFileName());
+		}
 		InputStream appStream = c.getBaseBundleFile();
 		if (appStream == null) {
 			System.out.println("ERROR: Couldn't find the jar file for " + c.getBaseBundleFileName());
@@ -545,7 +547,9 @@ public class BundleShareNav implements Runnable {
 		InputStream fr;
 		try {
 			validateConfig(config);
-			System.out.println(config.toString());
+			if (config.verbose >= 0) {
+				System.out.println(config.toString());
+			}
 			
 			// the legend must be parsed after the configuration to apply parameters to the travel modes specified in useRouting
 			TravelModes.stringToTravelModes(config.useRouting);

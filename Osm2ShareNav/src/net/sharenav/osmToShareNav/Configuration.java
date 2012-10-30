@@ -332,6 +332,9 @@ public class Configuration {
 		/** Flag if zip (with no program) is to be built instead of a bundle (as it will be shown on the device). */
 		public boolean mapzip;
 
+		/** Do we want verbose progress output (for non-errors); several --verbose for more output, --silent for decreasing verbosity */
+		public int verbose = 1;
+
 		/** Name of the base bundle (e.g. ShareNav-Generic-full-connected) to be used. */
 		private String appParam;
 
@@ -532,6 +535,12 @@ public class Configuration {
 						// create a map zip instead of bundle jar
 						mapzip = true;
 					}
+					if (arg.startsWith("--verbose")) {
+						verbose++;
+					}
+					if (arg.startsWith("--silent")) {
+						verbose--;
+					}
 					if (arg.startsWith("--nogui")) {
 						// makes argument length to be 2 so GUI will not be started
 					}
@@ -553,6 +562,8 @@ public class Configuration {
 						System.err.println("       The data comes from OpenCellId.org and the file can be found at http://dump.opencellid.org/cellsIdData/");
 						System.err.println("  \"--map.name=\" specifies the output map zip basename");
 						System.err.println("  \"--mapzip\" builds a map zip named by properties bundle.name");
+						System.err.println("  \"--verbose\" increases output verbosity");
+						System.err.println("  \"--silent\" decreases output verbosity");
 						System.err.println("  \"--properties=\" points to a .properties file specifying additional parameters");
 						System.err.println("  \"--nogui\" don't start the GUI (to be used with --properties= if map name is specified in properties)");
 						System.err.println("  planet.osm.bz2: points to a (compressed) .osm file, overrides possible .properties mapSource");
@@ -575,7 +586,9 @@ public class Configuration {
 				InputStream cf;
 				if (propFile != null) {
 					try {
-						System.out.println("Loading properties: " + propFile);
+						if (verbose >= 0) {
+							System.out.println("Loading properties: " + propFile);
+						}
 						if (propFile.endsWith(".properties")) {
 							cf = new FileInputStream(propFile);
 						} else {
@@ -831,7 +844,9 @@ public class Configuration {
 				//System.out.println("'" + styleFile + "' not found, searching in JAR");
 				if (getClass().getResource(styleFile) != null) {
 					legendInputStream = getClass().getResourceAsStream(styleFile);
-					System.out.println("Using style file '" + styleFile + "' from JAR");
+					if (verbose >= 0) {
+						System.out.println("Using style file '" + styleFile + "' from JAR");
+					}
 				} else {
 					// When reading the bundle file, there is already a fallback
 					// to the style-file specified in version.properties - see getString().
@@ -887,7 +902,7 @@ public class Configuration {
 		 * @throws MissingResourceException if the key exists in neither of the two files
 		 */
 		public String getString(String key) {
-			if ("region.1.lat.min".equals(key)){
+			if ("region.1.lat.min".equals(key) && verbose >= 0){
 				System.out.println("Try to fetch bounds");
 			}
 			try {

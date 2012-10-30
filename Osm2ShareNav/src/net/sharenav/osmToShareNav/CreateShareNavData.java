@@ -169,8 +169,10 @@ public class CreateShareNavData implements FilenameFilter {
 		sl.createNameList(path);
 		ul.createUrlList(path);
 		for (int i = 0; i <= 3; i++) {
-			System.out.println("Exporting tiles for zoomlevel " + i );
-			System.out.println("===============================");
+			if (configuration.verbose >= 0) {
+				System.out.println("Exporting tiles for zoomlevel " + i );
+				System.out.println("===============================");
+			}
 			if (!LegendParser.tileScaleLevelContainsRoutableWays[i]) {
 				System.out.println("Info: This tile level contains no routable ways");
 			}
@@ -183,7 +185,7 @@ public class CreateShareNavData implements FilenameFilter {
 					" dictionary files");
 			System.out.println("  Time taken: " + time / 1000 + " seconds");
 		}
-		if (Configuration.attrToBoolean(configuration.useRouting) >= 0) {
+		if (Configuration.attrToBoolean(configuration.useRouting) >= 0 && configuration.verbose >= 0) {
 			System.out.println("Exporting route tiles");
 			System.out.println("=====================");
 			long startTime = System.currentTimeMillis();
