@@ -941,11 +941,10 @@ public class Configuration {
 		}
 		
 		public String getBundleOrMidletString() {
-			String bn = getString("bundle.name");
-			if (bn == null && getString("midlet.name") != null) {
+			if (!getString("midlet.name").equals("")) {
 				return getString("midlet.name");
 			}
-			return bn;
+			return getString("bundle.name");
 		}
 
 		/** Returns cell source file
