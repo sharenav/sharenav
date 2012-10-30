@@ -36,8 +36,10 @@ public class RouteSoundSyntax {
 			}
 		}			
 
-		System.out.println(info + " for specifying route and sound syntax");
-		
+		if (Configuration.getConfiguration().verbose >= 0) {
+			System.out.println(info + " for specifying route and sound syntax");
+		}
+
 		if (is != null) {
 			try {
 				InputStreamReader isr;

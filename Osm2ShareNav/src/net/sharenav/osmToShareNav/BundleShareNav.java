@@ -70,7 +70,6 @@ public class BundleShareNav implements Runnable {
 
 		long maxMem = Runtime.getRuntime().maxMemory() / (1024 * 1024);
 		String dataModel = System.getProperty("sun.arch.data.model");
-		System.out.println("Available memory: " + maxMem + "MB (" + dataModel + " bit system)");
 		String warning = null;
 		if (
 				(maxMem < 800 && dataModel.equals("32"))
@@ -104,11 +103,16 @@ public class BundleShareNav implements Runnable {
 			gcw = new GuiConfigWizard();
 			c = gcw.startWizard(args);
 		} else {
+			
 			if (warning != null) {
+				System.out.println("Available memory: " + maxMem + "MB (" + dataModel + " bit system)");
 				System.out.println("WARNING:");
 				System.out.println(warning);
 			}
 			c = new Configuration(args);
+			if (c.verbose >= 0 && warning == null) {
+				System.out.println("Available memory: " + maxMem + "MB (" + dataModel + " bit system)");
+			}
 		}
 		/**
 		 * Decouple the computational thread from

@@ -218,7 +218,9 @@ public class CleanUpData {
 		}
 		parser.removeNodes(rmNodes);
 		long time = (System.currentTimeMillis() - startTime);
-		System.out.println("Removed " + rmNodes.size() + " unused nodes, took "
-				+ time + " ms");
+		if (conf.verbose >= 0) {
+			System.out.println("Removed " + rmNodes.size() + " unused nodes, took "
+					   + time + " ms");
+		}
 	}
 }

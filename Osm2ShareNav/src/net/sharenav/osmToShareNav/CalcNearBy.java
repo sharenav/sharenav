@@ -354,7 +354,9 @@ public class CalcNearBy {
 			}
 		}		
 		long time = (System.currentTimeMillis() - startTime);
-		System.out.println("info: area housenumbers: accepted " + count + " non-relation housenumber-to-street connections in " + time / 1000 + " seconds");
+		if (Configuration.getConfiguration().verbose >= 0) {
+			System.out.println("info: area housenumbers: accepted " + count + " non-relation housenumber-to-street connections in " + time / 1000 + " seconds");
+		}
 	}
 
 	private void calcCityNearBy(OsmParser parser, KDTree nearByElements) {

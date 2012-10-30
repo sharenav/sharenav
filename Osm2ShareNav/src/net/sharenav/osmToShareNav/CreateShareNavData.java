@@ -255,8 +255,11 @@ public class CreateShareNavData implements FilenameFilter {
 		for (Node n : parser.getNodes()) {
 			na.addName(n, wayRedirect);
 		}
-		System.out.println("Found " + na.getNames().size() + " names, " + 
-				na.getCanons().size() + " canon");
+
+		if (configuration.verbose >= 0) {
+			System.out.println("Found " + na.getNames().size() + " names, " + 
+					   na.getCanons().size() + " canon");
+		}
 		na.calcNameIndex();
 		return (na);
 	}
@@ -271,7 +274,9 @@ public class CreateShareNavData implements FilenameFilter {
 			na.addUrl(n);
 			na.addPhone(n);
 		}
-		System.out.println("found " + na.getUrls().size() + " urls, including phones ");
+		if (configuration.verbose >= 0) {
+			System.out.println("found " + na.getUrls().size() + " urls, including phones ");
+		}
 		na.calcUrlIndex();
 		return (na);
 	}

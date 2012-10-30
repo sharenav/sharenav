@@ -95,7 +95,9 @@ public class RouteData {
 			addConnections(w.getNodes(), w);
 
 		}
-		System.out.println("Created " + nodes.size() + " route nodes.");
+		if (config.verbose >= 0) {
+			System.out.println("Created " + nodes.size() + " route nodes.");
+		}
 		createIds();
 		calculateTurnRestrictions();
 	}
@@ -107,7 +109,9 @@ public class RouteData {
 	private void calculateTurnRestrictions() {
 		resolveViaWays();
 		
-		System.out.println("info: Calculating turn restrictions");
+		if (config.verbose >= 0) {
+			System.out.println("info: Calculating turn restrictions");
+		}
 		int numTurnRestrictions = 0;
 		for (RouteNode n: nodes.values()) {
 			TurnRestriction turn = (TurnRestriction) parser.getTurnRestrictionHashMap().get(new Long(n.node.id));
@@ -210,7 +214,9 @@ public class RouteData {
 				turn = turn.nextTurnRestrictionAtThisNode;
 			}
 		}
-		System.out.println("info: " + numTurnRestrictions + " turn restrictions valid");
+		if (config.verbose >= 0) {
+			System.out.println("info: " + numTurnRestrictions + " turn restrictions valid");
+		}
 	}
 
 
