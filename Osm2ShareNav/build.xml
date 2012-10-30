@@ -85,9 +85,9 @@
         <entry key="useRouting" value="true"/>
         <entry key="useUrlTags" value="false"/>
         <entry key="usePhoneTags" value="false"/>
-        <entry key="useHouseNumbers" value="false"/>
+        <entry key="useHouseNumbers" value="true"/>
         <entry key="useWordSearch" value="true"/>
-        <entry key="useSeaTiles" value="false"/>
+        <entry key="useSeaTiles" value="true"/>
         <entry key="outlineAreaFormat" value="true"/>
         <entry key="triangleAreaFormat" value="true"/>
         <entry key="useBarriers" value="false"/>
@@ -115,7 +115,7 @@
    		<entry key="style-file" value="style-file.xml"/>
    		<entry key="enableEditing" value="false"/>
    		<entry key="useCellID" value="false"/>
-   		<entry key="generateSea" value="false"/>
+   		<entry key="generateSea" value="true"/>
    		<entry key="cellIDnoLAC" value="false"/>
 		<entry key="mapPrecisionInMeters" value="1"/>
    		<entry key="useIcons" value="true"/>

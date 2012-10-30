@@ -8,7 +8,10 @@
       use two --silent options to only show errors & warnings when building the map
     - enable outline area format by default, to make maps good performance on Android
       by default
-    - set default sound format to wav
+    - modify other defaults:
+      * sound format wav
+      * use house numbers
+      * generate sea & use sea tiles
 
 ShareNav 0.8.4
     *** Map Display ***
