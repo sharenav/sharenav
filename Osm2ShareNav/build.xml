@@ -119,7 +119,7 @@
    		<entry key="cellIDnoLAC" value="false"/>
 		<entry key="mapPrecisionInMeters" value="1"/>
    		<entry key="useIcons" value="true"/>
-   		<entry key="useSounds" value="amr"/>
+   		<entry key="useSounds" value="wav"/>
    		<entry key="mapSource" value=""/>
    		<entry key="useSoundFilesWithSyntax" value="sound"/>
    		<entry key="lang" value="*"/>
