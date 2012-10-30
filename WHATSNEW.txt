@@ -4,6 +4,7 @@
     - improve terminology to work better on Android - use "bundle" instead of "midlet", also
       changes .properties syntax (though there's backwards compatility with midlet.name)
     - Android: remove .dex & .xml when building a map zip
+    - add --verbose and --silent options to increase & decrease verbosity level
 
 ShareNav 0.8.4
     *** Map Display ***

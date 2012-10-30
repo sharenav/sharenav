@@ -641,20 +641,28 @@ public class BundleShareNav implements Runnable {
 			long time;
 			SeaGenerator2.setOptions(config, true, true, true, true, 100);
 			if (config.getGenerateSea()) {
-				System.out.println("Starting SeaGenerator");
+				if (config.verbose >= 0) {
+					System.out.println("Starting SeaGenerator");
+				}
 				sg2.generateSea(parser);
 				time = (System.currentTimeMillis() - startTime);
-				System.out.println("SeaGenerator run");
-				System.out.println("  Time taken: " + time / 1000 + " seconds");
+				if (config.verbose >= 0) {
+					System.out.println("SeaGenerator run");
+					System.out.println("  Time taken: " + time / 1000 + " seconds");
+				}
 			}
 			
-			System.out.println("Starting relation handling");
+			if (config.verbose >= 0) {
+				System.out.println("Starting relation handling");
+			}
 			startTime = System.currentTimeMillis();
 			Area.setParser(parser);
 			new Relations(parser, config);
-			System.out.println("Relations processed");
-			time = (System.currentTimeMillis() - startTime);
-			System.out.println("  Time taken: " + time / 1000 + " seconds");
+			if (config.verbose >= 0) {
+				System.out.println("Relations processed");
+				time = (System.currentTimeMillis() - startTime);
+				System.out.println("  Time taken: " + time / 1000 + " seconds");
+			}
 
 			/**
 			 * Display some stats about the type of relations we currently aren't handling
@@ -674,35 +682,47 @@ public class BundleShareNav implements Runnable {
 				}
 				relTypes.put(type, count);
 			}
-			System.out.println("Types of relations present but ignored: ");
-			for (Entry<String, Integer> e : relTypes.entrySet()) {
-				System.out.println("   " + e.getKey() + ": " + e.getValue());
+			if (config.verbose >= 0) {
+				System.out.println("Types of relations present but ignored: ");
+				for (Entry<String, Integer> e : relTypes.entrySet()) {
+					System.out.println("   " + e.getKey() + ": " + e.getValue());
 
+				}
 			}
 			relTypes = null;
-			System.out.println("Splitting long ways");
+			if (config.verbose >= 0) {
+				System.out.println("Splitting long ways");
+			}
 			int numWays = parser.getWays().size();
 			startTime = System.currentTimeMillis();
 			new SplitLongWays(parser);
 			time = (System.currentTimeMillis() - startTime);
-			System.out.println("Splitting long ways increased ways from "
-					+ numWays + " to " + parser.getWays().size());
-			System.out.println("  Time taken: " + time / 1000 + " seconds");
+			if (config.verbose >= 0) {
+				System.out.println("Splitting long ways increased ways from "
+						   + numWays + " to " + parser.getWays().size());
+				System.out.println("  Time taken: " + time / 1000 + " seconds");
+			}
 			OxParser.printMemoryUsage(1);
 			
 			RouteData rd = null;
 			if (Configuration.attrToBoolean(config.useRouting) >= 0 ) {
 				rd = new RouteData(parser, target.getCanonicalPath());
-				System.out.println("Remembering " + parser.trafficSignalCount + " traffic signal nodes");
+				if (config.verbose >= 0) {
+					System.out.println("Remembering " + parser.trafficSignalCount + " traffic signal nodes");
+				}
 				rd.rememberDelayingNodes();
 			}
 			
-			System.out.println("Removing unused nodes");
+			if (config.verbose >= 0) {
+				System.out.println("Removing unused nodes");
+			}
 			new CleanUpData(parser, config);
 
 			if (Configuration.attrToBoolean(config.useRouting) >= 0 ) {
-				System.out.println("Creating route data");
-				System.out.println("===================");
+				if (config.verbose >= 0) {
+					System.out.println("Creating route data");
+					System.out.println("===================");
+				}
 				rd.create(config);
 				rd.optimise();
 				OsmParser.printMemoryUsage(1);

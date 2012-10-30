@@ -23,6 +23,7 @@ import net.sharenav.osmToShareNav.model.Relation;
 import net.sharenav.osmToShareNav.model.Storage;
 import net.sharenav.osmToShareNav.model.TurnRestriction;
 import net.sharenav.osmToShareNav.model.Way;
+import net.sharenav.osmToShareNav.Configuration;
 import java.text.DecimalFormat;
 import java.util.Map;
 
@@ -286,7 +287,9 @@ public abstract class OsmParser {
 	public void resize() {
 		//System.gc();
 		//System.out.println("Free memory: " + Runtime.getRuntime().freeMemory());
-		System.out.println("Resizing nodes HashMap");
+		if (configuration.verbose >= 0) {
+			System.out.println("Resizing nodes HashMap");
+		}
 		if (nodes == null) {
 			nodes2 = new Vector<Node>(nodes2);
 		} else {
@@ -313,15 +316,19 @@ public abstract class OsmParser {
 	 */
 	public static void printMemoryUsage(int numberOfGarbageLoops) {
 		DecimalFormat df =   new DecimalFormat  (",###");
-		System.out.print("---> Used memory: "
-				+ df.format((Runtime.getRuntime().totalMemory() - Runtime.getRuntime()
-						.freeMemory()) / 1024) + " KB / "
-				+ df.format(Runtime.getRuntime().maxMemory() / 1024) + " KB");
+		if (Configuration.getConfiguration().verbose >= 0) {
+			System.out.print("---> Used memory: "
+					 + df.format((Runtime.getRuntime().totalMemory() - Runtime.getRuntime()
+						      .freeMemory()) / 1024) + " KB / "
+					 + df.format(Runtime.getRuntime().maxMemory() / 1024) + " KB");
+		}
 		for (int i = 0; i < numberOfGarbageLoops; i++) {
 			System.gc();
-			System.out.print(" --> gc: "
-					+ df.format((Runtime.getRuntime().totalMemory() - Runtime
-							.getRuntime().freeMemory()) / 1024) + " KB");
+			if (Configuration.getConfiguration().verbose >= 0) {
+				System.out.print(" --> gc: "
+						 + df.format((Runtime.getRuntime().totalMemory() - Runtime
+							      .getRuntime().freeMemory()) / 1024) + " KB");
+			}
 			try {
 				if (i + 1 < numberOfGarbageLoops) {
 					Thread.sleep(100);

@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sharenav.osmToShareNav.Configuration;
 import net.sharenav.osmToShareNav.MyMath;
 import net.sharenav.osmToShareNav.OsmParser;
 import net.sharenav.osmToShareNav.model.Bounds;
@@ -122,9 +123,11 @@ public class Area {
 			while (outline.vertexCount() > 2) {
 				loop++;
 				if (loop % 5000 == 0) {
-					System.err.println("Triangulating outline "
-							   + outline.getWayId() + " looped "
-							   + loop + " times");
+					if (Configuration.getConfiguration().verbose >= 0) {
+						System.err.println("Triangulating outline "
+								   + outline.getWayId() + " looped "
+								   + loop + " times");
+					}
 				}
 				if (loop > 4000000) {
 					System.err.println("Break because of infinite loop for outline " + outline.getWayId());

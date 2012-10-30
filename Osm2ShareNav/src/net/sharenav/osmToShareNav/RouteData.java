@@ -219,7 +219,9 @@ public class RouteData {
 	 */
 	private void resolveViaWays() {
 		int numViaWaysResolved = 0;
-		System.out.println("info: Resolving " + parser.getTurnRestrictionsWithViaWays().size() + " viaWays for turn restrictions");
+		if (config.verbose >= 0) {
+			System.out.println("info: Resolving " + parser.getTurnRestrictionsWithViaWays().size() + " viaWays for turn restrictions");
+		}
 		for (TurnRestriction turn: parser.getTurnRestrictionsWithViaWays()) {
 			Way restrictionFromWay = parser.getWayHashMap().get(new Long(turn.fromWayRef));
 			// skip if restrictionFromWay is not in available wayData				
@@ -250,7 +252,9 @@ public class RouteData {
 			for (RouteNode n:viaWayRouteNodes) {
 				if (restrictionFromWay.containsNode(n.node)) { // this is where viaWay and fromWay are connected
 					additionalViaRouteNodesCache.add(n); // and becomes the first entry in the additionalViaRouteNode array
-					System.out.println("info:  Resolved viaWay x fromWay to node " + n.node.id);
+					if (config.verbose >= 0) {
+						System.out.println("info:  Resolved viaWay x fromWay to node " + n.node.id);
+					}
 					break;
 				}
 				startEntry++;
@@ -272,7 +276,9 @@ public class RouteData {
 					} else {
 						direction = -1;
 					}
-					System.out.println("info:  Resolved viaWay x toWay to node " + rn.node.id);					
+					if (config.verbose >= 0) {
+						System.out.println("info:  Resolved viaWay x toWay to node " + rn.node.id);					
+					}
 					break;
 				} else {
 					
@@ -296,20 +302,24 @@ public class RouteData {
 					turn.additionalViaRouteNodes[i] = additionalViaRouteNodesCache.get(i);
 				}
 				
-				System.out.println("info:  viaRouteNodes on viaWay " + restrictionViaWay.toUrl() + ":");
-				for (RouteNode n:turn.additionalViaRouteNodes) {
-					if (n != null && n.node != null) {
-						System.out.println("info:    " + n.node.toUrl());
-					} else {
-						if (n == null) {
-							System.out.println("info:    n is null");
-						} else {
-							System.out.println("info:    n.node is null");
-						}
-						continue;
-					}
+				if (config.verbose >= 0) {
+					System.out.println("info:  viaRouteNodes on viaWay " + restrictionViaWay.toUrl() + ":");
 				}
-				System.out.println("info:    " + turn.viaRouteNode.node.toUrl());									
+				if (config.verbose >= 0) {
+					for (RouteNode n:turn.additionalViaRouteNodes) {
+						if (n != null && n.node != null) {
+							System.out.println("info:    " + n.node.toUrl());
+						} else {
+							if (n == null) {
+								System.out.println("info:    n is null");
+							} else {
+								System.out.println("info:    n.node is null");
+							}
+							continue;
+						}
+					}
+					System.out.println("info:    " + turn.viaRouteNode.node.toUrl());
+				}
 
 				// add the resolved viaWay turn restriction to its viaRouteNode
 				parser.addTurnRestriction(new Long(turn.viaRouteNode.node.id), turn);
@@ -328,7 +338,9 @@ public class RouteData {
 				}
 			}
 		}
-		System.out.println("  " + numViaWaysResolved + " viaWays resolved");
+		if (config.verbose >= 0) {
+			System.out.println("  " + numViaWaysResolved + " viaWays resolved");
+		}
 
 		parser.getTurnRestrictionsWithViaWays().clear();		
 	}

@@ -163,11 +163,13 @@ public class SeaGenerator2 {
 					mapBounds.maxLat -= seaTileMargin;
 					mapBounds.maxLon -= seaTileMargin;
 
-					if (debugSea) {
-						System.out.println("seaBounds: " + seaBounds);
-					}
-					if (debugSea) {
-						System.out.println("mapBounds: " + mapBounds);
+					if (configuration.verbose >= 0) {
+						if (debugSea) {
+							System.out.println("seaBounds: " + seaBounds);
+						}
+						if (debugSea) {
+							System.out.println("mapBounds: " + mapBounds);
+						}
 					}
 
 					landWays.clear();

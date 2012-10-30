@@ -38,10 +38,12 @@ public class CleanUpData {
 		removeUnusedNodes();
 		parser.dropHashMap();
 		parser.resize();
-		System.out.println("Remaining after cleanup:");
-		System.out.println("  Nodes: " + parser.getNodes().size());
-		System.out.println("  Ways: " + parser.getWays().size());
-		System.out.println("  Relations: " + parser.getRelations().size());
+		if (conf.verbose >= 0) {
+			System.out.println("Remaining after cleanup:");
+			System.out.println("  Nodes: " + parser.getNodes().size());
+			System.out.println("  Ways: " + parser.getWays().size());
+			System.out.println("  Relations: " + parser.getRelations().size());
+		}
 
 	}
 
@@ -95,7 +97,9 @@ public class CleanUpData {
 		Storage<Node> nodes = new Storage<Node>(new NodeHash());
 		Storage<Node> nodesReEnabled = new Storage<Node>(new NodeHash2());
 
-		System.out.println("PLEASE HELP and fix reported duplicates in OpenStreetMap");
+		if (conf.verbose >= 0) {
+			System.out.println("PLEASE HELP and fix reported duplicates in OpenStreetMap");
+		}
 
 		long startTime = System.currentTimeMillis();
 
@@ -104,8 +108,10 @@ public class CleanUpData {
 
 			progressCounter++;
 			if (noNodes > 0 && progressCounter % noNodes == 0) {
-				System.out.println("Processed " + progressCounter + " of "
-						+ noNodes * 20 + " nodes, " + duplicates + " duplicates found");
+				if (conf.verbose >= 0) {
+					System.out.println("Processed " + progressCounter + " of "
+							   + noNodes * 20 + " nodes, " + duplicates + " duplicates found");
+				}
 			}
 
 			n.used = true;
@@ -148,8 +154,10 @@ public class CleanUpData {
 		}
 		substitute();
 		long time = (System.currentTimeMillis() - startTime);
-		System.out.println("Removed " + rm + " duplicate nodes, took "
-				+ time + " ms, reset to used " + iReSetToUsed);
+		if (conf.verbose >= 0) {
+			System.out.println("Removed " + rm + " duplicate nodes, took "
+					   + time + " ms, reset to used " + iReSetToUsed);
+		}
 	}
 
 	/**

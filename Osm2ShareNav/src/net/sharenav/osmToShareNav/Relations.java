@@ -42,17 +42,21 @@ public class Relations {
 	
 
 	public Relations(OsmParser parser, Configuration conf) {
-		System.out.println("Triangulating relations");
+		if (conf.verbose >= 0) {
+			System.out.println("Triangulating relations");
+		}
 		this.parser = parser;
 		this.conf = conf;
 		processRelations();
 		parser.resize();
-		System.out.println("Remaining after relation processing (triangulation etc.):");
-		System.out.println("  Nodes: " + parser.getNodes().size());
-		System.out.println("  Ways: " + parser.getWays().size());
-		System.out.println("  Relations: " + parser.getRelations().size());
-		System.out.println("  Areas: " + areas);
-		System.out.println("  Triangles: " + triangles);
+		if (conf.verbose >= 0) {
+			System.out.println("Remaining after relation processing (triangulation etc.):");
+			System.out.println("  Nodes: " + parser.getNodes().size());
+			System.out.println("  Ways: " + parser.getWays().size());
+			System.out.println("  Relations: " + parser.getRelations().size());
+			System.out.println("  Areas: " + areas);
+			System.out.println("  Triangles: " + triangles);
+		}
 	}
 
 
@@ -81,7 +85,7 @@ public class Relations {
 			if (r.isValid()) {
 				Way outerWay = null;
 				validRelationCount++;
-				if (validRelationCount % 100 == 0) {
+				if (validRelationCount % 100 == 0 && Configuration.getConfiguration().verbose >= 0) {
 					System.out.println("info: handled " + validRelationCount + " relations");
 					System.out.println("info: currently handling relation type " + r.getAttribute("type"));
 				}
@@ -420,19 +424,21 @@ public class Relations {
 				//System.out.println("  info: multipolygon member " + w.toUrl() + " not removed because it is routable");
 			}
 		}
-		if (numMultipolygonMembersNotRemoved > 0) {
+		if (numMultipolygonMembersNotRemoved > 0 && conf.verbose >= 0) {
 			System.out.println("  info: " + numMultipolygonMembersNotRemoved + " multipolygon members not removed because they are routable");
 		}
 		
 		//parser.resize();
-		System.out.println("info: processed " + validRelationCount + " valid relations");
-		System.out.println("info: ignored " + invalidRelationCount + " non-valid relations");
-		System.out.println("info: accepted " + houseNumberCount + " housenumber-to-street connections from associatedStreet relations");
-		System.out.println("info: ignored " + houseNumberRelationIgnoreCount + " associatedStreet (housenumber) relations");
-		System.out.println("info: ignored " + houseNumberInterpolationIgnoreCount + " associatedStreet (housenumber) relation interpolation ways");
-		System.out.println("info: processed " + houseNumberRelationAcceptCount + " associatedStreet (housenumber) relations"
-			+ ", of which " +  houseNumberRelationProblemCount + " had problems");
-		System.out.println("info: ignored " + boundaryIgnore + " boundary=administrative multipolygon relations");
+		if (conf.verbose >= 0) {
+			System.out.println("info: processed " + validRelationCount + " valid relations");
+			System.out.println("info: ignored " + invalidRelationCount + " non-valid relations");
+			System.out.println("info: accepted " + houseNumberCount + " housenumber-to-street connections from associatedStreet relations");
+			System.out.println("info: ignored " + houseNumberRelationIgnoreCount + " associatedStreet (housenumber) relations");
+			System.out.println("info: ignored " + houseNumberInterpolationIgnoreCount + " associatedStreet (housenumber) relation interpolation ways");
+			System.out.println("info: processed " + houseNumberRelationAcceptCount + " associatedStreet (housenumber) relations"
+					   + ", of which " +  houseNumberRelationProblemCount + " had problems");
+			System.out.println("info: ignored " + boundaryIgnore + " boundary=administrative multipolygon relations");
+		}
 	}
 
 	/**

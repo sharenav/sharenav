@@ -293,7 +293,9 @@ public class OpbfParser extends OsmParser {
 		 */
 		@Override
 		public void complete() {
-			System.out.println("End of document");
+			if (configuration.verbose >= 0) {
+				System.out.println("End of document");
+			}
 		}
 	}
 
@@ -340,8 +342,10 @@ public class OpbfParser extends OsmParser {
 						   + relPart + "/" + relIns);
 			}
 			printMemoryUsage(2);
-			System.out.println("Parsing took "
-					+ (System.currentTimeMillis() - startTime) / 1000 + "s");
+			if (configuration.verbose >= 0) {
+				System.out.println("Parsing took "
+						   + (System.currentTimeMillis() - startTime) / 1000 + "s");
+			}
 		} catch (IOException e) {
 			System.out.println("IOException: " + e);
 			e.printStackTrace();
