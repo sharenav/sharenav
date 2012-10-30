@@ -88,7 +88,7 @@
         <entry key="useHouseNumbers" value="false"/>
         <entry key="useWordSearch" value="true"/>
         <entry key="useSeaTiles" value="false"/>
-        <entry key="outlineAreaFormat" value="false"/>
+        <entry key="outlineAreaFormat" value="true"/>
         <entry key="triangleAreaFormat" value="true"/>
         <entry key="useBarriers" value="false"/>
         <entry key="sourceOSMODbL" value="true"/>

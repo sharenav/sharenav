@@ -6,6 +6,8 @@
     - Android: remove .dex & .xml when building a map zip
     - add --verbose and --silent options to increase & decrease verbosity level;
       use two --silent options to only show errors & warnings when building the map
+    - enable outline area format by default, to make maps good performance on Android
+      by default
 
 ShareNav 0.8.4
     *** Map Display ***
