@@ -373,8 +373,10 @@ public class BundleShareNav implements Runnable {
 			writeJADfile(c, n.length());
 		}
 		Calendar endTime = Calendar.getInstance();
-		System.out.println(n.getName() + " created successfully with " + (n.length() / 1024 / 1024) + " MiB in " +
-				   getDuration(endTime.getTimeInMillis() - startTime.getTimeInMillis()));
+		if (config.verbose >= 0) {
+			System.out.println(n.getName() + " created successfully with " + (n.length() / 1024 / 1024) + " MiB in " +
+					   getDuration(endTime.getTimeInMillis() - startTime.getTimeInMillis()));
+		}
 	}
 	
 	public static void showSigningMessage(String bundleName) {
@@ -750,7 +752,9 @@ public class BundleShareNav implements Runnable {
 			//so these won't get deleted
 			if (config.cleanupTmpDirAfterUse()) {
 				File tmpBaseDir = new File(config.getTempBaseDir());
-				System.out.println("Cleaning up temporary directory " + tmpBaseDir);
+				if (config.verbose >= 0) {
+					System.out.println("Cleaning up temporary directory " + tmpBaseDir);
+				}
 				deleteDirectory(tmpBaseDir);
 			}
 			

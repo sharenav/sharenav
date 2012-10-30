@@ -172,34 +172,38 @@ public class CreateShareNavData implements FilenameFilter {
 			if (configuration.verbose >= 0) {
 				System.out.println("Exporting tiles for zoomlevel " + i );
 				System.out.println("===============================");
-			}
-			if (!LegendParser.tileScaleLevelContainsRoutableWays[i]) {
-				System.out.println("Info: This tile level contains no routable ways");
+				if (!LegendParser.tileScaleLevelContainsRoutableWays[i]) {
+					System.out.println("Info: This tile level contains no routable ways");
+				}
 			}
 			long startTime = System.currentTimeMillis();
 			long bytesWritten = exportMapToMid(i);
 			long time = (System.currentTimeMillis() - startTime);
-			System.out.println("  Zoomlevel " + i + ": " + 
-					Configuration.memoryWithUnit(bytesWritten) + " in " + 
-					tileFilesWritten  + " files indexed by " + dictFilesWritten + 
-					" dictionary files");
-			System.out.println("  Time taken: " + time / 1000 + " seconds");
+			if (configuration.verbose >= 0) {
+				System.out.println("  Zoomlevel " + i + ": " + 
+						   Configuration.memoryWithUnit(bytesWritten) + " in " + 
+						   tileFilesWritten  + " files indexed by " + dictFilesWritten + 
+						   " dictionary files");
+				System.out.println("  Time taken: " + time / 1000 + " seconds");
+			}
 		}
-		if (Configuration.attrToBoolean(configuration.useRouting) >= 0 && configuration.verbose >= 0) {
-			System.out.println("Exporting route tiles");
-			System.out.println("=====================");
-			long startTime = System.currentTimeMillis();
-			long bytesWritten = exportMapToMid(ROUTEZOOMLEVEL);
-			long time = (System.currentTimeMillis() - startTime);
-			System.out.println("  " + Configuration.memoryWithUnit(bytesWritten) + 
-				" for nodes in " + tileFilesWritten + " files, " +
-				Configuration.memoryWithUnit(outputLengthConns) + " for connections in " + 
-				tileFilesWritten + " files");
-			System.out.println("    The route tiles have been indexed by " + 
-					dictFilesWritten + " dictionary files");
-			System.out.println("  Time taken: " + time / 1000 + " seconds");
-		} else {
-			System.out.println("No route tiles to export");
+		if (configuration.verbose >= 0) {
+			if (Configuration.attrToBoolean(configuration.useRouting) >= 0) {
+				System.out.println("Exporting route tiles");
+				System.out.println("=====================");
+				long startTime = System.currentTimeMillis();
+				long bytesWritten = exportMapToMid(ROUTEZOOMLEVEL);
+				long time = (System.currentTimeMillis() - startTime);
+				System.out.println("  " + Configuration.memoryWithUnit(bytesWritten) + 
+						   " for nodes in " + tileFilesWritten + " files, " +
+						   Configuration.memoryWithUnit(outputLengthConns) + " for connections in " + 
+						   tileFilesWritten + " files");
+				System.out.println("    The route tiles have been indexed by " + 
+						   dictFilesWritten + " dictionary files");
+				System.out.println("  Time taken: " + time / 1000 + " seconds");
+			} else {
+				System.out.println("No route tiles to export");
+			}
 		}
 //		for (int x = 1; x < 12; x++) {
 //			System.out.print("\n" + x + " :");
@@ -221,24 +225,26 @@ public class CreateShareNavData implements FilenameFilter {
 		}
 
 		// Output statistics for travel modes
-		if (Configuration.attrToBoolean(configuration.useRouting) >= 0) {
+		if (configuration.verbose >= 0) {
+			if (Configuration.attrToBoolean(configuration.useRouting) >= 0) {
+				for (int i = 0; i < TravelModes.travelModeCount; i++) {
+					System.out.println(TravelModes.getTravelMode(i).toString());			
+				}
+			}		
+			System.out.println("  MainStreet_Net Connections: " + 
+					   TravelModes.numMotorwayConnections + " motorway  " + 
+					   TravelModes.numTrunkOrPrimaryConnections + " trunk/primary  " +
+					   TravelModes.numMainStreetNetConnections + " total");			
+			System.out.print("  Connections with toll flag:");
 			for (int i = 0; i < TravelModes.travelModeCount; i++) {
-				System.out.println(TravelModes.getTravelMode(i).toString());			
+				System.out.print(" " + TravelModes.getTravelMode(i).getName() + "(" + TravelModes.getTravelMode(i).numTollRoadConnections + ")" );
 			}
-		}		
-		System.out.println("  MainStreet_Net Connections: " + 
-				TravelModes.numMotorwayConnections + " motorway  " + 
-				TravelModes.numTrunkOrPrimaryConnections + " trunk/primary  " +
-				TravelModes.numMainStreetNetConnections + " total");			
-		System.out.print("  Connections with toll flag:");
-		for (int i = 0; i < TravelModes.travelModeCount; i++) {
-			System.out.print(" " + TravelModes.getTravelMode(i).getName() + "(" + TravelModes.getTravelMode(i).numTollRoadConnections + ")" );
+			System.out.println("");
+			System.out.println("Total ways: "+ totalWaysWritten 
+					   + ", segments: " + totalSegsWritten
+					   + ", nodes: " + totalNodesWritten
+					   + ", POI: " + totalPOIsWritten);
 		}
-		System.out.println("");
-		System.out.println("Total ways: "+ totalWaysWritten 
-				         + ", segments: " + totalSegsWritten
-				         + ", nodes: " + totalNodesWritten
-				         + ", POI: " + totalPOIsWritten);
 	}
 	
 	private Names getNames1() {
@@ -605,16 +611,19 @@ public class CreateShareNavData implements FilenameFilter {
 
 
 			if (Configuration.attrToBoolean(configuration.useIcons) < 0) {
-				System.out.println("Icons disabled - removing icon files from bundle.");
+				if (configuration.verbose >= 0) {
+					System.out.println("Icons disabled - removing icon files from bundle.");
+				}
 				removeUnusedIconSizes(path, true);
 			} else {				
 				// show summary for copied icon files
-				System.out.println("Icon inclusion summary:");
-				System.out.println("  " + FileTools.copyDir("icon", path, true, true) + 
-						" internal icons replaced from " + "icon" + 
-						System.getProperty("file.separator") + " containing " + 
-						FileTools.countFiles("icon") + " files");
-
+				if (configuration.verbose >= 0) {
+					System.out.println("Icon inclusion summary:");
+					System.out.println("  " + FileTools.copyDir("icon", path, true, true) + 
+							   " internal icons replaced from " + "icon" + 
+							   System.getProperty("file.separator") + " containing " + 
+							   FileTools.countFiles("icon") + " files");
+				}
 				// if useIcons == small or useIcons == big rename the corresponding icons to normal icons
 				if ((!Configuration.getConfiguration().sourceIsApk) && Configuration.attrToBoolean(configuration.useIcons) == 0) {
 					renameAlternativeIconSizeToUsedIconSize(configuration.useIcons + "_");
@@ -691,19 +700,21 @@ public class CreateShareNavData implements FilenameFilter {
 			
 			// show summary for copied media files
 			try {
-				if (sbCopiedMedias.length() != 0) {
-					System.out.println("External media inclusion summary:");
-					sbCopiedMedias.append("\r\n");
-				} else {				
-					System.out.println("No external media included.");
+				if (configuration.verbose >= 0 || mediaInclusionErrors != 0) {
+					if (sbCopiedMedias.length() != 0) {
+						System.out.println("External media inclusion summary:");
+						sbCopiedMedias.append("\r\n");
+					} else {				
+						System.out.println("No external media included.");
+					}
+					sbCopiedMedias.append("  Media Sources for external medias\r\n");
+					sbCopiedMedias.append("  referenced in " + configuration.getStyleFileName() + " have been:\r\n");
+					sbCopiedMedias.append("    " + 
+							      (configuration.getStyleFileDirectory().length() == 0 ? 
+							       "Current directory" : configuration.getStyleFileDirectory()) + 
+							      " and its png and " + configuration.getSoundFiles() + " subdirectories");
+					System.out.println(sbCopiedMedias.toString());
 				}
-				sbCopiedMedias.append("  Media Sources for external medias\r\n");
-				sbCopiedMedias.append("  referenced in " + configuration.getStyleFileName() + " have been:\r\n");
-				sbCopiedMedias.append("    " + 
-						(configuration.getStyleFileDirectory().length() == 0 ? 
-								"Current directory" : configuration.getStyleFileDirectory()) + 
-						" and its png and " + configuration.getSoundFiles() + " subdirectories");
-				System.out.println(sbCopiedMedias.toString());
 				if (mediaInclusionErrors != 0) {
 					System.out.println("");
 					System.out.println("  WARNING: " + mediaInclusionErrors + 

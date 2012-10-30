@@ -202,7 +202,9 @@ public class CalcNearBy {
 			}
 		}
 		long time = (System.currentTimeMillis() - startTime);
-		System.out.println("info: calcEntityIsIn for ways took " + time / 1000 + " seconds");
+		if (Configuration.getConfiguration().verbose >= 0) {
+			System.out.println("info: calcEntityIsIn for ways took " + time / 1000 + " seconds");
+		}
 		startTime = System.currentTimeMillis();
 		for (Node n : parser.getNodes()) {
 			if (n.getName() != null) {
@@ -210,7 +212,9 @@ public class CalcNearBy {
 			}
 		}
 		time = (System.currentTimeMillis() - startTime);
-		System.out.println("info: calcEntityIsIn for nodes took " + time / 1000 + " seconds");
+		if (Configuration.getConfiguration().verbose >= 0) {
+			System.out.println("info: calcEntityIsIn for nodes took " + time / 1000 + " seconds");
+		}
 
 	}
 
@@ -316,10 +320,12 @@ public class CalcNearBy {
 			}
 		}		
 		long time = (System.currentTimeMillis() - startTime);
-		System.out.println("info: node housenumbers: accepted " + count + " non-relation housenumber-to-street connections in " + time / 1000 + " seconds");
-		System.out.println("info: node housenumbers: ignored " + ignoreCount + " non-relation housenumber-to-street connections");
-		System.out.println("info: node+area housenumbers:  " + exactCount + " exact matches");
-		System.out.println("info: node+area housenumbers:  " + heuristicCount + " heuristic matches (housenumbers without addr:street or addr:street not found)");
+		if (Configuration.getConfiguration().verbose >= 0) {
+			System.out.println("info: node housenumbers: accepted " + count + " non-relation housenumber-to-street connections in " + time / 1000 + " seconds");
+			System.out.println("info: node housenumbers: ignored " + ignoreCount + " non-relation housenumber-to-street connections");
+			System.out.println("info: node+area housenumbers:  " + exactCount + " exact matches");
+			System.out.println("info: node+area housenumbers:  " + heuristicCount + " heuristic matches (housenumbers without addr:street or addr:street not found)");
+		}
 	}
 
 	private void CalcWaysForHouseNumberAreas(OsmParser parser, KDTree nearByElements) {		
@@ -403,12 +409,16 @@ public class CalcNearBy {
 			}
 		}
 		long time = (System.currentTimeMillis() - startTime);
-		System.out.println("info: city nearbys created in " + time / 1000 + " seconds");
+		if (Configuration.getConfiguration().verbose >= 0) {
+			System.out.println("info: city nearbys created in " + time / 1000 + " seconds");
+		}
 	}
 
 	private KDTree getNearByElements(OsmParser parser) {
 		long startTime = System.currentTimeMillis();
-		System.out.println("Creating nearBy candidates");
+		if (Configuration.getConfiguration().verbose >= 0) {
+			System.out.println("Creating nearBy candidates");
+		}
 		KDTree kd = new KDTree(3);
 		//double [] latlonKey = new double[2]; 
 		for (Node n : parser.getNodes()) {
@@ -432,11 +442,15 @@ public class CalcNearBy {
 			}
 		}
 		long time = (System.currentTimeMillis() - startTime);
-		System.out.println("Found " + kdSize + " placenames in " + time / 1000 + " seconds");
+		if (Configuration.getConfiguration().verbose >= 0) {
+			System.out.println("Found " + kdSize + " placenames in " + time / 1000 + " seconds");
+		}
 		return kd;
 	}
 	private KDTree getNearByWays(OsmParser parser) {
-		System.out.println("Creating nearBy way candidates");
+		if (Configuration.getConfiguration().verbose >= 0) {
+			System.out.println("Creating nearBy way candidates");
+		}
 		long startTime = System.currentTimeMillis();
 		KDTree kd = new KDTree(3);
 		//double [] latlonKey = new double[2]; 
@@ -483,7 +497,9 @@ public class CalcNearBy {
 			}
 		}
 		long time = (System.currentTimeMillis() - startTime);
-		System.out.println("Found " + kdWaysSize + " waynames in " + time / 1000 + " seconds");
+		if (Configuration.getConfiguration().verbose >= 0) {
+			System.out.println("Found " + kdWaysSize + " waynames in " + time / 1000 + " seconds");
+		}
 		return kd;
 	}
 	// return distance from node to way
