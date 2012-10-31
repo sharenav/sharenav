@@ -2,6 +2,7 @@
     - only build java-full-connected by default
     - Android: set minSdkVersion to 5 (Android 2.0) due to issues with
       no multitouch on <= Android 1.6
+    - Android: support xlargeScreens
     *** Osm2ShareNav ***
     - improve terminology to work better on Android - use "bundle" instead of "midlet", also
       changes .properties syntax (though there's backwards compatility with midlet.name)
