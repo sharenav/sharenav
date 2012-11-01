@@ -1,8 +1,7 @@
-Installing ShareNav
------------------
+Installing ShareNav on J2ME
+---------------------------
 You need to choose the right variant of ShareNav for your phone.
-If you are unsure, try <ShareNav-Generic-full-0.8.4-map72> or read the Wiki page
-FIXME
+If you are unsure, try <ShareNav-Generic-full-0.8.5-map72> or read the Wiki page
 where users have collected their experiences with different phone models.
 
 Download the right JAR and JAD file for your variant and copy it to your
@@ -14,12 +13,12 @@ entry from its context menu.
 
 Map data
 --------
-<Osm2ShareNav-0.8.4-map72.jar> is needed to create the binary map data for ShareNav.
+<Osm2ShareNav-0.8.5-map72.jar> is needed to create the binary map data for ShareNav.
 Java 1.5 or later must be installed on your PC to run it.
 The process is explained here:
 [http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Getting_started](http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Getting_started)
 
-<Osm2ShareNav-0.8.4-map72-debug.jar> creates debug versions of ShareNav. Normally,
+<Osm2ShareNav-0.8.5-map72-debug.jar> creates debug versions of ShareNav. Normally,
 you won't need to use it.
 
 
