@@ -1,6 +1,11 @@
     - Android: to be able to install ShareNav on SD card, a modified
       version of J2MEPolish (or hopefully a later version) needs to be used to compile
       ShareNav. A patch is available at https://sourceforge.net/support/tracker.php?aid=3582428
+    - Android: j2mepolish-diffs/diff.telephony-121102-1412 applied to j2mepolish-src
+      will stop ShareNav from needing access to phone info, so this needs to be applied
+      to build ShareNav which doesn't need phone permission.
+      For unmodified J2MEPolish source which accesses phone IMEI etc,
+      add READ_PHONE_STATE to android.permissions in build.xml.
 
 ShareNav 0.8.4
     - new target Generic/Java
