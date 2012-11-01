@@ -394,6 +394,7 @@
 				<variable name="android.installLocation" value="auto" />
 				<!-- FIXME should remove the last two for offline version -->
 				<variable name="polish.build.android.permissions" value="RECORD_AUDIO,ACCESS_FINE_LOCATION,ACCESS_MOCK_LOCATION,ACCESS_COARSE_LOCATION,WAKE_LOCK,CAMERA,INTERNET,SEND_SMS" />
+				<variable name="polish.build.android.features" value="hardware.camera/false,hardware.camera.autofocus/false,hardware.microphone/false" />
 			</variables>
 			<!-- Here you can set the dir attribute to "resources2" for an alternative design. -->
 			<resources dir="resources" defaultexcludes="yes" excludes="readme.txt">
