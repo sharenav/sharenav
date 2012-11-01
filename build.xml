@@ -102,7 +102,7 @@
 	    <!-- FIXME: javax.microedition.io.Connector.http should really be only active for the editing target -->
 		<info
 			name="ShareNav"
-			version="0.8.4"
+			version="0.8.5"
 			description="Vector navigation and map viewing software"
 			vendorName="Jyrki Kuoppala"
 			infoUrl="http://www.sharenav.net"
@@ -294,7 +294,7 @@
 	<j2mepolish>
 		<info
 			name="ShareNav"
-			version="0.8.4"
+			version="0.8.5"
 			description="Vector navigation and map viewing software"
 			vendorName="Jyrki Kuoppala"
 			infoUrl="http://www.sharenav.net"

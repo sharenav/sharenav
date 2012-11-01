@@ -1,3 +1,4 @@
+ShareNav 0.8.5
     *** Appearance ***
     - add a splash screen
     *** Targets ***

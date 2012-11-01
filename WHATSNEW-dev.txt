@@ -1,3 +1,4 @@
+ShareNav 0.8.5
     - Android: to be able to install ShareNav on SD card, a modified
       version of J2MEPolish (or hopefully a later version) needs to be used to compile
       ShareNav. A patch is available at https://sourceforge.net/support/tracker.php?aid=3582428
