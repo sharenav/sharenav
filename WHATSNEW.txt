@@ -1,3 +1,5 @@
+    *** Appearance ***
+    - add a splash screen
     *** Targets ***
     - only build java-full-connected by default
     - Android: set minSdkVersion to 5 (Android 2.0) due to issues with

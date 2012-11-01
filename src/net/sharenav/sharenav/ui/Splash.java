@@ -138,17 +138,12 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 
 		Configuration.setHasPointerEvents(hasPointerEvents());
 
-		// FIXME add splash image
-		//#if false
 		try {
-			splash = Image.createImage("/Gps-splash.png");
+			splash = Image.createImage("/sharenav-splash.png");
 		} catch (IOException e) {
 			e.printStackTrace();
-			splash = Image.createImage(176, 220);
+			splash = Image.createImage(176, 176);
 		}
-		//#else
-		splash = Image.createImage(176, 220);
-		//#endif
 		if (splash.getWidth() < getWidth() ) {
 			double scaleW = (double) getWidth() / (double) splash.getWidth();
 			double scaleH = (double) getHeight() / (double) splash.getHeight();
