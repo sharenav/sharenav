@@ -1,0 +1,19 @@
+--- j2mepolish-src/j2me/src/de/enough/polish/android/midlet/MidletBridge.java~	2012-10-24 17:14:57.000000000 +0300
++++ j2mepolish-src/j2me/src/de/enough/polish/android/midlet/MidletBridge.java	2012-11-01 14:06:33.594686495 +0200
+@@ -220,12 +220,14 @@
+ 		events |= PhoneStateListener.LISTEN_SIGNAL_STRENGTHS;
+ 		
+ 		telephonyManager.listen(listener, events);
+-		String subscriberId = telephonyManager.getSubscriberId();
++		// String subscriberId = telephonyManager.getSubscriberId();
++		String subscriberId = null;
+ 		if(subscriberId == null) {
+ 			subscriberId = "";
+ 		}
+ 		setSystemProperty("IMSI", subscriberId);
+-		String deviceId = telephonyManager.getDeviceId();
++		// String deviceId = telephonyManager.getDeviceId();
++		String deviceId = null;
+ 		if(deviceId == null) {
+ 			deviceId = "";
+ 		}
