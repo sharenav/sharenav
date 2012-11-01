@@ -1,4 +1,4 @@
-ShareNav 0.8.5
+ShareNav 0.8.5 == 0.8.6
     *** Appearance ***
     - add a splash screen
     *** Targets ***
