@@ -1399,3 +1399,5 @@ guiroute.keeponroad=Center map to road
 guidiscover.AutoDayNight=Autoswitch
 guidiscover.TMSSplitScreen=Show raster map in split-screen mode
 splash.webaddr=http://www.sharenav.net
+guidiscover.BundleMap1=Bundled external map 1
+guidiscover.BundleMap2=Bundled external map 2

@@ -25,6 +25,7 @@ import javax.microedition.io.file.FileConnection;
 import de.enough.polish.android.midlet.MidletBridge;
 import android.content.res.AssetManager;
 import android.content.Context;
+import android.os.Environment;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -392,6 +393,10 @@ public class Configuration {
 	public final static short CFGBIT_NIGHT_MODE_AUTO = 156;
 	/** bit 157: Flag to show raster map in split-screen mode */
 	public final static short CFGBIT_TMS_SPLITSCREEN = 157;
+	/** bit 158: Are we using external bundled map #1 */
+	public final static short CFGBIT_MAP_EXT_BUNDLE1 = 158;
+	/** bit 159: Are we using external bundled map #2 */
+	public final static short CFGBIT_MAP_EXT_BUNDLE2 = 159;
 	
 	/**
 	 * These are the database record IDs for each configuration option
@@ -1601,6 +1606,14 @@ public class Configuration {
 	public static void setBuiltinMap(boolean mapFromJar) {
 		write(mapFromJar ? 0 : 1, RECORD_ID_MAP_FROM_JAR);
 		Configuration.mapFromJar = mapFromJar;
+		//#if polish.android
+		if (getCfgBitState(CFGBIT_MAP_EXT_BUNDLE1)) {
+			mapFileUrl = getAPKExpansionFiles()[0];
+		}
+		if (getCfgBitState(CFGBIT_MAP_EXT_BUNDLE2)) {
+			mapFileUrl = getAPKExpansionFiles()[1];
+		}
+		//#endif
 	}
 	
 	public static String getMapUrl() {
@@ -1609,7 +1622,9 @@ public class Configuration {
 	
 	public static void setMapUrl(String url) {
 		write(url, RECORD_ID_MAP_FILE_URL);
-		mapFileUrl = url;
+		if (!getCfgBitState(CFGBIT_MAP_EXT_BUNDLE1) && !getCfgBitState(CFGBIT_MAP_EXT_BUNDLE2)) {
+			mapFileUrl = url;
+		}
 		Routing.dropToConnectionsCache();
 	}
 
@@ -2734,4 +2749,48 @@ public class Configuration {
 		// FIXME switch this based on pixels-per-inch value and/or make user-configurable
 		return 80;
 	}
+	//#if polish.android
+	// modified from version at Google's documentation,
+	// http://developer.android.com/guide/google/play/expansion-files.html
+	// Paths will be e.g. main.8006.net.sharenav.sharenav.ui.obb
+	// and patch.8006.net.sharenav.sharenav.ui.obb
+	// The shared path to all app expansion files
+	private final static String EXP_PATH = "/Android/obb/";
+
+	public static String[] getAPKExpansionFiles() {
+		int mainVersion = 8006;
+		int patchVersion = mainVersion;
+		Context ctx = MidletBridge.instance;
+		String packageName = ctx.getPackageName();
+		Vector<String> ret = new Vector<String>();
+		if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+			// Build the full path to the app's expansion files
+			File root = Environment.getExternalStorageDirectory();
+			File expPath = new File(root.toString() + EXP_PATH + packageName);
+
+			// Check that expansion file path exists
+			if (expPath.exists()) {
+				if ( mainVersion > 0 ) {
+					String strMainPath = expPath + File.separator + "main." +
+						mainVersion + "." + packageName + ".obb";
+					File main = new File(strMainPath);
+					if ( main.isFile() ) {
+						ret.add(strMainPath);
+					}
+				}
+				if ( patchVersion > 0 ) {
+					String strPatchPath = expPath + File.separator + "patch." +
+						mainVersion + "." + packageName + ".obb";
+					File main = new File(strPatchPath);
+					if ( main.isFile() ) {
+						ret.add(strPatchPath);
+					}
+				}
+			}
+		}
+		String[] retArray = new String[ret.size()];
+		ret.toArray(retArray);
+		return retArray;
+	}
+	//#endif
 }

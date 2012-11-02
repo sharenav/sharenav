@@ -333,6 +333,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 
 	private static GuiDiscoverIconMenu setupIconMenu = null;
 	
+	private static int sourceCount;
+	private static int extFileIndex;
+
+	private String extStorageFiles[];
+
 	public GuiDiscover(ShareNav parent) {
 		this.parent = parent;
 
@@ -487,9 +492,31 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		menuSelectMapSource.addCommand(BACK_CMD);
 		menuSelectMapSource.addCommand(OK_CMD);
 		menuSelectMapSource.addCommand(FILE_MAP);
-		String [] sources = new String[2];
-		sources[0] = Locale.get("guidiscover.Built-inMap")/*Built-in map*/;
-		sources[1] = Locale.get("guidiscover.Filesystem")/*Filesystem: */;
+		//#if polish.android
+		extStorageFiles = Configuration.getAPKExpansionFiles();
+		//#else
+		extStorageFiles = null;
+		//#endif
+		sourceCount = 2;
+		extFileIndex = 1;
+		
+		if (extStorageFiles != null) {
+			for (int i = 0; i < extStorageFiles.length; i++) {
+				sourceCount++;
+				extFileIndex++;
+			}
+		}
+		String [] sources = new String[sourceCount];
+		int count = 0;
+		sources[count++] = Locale.get("guidiscover.Built-inMap")/*Built-in map*/;
+		if (sourceCount >= 3) {
+			sources[count++] = Locale.get("guidiscover.BundleMap1")/*Bundled external map 1*/;
+			if (sourceCount == 4) {
+				sources[count++] = Locale.get("guidiscover.BundleMap2")/*Bundled external map 2*/;
+			}
+		}
+		sources[count++] = Locale.get("guidiscover.Filesystem")/*Filesystem: */;
+
 		mapSrc = new ChoiceGroup(Locale.get("guidiscover.MapSource")/*Map source:*/, Choice.EXCLUSIVE, sources, null);
 
 		//#if polish.android
@@ -1151,7 +1178,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			case STATE_MAP:
 				title = Locale.get("guidiscover.MapZipFileOrDirectory")/*Map ZipFile or Directory*/;
 				// get initialDir from form
-				String url = mapSrc.getString(1);
+				String url = mapSrc.getString(extFileIndex);
 				// skip "Filesystem: " or equivalent
 				url = url.substring(Locale.get("guidiscover.Filesystem").length());
 				initialDir = url;
@@ -1171,7 +1198,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		}
 		FsDiscover fsd = new FsDiscover(this, this, initialDir, 
 				(state == STATE_MAP) ? FsDiscover.CHOOSE_FILE_OR_DIR : FsDiscover.CHOOSE_DIRONLY, 
-				(state == STATE_MAP) ? ".zip;.jar;.apk" : null, title);
+				(state == STATE_MAP) ? ".zip;.jar;.apk;.obb" : null, title);
 		fsd.show();
 		//#else
 		//logger.error("Files system support is not compiled into this version");
@@ -1343,10 +1370,17 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				break;
 			case MENU_ITEM_MAP_SRC: // Map Source
 				initMapSource();
-				mapSrc.set(1, Locale.get("guidiscover.Filesystem")/*Filesystem: */ + ( (Configuration.getMapUrl() == null) ?
+				mapSrc.set(extFileIndex, Locale.get("guidiscover.Filesystem")/*Filesystem: */ + ( (Configuration.getMapUrl() == null) ?
 								 Locale.get("guidiscover.PleaseSelectMapDirFirst")/*<Please select map directory or other .jar/zip file first>*/ :
 							Configuration.getMapUrl() ), null);
-				mapSrc.setSelectedIndex(Configuration.usingBuiltinMap() ? 0 : 1, true);
+				mapSrc.setSelectedIndex(Configuration.usingBuiltinMap() ? 0 : extFileIndex, true);
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_MAP_EXT_BUNDLE1) && sourceCount >= 3) {
+					mapSrc.setSelectedIndex(Configuration.usingBuiltinMap() ? 0 : 1, true);
+				}
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_MAP_EXT_BUNDLE2) && sourceCount == 4) {
+					mapSrc.setSelectedIndex(Configuration.usingBuiltinMap() ? 0 : 2, true);
+				}
+
 				mapSrcOptions.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_MAP_CREDITS));
 				mapSrcOptions.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS));
 				mapSrcOptions.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS));
@@ -1461,16 +1495,28 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	}
 	
 	private void returnFromMapOptions() {
-		Configuration.setBuiltinMap((mapSrc.getSelectedIndex() == 0));
 		// extract map url from form and save it to Configuration
-		String url = mapSrc.getString(1);
-		// skip "Filesystem: " or translation
-		url = url.substring(Locale.get("guidiscover.Filesystem").length());
-		// no valid url, i.e. "Please select..."
-		if (url.indexOf(":") == -1) {
-			url = null;
+		String url = "";
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAP_EXT_BUNDLE1, false);
+		Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAP_EXT_BUNDLE2, false);
+		if (mapSrc.getSelectedIndex() == extFileIndex) {
+			url = mapSrc.getString(extFileIndex);
+			// skip "Filesystem: " or translation
+			url = url.substring(Locale.get("guidiscover.Filesystem").length());
+			// no valid url, i.e. "Please select..."
+			if (url.indexOf(":") == -1) {
+				url = null;
+			}
+			Configuration.setMapUrl(url);
+		} else if (mapSrc.getSelectedIndex() == 0) {
+			//
+		} else if (sourceCount >= 3) { // ext. bundled map 
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAP_EXT_BUNDLE1, mapSrc.getSelectedIndex() == 1);
+			if (sourceCount == 4) {
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAP_EXT_BUNDLE2, mapSrc.getSelectedIndex() == 2);
+			}
 		}
-		Configuration.setMapUrl(url);
+		Configuration.setBuiltinMap((mapSrc.getSelectedIndex() == 0));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_MAP_CREDITS, mapSrcOptions.isSelected(0));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS, mapSrcOptions.isSelected(1));
 		Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS, mapSrcOptions.isSelected(2));
@@ -2034,8 +2080,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			break;
 		//#if polish.api.fileconnection
 		case STATE_MAP:
-			mapSrc.set(1, Locale.get("guidiscover.Filesystem")/*Filesystem: */ + url, null);
-			mapSrc.setSelectedIndex(1, true);
+			mapSrc.set(extFileIndex, Locale.get("guidiscover.Filesystem")/*Filesystem: */ + url, null);
+			mapSrc.setSelectedIndex(extFileIndex, true);
 			//As the Filesystem chooser has called the show()
 			//method of this class, it currently shows the root
 			//menu, but we want't to continue to edit the MapSource

@@ -942,3 +942,5 @@ guidiscover.TMSFCPath=Rasterikartan välimuistipolku:
 guiroute.keeponroad=Keskitä kartta tiehen
 guidiscover.AutoDayNight=Automaattivaihto
 guidiscover.TMSSplitScreen=Näytä jaetussa ruudussa
+guidiscover.BundleMap1=Paketoitu ulkoinen kartta 1
+guidiscover.BundleMap2=Paketoitu ulkoinen kartta 2
