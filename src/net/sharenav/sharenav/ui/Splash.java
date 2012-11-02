@@ -1,5 +1,6 @@
 /*
  * ShareNav - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
+ * 	      Copyright (c) 2010-2012 Jyrki Kuoppala jkpj at users dot sourceforge dot net
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -212,7 +213,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		int sp = f.getHeight();
 		int x = (getWidth() + splash.getWidth()) / 2 - 2;
 		
-		g.drawImage(splash, getWidth() / 2, 0, Graphics.HCENTER | Graphics.TOP);
+		g.drawImage(splash, getWidth() / 2, 20, Graphics.HCENTER | Graphics.TOP);
 
 		g.setColor(0xFFFF99);
 		g.drawString(appVersion + " " + mapVersion, x , 2, Graphics.TOP | Graphics.RIGHT);		

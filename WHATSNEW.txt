@@ -2,6 +2,8 @@
     - Android: use external bundled maps (#1 & #2) if available
       (if APK extension(s) is/are loaded with the app when installed from
       Google play)
+    *** Appearance ***
+    - Make version string more visible
 
 ShareNav 0.8.5 == 0.8.6
     *** Appearance ***
