@@ -762,11 +762,13 @@ public class Configuration {
 				cfgBits_0_to_63 |= 1L << CFGBIT_BACKLIGHT_ON;
 			}
 			//#if polish.android
-			// (was) no bundle support for android yet, set a fixed location for map
-			// bundle support works enough so we don't need this
-			// setBuiltinMap(false);
-			// setMapUrl("file:///sdcard/sharenavmap/");
-			// setMapUrl("file:///");
+			String extBundles[] = getAPKExpansionFiles();
+			if (extBundles.length > 0) {
+				// prefer a bundled external map (from Google Play store)
+				// over internal map if available
+				setCfgBitSavedState(CFGBIT_MAP_EXT_BUNDLE1, true);
+				setBuiltinMap(false);
+			}
 			//#endif
 			// Record Rule Default
 			setGpxRecordRuleMode(GPX_RECORD_MINIMUM_SECS_DIST);
