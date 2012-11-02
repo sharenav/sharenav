@@ -30,12 +30,15 @@ import de.enough.polish.util.zip.GZipInputStream;
 //#if polish.android
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.RandomAccessFile;
 //#endif
 
 public class ZipFile {
 //#if polish.api.fileconnection
 //#if polish.android
 	private File file;
+	private RandomAccessFile raFile;
+	private InputStream ais;
 //#else
 	private FileConnection fc;
 //#endif
@@ -59,6 +62,9 @@ public class ZipFile {
 		if (file == null)
 			throw new IOException("file unreadable");
 		//ais = new FileInputStream(file);
+		raFile = new RandomAccessFile(file, "r");
+		if (raFile == null)
+			throw new IOException("file unreadable");
 		//if (ais == null)
 		//	throw new IOException("file unreadable");
 //#else
@@ -134,13 +140,14 @@ public class ZipFile {
 	
 			/*log.writeChars("attempting "+e.getSize()); log.flush();*/
 			//#if polish.android
-			ret = new FileInputStream(file);
+			raFile.seek(e.offset);
+			raFile.read(b, 0, i);
 			//#else
 			ret = fc.openInputStream();
-			//#endif
 			ret.skip(e.offset);
 			ret.read(b, 0, i);
 			ret.close();
+			//#endif
 			ret = null;
 			/*log.writeChars("done "+e.getSize()); log.flush();*/
 	

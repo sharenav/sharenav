@@ -2,7 +2,7 @@
     - Android: use external bundled maps (#1 & #2) if available, and prefer over internal.
       (if APK extension(s) is/are loaded with the app when installed from
       Google play)
-    - Android: Speed up external zip file reading (also affects external bundled maps)
+    - Android: Speed up external zip file reading, also improving external bundled map performance
     *** Appearance ***
     - Make version string more visible
 
