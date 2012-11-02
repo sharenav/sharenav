@@ -23,6 +23,9 @@ import javax.microedition.io.file.FileConnection;
 //#endif
 //#if polish.android
 import de.enough.polish.android.midlet.MidletBridge;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetManager;
 import android.content.Context;
 import android.os.Environment;
@@ -1607,11 +1610,17 @@ public class Configuration {
 		write(mapFromJar ? 0 : 1, RECORD_ID_MAP_FROM_JAR);
 		Configuration.mapFromJar = mapFromJar;
 		//#if polish.android
-		if (getCfgBitState(CFGBIT_MAP_EXT_BUNDLE1)) {
-			mapFileUrl = getAPKExpansionFiles()[0];
-		}
-		if (getCfgBitState(CFGBIT_MAP_EXT_BUNDLE2)) {
-			mapFileUrl = getAPKExpansionFiles()[1];
+		if (!mapFromJar) {
+			if (getCfgBitState(CFGBIT_MAP_EXT_BUNDLE1)) {
+				String files[] = getAPKExpansionFiles();
+				mapFileUrl = "file://" + files[0];
+				System.out.println("mapFileUrl: " + mapFileUrl);
+			}
+			if (getCfgBitState(CFGBIT_MAP_EXT_BUNDLE2)) {
+				String files[] = getAPKExpansionFiles();
+				mapFileUrl = "file://" + files[1];
+				System.out.println("mapFileUrl: " + mapFileUrl);
+			}
 		}
 		//#endif
 	}
@@ -2759,8 +2768,14 @@ public class Configuration {
 
 	public static String[] getAPKExpansionFiles() {
 		int mainVersion = 8006;
-		int patchVersion = mainVersion;
 		Context ctx = MidletBridge.instance;
+		try {
+			PackageInfo pInfo = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), PackageManager.GET_META_DATA);
+			mainVersion = pInfo.versionCode;
+		} catch (NameNotFoundException e) {
+			//Handle exception
+		}
+		int patchVersion = mainVersion;
 		String packageName = ctx.getPackageName();
 		Vector<String> ret = new Vector<String>();
 		if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
