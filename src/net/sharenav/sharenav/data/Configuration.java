@@ -628,6 +628,7 @@ public class Configuration {
 			photoEncoding = readString(database, RECORD_ID_PHOTO_ENCODING);
 			mapFromJar = (readInt(database, RECORD_ID_MAP_FROM_JAR) == 0);
 			mapFileUrl = readString(database, RECORD_ID_MAP_FILE_URL);
+			setBuiltinMap(mapFromJar);
 			rawGpsLogUrl = readString(database, RECORD_ID_LOG_RAW_GPS_URL);
 			rawGpsLogEnable = (readInt(database, RECORD_ID_LOG_RAW_GPS_ENABLE) !=0);
 			detailBoost = readInt(database, RECORD_ID_DETAIL_BOOST);
