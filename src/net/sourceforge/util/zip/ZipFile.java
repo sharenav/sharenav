@@ -27,10 +27,18 @@ import javax.microedition.io.file.FileConnection;
 import de.enough.polish.util.HashMap;
 import de.enough.polish.util.zip.GZipInputStream;
 //#endif
+//#if polish.android
+import java.io.File;
+import java.io.FileInputStream;
+//#endif
 
 public class ZipFile {
 //#if polish.api.fileconnection
+//#if polish.android
+	private File file;
+//#else
 	private FileConnection fc;
+//#endif
 	private HashMap contents;
 	private int contents_limit;
 	/*private DataOutputStream log;*/
@@ -45,9 +53,19 @@ public class ZipFile {
 		log = fc2.openDataOutputStream();
 
 */
+//#if polish.android
+		// strip file:// prefix
+		file = new File(fileUrl.substring("file://".length()));
+		if (file == null)
+			throw new IOException("file unreadable");
+		//ais = new FileInputStream(file);
+		//if (ais == null)
+		//	throw new IOException("file unreadable");
+//#else
 		fc = (FileConnection) Connector.open(fileUrl, Connector.READ);
 		if (fc == null || !fc.canRead())
 			throw new IOException("file unreadable");
+//#endif
 
 		contents = new HashMap();
 		contents_limit = limitIndexCache;
@@ -115,7 +133,11 @@ public class ZipFile {
 			int i = b.length-8;
 	
 			/*log.writeChars("attempting "+e.getSize()); log.flush();*/
+			//#if polish.android
+			ret = new FileInputStream(file);
+			//#else
 			ret = fc.openInputStream();
+			//#endif
 			ret.skip(e.offset);
 			ret.read(b, 0, i);
 			ret.close();
@@ -334,7 +356,11 @@ public class ZipFile {
 		public void reset() throws IOException {
 			if (is != null)	close();
 
+			//#if polish.android
+			is = new FileInputStream(file);
+			//#else
 			is = fc.openInputStream();
+			//#endif
 			buf = new byte [buflen_orig];
 			bufp = buflen = buflen_orig;
 			fp = -buflen_orig;
@@ -424,7 +450,11 @@ public class ZipFile {
 			if (readIntLE()==ZipConstants.LOCSIG) {
 				// we do not parse archive comments,
 				// this is just a quick shot to get to the directory
+				//#if polish.android
+				skip((int)file.length()-22-4);
+				//#else
 				skip((int)fc.fileSize()-22-4);
+				//#endif
 				if (readIntLE()==ZipConstants.ENDSIG) {
 					skip(6);
 					cendir_entries = readShortLE();
