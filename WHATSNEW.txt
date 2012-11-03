@@ -6,6 +6,8 @@
     *** Appearance ***
     - Make version string more visible
     - sea color the same as water color
+    *** Osm2ShareNav ***
+    - make --mapzip command line argument do the right thing even when source app is an .apk
 
 ShareNav 0.8.5 == 0.8.6
     *** Appearance ***

@@ -286,7 +286,7 @@ public class BundleShareNav implements Runnable {
 
 	private static void pack(Configuration c) throws ZipException, IOException {
 		File n = null;
-		if (config.getMapName().equals("")) {
+		if (config.getMapName().equals("") || !config.mapzip) {
 			n = new File(c.getBundleFileName() + (config.sourceIsApk ? ".apk": ".jar"));
 			rewriteManifestFile(c, true);
 		} else {
@@ -316,7 +316,7 @@ public class BundleShareNav implements Runnable {
 		
 		zf.close();
 
-		if (config.sourceIsApk && config.signApk) {
+		if (config.sourceIsApk && config.signApk && !config.mapzip) {
 			Process signer = null;
 			// FIXME add "-storepass" handling with a password field on GUI
 
@@ -638,6 +638,12 @@ public class BundleShareNav implements Runnable {
 				f.delete();
 				f = new File(tmpDir + "/META-INF/CERT.RSA");
 				f.delete();
+				if (config.mapzip) {
+					f = new File(tmpDir + "/META-INF/SHARENAV.SF");
+					f.delete();
+					f = new File(tmpDir + "/META-INF/SHARENAV.RSA");
+					f.delete();
+				}
 			}
 			
 			OsmParser parser = config.getPlanetParser();

@@ -138,7 +138,7 @@ public class CreateShareNavData implements FilenameFilter {
 	public CreateShareNavData(OsmParser parser, String path) {
 		super();
 		this.parser = parser;
-		if (Configuration.getConfiguration().sourceIsApk) {
+		if (Configuration.getConfiguration().sourceIsApk && !Configuration.getConfiguration().mapzip) {
 			path = path + "/assets";
 		}
 		this.path = path;
@@ -357,7 +357,7 @@ public class CreateShareNavData implements FilenameFilter {
 			}
 
 			// remove class files (midlet/android code) if building just the map
-			if (!configuration.getMapName().equals("")) {
+			if (!configuration.getMapName().equals("") || configuration.mapzip) {
 				removeFilesWithExt(path, "class", null);
 				removeFilesWithExt(path, "dex", null);
 				removeFilesWithExt(path, "xml", null);
