@@ -2021,7 +2021,8 @@ scale alias 1: zoomed out 21x
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "8"/>
-  				<lineColor color = "005A74B5" colorAtNight="0000009A"/>
+				<!-- previous sea color: 005A74B5 -->
+  				<lineColor color = "000000CC" colorAtNight="0000009A"/>
 				<force_to layer = "-2"/> 
 			</Wvalue>  			
   			<Wvalue name = "wood">
