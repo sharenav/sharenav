@@ -5,6 +5,7 @@
     - Android: Speed up external zip file reading, also improving external bundled map performance
     *** Appearance ***
     - Make version string more visible
+    - sea color the same as water color
 
 ShareNav 0.8.5 == 0.8.6
     *** Appearance ***
