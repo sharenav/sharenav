@@ -1616,13 +1616,15 @@ public class Configuration {
 		if (!mapFromJar) {
 			if (getCfgBitState(CFGBIT_MAP_EXT_BUNDLE1)) {
 				String files[] = getAPKExpansionFiles();
-				mapFileUrl = "file://" + files[0];
-				System.out.println("mapFileUrl: " + mapFileUrl);
+				if (files.length > 0) {
+					mapFileUrl = "file://" + files[0];
+				}
 			}
 			if (getCfgBitState(CFGBIT_MAP_EXT_BUNDLE2)) {
 				String files[] = getAPKExpansionFiles();
-				mapFileUrl = "file://" + files[1];
-				System.out.println("mapFileUrl: " + mapFileUrl);
+				if (files.length > 1) {
+					mapFileUrl = "file://" + files[1];
+				}
 			}
 		}
 		//#endif
