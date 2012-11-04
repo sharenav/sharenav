@@ -752,7 +752,7 @@ public class Configuration {
 			   			1L << CFGBIT_POITEXTS |
 			   			1L << CFGBIT_AREATEXTS |
 			   			1L << CFGBIT_WPTTEXTS |
-			   			// 1L << CFGBIT_WAYTEXTS | // way texts are still experimental
+			   			1L << CFGBIT_WAYTEXTS |
 			   			1L << CFGBIT_ADD_EXIF |
 			   			1L << CFGBIT_ONEWAY_ARROWS |
 			   			1L << CFGBIT_POIS |
