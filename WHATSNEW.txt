@@ -1,5 +1,7 @@
     *** Targets ***
     - build java SE and J2ME (java ME) targets by default
+    *** Osm2ShareNav ***
+    - add README.mkd for some instructions
 
 ShareNav 0.8.7
     *** Targets ***
