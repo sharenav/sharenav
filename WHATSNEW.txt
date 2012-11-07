@@ -1,3 +1,6 @@
+    *** Targets ***
+    - build java SE and J2ME (java ME) targets by default
+
 ShareNav 0.8.7
     *** Targets ***
     - Android: use external bundled maps (#1 & #2) if available, and prefer over internal.
