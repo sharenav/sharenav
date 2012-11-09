@@ -2,6 +2,7 @@
     - build java SE and J2ME (java ME) targets by default
     *** Osm2ShareNav ***
     - add README.mkd for some instructions
+    - fixes to handling of zipped map building (e.g. from apk source)
 
 ShareNav 0.8.7
     *** Targets ***

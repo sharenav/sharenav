@@ -943,6 +943,7 @@ public class Configuration {
 		 */
 		public void setMapName(String name) {
 			mapName = name;
+			mapzip = true;
 		}
 		
 		/** Returns the name of the bundle (as it will be shown on the device).
@@ -1053,6 +1054,11 @@ public class Configuration {
 			} else {
 				sourceIsApk = false;
 			}
+		}
+
+		/** Is the target file an .apk file */
+		public boolean targetIsApk() {
+			return sourceIsApk && !mapzip;
 		}
 
 		/** Allows to set parameters for tile size vscount
