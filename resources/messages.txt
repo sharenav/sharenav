@@ -23,6 +23,7 @@ configuration.LPBluetoothNMEA=Bluetooth (NMEA)
 configuration.LPBluetoothSirf=Bluetooth (Sirf)
 configuration.LPCellID=CellID (OpenCellID.org)
 configuration.Android=Android
+configuration.gpsd=gpsd
 configuration.LPInternalJSR179=Internal (JSR179)
 configuration.LPNone=None
 configuration.nullexclmark=!null!

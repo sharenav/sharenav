@@ -856,7 +856,18 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 			//#endif
 			startCompass();
 			int locprov = Configuration.getLocationProvider();
+			//#if polish.android
 			receiveMessage(Locale.get("trace.ConnectTo")/*Connect to */ + Configuration.LOCATIONPROVIDER[locprov]);
+			//#else
+			if (locprov == Configuration.LOCATIONPROVIDER_GPSD) {
+				receiveMessage(Locale.get("trace.ConnectTo")/*Connect to */ + Configuration.LOCATIONPROVIDER[locprov-1]);
+			} else {
+				receiveMessage(Locale.get("trace.ConnectTo")/*Connect to */ + Configuration.LOCATIONPROVIDER[locprov]);
+			}
+			if (locprov == Configuration.LOCATIONPROVIDER_GPSD-1) {
+				locprov = Configuration.LOCATIONPROVIDER_GPSD;
+			}
+			//#endif
 			if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_CELLID_STARTUP)) {
 				// Don't do initial lookup if we're going to start primary cellid location provider anyway
 				if (Configuration.getLocationProvider() != Configuration.LOCATIONPROVIDER_SECELL || !Configuration.getCfgBitState(Configuration.CFGBIT_AUTO_START_GPS)) {
@@ -868,6 +879,9 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 					locationProducer = new SirfInput();
 					break;
 				case Configuration.LOCATIONPROVIDER_NMEA:
+					locationProducer = new NmeaInput();
+					break;
+				case Configuration.LOCATIONPROVIDER_GPSD:
 					locationProducer = new NmeaInput();
 					break;
 				case Configuration.LOCATIONPROVIDER_SECELL:

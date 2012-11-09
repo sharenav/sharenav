@@ -76,6 +76,7 @@ public class Configuration {
 	public final static int LOCATIONPROVIDER_JSR179 = 3;
 	public final static int LOCATIONPROVIDER_SECELL = 4;
 	public final static int LOCATIONPROVIDER_ANDROID = 5;
+	public final static int LOCATIONPROVIDER_GPSD = 6; // must be next after _ANDROID
 	
 	// bit 0: render as street
 	public final static short CFGBIT_STREETRENDERMODE = 0;
@@ -1242,6 +1243,10 @@ public class Configuration {
 	}
 
 	public static void setLocationProvider(int locationProvider) {
+		if (locationProvider == Configuration.LOCATIONPROVIDER_GPSD
+			&& Configuration.locationProvider != locationProvider) {
+			setBtUrl("socket://127.0.0.1:2947");
+		}
 		Configuration.locationProvider = locationProvider;
 		write(locationProvider, RECORD_ID_LOCATION_PROVIDER);
 	}
@@ -1504,9 +1509,9 @@ public class Configuration {
 			}
 			
 			//#if polish.android
-			LOCATIONPROVIDER = new String[6];
+			LOCATIONPROVIDER = new String[7];
 			//#else
-			LOCATIONPROVIDER = new String[5];
+			LOCATIONPROVIDER = new String[6];
 			//#endif
 			LOCATIONPROVIDER[LOCATIONPROVIDER_NONE] = Locale.get("configuration.LPNone")/*None*/;
 			LOCATIONPROVIDER[LOCATIONPROVIDER_SIRF] = Locale.get("configuration.LPBluetoothSirf")/*Bluetooth (Sirf)*/;
@@ -1515,6 +1520,9 @@ public class Configuration {
 			LOCATIONPROVIDER[LOCATIONPROVIDER_SECELL] = Locale.get("configuration.LPCellID")/*Cell-ID (OpenCellId.org)*/;
 			//#if polish.android
 			LOCATIONPROVIDER[LOCATIONPROVIDER_ANDROID] = Locale.get("configuration.Android")/*Android*/;
+			LOCATIONPROVIDER[LOCATIONPROVIDER_GPSD] = Locale.get("configuration.gpsd")/*gpsd*/;
+			//#else
+			LOCATIONPROVIDER[LOCATIONPROVIDER_GPSD-1] = Locale.get("configuration.gpsd")/*gpsd*/;
 			//#endif
 
 			projectionsString = new String[ProjFactory.COUNT];
@@ -1720,6 +1728,7 @@ public class Configuration {
 			}
 			if (microemulator) {
 				setCfgBitSavedState(CFGBIT_FULLSCREEN, true);
+				setLocationProvider(LOCATIONPROVIDER_GPSD);
 			}
 			setCfgBitSavedState(CFGBIT_CANVAS_SPECIFIC_DEFAULTS_DONE, true);
 		}

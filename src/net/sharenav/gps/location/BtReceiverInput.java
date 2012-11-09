@@ -290,6 +290,11 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 				btGpsOutputStream = conn.openOutputStream();
 			}
 			
+			if (Configuration.getLocationProvider() == Configuration.LOCATIONPROVIDER_GPSD) {
+				btGpsOutputStream = conn.openOutputStream();
+				btGpsOutputStream.write("?WATCH={\"enable\":true,\"nmea\":true}\r\n".getBytes("ISO-8859-1"));
+				btGpsOutputStream.flush();
+			}
 		} catch (SecurityException se) {
 			/**
 			 * The application was not permitted to connect to bluetooth
@@ -315,6 +320,10 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 		}
 		if (btGpsOutputStream != null){
 			try {
+				if (Configuration.getLocationProvider() == Configuration.LOCATIONPROVIDER_GPSD) {
+					btGpsOutputStream.write("?WATCH={\"enable\":false}".getBytes("ISO-8859-1"));
+					btGpsOutputStream.flush();
+				}
 				btGpsOutputStream.close();
 			} catch (IOException e) {
 			}

@@ -1081,7 +1081,13 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				show();
 				break;
 			case STATE_LOC_PROV:
-				Configuration.setLocationProvider(locProv.getSelectedIndex());
+				int locProvNumber = locProv.getSelectedIndex();
+				//#if not polish.android
+				if (locProvNumber == Configuration.LOCATIONPROVIDER_GPSD-1) {
+					locProvNumber = Configuration.LOCATIONPROVIDER_GPSD;
+				}
+				//#endif
+				Configuration.setLocationProvider(locProvNumber);
 				boolean [] selraw = new boolean[2];
 				rawLogCG.getSelectedFlags(selraw);
 				Configuration.setGpsRawLoggerUrl(rawLogDir);
@@ -1210,6 +1216,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			case MENU_ITEM_LOCATION: // Location Receiver
 				initLocationSetupMenu();
 				int selIdx = Configuration.getLocationProvider();
+				//#if not polish.android
+				if (selIdx == Configuration.LOCATIONPROVIDER_GPSD) {
+					selIdx = Configuration.LOCATIONPROVIDER_GPSD-1;
+				}
+				//#endif
 				locProv.setSelectedIndex(selIdx, true);
 				String logUrl;
 				rawLogDir = Configuration.getGpsRawLoggerUrl();
