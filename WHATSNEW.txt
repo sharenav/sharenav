@@ -1,6 +1,9 @@
     *** Targets ***
     - build java SE and J2ME (java ME) targets by default
     - (java SE:) added support for gpsd
+    - android: don't use direct SMS sending, don't request the SMS permission,
+      instead use a generic sharing intent so the sending of position is user-directed
+      with the normal Android tools
     *** Osm2ShareNav ***
     - add README.mkd for some instructions
     - fixes to handling of zipped map building (e.g. from apk source)

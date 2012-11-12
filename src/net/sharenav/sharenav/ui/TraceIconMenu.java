@@ -167,8 +167,13 @@ public class TraceIconMenu extends IconMenuWithPagesGui {
 				"i_micro", Trace.TOGGLE_AUDIO_REC);
 		iconToggleAudioRec.setFlag(LayoutElement.FLAG_IMAGE_TOGGLEABLE);
 		
+		//#if polish.android
+		mp.createAndAddIcon(Locale.get("guisendmessage.SendPos")/*Send map pos*/, 
+				"i_sendsms", Trace.SEND_MESSAGE_CMD);
+		//#else
 		mp.createAndAddIcon(Locale.get("traceiconmenu.SendSMS")/*Send SMS*/, 
 				"i_sendsms", Trace.SEND_MESSAGE_CMD);
+		//#endif
 		mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, 
 				"i_back", IconActionPerformer.BACK_ACTIONID);
 

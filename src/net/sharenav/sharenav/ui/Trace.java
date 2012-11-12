@@ -33,12 +33,18 @@ import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextField;
 //#if polish.android
 import de.enough.polish.android.lcdui.AndroidDisplay;
+import de.enough.polish.android.lcdui.CanvasBridge;
+import de.enough.polish.android.midlet.MidletBridge;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.Context;
 import android.graphics.Region;
 import android.graphics.Region.Op;
+import android.os.Bundle;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.util.FloatMath;
+import android.view.Display;
 import android.view.InputEvent;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -121,12 +127,6 @@ import net.sharenav.util.IntPoint;
 import net.sharenav.util.Logger;
 import net.sharenav.util.MoreMath;
 import net.sharenav.util.ProjMath;
-
-//#if polish.android
-import android.view.Display;
-import de.enough.polish.android.lcdui.CanvasBridge;
-import de.enough.polish.android.midlet.MidletBridge;
-//#endif
 
 /**
  * Implements the main "Map" screen which displays the map, offers track recording etc.
@@ -613,7 +613,11 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 		CMDS[SETUP_CMD] = new Command(Locale.get("trace.Setup")/*Setup*/, Command.ITEM, 25);
 		CMDS[ABOUT_CMD] = new Command(Locale.get("generic.About")/*About*/, Command.ITEM, 30);
 		//#if polish.api.wmapi
+		//#if polish.android
+		CMDS[SEND_MESSAGE_CMD] = new Command(Locale.get("guisendmessage.SendPos")/*Send SMS (map pos)*/,Command.ITEM, 20);
+		//#else
 		CMDS[SEND_MESSAGE_CMD] = new Command(Locale.get("trace.SendSMSMapPos")/*Send SMS (map pos)*/,Command.ITEM, 20);
+		//#endif
 		//#endif
 		CMDS[EDIT_ADDR_CMD] = new Command(Locale.get("trace.AddAddrNode")/*Add Addr node*/,Command.ITEM,100);
 		CMDS[CELLID_LOCATION_CMD] = new Command(Locale.get("trace.CellidLocation")/*Set location from CellID*/,Command.ITEM,100);
@@ -1515,8 +1519,22 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 			}
 			//#if polish.api.wmapi
 			if (c == CMDS[SEND_MESSAGE_CMD]) {
+				//#if polish.android
+				Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+				shareIntent.setType("text/plain");
+				shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "message subject");
+				shareIntent.putExtra(android.content.Intent.EXTRA_TEXT,
+						     "Lat: " + center.radlat * MoreMath.FAC_RADTODEC +
+						     " " +
+						     "Lon: " + center.radlon * MoreMath.FAC_RADTODEC +
+//						        Locale.get("guisendmessage.Lat")/*Lat: */ + center.radlat * MoreMath.FAC_RADTODEC +
+//						        Locale.get("guisendmessage.Lon")/* Lon: */ + center.radlon * MoreMath.FAC_RADTODEC +
+						     " ");
+				MidletBridge.instance.startActivity(Intent.createChooser(shareIntent, "Pick a Share method"));
+				//#else
 				GuiSendMessage sendMsg = new GuiSendMessage(this);
 				sendMsg.show();
+				//#endif
 				repaint();
 				return;
 			}
@@ -1579,7 +1597,11 @@ CompassReceiver, Runnable , ShareNavDisplayable, CompletionListener, IconActionP
 					//#if polish.api.wmapi
 					if (hasJSR120) {
 						recordingsMenuCmds[idx] = SEND_MESSAGE_CMD;
+						//#if polish.android
+						elements[idx++] = Locale.get("guisendmessage.SendPos")/*Send SMS (map pos)*/;
+						//#else
 						elements[idx++] = Locale.get("trace.SendSMSMapPos")/*Send SMS (map pos)*/;
+						//#endif
 					}
 					//#endif
 					

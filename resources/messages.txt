@@ -1402,3 +1402,5 @@ guidiscover.TMSSplitScreen=Show raster map in split-screen mode
 splash.webaddr=http://www.sharenav.net
 guidiscover.BundleMap1=Packaged 1
 guidiscover.BundleMap2=Packaged 2
+guisendmessage.ShareMethod=Pick a method to share with
+guisendmessage.SendPos=Send map pos

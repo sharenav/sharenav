@@ -944,3 +944,5 @@ guidiscover.AutoDayNight=Automaattivaihto
 guidiscover.TMSSplitScreen=Näytä jaetussa ruudussa
 guidiscover.BundleMap1=Paketoitu 1
 guidiscover.BundleMap2=Paketoitu 2
+guisendmessage.ShareMethod=Valitse miten jaetaan
+guisendmessage.SendPos=Lähetä sijainti
