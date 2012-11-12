@@ -1,6 +1,6 @@
 Building ShareNav for Java SE (desktop/laptop computers)
 --------------------------------------------------------
-Choose <ShareNav-Generic-java-full-connected-0.8.7-map72>
+Choose <ShareNav-Generic-java-full-connected-0.8.8-map72>
 
 Run the resulting JAR by clicking or double-clicking on it,
 or with java -jar filename-here-mapver.jar
@@ -12,7 +12,7 @@ access and sounds instructions.
 Building ShareNav for J2ME
 --------------------------
 You need to choose the right variant of ShareNav for your phone.
-If you are unsure, try <ShareNav-Generic-full-0.8.7-map72> or read the Wiki page
+If you are unsure, try <ShareNav-Generic-full-0.8.8-map72> or read the Wiki page
 where users have collected their experiences with different phone models.
 
 Download the right JAR and JAD file for your variant and copy it to your
@@ -23,7 +23,7 @@ entry from its context menu.
 
 Map data
 --------
-<Osm2ShareNav-0.8.7-map72.jar> is needed to create the binary map data for ShareNav.
+<Osm2ShareNav-0.8.8-map72.jar> is needed to create the binary map data for ShareNav.
 Java 1.5 or later must be installed on your PC to run it.
 The process is explained here:
 [https://github.com/sharenav/sharenav/wiki/Osm2ShareNav](https://github.com/sharenav/sharenav/wiki/Osm2ShareNav)
